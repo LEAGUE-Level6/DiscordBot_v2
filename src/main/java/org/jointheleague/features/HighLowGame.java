@@ -5,13 +5,14 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.discordbot.CustomMessageCreateListener;
 import org.jointheleague.pojo.help_embed.HelpEmbed;
 
+import java.sql.SQLOutput;
 import java.util.Random;
 
 public class HighLowGame extends CustomMessageCreateListener {
 
-    public static final String COMMAND = "!highLow";
+    public final String COMMAND = "!highLow";
     private final Random random = new Random();
-    private int numberToGuess;
+    int numberToGuess;
 
     public HighLowGame(String channelName) {
         super(channelName);
@@ -19,7 +20,7 @@ public class HighLowGame extends CustomMessageCreateListener {
     }
 
     @Override
-    public void handle(MessageCreateEvent event) throws APIException {
+    public void handle(MessageCreateEvent event){
         String messageContent = event.getMessageContent();
 
         //start the game with the command
@@ -28,7 +29,9 @@ public class HighLowGame extends CustomMessageCreateListener {
             event.getChannel().sendMessage("I have picked a number between 1 and 100. Guess by using e.g. !highLow 5");
         }
         //check a guess
-        else if (messageContent.contains(COMMAND) && !messageContent.contains("e.g.")) {
+        else if (messageContent.contains(COMMAND)
+                && !messageContent.contains("e.g.")
+                && !messageContent.contains("this:")) {
 
             //check if the game has been started
             if(numberToGuess == 0){
@@ -40,7 +43,6 @@ public class HighLowGame extends CustomMessageCreateListener {
             //parse the guess from the message
             String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND, "");
 
-            System.out.println(guessMessage);
             //change the guess to an int
             int guess = 0;
             try{

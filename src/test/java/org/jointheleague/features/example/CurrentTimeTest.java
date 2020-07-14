@@ -1,8 +1,7 @@
-package org.jointheleague.features;
+package org.jointheleague.features.example;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.example.RandomNumber;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,20 +10,17 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class RandomNumberTest {
+public class CurrentTimeTest {
 
     private final String testChannelName = "test";
-    private final RandomNumber underTest = new RandomNumber(testChannelName);
+    private final CurrentTime underTest = new CurrentTime(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
-    private final PrintStream originalErr = System.err;
 
 
     @Mock
@@ -33,23 +29,16 @@ public class RandomNumberTest {
     @Mock
     private TextChannel textChannel;
 
-    //test that:
-    //there are no print statements
-    //
-
-
     @AfterEach
-    public void restoreStreams() {
+    public void itShouldNotPrintToSystemOut() {
+        assertThat(outContent.toString()).isBlank();
         System.setOut(originalOut);
-        System.setErr(originalErr);
     }
-
-
+    
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
     }
 
     @Test
@@ -57,7 +46,7 @@ public class RandomNumberTest {
         //Given
 
         //When
-        String command = RandomNumber.COMMAND;
+        String command = underTest.COMMAND;
 
         //Then
         assertThat(command).isNotBlank();
@@ -66,7 +55,7 @@ public class RandomNumberTest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn(RandomNumber.COMMAND);
+        when(messageCreateEvent.getMessageContent()).thenReturn(underTest.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
@@ -93,6 +82,7 @@ public class RandomNumberTest {
     @Test
     void itShouldHaveAHelpEmbed() {
         //Given
+
         //When
 
         //Then
@@ -102,39 +92,11 @@ public class RandomNumberTest {
     @Test
     void itShouldHaveTheCommandAsTheTitleOfTheHelpEmbed() {
         //Given
+
         //When
 
         //Then
-        assertThat(underTest.getHelpEmbed().getTitle()).isEqualTo(RandomNumber.COMMAND);
+        assertThat(underTest.getHelpEmbed().getTitle()).isEqualTo(underTest.COMMAND);
     }
-
-    @Test
-    void itShouldNotPrintAnythingUsingSystemOutPrintlnWhenHandlingMessages() {
-        //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn(RandomNumber.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        underTest.handle(messageCreateEvent);
-
-        //Then
-        assertThat(outContent.toString()).isBlank();
-    }
-
-
-
-    //Specific to RandomNumber
-    @Test
-    void itShouldHandleMessagesWhenRangeOfValuesIsProvided() {
-        //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn(RandomNumber.COMMAND + " 10-100");
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        underTest.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
-    }
-
+    
 }

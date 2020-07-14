@@ -1,7 +1,10 @@
 package org.jointheleague.features.example;
 
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.features.example.help_embed.HelpListener;
+import org.jointheleague.pojo.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,17 +13,21 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ApiExampleTest {
+public class HelpListenerTest {
 
     private final String testChannelName = "test";
-    private final ApiExample underTest = new ApiExample(testChannelName);
+    private final HelpListener underTest = new HelpListener(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
+
 
     @Mock
     private MessageCreateEvent messageCreateEvent;
@@ -33,7 +40,7 @@ public class ApiExampleTest {
         assertThat(outContent.toString()).isBlank();
         System.setOut(originalOut);
     }
-
+    
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -52,31 +59,22 @@ public class ApiExampleTest {
     }
 
     @Test
-    void itShouldHandleMessagesWithOnlyCommandByAskingForTopic() {
+    void itShouldHandleMessagesWithCommand() {
         //Given
+        HelpEmbed helpEmbed = new HelpEmbed(underTest.COMMAND, "test");
         when(messageCreateEvent.getMessageContent()).thenReturn(underTest.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        org.springframework.test.util
+                .ReflectionTestUtils.setField(
+                underTest,
+                "helpEmbeds",
+                Collections.singletonList(helpEmbed));
 
         //When
         underTest.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage("Please put a word after the command");
-    }
-
-    @Test
-    void itShouldHandleMessagesWithTopic() {
-        //Given
-        String topic = "cats";
-        when(messageCreateEvent.getMessageContent()).thenReturn(underTest.COMMAND + " " + topic);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        underTest.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
-
+        verify(textChannel, times(1)).sendMessage(any(EmbedBuilder.class));
     }
 
     @Test
@@ -92,25 +90,5 @@ public class ApiExampleTest {
         verify(textChannel, never()).sendMessage();
 
     }
-
-    @Test
-    void itShouldHaveAHelpEmbed() {
-        //Given
-
-        //When
-
-        //Then
-        assertThat(underTest.getHelpEmbed()).isNotNull();
-    }
-
-    @Test
-    void itShouldHaveTheCommandAsTheTitleOfTheHelpEmbed() {
-        //Given
-
-        //When
-
-        //Then
-        assertThat(underTest.getHelpEmbed().getTitle()).isEqualTo(underTest.COMMAND);
-    }
-
+    
 }
