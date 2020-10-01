@@ -1,4 +1,4 @@
-package org.jointheleague.pojo.api_example;
+package org.jointheleague.features.plain_old_java_objects.api_example;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;

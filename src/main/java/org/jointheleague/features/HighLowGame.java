@@ -1,14 +1,12 @@
 package org.jointheleague.features;
 
-import net.aksingh.owmjapis.api.APIException;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.discordbot.CustomMessageCreateListener;
-import org.jointheleague.pojo.help_embed.HelpEmbed;
+import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
-import java.sql.SQLOutput;
 import java.util.Random;
 
-public class HighLowGame extends CustomMessageCreateListener {
+public class HighLowGame extends Feature {
 
     public final String COMMAND = "!highLow";
     private final Random random = new Random();

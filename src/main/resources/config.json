@@ -1,6 +1,6 @@
 {
 
-    "channels": ["channelName"],
-    "token": "token"
+    "channelName": "CHANNEL_NAME",
+    "token": "TOKEN"
 
 }

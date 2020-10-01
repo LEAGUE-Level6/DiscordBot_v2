@@ -1,9 +1,6 @@
-package org.jointheleague.features.example;
+package org.jointheleague.features.examples;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 import javax.json.Json;
@@ -11,16 +8,16 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.discordbot.CustomMessageCreateListener;
-import org.jointheleague.pojo.help_embed.HelpEmbed;
-import org.jointheleague.pojo.api_example.ApiExampleWrapper;
-import org.jointheleague.pojo.api_example.Article;
+import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.plain_old_java_objects.api_example.ApiExampleWrapper;
+import org.jointheleague.features.plain_old_java_objects.api_example.Article;
 
 import com.google.gson.Gson;
 
 //this example uses the "News API"
 //documentation for the API can be found here: https://newsapi.org/docs/get-started
-public class ApiExample extends CustomMessageCreateListener {
+public class ApiExample extends Feature {
 
 		//API key is received through creating an account on the web site.
 		//API may not require a key, or may require the key as a header as in PictureOf.java

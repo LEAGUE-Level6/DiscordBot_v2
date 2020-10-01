@@ -1,13 +1,13 @@
-package org.jointheleague.features.example;
+package org.jointheleague.features.examples;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.discordbot.CustomMessageCreateListener;
-import org.jointheleague.pojo.help_embed.HelpEmbed;
+import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
-public class RandomNumber extends CustomMessageCreateListener {
+public class RandomNumber extends Feature {
 
 	public final String COMMAND = "!random";
 	

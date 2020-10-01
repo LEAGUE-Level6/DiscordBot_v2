@@ -1,13 +1,13 @@
-package org.jointheleague.features.example.help_embed;
+package org.jointheleague.help_embed;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.discordbot.CustomMessageCreateListener;
-import org.jointheleague.pojo.help_embed.HelpEmbed;
+import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
-public class HelpListener extends CustomMessageCreateListener {
+public class HelpListener extends Feature {
 
 	public final String COMMAND = "!help";
 	private List<HelpEmbed> helpEmbeds = new ArrayList<>();

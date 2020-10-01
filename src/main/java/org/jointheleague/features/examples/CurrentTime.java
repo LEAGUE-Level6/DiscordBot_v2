@@ -1,14 +1,14 @@
-package org.jointheleague.features.example;
+package org.jointheleague.features.examples;
 
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.discordbot.CustomMessageCreateListener;
-import org.jointheleague.pojo.help_embed.HelpEmbed;
+import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
-public class CurrentTime extends CustomMessageCreateListener {
+public class CurrentTime extends Feature {
 
 	public final String COMMAND = "!time";
 
@@ -20,7 +20,7 @@ public class CurrentTime extends CustomMessageCreateListener {
 	@Override
 	public void handle(MessageCreateEvent event) {
 		if (event.getMessageContent().startsWith(COMMAND)) {
-			SimpleDateFormat formatter = new SimpleDateFormat("'The time is 'HH:mm:ss z' on 'MM-dd-YYYY'.'");
+			SimpleDateFormat formatter = new SimpleDateFormat("'The time is 'HH:mm:ss z' on 'MM-dd-yyyy'.'");
 			Date date = new Date(System.currentTimeMillis());
 			
 			event.getChannel().sendMessage(formatter.format(date));

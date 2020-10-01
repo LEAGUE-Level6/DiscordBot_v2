@@ -1,18 +1,13 @@
-package org.jointheleague.pojo.help_embed;
-
-import java.awt.Color;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package org.jointheleague.help_embed.plain_old_java_objects.help_embed;
 
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import java.awt.*;
 
 public class HelpEmbed {
 	
 	private final Color color = Color.green;
 	private final String command;
 	private final String description;
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
 
 	public HelpEmbed(String command, String description){
 		this.command = command;
