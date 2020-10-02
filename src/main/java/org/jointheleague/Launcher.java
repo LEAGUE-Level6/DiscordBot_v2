@@ -14,6 +14,8 @@ import org.jointheleague.discord_bot.DiscordBot;
 public class Launcher {
 	public static void main(String[] args) {
 
+		//test
+
 		//Initialize discord bot
 		String token = "TOKEN";
 		String channelName = "CHANNEL_NAME";
