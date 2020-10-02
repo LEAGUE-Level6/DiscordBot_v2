@@ -3,17 +3,11 @@ package org.jointheleague.discord_bot;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.HighLowGame;
-import org.jointheleague.features.examples.ApiExample;
-import org.jointheleague.features.examples.CurrentTime;
-import org.jointheleague.features.examples.RandomNumber;
+import org.jointheleague.features.examples.second_features.HighLowGame;
+import org.jointheleague.features.examples.third_features.ApiExample;
+import org.jointheleague.features.examples.first_features.CurrentTime;
+import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.help_embed.HelpListener;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
 public class DiscordBot {
 

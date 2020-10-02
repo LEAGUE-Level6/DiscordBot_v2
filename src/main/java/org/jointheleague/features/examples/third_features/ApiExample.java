@@ -1,4 +1,4 @@
-package org.jointheleague.features.examples;
+package org.jointheleague.features.examples.third_features;
 
 import java.net.HttpURLConnection;
 import java.net.URL;

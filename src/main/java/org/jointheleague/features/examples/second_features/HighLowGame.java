@@ -1,4 +1,4 @@
-package org.jointheleague.features;
+package org.jointheleague.features.examples.second_features;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;

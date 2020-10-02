@@ -1,4 +1,4 @@
-package org.jointheleague.features.examples;
+package org.jointheleague.features.examples.first_features;
 
 
 import java.text.SimpleDateFormat;
@@ -19,10 +19,10 @@ public class CurrentTime extends Feature {
 
 	@Override
 	public void handle(MessageCreateEvent event) {
-		if (event.getMessageContent().startsWith(COMMAND)) {
-			SimpleDateFormat formatter = new SimpleDateFormat("'The time is 'HH:mm:ss z' on 'MM-dd-yyyy'.'");
+		String messageContent = event.getMessageContent();
+		if (messageContent.startsWith(COMMAND)) {
 			Date date = new Date(System.currentTimeMillis());
-			
+			SimpleDateFormat formatter = new SimpleDateFormat("'The time is 'HH:mm:ss z' on 'MM-dd-yyyy'.'");
 			event.getChannel().sendMessage(formatter.format(date));
 		}
 	}

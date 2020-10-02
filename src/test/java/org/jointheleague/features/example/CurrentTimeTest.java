@@ -2,7 +2,7 @@ package org.jointheleague.features.example;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.examples.CurrentTime;
+import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
