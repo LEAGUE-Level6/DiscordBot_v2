@@ -13,9 +13,15 @@ import org.jointheleague.discord_bot.DiscordBot;
 
 public class Launcher {
 	public static void main(String[] args) {
-		DiscordBot discordBot = DiscordBot.fromConfigJsonFile();
 
+		//Initialize discord bot
+		String token = "TOKEN";
+		String channelName = "CHANNEL_NAME";
+		DiscordBot discordBot = new DiscordBot(token, channelName);
+
+		//Connect discord bot to channel
 		boolean printBotAuthorizationInvite =  true;
 		discordBot.connect(printBotAuthorizationInvite);
+
 	}
 }

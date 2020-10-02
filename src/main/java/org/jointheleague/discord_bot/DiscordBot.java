@@ -25,28 +25,10 @@ public class DiscordBot {
 
 	HelpListener helpListener;
 
-	private DiscordBot(String token, String channelName) {
+	public DiscordBot(String token, String channelName) {
 		this.token = token;
 		this.channelName = channelName;
 		helpListener = new HelpListener(channelName);
-	}
-
-	public static DiscordBot fromConfigJsonFile(){
-		JSONParser parser = new JSONParser();
-		try {
-			//Read and parse config.json file
-			FileReader fr = new FileReader(new File("src/main/resources/config.json"));
-			JSONObject json = (JSONObject) parser.parse(fr);
-
-			//Get the token and channelName from the object
-			String token = (String) json.get("token");
-			String channelName = (String) json.get("channelName");
-
-			return new DiscordBot(token, channelName);
-		} catch (IOException | ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	public void connect(boolean printInvite) {
