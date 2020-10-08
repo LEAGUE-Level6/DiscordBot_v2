@@ -10,8 +10,8 @@ import javax.json.JsonReader;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.jointheleague.features.plain_old_java_objects.api_example.ApiExampleWrapper;
-import org.jointheleague.features.plain_old_java_objects.api_example.Article;
+import org.jointheleague.features.examples.third_features.plain_old_java_objects.api_example.ApiExampleWrapper;
+import org.jointheleague.features.examples.third_features.plain_old_java_objects.api_example.Article;
 
 import com.google.gson.Gson;
 
