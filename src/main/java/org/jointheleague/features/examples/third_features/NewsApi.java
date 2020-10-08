@@ -11,10 +11,11 @@ import reactor.core.publisher.Mono;
 //Documentation for the API can be found here: https://newsapi.org/docs/get-started
 public class NewsApi extends Feature {
 
+    public final String COMMAND = "!newsApi";
+
+    private WebClient webClient;
     private static final String baseUrl = "http://newsapi.org/v2/everything";
     private final String apiKey = "59ac01326c584ac0a069a29798794bec";
-    private WebClient webClient;
-    public final String COMMAND = "!newsApi";
 
     public NewsApi(String channelName) {
         super(channelName);
