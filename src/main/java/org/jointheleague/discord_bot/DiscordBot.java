@@ -4,7 +4,8 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
-import org.jointheleague.features.examples.third_features.ApiExample;
+import org.jointheleague.features.examples.third_features.CatFactsApi;
+import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
@@ -31,7 +32,8 @@ public class DiscordBot {
 
 		//Print the URL to invite the bot
 		if (printInvite) {
-			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite());
+			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
+					+"\n\tThis message can be disabled in Launcher.java");
 		}
 
 		//Send bot connected message in channel
@@ -42,10 +44,10 @@ public class DiscordBot {
 
 		//add features
 		addFeature(new RandomNumber(channelName));
-		addFeature(new ApiExample(channelName));
 		addFeature(new CurrentTime(channelName));
 		addFeature(new HighLowGame(channelName));
-
+		addFeature(new NewsApi(channelName));
+		addFeature(new CatFactsApi(channelName));
 	}
 
 	private void addFeature(Feature feature){

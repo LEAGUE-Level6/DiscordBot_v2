@@ -1,24 +1,26 @@
-package org.jointheleague.features.examples.first_features;
+package org.jointheleague.features.examples.third_features;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.*;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
-public class RandomNumberTest {
+public class CatFactsApiTest {
 
     private final String testChannelName = "test";
-    private final RandomNumber underTest = new RandomNumber(testChannelName);
+    private final CatFactsApi underTest = new CatFactsApi(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -70,6 +72,20 @@ public class RandomNumberTest {
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
     }
+
+//    @Test
+//    void itShouldHandleMessagesWithoutSecondaryCommand() {
+//        //Given
+//        HelpEmbed helpEmbed = new HelpEmbed(underTest.COMMAND, "test");
+//        when(messageCreateEvent.getMessageContent()).thenReturn(underTest.COMMAND);
+//        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+//
+//        //When
+//        underTest.handle(messageCreateEvent);
+//
+//        //Then
+//        verify(textChannel, times(1)).sendMessage(anyString());
+//    }
 
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
