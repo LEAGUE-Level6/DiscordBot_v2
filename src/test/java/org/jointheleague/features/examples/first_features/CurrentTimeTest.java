@@ -1,22 +1,19 @@
-package org.jointheleague.features.example;
+package org.jointheleague.features.examples.first_features;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.examples.first_features.CurrentTime;
-import org.jointheleague.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 public class CurrentTimeTest {
 
@@ -40,7 +37,7 @@ public class CurrentTimeTest {
 
     @AfterEach
     public void itShouldNotPrintToSystemOut() {
-        String expected  = "";
+        String expected = "";
         String actual = outContent.toString();
 
         assertEquals(expected, actual);
@@ -57,6 +54,7 @@ public class CurrentTimeTest {
         //Then
         assertNotEquals("", command);
         assertNotEquals("!command", command);
+        assertNotNull(command);
     }
 
     @Test
@@ -108,5 +106,5 @@ public class CurrentTimeTest {
         //Then
         assertEquals(command, helpEmbedTitle);
     }
-    
+
 }

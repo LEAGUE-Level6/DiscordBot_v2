@@ -7,7 +7,7 @@ import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.ApiExample;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
-import org.jointheleague.help_embed.HelpListener;
+import org.jointheleague.features.help_embed.HelpListener;
 
 public class DiscordBot {
 
@@ -35,7 +35,7 @@ public class DiscordBot {
 		}
 
 		//Send bot connected message in channel
-		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " is connected"));
+		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has connected"));
 
 		//add help listener to bot
 		api.addMessageCreateListener(helpListener);

@@ -6,7 +6,7 @@ import java.util.Date;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
 public class CurrentTime extends Feature {
 

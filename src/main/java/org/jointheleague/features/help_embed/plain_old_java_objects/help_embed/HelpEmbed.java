@@ -1,4 +1,4 @@
-package org.jointheleague.help_embed.plain_old_java_objects.help_embed;
+package org.jointheleague.features.help_embed.plain_old_java_objects.help_embed;
 
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import java.awt.*;
@@ -6,7 +6,9 @@ import java.awt.*;
 public class HelpEmbed {
 	
 	private final Color color = Color.green;
+
 	private final String command;
+
 	private final String description;
 
 	public HelpEmbed(String command, String description){
@@ -33,6 +35,5 @@ public class HelpEmbed {
 		embed.setDescription(this.description);
 		return embed;
 	}
-	
 	
 }
