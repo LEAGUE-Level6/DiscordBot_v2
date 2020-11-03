@@ -6,7 +6,7 @@
 
     <groupId>org.jointheleague</groupId>
     <artifactId>discordbot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>2.0</version>
     <packaging>jar</packaging>
 
     <name>discordbot</name>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>org.javacord</groupId>
             <artifactId>javacord</artifactId>
-            <version>3.0.3</version>
+            <version>3.1.1</version>
             <type>pom</type>
         </dependency>
         <!--loads BotInfo from config.json-->
