@@ -5,8 +5,8 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -82,6 +82,7 @@ public class NewsApiTest {
         String command = newsApi.COMMAND;
 
         //Then
+
         assertNotEquals("", command);
         assertNotEquals("!command", command);
         assertNotNull(command);

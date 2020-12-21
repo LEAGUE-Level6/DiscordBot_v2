@@ -38,18 +38,22 @@ public class CatFactsApi extends Feature {
     public String getCatFact() {
 
         //Make the request, accepting the response as a plain old java object you created
-        Mono<CatWrapper> catWrapperFlux = webClient.get()
+        Mono<CatWrapper> catWrapperMono = webClient.get()
                 .retrieve()
                 .bodyToMono(CatWrapper.class);
 
         //collect the response into a plain old java object
-        CatWrapper catWrapper = catWrapperFlux.block();
+        CatWrapper catWrapper = catWrapperMono.block();
 
         //get the cat fact from the response
         String message = catWrapper.getData().get(0);
 
         //send the message
         return message;
+    }
+
+    public void setWebClient(WebClient webClient) {
+        this.webClient = webClient;
     }
 
 }
