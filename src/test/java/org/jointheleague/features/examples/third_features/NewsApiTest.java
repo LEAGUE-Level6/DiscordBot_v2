@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class NewsApiTest {
 
     private final String testChannelName = "test";
-    private final NewsApi underTest = new NewsApi(testChannelName);
+    private final NewsApi newsApi = new NewsApi(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -51,7 +51,7 @@ public class NewsApiTest {
         //Given
 
         //When
-        String command = underTest.COMMAND;
+        String command = newsApi.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -62,12 +62,12 @@ public class NewsApiTest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(underTest.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(underTest.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(newsApi.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(newsApi.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        underTest.handle(messageCreateEvent);
+        newsApi.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -94,7 +94,7 @@ public class NewsApiTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        underTest.handle(messageCreateEvent);
+        newsApi.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -105,7 +105,7 @@ public class NewsApiTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = underTest.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = newsApi.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -116,8 +116,8 @@ public class NewsApiTest {
         //Given
 
         //When
-        String helpEmbedTitle = underTest.getHelpEmbed().getTitle();
-        String command = underTest.COMMAND;
+        String helpEmbedTitle = newsApi.getHelpEmbed().getTitle();
+        String command = newsApi.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

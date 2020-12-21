@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class CatFactsApiTest {
 
     private final String testChannelName = "test";
-    private final CatFactsApi underTest = new CatFactsApi(testChannelName);
+    private final CatFactsApi catFactsApi = new CatFactsApi(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -51,7 +51,7 @@ public class CatFactsApiTest {
         //Given
 
         //When
-        String command = underTest.COMMAND;
+        String command = catFactsApi.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -62,12 +62,12 @@ public class CatFactsApiTest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(underTest.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(underTest.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(catFactsApi.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(catFactsApi.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        underTest.handle(messageCreateEvent);
+        catFactsApi.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -94,7 +94,7 @@ public class CatFactsApiTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        underTest.handle(messageCreateEvent);
+        catFactsApi.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -105,7 +105,7 @@ public class CatFactsApiTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = underTest.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = catFactsApi.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -116,8 +116,8 @@ public class CatFactsApiTest {
         //Given
 
         //When
-        String helpEmbedTitle = underTest.getHelpEmbed().getTitle();
-        String command = underTest.COMMAND;
+        String helpEmbedTitle = catFactsApi.getHelpEmbed().getTitle();
+        String command = catFactsApi.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
