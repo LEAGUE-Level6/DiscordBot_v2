@@ -23,6 +23,7 @@ public class FeatureTemplate extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
+            event.getChannel().sendMessage("Sending a message to the channel");
         }
     }
 

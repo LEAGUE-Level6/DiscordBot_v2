@@ -73,19 +73,19 @@ public class NewsApiTest {
         verify(textChannel, times(1)).sendMessage(anyString());
     }
 
-//    @Test
-//    void itShouldHandleMessagesWithoutSecondaryCommand() {
-//        //Given
-//        HelpEmbed helpEmbed = new HelpEmbed(underTest.COMMAND, "test");
-//        when(messageCreateEvent.getMessageContent()).thenReturn(underTest.COMMAND);
-//        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-//
-//        //When
-//        underTest.handle(messageCreateEvent);
-//
-//        //Then
-//        verify(textChannel, times(1)).sendMessage(anyString());
-//    }
+    @Test
+    void itShouldHandleMessagesWithoutSecondaryCommand() {
+        //Given
+        HelpEmbed helpEmbed = new HelpEmbed(newsApi.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(newsApi.COMMAND);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+
+        //When
+        newsApi.handle(messageCreateEvent);
+
+        //Then
+        verify(textChannel, times(1)).sendMessage(anyString());
+    }
 
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
