@@ -43,6 +43,7 @@ public class NewsApiTest {
         String actual = outContent.toString();
 
         assertEquals(expected, actual);
+        System.out.println(actual);
         System.setOut(originalOut);
     }
 

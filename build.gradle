@@ -29,7 +29,6 @@ version = '2.0'
 description = 'discordbot'
 sourceCompatibility = '1.8'
 
-logging.captureStandardOutput LogLevel.INFO
 
 test {
     useJUnitPlatform()
