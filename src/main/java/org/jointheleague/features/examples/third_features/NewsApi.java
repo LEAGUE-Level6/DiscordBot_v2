@@ -19,7 +19,7 @@ public class NewsApi extends Feature {
 
     public NewsApi(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Example of using an API to get information from another service.  This returns a news story related to a topic (e.g. !apiExample cats)");
+        helpEmbed = new HelpEmbed(COMMAND, "Example of using an API to get information from another service.  This returns a news story related to a topic (e.g. !newsApi cats)");
 
         //build the WebClient
         this.webClient = WebClient

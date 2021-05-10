@@ -8,10 +8,10 @@ import org.mockito.MockitoAnnotations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
@@ -41,7 +41,6 @@ public class CurrentTimeTest {
         String actual = outContent.toString();
 
         assertEquals(expected, actual);
-        System.out.println(actual);
         System.setOut(originalOut);
     }
 

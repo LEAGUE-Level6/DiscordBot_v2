@@ -5,7 +5,6 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,9 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class NewsApiTest {
@@ -82,7 +79,7 @@ public class NewsApiTest {
         String command = newsApi.COMMAND;
 
         //Then
-
+        assertNotEquals("!command", command);
         assertNotEquals("", command);
         assertNotEquals("!command", command);
         assertNotNull(command);
@@ -127,7 +124,7 @@ public class NewsApiTest {
 
     @Test
     void givenMessageWithCommandAndTopic_whenHandle_thenSendStoryMessage() {
-        //given
+        //Given
         String topic = "Cows";
         String articleTitle = "Cows: Nature's Menace?";
         String articleContent = "No, they are not.";
@@ -160,12 +157,12 @@ public class NewsApiTest {
                 + articleContent
                 + "\nFull article: " + articleUrl;
 
-        //when
+        //When
         newsApi.handle(messageCreateEvent);
 
-        //then
+        //Then
         verify(webClientMock, times(1)).get();
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(textChannel, times(1)).sendMessage(expectedStory);
     }
 
     @Test
