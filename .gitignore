@@ -1,3 +1,7 @@
-src/main/java/org/jointheleague/Launcher.java
 
 *.class
+/target/
+.idea
+.settings
+*.xml
+!pom.xml

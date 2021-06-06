@@ -19,7 +19,7 @@ public class NewsApi extends Feature {
 
     public NewsApi(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Example of using an API to get information from another service.  This returns a news story related to a topic (e.g. !apiExample cats)");
+        helpEmbed = new HelpEmbed(COMMAND, "Example of using an API to get information from another service.  This returns a news story related to a topic (e.g. !newsApi cats)");
 
         //build the WebClient
         this.webClient = WebClient
@@ -33,19 +33,20 @@ public class NewsApi extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             messageContent = messageContent
-                    .replace(COMMAND + " ", "");
+                    .replace(COMMAND, "")
+                    .replace(" " , "");
             if (messageContent.equals("")) {
                 event.getChannel().sendMessage("Please put a topic after the command (e.g. " + COMMAND + " cats)");
             }
             else{
-                String story = getNewsStoryStringByTopic(messageContent);
+                String story = findStory(messageContent);
                 event.getChannel().sendMessage(story);
             }
         }
     }
 
-    public String getNewsStoryStringByTopic(String topic) {
-        Mono<ApiExampleWrapper> apiExampleWrapperFlux = webClient.get()
+    public ApiExampleWrapper getNewsStoryByTopic(String topic) {
+        Mono<ApiExampleWrapper> apiExampleWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("q", topic)
                         .queryParam("sortBy", "popularity")
@@ -54,29 +55,38 @@ public class NewsApi extends Feature {
                 .retrieve()
                 .bodyToMono(ApiExampleWrapper.class);
 
-        //collect the response into a java object using the plain old java objects you created
-        ApiExampleWrapper apiExampleWrapper = apiExampleWrapperFlux.block();
+        return apiExampleWrapperMono.block();
+    }
 
-        //get the first article (these are plain old java objects now)
+    public String findStory(String topic){
+
+        //Get a story from News API
+        ApiExampleWrapper apiExampleWrapper = getNewsStoryByTopic(topic);
+
+        //Get the first article
         Article article = apiExampleWrapper.getArticles().get(0);
 
-        //get the title of the article
+        //Get the title of the article
         String articleTitle = article.getTitle();
 
-        //get the content of the article
+        //Get the content of the article
         String articleContent = article.getContent();
 
-        //get the URL of the article
+        //Get the URL of the article
         String articleUrl = article.getUrl();
 
-        //create the message
+        //Create the message
         String message =
                 articleTitle + " -\n"
                         + articleContent
                         + "\nFull article: " + articleUrl;
 
-        //return the message
+        //Send the message
         return message;
+    }
+
+    public void setWebClient(WebClient webClient) {
+        this.webClient = webClient;
     }
 
 }

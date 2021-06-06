@@ -8,17 +8,17 @@ import org.mockito.MockitoAnnotations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 public class CurrentTimeTest {
 
     private final String testChannelName = "test";
-    private final CurrentTime underTest = new CurrentTime(testChannelName);
+    private final CurrentTime currentTime = new CurrentTime(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -49,7 +49,7 @@ public class CurrentTimeTest {
         //Given
 
         //When
-        String command = underTest.COMMAND;
+        String command = currentTime.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -60,12 +60,12 @@ public class CurrentTimeTest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(underTest.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(underTest.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(currentTime.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(currentTime.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        underTest.handle(messageCreateEvent);
+        currentTime.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -78,7 +78,7 @@ public class CurrentTimeTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        underTest.handle(messageCreateEvent);
+        currentTime.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -89,7 +89,7 @@ public class CurrentTimeTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = underTest.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = currentTime.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -100,8 +100,8 @@ public class CurrentTimeTest {
         //Given
 
         //When
-        String helpEmbedTitle = underTest.getHelpEmbed().getTitle();
-        String command = underTest.COMMAND;
+        String helpEmbedTitle = currentTime.getHelpEmbed().getTitle();
+        String command = currentTime.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
