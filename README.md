@@ -7,7 +7,7 @@
 
 Travis CI  
 [![Build Status](https://travis-ci.com/LEAGUE-Level6/DiscordBot_v2.svg?token=sAmoAvbydsv8Qn1zzcNP&branch=master)](https://travis-ci.com/LEAGUE-Level6/DiscordBot_v2)
-
+![example branch parameter]https://github.com/LEAGUE-Level6/DiscordBot_v2/actions/workflows/gradle.yml/badge.svg
 <br />
 
 ## Documentation
