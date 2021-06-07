@@ -1,6 +1,7 @@
 package org.jointheleague.features.help_embed;
 
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
@@ -11,6 +12,8 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -61,6 +64,7 @@ public class HelpListenerTest {
     void itShouldHandleMessagesWithCommand() {
         //Given
         HelpEmbed helpEmbed = new HelpEmbed(helpListener.COMMAND, "test");
+        helpListener.setHelpEmbeds(Collections.singletonList(helpEmbed));
         when(messageCreateEvent.getMessageContent()).thenReturn(helpListener.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
@@ -68,7 +72,7 @@ public class HelpListenerTest {
         helpListener.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(textChannel, times(1)).sendMessage(any(EmbedBuilder.class));
     }
 
     @Test
