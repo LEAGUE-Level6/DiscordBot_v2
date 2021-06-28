@@ -2,6 +2,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'application'
 }
 
 repositories {
@@ -32,6 +33,10 @@ sourceCompatibility = '1.8'
 
 test {
     useJUnitPlatform()
+}
+
+application {
+    mainClass = 'Launcher'
 }
 
 tasks.withType(JavaCompile) {
