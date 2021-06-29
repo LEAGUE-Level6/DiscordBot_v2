@@ -24,10 +24,12 @@ public class HelpListener extends Feature {
 			}
 		}
 	}
-	
+
 	public void addHelpEmbed(HelpEmbed helpEmbed) {
 		helpEmbeds.add(helpEmbed);
 	}
-	
-	
+
+	public void setHelpEmbeds(List<HelpEmbed> helpEmbeds) {
+		this.helpEmbeds = helpEmbeds;
+	}
 }
