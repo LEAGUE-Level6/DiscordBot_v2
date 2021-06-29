@@ -34,5 +34,5 @@ jobs:
         pwd
         cd ..
         pwd
-        ssh -tt -i "discordbot_v2.pem" ec2-user@ec2-18-144-30-103.us-west-1.compute.amazonaws.com
+        ssh -o StrictHostKeyChecking=no -tt -i "discordbot_v2.pem" ec2-user@ec2-18-144-30-103.us-west-1.compute.amazonaws.com
       
