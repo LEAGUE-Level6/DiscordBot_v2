@@ -25,9 +25,11 @@ jobs:
     - name: Print directory
       run: |
         cd ..
-        echo ${{ secrets.HOST }} > 'discordbot_v2.pem'
+        echo ${{ secrets.SSH_KEY }} > 'discordbot_v2.pem'
         chmod 400 discordbot_v2.pem
         ls -a
     - name: Connect to EC2 via SSH
-      run: ssh -i "discordbot_v2.pem" ec2-user@ec2-18-144-30-103.us-west-1.compute.amazonaws.com
+      run: | 
+        cd ..
+        ssh -i "discordbot_v2.pem" ec2-user@ec2-18-144-30-103.us-west-1.compute.amazonaws.com
       
