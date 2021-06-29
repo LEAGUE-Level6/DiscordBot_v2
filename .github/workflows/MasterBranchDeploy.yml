@@ -27,9 +27,12 @@ jobs:
         cd ..
         echo ${{ secrets.SSH_KEY }} > 'discordbot_v2.pem'
         chmod 400 discordbot_v2.pem
+        pwd
         ls -a
     - name: Connect to EC2 via SSH
       run: | 
+        pwd
         cd ..
+        pwd
         ssh -tt -i "discordbot_v2.pem" ec2-user@ec2-18-144-30-103.us-west-1.compute.amazonaws.com
       
