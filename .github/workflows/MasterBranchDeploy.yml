@@ -1,4 +1,4 @@
-# This workflow will depliy the master branch to an existing EC2 instance
+# This workflow will depliy the master branch to an existing EC2 instance  
 
 name: Master Branch Deploy
 
