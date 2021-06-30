@@ -25,7 +25,7 @@ jobs:
     - name: Print directory
       run: |
         cd ..
-        echo ${{ secrets.SSH_KEY }} > 'discordbot_v2.pem'
+        "${{ secrets.SSH_KEY }}" > 'discordbot_v2.pem'
         chmod 400 discordbot_v2.pem
         pwd
         ls -a
