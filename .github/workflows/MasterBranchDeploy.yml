@@ -25,9 +25,9 @@ jobs:
     - name: Print directory
       run: |
         cd ..
-        cat > /etc/myconfig.conf << EOL
+        tee -a discordbot_v2.pem << END
         ${{ secrets.SSH_KEY }}
-        EOL
+        END
         chmod 400 discordbot_v2.pem
         pwd
         ls -a
