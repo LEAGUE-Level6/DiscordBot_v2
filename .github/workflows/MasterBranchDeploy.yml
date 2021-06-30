@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: webfactory/ssh-agent@v0.5.3
-          with:
-            ssh-private-key: ${{ secrets.SSH_KEY }}
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
       - name: connect
         run: ssh -o StrictHostKeyChecking=no -tt ec2-user@ec2-18-144-30-103.us-west-1.compute.amazonaws.com
