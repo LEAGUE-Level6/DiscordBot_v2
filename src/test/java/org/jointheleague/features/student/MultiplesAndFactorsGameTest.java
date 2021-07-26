@@ -394,7 +394,7 @@ public class MultiplesAndFactorsGameTest {
 			Thread.sleep(30000);
 			
 			//A little extra time
-			Thread.sleep(5);
+			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
