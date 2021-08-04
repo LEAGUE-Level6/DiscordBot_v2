@@ -1,7 +1,7 @@
+
 *.class
 /target/
 .idea
-.mvn
 .settings
 *.xml
 !pom.xml
