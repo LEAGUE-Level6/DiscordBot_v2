@@ -59,7 +59,7 @@ public class AnagramGame extends Feature {
 			e.printStackTrace();
 		event.getChannel().sendMessage("Failed to get random word");
 		}
-	// e e
+	// e ee
 	}
 
 }
