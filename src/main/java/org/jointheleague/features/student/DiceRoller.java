@@ -11,7 +11,7 @@ public class DiceRoller extends Feature{
 
     public DiceRoller(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Rolls a die of your choosing.");
+        helpEmbed = new HelpEmbed(COMMAND, "Rolls dice of your choosing\nFormated as \"!roll #d#\"\nThe first number refers to the amount of dice while the second refers to the amount of sides on the dice (eg. !roll 2d6).");
     }
 
     @Override
@@ -19,18 +19,27 @@ public class DiceRoller extends Feature{
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
         	String[] message = messageContent.split(" ");
-        	String diceSides = message[1].substring(message[1].indexOf("d")+1);
-        	int sides = Integer.parseInt(diceSides);
-        	String diceAmount = message[1].substring(0, message[1].indexOf("d"));
-        	int amount = Integer.parseInt(diceAmount);
-        	
-        	int total = 0;
-        	
-            Random r = new Random();
-            for (int i = 0; i < amount; i++) {
-				total += r.nextInt(sides);
+        	int amount = 0;
+        	int sides = 0;
+        	try {
+        		//Checks the number of dice being rolled
+            	String diceAmount = message[1].substring(0, message[1].indexOf("d"));
+            	amount = Integer.parseInt(diceAmount);
+    				
+            	//Checks the amount of sides on each dice
+            	String diceSides = message[1].substring(message[1].indexOf("d")+1);
+            	sides = Integer.parseInt(diceSides);
+            	int total = 0;
+            	
+                Random r = new Random();
+                for (int i = 0; i < amount; i++) {
+    				total += r.nextInt(sides);
+    			}
+                event.getChannel().sendMessage("You rolled a total of " + total);
+			} catch (Exception e) {
+				event.getChannel().sendMessage("Command not formated correctly");
 			}
-            event.getChannel().sendMessage("You rolled a total of " + total);
+        	
         }
     }
 }
