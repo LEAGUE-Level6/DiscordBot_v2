@@ -61,7 +61,7 @@ cook
 cool
 cope
 copy
-CORE
+core
 cost
 crew
 crop

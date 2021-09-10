@@ -22,7 +22,9 @@ public class AnagramGame extends Feature {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "This is a game where you are provided with a scrambled word and you need to figure out what it is"
+                "This is a game where you are provided with a scrambled word and you need to figure out what it is \n"
+                + "To start the game do !gram (easy/meduim/hard). The different dificulties determin the word length \n"
+                + "Once you begin to play, the next message you send will be considered your guess! Good luck!"
         );
     }
 
@@ -65,11 +67,11 @@ public class AnagramGame extends Feature {
 			BufferedReader read = null;
 			int line = 0;
 			if(dificulty ==0) {
-			read = new BufferedReader(new FileReader("easy.txt"));
+			read = new BufferedReader(new FileReader("/Users/league/git/DiscordBot_v2/src/main/java/easy.txt"));
 			} else if(dificulty==1) {
-			read = new BufferedReader(new FileReader("meduim.txt"));
+			read = new BufferedReader(new FileReader("/Users/league/git/DiscordBot_v2/src/main/java/meduim.txt"));
 			}else {
-				read = new BufferedReader(new FileReader("hard.txt"));
+				read = new BufferedReader(new FileReader("/Users/league/git/DiscordBot_v2/src/main/java/hard.txt"));
 			}
 			line = new Random().nextInt(499)+1;
 			for(int i = 0; i < line;i++) {
@@ -94,7 +96,6 @@ public class AnagramGame extends Feature {
 			e.printStackTrace();
 		event.getChannel().sendMessage("Failed to get random word");
 		}
-	// e ee
 	}
 
 }
