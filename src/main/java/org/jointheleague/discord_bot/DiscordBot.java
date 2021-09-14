@@ -9,6 +9,7 @@ import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
+import org.jointheleague.features.sameer_bot.first.*;
 
 public class DiscordBot {
 
@@ -48,6 +49,8 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		addFeature(new Magic8Ball(channelName));
+		addFeature(new Dice(channelName));
 	}
 
 	private void addFeature(Feature feature){
