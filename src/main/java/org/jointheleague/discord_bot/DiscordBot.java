@@ -3,6 +3,7 @@ package org.jointheleague.discord_bot;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.AnagramGame.AnagramGame;
+import org.jointheleague.features.CrossyRoad.CrossyRoad;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
@@ -50,6 +51,7 @@ public class DiscordBot {
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new AnagramGame(channelName));
+		addFeature(new CrossyRoad(channelName));
 	}
 
 	private void addFeature(Feature feature){
