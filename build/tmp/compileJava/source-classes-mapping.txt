@@ -30,3 +30,5 @@ Launcher.java
  Launcher
 org/jointheleague/discord_bot/DiscordBot.java
  org.jointheleague.discord_bot.DiscordBot
+org/jointheleague/features/student/Riddle.java
+ org.jointheleague.features.student.Riddle

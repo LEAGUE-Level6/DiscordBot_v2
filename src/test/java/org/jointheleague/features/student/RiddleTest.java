@@ -19,9 +19,9 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-public class PunTest {
+public class RiddleTest {
     private final String testChannelName = "test";
-    private final Pun pun = new Pun(testChannelName);
+    private final Riddle riddle = new Riddle(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -53,23 +53,23 @@ public class PunTest {
         //Given
 
         //When
-        String command = pun.PUN;
+        String command = riddle.RIDDLE;
 
         //Then
         assertNotEquals("", command);
-        assertEquals("!pun", command);
+        assertEquals("!riddle", command);
         assertNotNull(command);
     }
 
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(pun.PUN, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(pun.PUN);
+        HelpEmbed helpEmbed = new HelpEmbed(riddle.RIDDLE, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(riddle.RIDDLE);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        pun.handle(messageCreateEvent);
+        riddle.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -82,7 +82,7 @@ public class PunTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        pun.handle(messageCreateEvent);
+        riddle.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -93,7 +93,7 @@ public class PunTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = pun.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = riddle.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -104,11 +104,50 @@ public class PunTest {
         //Given
 
         //When
-        String helpEmbedTitle = pun.getHelpEmbed().getTitle();
-        String command = pun.PUN;
+        String helpEmbedTitle = riddle.getHelpEmbed().getTitle();
+        String command = riddle.RIDDLE;
 
         //Then
         assertEquals(command, helpEmbedTitle);
     }
 
+     @Test
+    void itShouldAllowTryAgain() {
+        //Given
+        when(messageCreateEvent.getMessageContent()).thenReturn(riddle.RIDDLE);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+
+        //When
+        riddle.handle(messageCreateEvent);
+
+        //Then
+         assertEquals(true, true);
+    }
+
+    @Test
+    void itShouldGiveFeedback() {
+        //Given
+        when(messageCreateEvent.getMessageContent()).thenReturn(riddle.RIDDLE);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+
+        //When
+        riddle.handle(messageCreateEvent);
+
+        //Then
+        //verify(textChannel, times(1)).sendMessage("Good job.");
+        assertEquals(true, true);
+    }
+
+    @Test
+    void itShouldPrintGoodJob() {
+        //Given
+        when(messageCreateEvent.getMessageContent()).thenReturn(riddle.RIDDLE);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+
+        //When
+        riddle.handle(messageCreateEvent);
+
+        //Then
+        verify(textChannel, times(1)).sendMessage("Good job.");
+    }
 }
