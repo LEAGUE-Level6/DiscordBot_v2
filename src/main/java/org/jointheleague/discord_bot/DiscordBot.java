@@ -51,6 +51,7 @@ public class DiscordBot {
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new Magic8Ball(channelName));
 		addFeature(new Dice(channelName));
+		addFeature(new Prime(channelName));
 	}
 
 	private void addFeature(Feature feature){

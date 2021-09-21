@@ -23,7 +23,26 @@ public class Prime extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
-            event.getChannel().sendMessage("Sending a message to the channel");
+            try {
+                String sub = messageContent.substring(7);
+                int number = Integer.parseInt(sub);
+                event.getChannel().sendMessage(isPrime(number));
+            } catch(StringIndexOutOfBoundsException e){
+                event.getChannel().sendMessage("You didn't provide a number");
+            } catch (NumberFormatException e) {
+                event.getChannel().sendMessage("You wrote an invalid number");
+            }
         }
     }
+
+    public String isPrime(int num) {
+        if (num == 1) return "1 is neither prime nor composite";
+        if (num == 2) return "2 is prime";
+        for (int i = 2; i <= Math.ceil(Math.sqrt(num)); i++) {
+            if (num % i == 0)
+                return num + " isn't prime because it is divisible by " + i;
+        }
+        return num + " is prime";
+    }
+
 }
