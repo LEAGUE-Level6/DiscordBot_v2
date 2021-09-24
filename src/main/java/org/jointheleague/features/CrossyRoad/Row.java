@@ -72,11 +72,45 @@ public void update(boolean mainOrNot) {
 		er = ":yellow_square";
 		}
 	} else if (type==2) {
-		//WATER!
+		if(woodCounter>new Random().nextInt(5)) {
+		woodCounter = 0;
+		log = false;
+		}
+		if(log) {
+			er = ":wood:";
+			woodCounter++;
+		} else {
+			if(new Random().nextInt(12)<1) {
+			log = true;
+			}
+			er = ":blue_square:";
+		}
+		
 	} else {
-		//TRAIN!
+		if(trainCounter>9) {
+			trainCounter = 0;
+			train = false;
+			}
+			if(train) {
+				if(trainCounter==0) {
+					er = ":bullettrain_front:";
+				}
+				else {
+				er = ":train:";
+				trainCounter++;
+				}
+			} else {
+				if(new Random().nextInt(20)<1) {
+				train = true;
+				}
+				if(gameRow[6].equals(":red_square:")) {
+					er = ":white_large_square:";
+				} else {
+					er = ":red_square:";
+				}
+			}
 	}
-	gameRow[7] = er;
+	gameRow[6] = er;
 	}
 }
 }

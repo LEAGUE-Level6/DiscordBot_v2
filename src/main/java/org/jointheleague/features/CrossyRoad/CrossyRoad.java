@@ -2,6 +2,7 @@
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.Embed;
@@ -11,8 +12,8 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 
 public class CrossyRoad extends Feature{
 	public final String COMMAND = "!road";
-    HashMap<MessageAuthor, Thread> games = new  HashMap<MessageAuthor,Thread>();
-    
+    HashMap<MessageAuthor, Holder> games = new  HashMap<MessageAuthor,Holder>();
+    MessageAuthor currentSetup = null;
     public CrossyRoad(String channelName) {
         super(channelName);
 
@@ -27,26 +28,44 @@ public class CrossyRoad extends Feature{
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         MessageAuthor auth = event.getMessageAuthor();
+    	if(event.getMessageAuthor().isYourself()&&messageContent.equals("setup")) {
+    	games.put(currentSetup, setUpGame(event));
+    	games.get(currentSetup).t.start();
+    	currentSetup=null;
+    	System.out.println("ee");
+
+    	}
         if (messageContent.startsWith(COMMAND)) {
             if(messageContent.contentEquals(COMMAND+" start")) {
             	if(!games.containsKey(auth)) {
-            	games.put(auth, setUpGame());
-            	
-            	} else {
+            		currentSetup = auth;
+            		event.getChannel().sendMessage("setup");
+            	            	} else {
             		event.getChannel().sendMessage("You are already in a game, either do !road end or finish the game before starting a new game");
             	}
-            }
-            event.getChannel().sendMessage("Sending a message to the channel");
-            
+            } else if ((COMMAND+" end").equals(messageContent)) {
+            	games.get(auth).r.kill();
+            }            
         }
     }
 
-	private Thread setUpGame() {
-		String[][] gameRay = new String[5][7];
-		for(int i = 0; i < gameRay.length-1;i++) {
-			//STUFF HERE ENEDS TO CHANGE
+	private Holder setUpGame(MessageCreateEvent e) {
+		Row[] rows = new Row[7];
+		for(int i = 0; i < rows.length-1;i++) {
+			int x = new Random().nextInt(10);
+			if(x < 5) {
+			rows[i] = new Row(0,false);
+			} else if (x < 7) {
+			rows[i] = new Row(1,false);
+			} else if (x < 9) {
+			rows[i] = new Row(2,false);
+			} else {
+			rows[i] = new Row(3,false);
+			}
 		}
-		return null;
+		rows[6] = new Row(0,true);
+		runningGame r = new runningGame(rows,e);
+		return new Holder(new Thread(r),r);
 	}
 
 }
