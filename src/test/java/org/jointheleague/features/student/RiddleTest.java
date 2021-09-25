@@ -111,8 +111,8 @@ public class RiddleTest {
         assertEquals(command, helpEmbedTitle);
     }
 
-     @Test
-    void itShouldAllowTryAgain() {
+    @Test
+    void itShouldPromptAndCongratulate() {
         //Given
         when(messageCreateEvent.getMessageContent()).thenReturn(riddle.RIDDLE);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
@@ -121,10 +121,20 @@ public class RiddleTest {
         riddle.handle(messageCreateEvent);
 
         //Then
-         assertEquals(true, true);
+        verify(textChannel, times(1)).sendMessage("If a duck was given $9, a spider was given" +
+                " $36, and a bee was given $27, how much will be given to a cat?");
+
+        //Given
+        when(messageCreateEvent.getMessageContent()).thenReturn("18");
+
+        //When
+        riddle.handle(messageCreateEvent);
+
+        //Then
+        verify(textChannel, times(1)).sendMessage("Good job.");
     }
 
-    @Test
+    /*@Test
     void itShouldGiveFeedback() {
         //Given
         when(messageCreateEvent.getMessageContent()).thenReturn(riddle.RIDDLE);
@@ -134,20 +144,6 @@ public class RiddleTest {
         riddle.handle(messageCreateEvent);
 
         //Then
-        //verify(textChannel, times(1)).sendMessage("Good job.");
-        assertEquals(true, true);
-    }
-
-    @Test
-    void itShouldPrintGoodJob() {
-        //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn(riddle.RIDDLE);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        riddle.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage("Good job.");
-    }
+        verify(textChannel, times(1)).sendMessage("Try again.");
+    }*/
 }

@@ -7,6 +7,7 @@ import java.util.Random;
 
 public class Riddle extends Feature{
     public final String RIDDLE = "!riddle";
+    boolean nextMessage = false;
 
     public Riddle(String channelName) {
         super(channelName);
@@ -23,14 +24,17 @@ public class Riddle extends Feature{
         String[] failMessages = {"Try again.", "Obtain a braincell.", "You got this."};
         Random random = new Random();
 
-        if (messageContent.startsWith(RIDDLE)) {
-            event.getChannel().sendMessage("If a duck was given $9, a spider was given" +
-                    " $36, and a bee was given $27, how much will be given to a cat?");
+        if(nextMessage) {
             if(!messageContent.contains("18")) {
                 event.getChannel().sendMessage(failMessages[random.nextInt(2)]);
             } else {
                 event.getChannel().sendMessage("Good job.");
+                nextMessage = false;
             }
+        } else if (messageContent.startsWith(RIDDLE)) {
+            event.getChannel().sendMessage("If a duck was given $9, a spider was given" +
+                    " $36, and a bee was given $27, how much will be given to a cat?");
+            nextMessage = true;
         }
     }
 
