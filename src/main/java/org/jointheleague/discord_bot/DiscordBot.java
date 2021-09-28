@@ -4,9 +4,11 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
+import org.jointheleague.features.examples.second_features.Translate;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
+import org.jointheleague.features.examples.first_features.Hello;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 
@@ -27,7 +29,7 @@ public class DiscordBot {
 	}
 
 	public void connect(boolean printInvite) {
-		
+
 		api = new DiscordApiBuilder().setToken(token).login().join();
 
 		//Print the URL to invite the bot
@@ -48,6 +50,11 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+
+		// my feature 1
+		addFeature(new Hello(channelName));
+
+		addFeature(new Translate(channelName));
 	}
 
 	private void addFeature(Feature feature){
