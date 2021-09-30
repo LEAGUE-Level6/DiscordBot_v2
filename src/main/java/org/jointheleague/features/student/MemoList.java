@@ -10,30 +10,32 @@ public class MemoList extends Feature{
 	public final String COMMAND1 = "!list";
 	public final String COMMAND2 = "!add";
 	public final String COMMAND3 = "!remove";
-
+	ArrayList<String> list = new ArrayList<String>();
+	
     public MemoList(String channelName) {
         super(channelName);
 
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND1,
-                ""
+                "Displays a list that can be created by using !add <item>. "
+                + "You can also remove items with !remove <index>."
         );
     }
 
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
-        ArrayList<String> list = new ArrayList<String>();
-        String temp = messageContent.substring(messageContent.indexOf(" ")+1);
+        
+        String item = messageContent.substring(messageContent.indexOf(" ")+1);
         try {
         	if (messageContent.startsWith(COMMAND1)) {
                 //Shows the list
-        		int index = Integer.parseInt(temp);
+        		int index = Integer.parseInt(item)+1;
         		String listComp = "";
-            	for (int i = (index*5)-5; i <= (index*5); i++) {
+            	for (int i = (index*5)-5; i < (index*5); i++) {
 					if(i<list.size()) {
-						listComp += list.get(i) + "\n";
+						listComp += i + ". " +list.get(i) + "\n";
 					}
 				}
                 event.getChannel().sendMessage(listComp);
@@ -42,15 +44,15 @@ public class MemoList extends Feature{
             if (messageContent.startsWith(COMMAND2)) {
                 //Adds to the list
             	
-            	list.add(temp);
-                event.getChannel().sendMessage("Added \"" +temp+"\" to the list.");
+            	list.add(item);
+                event.getChannel().sendMessage("Added \"" +item+"\" to the list.");
             }
             
             if (messageContent.startsWith(COMMAND3)) {
                 //removes something from the list
-            	int index = Integer.parseInt(temp);
+            	int index = Integer.parseInt(item);
             	list.remove(index);
-                event.getChannel().sendMessage("Removed \"" +temp+"\" from the list.");
+                event.getChannel().sendMessage("Removed \"" +item+"\" from the list.");
             }
             
 		} catch (NumberFormatException e) {
