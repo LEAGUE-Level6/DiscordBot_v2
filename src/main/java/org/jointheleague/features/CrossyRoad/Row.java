@@ -9,6 +9,7 @@ public class Row {
 	int trainCounter = 0;
 	boolean log = false;
 	int woodCounter = 0;
+	String burried;
 	public String[] gameRow = new String[7];
 public Row(int type,boolean main) {
 	this.type = type;
@@ -51,25 +52,30 @@ private void setUp() {
 		break;
 	}
 }
-public void update(boolean mainOrNot) {
+public boolean update(boolean mainOrNot) {
 	//DO NOT NEED TO shift anything that has been removed from being main as it should no longer exist
-	main = mainOrNot;
 	//EVERYTHING shifts over one
 	//Check main and if center overlaps with something finish game
 	if(type!=0) {
 	for(int i = 0; i < gameRow.length-1;i++) {
 		gameRow[i] = gameRow[i+1];
+		if(i == 3) {
+			burried = gameRow[i+1];
+		}
+		if(main&&mainOrNot&&i==2) {
+		gameRow[i] = burried;
+		} 
 	}
 	String er = "";
 	if(type==1) {
 		if(new Random().nextInt(10)<3) {
 			if(new Random().nextBoolean()) {
-				er = "blue_car";
+				er = ":blue_car:";
 			} else {
-				er = "red_car";
+				er = ":red_car:";
 			}
 		}else {
-		er = ":yellow_square";
+		er = ":yellow_square:";
 		}
 	} else if (type==2) {
 		if(woodCounter>new Random().nextInt(5)) {
@@ -94,6 +100,7 @@ public void update(boolean mainOrNot) {
 			if(train) {
 				if(trainCounter==0) {
 					er = ":bullettrain_front:";
+					trainCounter++;
 				}
 				else {
 				er = ":train:";
@@ -112,5 +119,13 @@ public void update(boolean mainOrNot) {
 	}
 	gameRow[6] = er;
 	}
+	main = mainOrNot;
+	if(main&&(gameRow[3]==":red_car:"||gameRow[3]==":blue_car:"||gameRow[3]==":bullettrain_front:"||gameRow[3]==":train:"||gameRow[3]==":blue_square:")) {
+	gameRow[3] = ":x:";
+	return true;
+	} else if (main){
+		gameRow[3] = ":bird:";
+	}
+	return false;
 }
 }
