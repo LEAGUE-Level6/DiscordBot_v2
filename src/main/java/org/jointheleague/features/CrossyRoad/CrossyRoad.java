@@ -38,7 +38,7 @@ public class CrossyRoad extends Feature {
 			games.put(currentSetup, setUpGame(event));
 			games.get(currentSetup).t.start();
 			currentSetup = null;
-		}
+		} else {
 		if (messageContent.startsWith(COMMAND)) {
 			if (messageContent.contentEquals(COMMAND + " start")) {
 				if (!games.containsKey(auth)) {
@@ -53,9 +53,8 @@ public class CrossyRoad extends Feature {
 							"You are already in a game, either do !road end or finish the game before starting a new game");
 				}
 			} else if ((COMMAND + " end").equals(messageContent)) {
-				games.get(auth).r.kill();
+				games.get(auth).r.dead = true;
 			} else if ((COMMAND + " leaderboard").equals(messageContent)) {
-
 				readBoard(event, false);
 			} else if ((COMMAND + " leaderboard all").equals(messageContent)) {
 				readBoard(event, true);
@@ -68,14 +67,13 @@ public class CrossyRoad extends Feature {
 			}
 		}
 	}
+	}
 
 	private void submitScore(String name, MessageCreateEvent event, int score) {
 		ArrayList<String> scores = new ArrayList<String>();
-		event.getChannel().sendMessage(name);
-
 		try {
 			BufferedReader r = new BufferedReader(new FileReader(
-					"/Users/ozan/git/DiscordBot_v2/src/main/java/org/jointheleague/features/CrossyRoad/leaderboard"));
+					"/Users/league/git/DiscordBot_v2/src/main/java/org/jointheleague/features/CrossyRoad/leaderboard"));
 			String w = r.readLine();
 			while (w != null) {
 				scores.add(w);
@@ -89,17 +87,17 @@ public class CrossyRoad extends Feature {
 					break;
 				}
 			}
-			if(e) {
+			if (e) {
 				scores.add(name + " - " + score);
 			}
 			r.close();
 			FileWriter x = new FileWriter(
-					"/Users/ozan/git/DiscordBot_v2/src/main/java/org/jointheleague/features/CrossyRoad/leaderboard");
+					"/Users/league/git/DiscordBot_v2/src/main/java/org/jointheleague/features/CrossyRoad/leaderboard");
 			String fin = "";
-			for (int i = 0; i < scores.size()-1; i++) {
+			for (int i = 0; i < scores.size() - 1; i++) {
 				fin += scores.get(i) + "\n";
 			}
-			fin += scores.get(scores.size()-1);
+			fin += scores.get(scores.size() - 1);
 			x.write(fin);
 			x.close();
 			{
@@ -114,7 +112,7 @@ public class CrossyRoad extends Feature {
 		try {
 			String message = "";
 			BufferedReader r = new BufferedReader(new FileReader(
-					"/Users/ozan/git/DiscordBot_v2/src/main/java/org/jointheleague/features/CrossyRoad/leaderboard"));
+					"/Users/league/git/DiscordBot_v2/src/main/java/org/jointheleague/features/CrossyRoad/leaderboard"));
 			if (all) {
 				String w = "";
 				while (w != null) {

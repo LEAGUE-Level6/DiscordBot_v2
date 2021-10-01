@@ -20,7 +20,7 @@ private void setUp() {
 	switch(type) {
 	case 0:
 		for(int i = 0; i < gameRow.length;i++) {
-			if(new Random().nextInt(3)<3) {
+			if(new Random().nextInt(20)<18||i==3) {
 		gameRow[i] = ":green_square:";	
 			} else {
 				gameRow[i] = ":evergreen_tree:";
@@ -67,9 +67,10 @@ public boolean update(boolean mainOrNot) {
 		} 
 	}
 	String er = "";
+	Random r = new Random();
 	if(type==1) {
-		if(new Random().nextInt(10)<3) {
-			if(new Random().nextBoolean()) {
+		if(r.nextInt(10)<3) {
+			if(r.nextBoolean()) {
 				er = ":blue_car:";
 			} else {
 				er = ":red_car:";
@@ -78,7 +79,7 @@ public boolean update(boolean mainOrNot) {
 		er = ":yellow_square:";
 		}
 	} else if (type==2) {
-		if(woodCounter>new Random().nextInt(5)) {
+		if(woodCounter>r.nextInt(5)) {
 		woodCounter = 0;
 		log = false;
 		}
@@ -86,7 +87,7 @@ public boolean update(boolean mainOrNot) {
 			er = ":wood:";
 			woodCounter++;
 		} else {
-			if(new Random().nextInt(12)<1) {
+			if(r.nextInt(12)<1) {
 			log = true;
 			}
 			er = ":blue_square:";
@@ -107,7 +108,7 @@ public boolean update(boolean mainOrNot) {
 				trainCounter++;
 				}
 			} else {
-				if(new Random().nextInt(20)<1) {
+				if(r.nextInt(20)<1) {
 				train = true;
 				}
 				if(gameRow[6].equals(":red_square:")) {
