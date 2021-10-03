@@ -7,14 +7,16 @@ import java.util.Random;
 
 public class Riddle extends Feature{
     public final String RIDDLE = "!riddle";
-    boolean nextMessage = false;
+    public final String GUESS = "!guess";
+    boolean gameStarted = false;
+    boolean sent = false;
 
     public Riddle(String channelName) {
         super(channelName);
 
         helpEmbed = new HelpEmbed(
                 RIDDLE,
-                "type !riddle to receive a riddle, then type your responses"
+                "type !riddle to receive a riddle, then type your response after !guess"
         );
     }
 
@@ -24,18 +26,24 @@ public class Riddle extends Feature{
         String[] failMessages = {"Try again.", "Obtain a braincell.", "You got this."};
         Random random = new Random();
 
-        if(nextMessage) {
-            if(!messageContent.contains("18")) {
+        if (messageContent.startsWith(RIDDLE)) {
+            event.getChannel().sendMessage("If a duck was given $9, a spider was given" +
+                    " $36, and a bee was given $27, how much will be given to a cat?");
+            gameStarted = true;
+        }
+        if (gameStarted == true && messageContent.startsWith(GUESS)) {
+            if (!messageContent.contains("18")) {
                 event.getChannel().sendMessage(failMessages[random.nextInt(2)]);
             } else {
                 event.getChannel().sendMessage("Good job.");
-                nextMessage = false;
             }
-        } else if (messageContent.startsWith(RIDDLE)) {
-            event.getChannel().sendMessage("If a duck was given $9, a spider was given" +
-                    " $36, and a bee was given $27, how much will be given to a cat?");
-            nextMessage = true;
         }
+
+        if(!gameStarted && !sent) {
+            event.getChannel().sendMessage("Game hasn't started.");
+            sent = true;
+        }
+
     }
 
 }

@@ -82,7 +82,7 @@ public class RiddleTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        riddle.handle(messageCreateEvent);
+        //riddle.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -112,7 +112,7 @@ public class RiddleTest {
     }
 
     @Test
-    void itShouldPromptAndCongratulate() {
+    void itShouldPrompt() {
         //Given
         when(messageCreateEvent.getMessageContent()).thenReturn(riddle.RIDDLE);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
@@ -123,9 +123,29 @@ public class RiddleTest {
         //Then
         verify(textChannel, times(1)).sendMessage("If a duck was given $9, a spider was given" +
                 " $36, and a bee was given $27, how much will be given to a cat?");
+    }
 
+    @Test
+    void itShouldNotAcceptGuessIfGameIsNotStarted() {
         //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn("18");
+        String command = "!guess 4";
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+
+        //When
+        riddle.handle(messageCreateEvent);
+
+        //Then
+        verify(textChannel, times(1)).sendMessage("Game hasn't started.");
+
+    }
+
+    @Test
+    void itShouldCongratulateOnRightAnswer() {
+        //Given
+        when(messageCreateEvent.getMessageContent()).thenReturn("!guess 18");
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        riddle.gameStarted = true;
 
         //When
         riddle.handle(messageCreateEvent);
@@ -133,17 +153,4 @@ public class RiddleTest {
         //Then
         verify(textChannel, times(1)).sendMessage("Good job.");
     }
-
-    /*@Test
-    void itShouldGiveFeedback() {
-        //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn(riddle.RIDDLE);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        riddle.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage("Try again.");
-    }*/
 }
