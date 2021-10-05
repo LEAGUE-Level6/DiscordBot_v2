@@ -2,27 +2,22 @@ package org.jointheleague.features.examples.third_features;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper;
+import org.jointheleague.features.examples.third_features.plain_old_java_objects.dog_facts_api.DogFactsApiWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-//A swagger page for this very simple API can be found here: https://app.swaggerhub.com/apis-docs/whiterabbit8/meowfacts/1.0.0
-public class Weather extends Feature {
+public class DogFactsApi extends Feature {
 
-    public final String COMMAND = "!weather";
+    public final String COMMAND = "!dogFacts";
 
     private WebClient webClient;
-    private static final String baseUrl = "https://meowfacts.herokuapp.com/";
-    /*
-    looking at https://rapidapi.com/theapiguy/api/national-weather-service/
-    its a bit iffy to use 
-    
-     */
+    private static final String baseUrl = "https://dog-facts-api.herokuapp.com/api/v1/resources/dogs?number=3";
+//    https://www.jsonschema2pojo.org/
 
-    public Weather(String channelName) {
+    public DogFactsApi(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Example of using an API to get information from another service.  This returns a cat fact");
+        helpEmbed = new HelpEmbed(COMMAND, "Gets facts about dogs (usage: !dogFacts, !dogFacts numOfFacts)");
 
         //build the WebClient
         this.webClient = WebClient
@@ -35,23 +30,24 @@ public class Weather extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
-            String catFact = getCatFact();
-            event.getChannel().sendMessage(catFact);
+            String dogFact = getDogFact();
+            event.getChannel().sendMessage(dogFact);
         }
     }
 
-    public String getCatFact() {
+    public String getDogFact() {
 
         //Make the request, accepting the response as a plain old java object you created
-        Mono<CatWrapper> catWrapperMono = webClient.get()
+    	System.out.println("control-f for 'abcdefg' Trying to get dog facts");
+        Mono<DogFactsApiWrapper> dfMono = webClient.get()
                 .retrieve()
-                .bodyToMono(CatWrapper.class);
+                .bodyToMono(DogFactsApiWrapper.class);
 
         //collect the response into a plain old java object
-        CatWrapper catWrapper = catWrapperMono.block();
+        DogFactsApiWrapper dfw = dfMono.block();
 
         //get the cat fact from the response
-        String message = catWrapper.getData().get(0);
+        String message = dfw.getData().get(0);
 
         //send the message
         return message;

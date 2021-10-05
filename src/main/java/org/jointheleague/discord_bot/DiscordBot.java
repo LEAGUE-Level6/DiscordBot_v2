@@ -6,6 +6,7 @@ import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.second_features.Translate;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
+import org.jointheleague.features.examples.third_features.DogFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.Hello;
@@ -51,10 +52,10 @@ public class DiscordBot {
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
 
-		// my feature 1
+		// my features
 		addFeature(new Hello(channelName));
-
 		addFeature(new Translate(channelName));
+		addFeature(new DogFactsApi(channelName));
 	}
 
 	private void addFeature(Feature feature){
