@@ -34,7 +34,7 @@ public class Beg extends Feature {
             int increaseAmount = (int) Math.floor(Math.random()*10) + 1;
             moneyAmount += increaseAmount;
             Data.userToCoins.put(id, moneyAmount);
-            event.getChannel().sendMessage(String.format("You received %d coins. You know have :coin: %d.", increaseAmount, moneyAmount));
+            event.getChannel().sendMessage(String.format("You received %d coins. You now have :coin: %d.", increaseAmount, moneyAmount));
         }
     }
 

@@ -32,7 +32,7 @@ public class Buy extends Feature {
                 Data.userToInventory.put(id, new ArrayList<>());
             }
             for (int i=0;i<Data.validItems.length;i++) {
-                if (item.equals(Data.validItems[i])) {
+                if (item.equalsIgnoreCase(Data.validItems[i])) {
                     index=i;
                 }
             }

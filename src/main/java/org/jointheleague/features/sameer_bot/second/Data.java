@@ -5,8 +5,9 @@ public class Data {
     public static HashMap<String, Integer> userToCoins = new HashMap<>();
     public static HashMap<String, ArrayList<String>> userToInventory = new HashMap<>();
 
-    public static String[] validItems = {"milk"};
-    public static int[] prices = {10};
+    public static String[] validItems = {"milk","tomato"};
+    public static String[] formattedItems = {":milk: Milk", ":tomato: Tomato"};
+    public static int[] prices = {10,8};
 
     public static int getMoney(String id) {
         if (!Data.userToCoins.containsKey(id)) {
@@ -19,6 +20,7 @@ public class Data {
         Object[] formatted = items.stream().map(item -> {
             switch(item){
                 case "milk": return ":milk: Milk";
+                case "tomato": return ":tomato: Tomato";
                 default: return "oops... that item wasn't found!";
             }
         }).toArray();
@@ -28,4 +30,6 @@ public class Data {
         }
         return asString;
     }
+
 }
+
