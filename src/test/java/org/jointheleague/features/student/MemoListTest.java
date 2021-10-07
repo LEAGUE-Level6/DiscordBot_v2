@@ -118,26 +118,53 @@ public class MemoListTest {
         //Then
         assertEquals(command, helpEmbedTitle);
     }
-    
+    @Test
     void listShouldWork() {
     	//Given
+    	String listIndex = "1";
+    	String command = MemoList.COMMAND1 + " " + listIndex;
+    	MemoList.list.add("test1");
+    	MemoList.list.add("test2");
+    	MemoList.list.add("test3");
+    	MemoList.list.add("test4");
+    	MemoList.list.add("test5");
+    	when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
     	
     	//When
-    	
+    	MemoList.handle(messageCreateEvent);
     	//Then
+    	verify(textChannel, times(1)).sendMessage("0. test1\n"
+    			+ "1. test2\n"
+    			+ "2. test3\n"
+    			+ "3. test4\n"
+    			+ "4. test5\n");
     }
+    @Test
     void addShouldWork() {
     	//Given
     	
     	//When
     	
     	//Then
+    	verify(textChannel, times(1)).sendMessage("");
     }
+    @Test
     void removeShouldWork() {
     	//Given
     	
     	//When
     	
     	//Then
+    	verify(textChannel, times(1)).sendMessage("");
+    }
+    @Test
+    void itShouldGiveErrorMessage() {
+    	//Given
+    	
+    	//When
+    	
+    	//Then
+    	verify(textChannel, times(1)).sendMessage("");
     }
 }
