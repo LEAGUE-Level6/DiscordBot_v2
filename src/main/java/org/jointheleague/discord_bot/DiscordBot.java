@@ -5,6 +5,7 @@ import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.AnagramGame.AnagramGame;
 import org.jointheleague.features.CrossyRoad.CrossyRoad;
 import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.features.covid_tracker.CovidTracker;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
@@ -52,6 +53,8 @@ public class DiscordBot {
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new AnagramGame(channelName));
 		addFeature(new CrossyRoad(channelName));
+		addFeature(new CovidTracker(channelName));
+
 	}
 
 	private void addFeature(Feature feature){
