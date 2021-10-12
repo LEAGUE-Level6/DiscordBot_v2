@@ -13,23 +13,27 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-public class BalanceTest {
+public class InventoryTest {
     private final String testChannelName = "test";
-    private final Balance balance = new Balance(testChannelName);
+    private final Inventory inventory = new Inventory(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
-
+    private ArrayList<String> inv = new ArrayList<>();
     @Mock
     private MessageCreateEvent messageCreateEvent;
 
     @Mock
     private TextChannel textChannel;
+
+    @Mock
+    private MessageAuthor messageAuthor;
 
     @BeforeEach
     void setUp() {
@@ -45,6 +49,8 @@ public class BalanceTest {
         assertEquals(expected, actual);
         System.out.println(actual);
         System.setOut(originalOut);
+        inv = new ArrayList<>();
+        Data.userToInventory.put("724786310711214118", inv);
     }
 
     @Test
@@ -52,13 +58,14 @@ public class BalanceTest {
         //Given
 
         //When
-        String command = balance.COMMAND;
+        String command = inventory.COMMAND;
 
         //Then
         assertNotEquals("", command);
         assertNotEquals("!command", command);
         assertNotNull(command);
     }
+
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
         //Given
@@ -66,7 +73,7 @@ public class BalanceTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        balance.handle(messageCreateEvent);
+        inventory.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -77,24 +84,62 @@ public class BalanceTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = balance.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = inventory.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
     }
 
     @Test
-    void itShouldSendEmbed() {
-        //Given
-        String command = "!balance";
+    void itShouldShowNoItems() {
+        // Given
+        String command = "!inventory";
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(messageAuthor);
+        when(messageAuthor.getIdAsString()).thenReturn("724786310711214118");
 
-        //When
-        balance.handle(messageCreateEvent);
+        // When
+        inventory.handle(messageCreateEvent);
 
-        //Then
-        verify(textChannel, times(1)).sendMessage(any(EmbedBuilder.class));
+        // Then
+        verify(textChannel, times(1)).sendMessage("Your inventory is empty");
+    }
 
+    @Test
+    void itShouldShowMilk() {
+        // Given
+        String command = "!inventory";
+        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(messageAuthor);
+        when(messageAuthor.getIdAsString()).thenReturn("724786310711214118");
+        inv.add("milk");
+        Data.userToInventory.put("724786310711214118", inv);
+
+        // When
+        inventory.handle(messageCreateEvent);
+
+        // Then
+        verify(textChannel, times(1)).sendMessage(":milk: Milk\n");
+    }
+
+    @Test
+    void itShouldShowMilkAndTomato() {
+        // Given
+        String command = "!inventory";
+        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(messageAuthor);
+        when(messageAuthor.getIdAsString()).thenReturn("724786310711214118");
+        inv.add("milk");
+        inv.add("tomato");
+        Data.userToInventory.put("724786310711214118", inv);
+
+        // When
+        inventory.handle(messageCreateEvent);
+
+        // Then
+        verify(textChannel, times(1)).sendMessage(":milk: Milk\n:tomato: Tomato\n");
     }
 }

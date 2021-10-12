@@ -21,11 +21,11 @@ public class Buy extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
-            String item = messageContent.substring(5);
-            if (item.equals("")){
+            if (messageContent.length() < 6){
                 event.getChannel().sendMessage("You did not specify an item");
                 return;
             }
+            String item = messageContent.substring(5);
             String id = event.getMessageAuthor().getIdAsString();
             int index = -1;
             if (!Data.userToInventory.containsKey(id)) {

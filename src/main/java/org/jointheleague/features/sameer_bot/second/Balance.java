@@ -30,7 +30,10 @@ public class Balance extends Feature {
             int coins = Data.getMoney(id);
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Balance");
-            embed.setAuthor(event.getMessageAuthor());
+            try {
+                embed.setAuthor(event.getMessageAuthor());
+            } catch (NullPointerException error) {
+            }
             embed.setDescription("You have :coin: " + coins + " coins");
             embed.setTimestampToNow();
             embed.setColor(new Color(174, 255,121));

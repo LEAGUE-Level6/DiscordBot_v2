@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Beg extends Feature {
-    HashMap<String, Integer> cooldowns = new HashMap<>();
+    public HashMap<String, Integer> cooldowns = new HashMap<>();
     public final String COMMAND = "!beg";
     public final int COOLDOWN = 30000; // ms
 

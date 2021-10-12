@@ -25,7 +25,11 @@ public class Shop extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             EmbedBuilder embed = new EmbedBuilder();
-            embed.setAuthor(event.getMessageAuthor());
+            try {
+                embed.setAuthor(event.getMessageAuthor());
+            } catch (NullPointerException error) {
+
+            }
             embed.setColor(new Color(252, 179, 68));
             for (int i = 0; i < Data.formattedItems.length; i++) {
                 embed.setTitle("Shop");

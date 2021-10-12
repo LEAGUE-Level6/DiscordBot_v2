@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-public class BalanceTest {
+public class ShopTest {
     private final String testChannelName = "test";
-    private final Balance balance = new Balance(testChannelName);
+    private final Shop shop = new Shop(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -52,7 +52,7 @@ public class BalanceTest {
         //Given
 
         //When
-        String command = balance.COMMAND;
+        String command = shop.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -66,7 +66,7 @@ public class BalanceTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        balance.handle(messageCreateEvent);
+        shop.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -77,7 +77,7 @@ public class BalanceTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = balance.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = shop.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -86,12 +86,12 @@ public class BalanceTest {
     @Test
     void itShouldSendEmbed() {
         //Given
-        String command = "!balance";
+        String command = "!shop";
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        balance.handle(messageCreateEvent);
+        shop.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(any(EmbedBuilder.class));
