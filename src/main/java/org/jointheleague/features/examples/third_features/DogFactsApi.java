@@ -12,7 +12,7 @@ public class DogFactsApi extends Feature {
     public final String COMMAND = "!dogFacts";
 
     private WebClient webClient;
-    private static final String baseUrl = "https://dog-facts-api.herokuapp.com/api/v1/resources/dogs?number=3";
+    private static final String baseUrl = "https://dog-facts-api.herokuapp.com/api/v1/resources/dogs?number=";
 //    https://www.jsonschema2pojo.org/
 
     public DogFactsApi(String channelName) {
@@ -30,6 +30,18 @@ public class DogFactsApi extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
+        	String otherWord = messageContent.replaceAll(" ", "").replace(COMMAND, "");
+        	int numberOfFacts;
+        	try {
+        		numberOfFacts = Integer.parseInt(otherWord);
+        	}
+        	catch (NumberFormatException e) {
+        		numberOfFacts = 1;
+        	}
+        	this.webClient = WebClient
+                    .builder()
+                    .baseUrl(baseUrl + numberOfFacts)
+                    .build();
             String dogFact = getDogFact();
             event.getChannel().sendMessage(dogFact);
         }
@@ -39,15 +51,18 @@ public class DogFactsApi extends Feature {
 
         //Make the request, accepting the response as a plain old java object you created
     	System.out.println("control-f for 'abcdefg' Trying to get dog facts");
-        Mono<DogFactsApiWrapper> dfMono = webClient.get()
+        Mono<DogFactsApiWrapper[]> dfMono = webClient.get()
                 .retrieve()
-                .bodyToMono(DogFactsApiWrapper.class);
+                .bodyToMono(DogFactsApiWrapper[].class);
 
         //collect the response into a plain old java object
-        DogFactsApiWrapper dfw = dfMono.block();
+        DogFactsApiWrapper[] dfw = dfMono.block();
 
         //get the cat fact from the response
-        String message = dfw.getData().get(0);
+        String message = "";
+        for (int i = 0; i < dfw.length; i++) {
+        	message = message + dfw[i].getFact() + "\n";
+        }
 
         //send the message
         return message;

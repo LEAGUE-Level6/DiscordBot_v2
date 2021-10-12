@@ -7,15 +7,16 @@ import java.util.List;
 
 public class DogFactsApiWrapper {
 
-    @SerializedName("fact")
-    @Expose
-    private List<String> fact = null;
+	@SerializedName("fact")
+	@Expose
+	private String fact;
 
-    public List<String> getData() {
-        return fact;
-    }
+	public String getFact() {
+		return fact;
+	}
 
-    public void setData(List<String> data) {
-        this.fact = data;
-    }
+	public void setFact(String fact) {
+		this.fact = fact;
+	}
+
 }
