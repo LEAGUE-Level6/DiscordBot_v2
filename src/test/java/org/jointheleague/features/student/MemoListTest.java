@@ -121,7 +121,7 @@ public class MemoListTest {
     @Test
     void listShouldWork() {
     	//Given
-    	String listIndex = "1";
+    	String listIndex = "0";
     	String command = MemoList.COMMAND1 + " " + listIndex;
     	MemoList.list.add("test1");
     	MemoList.list.add("test2");
@@ -140,31 +140,41 @@ public class MemoListTest {
     			+ "3. test4\n"
     			+ "4. test5\n");
     }
+    
     @Test
-    void addShouldWork() {
+    void addShouldConfirm() {
     	//Given
-    	
+    	String command = MemoList.COMMAND2 + " Test";
+    	when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
     	//When
-    	
+    	MemoList.handle(messageCreateEvent);
     	//Then
-    	verify(textChannel, times(1)).sendMessage("");
+    	verify(textChannel, times(1)).sendMessage("Added \"" +"Test"+"\" to the list.");
     }
     @Test
-    void removeShouldWork() {
+    void removeShouldConfirm() {
     	//Given
-    	
+    	String command = MemoList.COMMAND3 + " 0";
+    	when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        MemoList.list.add("test1");
+        MemoList.list.add("test2");
     	//When
-    	
+        MemoList.handle(messageCreateEvent);
     	//Then
-    	verify(textChannel, times(1)).sendMessage("");
+    	verify(textChannel, times(1)).sendMessage("Removed \"" +"test1"+"\" from the list.");
     }
     @Test
     void itShouldGiveErrorMessage() {
     	//Given
-    	
+    	String command = MemoList.COMMAND1 + " Test";
+    	when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
     	//When
-    	
+        MemoList.handle(messageCreateEvent);
     	//Then
-    	verify(textChannel, times(1)).sendMessage("");
+    	verify(textChannel, times(1)).sendMessage("Command not formatted correctly");
     }
+    
 }

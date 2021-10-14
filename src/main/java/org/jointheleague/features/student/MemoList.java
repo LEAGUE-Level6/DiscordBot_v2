@@ -51,8 +51,9 @@ public class MemoList extends Feature{
             if (messageContent.startsWith(COMMAND3)) {
                 //removes something from the list
             	int index = Integer.parseInt(item);
+            	String removed = list.get(index);
             	list.remove(index);
-                event.getChannel().sendMessage("Removed \"" +item+"\" from the list.");
+                event.getChannel().sendMessage("Removed \"" +removed+"\" from the list.");
             }
             
 		} catch (NumberFormatException e) {
