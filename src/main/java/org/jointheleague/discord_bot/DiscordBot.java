@@ -9,6 +9,7 @@ import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
+import org.jointheleague.features.student.Attachment;
 import org.jointheleague.features.student.Pun;
 import org.jointheleague.features.student.Riddle;
 
@@ -52,6 +53,7 @@ public class DiscordBot {
 		addFeature(new CatFactsApi(channelName));*/
 		addFeature(new Pun(channelName));
 		addFeature(new Riddle(channelName));
+		addFeature(new Attachment(channelName));
 	}
 
 	private void addFeature(Feature feature){

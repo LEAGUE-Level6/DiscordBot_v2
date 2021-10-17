@@ -10,25 +10,27 @@ org/jointheleague/features/examples/third_features/plain_old_java_objects/news_a
  org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Source
 org/jointheleague/features/examples/third_features/CatFactsApi.java
  org.jointheleague.features.examples.third_features.CatFactsApi
+Launcher.java
+ Launcher
 org/jointheleague/features/examples/third_features/plain_old_java_objects/news_api/Article.java
  org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article
 org/jointheleague/features/examples/second_features/HighLowGame.java
  org.jointheleague.features.examples.second_features.HighLowGame
+org/jointheleague/features/student/Pun.java
+ org.jointheleague.features.student.Pun
 org/jointheleague/features/help_embed/HelpListener.java
  org.jointheleague.features.help_embed.HelpListener
 org/jointheleague/features/templates/FeatureTemplate.java
  org.jointheleague.features.templates.FeatureTemplate
 org/jointheleague/features/abstract_classes/Feature.java
  org.jointheleague.features.abstract_classes.Feature
-org/jointheleague/features/examples/third_features/plain_old_java_objects/news_api/ApiExampleWrapper.java
- org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper
 org/jointheleague/features/examples/first_features/CurrentTime.java
  org.jointheleague.features.examples.first_features.CurrentTime
-org/jointheleague/features/student/Pun.java
- org.jointheleague.features.student.Pun
-Launcher.java
- Launcher
-org/jointheleague/discord_bot/DiscordBot.java
- org.jointheleague.discord_bot.DiscordBot
+org/jointheleague/features/examples/third_features/plain_old_java_objects/news_api/ApiExampleWrapper.java
+ org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper
 org/jointheleague/features/student/Riddle.java
  org.jointheleague.features.student.Riddle
+org/jointheleague/features/student/Attachment.java
+ org.jointheleague.features.student.Attachment
+org/jointheleague/discord_bot/DiscordBot.java
+ org.jointheleague.discord_bot.DiscordBot

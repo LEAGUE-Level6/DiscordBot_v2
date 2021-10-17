@@ -9,7 +9,6 @@ public class Riddle extends Feature{
     public final String RIDDLE = "!riddle";
     public final String GUESS = "!guess";
     boolean gameStarted = false;
-    boolean sent = false;
 
     public Riddle(String channelName) {
         super(channelName);
@@ -38,12 +37,6 @@ public class Riddle extends Feature{
                 event.getChannel().sendMessage("Good job.");
             }
         }
-
-        if(!gameStarted && !sent) {
-            event.getChannel().sendMessage("Game hasn't started.");
-            sent = true;
-        }
-
     }
 
 }

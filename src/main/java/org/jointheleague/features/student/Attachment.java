@@ -4,12 +4,14 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
-import java.util.Random;
 
 public class Attachment extends Feature{
     public final String ATTACH4 = "!attach4";
     boolean gameStarted = false;
-    boolean sent = false;
+    boolean roundStarted = false;
+
+    char[][] field = new char[][] {{'O', 'O', 'O', 'O', 'O'},{'O', 'O', 'O', 'O', 'O'}
+            ,{'O', 'O', 'O', 'O', 'O'},{'O', 'O', 'O', 'O', 'O'},{'O', 'O', 'O', 'O', 'O'}};
 
     public Attachment(String channelName) {
         super(channelName);
@@ -24,35 +26,47 @@ public class Attachment extends Feature{
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
-        char[][] field = new char[][] {{'O', 'O', 'O', 'O', 'O'},{}'O', 'O', 'O', 'O', 'O'
-                ,{'O', 'O', 'O', 'O', 'O'},{'O', 'O', 'O', 'O', 'O'},{'O', 'O', 'O', 'O', 'O'}};
+        String rowToPrint = "";
 
         if (messageContent.startsWith(ATTACH4)) {
-            event.getChannel().sendMessage("If a duck was given $9, a spider was given" +
-                    " $36, and a bee was given $27, how much will be given to a cat?");
+            event.getChannel().sendMessage("Welcome to Attach. It's really Connect4 but with a different name. " +
+                    "type a !column and the number of the column you would like to place your piece. ex: !column2 for column 2." +
+                    "Good luck.");
             gameStarted = true;
+            roundStarted = true;
         }
 
         if (gameStarted == true) {
-            if (!messageContent.contains("1")) {
+            if (roundStarted) {
+                for (int row = 0; row < field.length; row++) {
+                    for (int column = 0; column < field[row].length; column++) {
+                        rowToPrint += field[row][column];
+                    }
+                    event.getChannel().sendMessage(rowToPrint);
+                    rowToPrint = "";
+                }
+                roundStarted = false;
+            }
 
-            } else if (!messageContent.contains("2")) {
-
-            } else if (!messageContent.contains("3")) {
-
-            } else if (!messageContent.contains("4")) {
-
-            } else if (!messageContent.contains("5")) {
-
-            } else if (!messageContent.contains("6")) {
-
+            if (messageContent.startsWith("!column1")) {
+                switchValue(0);
+            } else if (!messageContent.contains("!column2")) {
+                switchValue(1);
+            } else if (!messageContent.contains("!column3")) {
+                switchValue(2);
+            } else if (!messageContent.contains("!column4")) {
+                switchValue(3);
+            } else if (!messageContent.contains("!column5")) {
+                switchValue(4);
             }
         }
-
-        if(!gameStarted && !sent) {
-            event.getChannel().sendMessage("Game hasn't started.");
-            sent = true;
+    }
+    public void switchValue(int column) {
+        for (int row = field.length; row > 0; row++) {
+            if (field[row][0] == 'O') {
+                field[row][0] = 'X';
+                break;
+            }
         }
-
     }
 }
