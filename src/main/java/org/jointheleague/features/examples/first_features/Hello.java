@@ -27,8 +27,10 @@ public class Hello extends Feature {
             String name = messageContent.replaceAll(" ", "").replace(COMMAND, "");
 
             if (name.equals("")) {
-            	person = event.getMessageAuthor().getDisplayName();
-            	if (person == null) {
+            	try {
+            		person = event.getMessageAuthor().getDisplayName();
+            	}
+            	catch (Exception e) {
             		person = "";
             	}
             }
@@ -37,7 +39,7 @@ public class Hello extends Feature {
             }
 
 
-            String outMessage = hellos[hellosIndex] + " " + person;
+            String outMessage = hellos[hellosIndex] + " " + person + "!";
 
             event.getChannel().sendMessage(outMessage);
         }
