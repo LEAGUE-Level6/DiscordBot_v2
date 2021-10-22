@@ -38,20 +38,63 @@ public class CovidTracker extends Feature {
    //https://api.covidactnow.org/v2/country/US.json?apiKey={apiKey}    @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
-        if(messageContent.startsWith(COMMAND)) {
-        	event.getChannel().sendMessage(test("CA")+"");
+        if(messageContent.startsWith(COMMAND+" cases")&&messageContent.length()==15) {
+        	event.getChannel().sendMessage(cases(messageContent.substring(13)));
+        } else if(messageContent.startsWith(COMMAND+" tests")&&messageContent.length()==15) {
+        	event.getChannel().sendMessage(tests(messageContent.substring(13)));
         }
         //https://api.covidactnow.org/v2/country/US.json?apiKey={apiKey}
     }
-	private int test(String stateString) {
+	private String tests(String stateString) {
 		Mono<Actuals> e = webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("state/"+stateString+".json").queryParam("apiKey",apiKey)
 				.build())
                 .retrieve()
                 .bodyToMono(Actuals.class);
-return e.block().getNewCases().intValue();
+		Actuals f = e.block();
+		String z = "Total Cases: "+f.getCases()+"\nNew Cases: "+f.getNewCases();
+return z;
 	}
-
+	private String cases(String stateString) {
+		Mono<Actuals> e = webClient.get()
+                .uri(uriBuilder -> uriBuilder.path("state/"+stateString+".json").queryParam("apiKey",apiKey)
+				.build())
+                .retrieve()
+                .bodyToMono(Actuals.class);
+		Actuals f = e.block();
+		String z = "Total Cases: "+f.getCases()+"\nNew Cases: "+f.getNewCases()+"\nTotal Deaths: "+f.getDeaths()+"\nNew Deaths: "+f.getNewDeaths();
+return z;
+	}
+private String hospitalBeds(String stateString) {
+	Mono<Actuals> e = webClient.get()
+            .uri(uriBuilder -> uriBuilder.path("state/"+stateString+".json").queryParam("apiKey",apiKey)
+			.build())
+            .retrieve()
+            .bodyToMono(Actuals.class);
+	Actuals f = e.block();
+	String z = "Total Hospital Beds: "+f.getHospitalBeds().getCapacity()+"\nUsed Hospital Beds: "+f.getHospitalBeds().getCurrentUsageTotal()+"\nCovid Hospital Bed Usage: "+f.getHospitalBeds().getCurrentUsageCovid();
+return z;
+	}
+private String ICUBeds(String stateString) {
+	Mono<Actuals> e = webClient.get()
+            .uri(uriBuilder -> uriBuilder.path("state/"+stateString+".json").queryParam("apiKey",apiKey)
+			.build())
+            .retrieve()
+            .bodyToMono(Actuals.class);
+	Actuals f = e.block();
+	String z = "Total ICU Beds: "+f.getIcuBeds().getCapacity()+"\nUsed ICU Beds: "+f.getIcuBeds().getCurrentUsageTotal()+"\nCovid ICU Bed Usage: "+f.getIcuBeds().getCurrentUsageCovid();
+return z;
+	}
+private String vaccinations(String stateString) {
+	Mono<Actuals> e = webClient.get()
+            .uri(uriBuilder -> uriBuilder.path("state/"+stateString+".json").queryParam("apiKey",apiKey)
+			.build())
+            .retrieve()
+            .bodyToMono(Actuals.class);
+	Actuals f = e.block();
+	String z = "Total Vaccines Distributed: "+f.getVaccinesDistributed()+"\nFirst Shots Given: "+f.getVaccinationsInitiated()+"\nVaccines Completed: "+f.getVaccinationsCompleted();
+return z;
+	}
 	
 
 }

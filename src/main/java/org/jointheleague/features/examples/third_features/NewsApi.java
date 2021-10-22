@@ -1,3 +1,4 @@
+
 package org.jointheleague.features.examples.third_features;
 
 import org.javacord.api.event.message.MessageCreateEvent;
