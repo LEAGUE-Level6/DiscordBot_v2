@@ -94,6 +94,7 @@ private String vaccinations(String stateString) {
 	Actuals f = e.block();
 	String z = "Total Vaccines Distributed: "+f.getVaccinesDistributed()+"\nFirst Shots Given: "+f.getVaccinationsInitiated()+"\nVaccines Completed: "+f.getVaccinationsCompleted();
 return z;
+//era
 	}
 	
 
