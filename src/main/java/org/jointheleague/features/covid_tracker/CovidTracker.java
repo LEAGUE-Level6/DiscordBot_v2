@@ -39,17 +39,17 @@ public class CovidTracker extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if(messageContent.startsWith(COMMAND)) {
-        	event.getChannel().sendMessage(test("US")+"");
+        	event.getChannel().sendMessage(test("CA")+"");
         }
         //https://api.covidactnow.org/v2/country/US.json?apiKey={apiKey}
     }
-	private Integer test(String countryString) {
-		Mono<Cases> e = webClient.get()
-                .uri(uriBuilder -> uriBuilder.path("country/"+countryString+".json").queryParam("apiKey="+apiKey)
+	private int test(String stateString) {
+		Mono<Actuals> e = webClient.get()
+                .uri(uriBuilder -> uriBuilder.path("state/"+stateString+".json").queryParam("apiKey",apiKey)
 				.build())
                 .retrieve()
-                .bodyToMono(Cases.class);
-return e.block().getAnomalies().get(0).getOriginalObservation();
+                .bodyToMono(Actuals.class);
+return e.block().getNewCases().intValue();
 	}
 
 	

@@ -1,6 +1,7 @@
 
 package org.jointheleague.features.covid_tracker;
 
+import java.util.List;
 import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -56,6 +57,18 @@ public class Example {
     @SerializedName("url")
     @Expose
     private String url;
+    @SerializedName("metricsTimeseries")
+    @Expose
+    private List<MetricsTimeseries> metricsTimeseries = null;
+    @SerializedName("actualsTimeseries")
+    @Expose
+    private List<ActualsTimeseries> actualsTimeseries = null;
+    @SerializedName("riskLevelsTimeseries")
+    @Expose
+    private List<RiskLevelsTimeseries> riskLevelsTimeseries = null;
+    @SerializedName("cdcTransmissionLevelTimeseries")
+    @Expose
+    private List<CdcTransmissionLevelTimeseries> cdcTransmissionLevelTimeseries = null;
 
     public String getFips() {
         return fips;
@@ -183,6 +196,38 @@ public class Example {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public List<MetricsTimeseries> getMetricsTimeseries() {
+        return metricsTimeseries;
+    }
+
+    public void setMetricsTimeseries(List<MetricsTimeseries> metricsTimeseries) {
+        this.metricsTimeseries = metricsTimeseries;
+    }
+
+    public List<ActualsTimeseries> getActualsTimeseries() {
+        return actualsTimeseries;
+    }
+
+    public void setActualsTimeseries(List<ActualsTimeseries> actualsTimeseries) {
+        this.actualsTimeseries = actualsTimeseries;
+    }
+
+    public List<RiskLevelsTimeseries> getRiskLevelsTimeseries() {
+        return riskLevelsTimeseries;
+    }
+
+    public void setRiskLevelsTimeseries(List<RiskLevelsTimeseries> riskLevelsTimeseries) {
+        this.riskLevelsTimeseries = riskLevelsTimeseries;
+    }
+
+    public List<CdcTransmissionLevelTimeseries> getCdcTransmissionLevelTimeseries() {
+        return cdcTransmissionLevelTimeseries;
+    }
+
+    public void setCdcTransmissionLevelTimeseries(List<CdcTransmissionLevelTimeseries> cdcTransmissionLevelTimeseries) {
+        this.cdcTransmissionLevelTimeseries = cdcTransmissionLevelTimeseries;
     }
 
 }
