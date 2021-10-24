@@ -10,8 +10,8 @@ org/jointheleague/features/examples/third_features/plain_old_java_objects/news_a
  org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Source
 org/jointheleague/features/examples/third_features/CatFactsApi.java
  org.jointheleague.features.examples.third_features.CatFactsApi
-Launcher.java
- Launcher
+org/jointheleague/features/student/Riddle.java
+ org.jointheleague.features.student.Riddle
 org/jointheleague/features/examples/third_features/plain_old_java_objects/news_api/Article.java
  org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article
 org/jointheleague/features/examples/second_features/HighLowGame.java
@@ -28,9 +28,11 @@ org/jointheleague/features/examples/first_features/CurrentTime.java
  org.jointheleague.features.examples.first_features.CurrentTime
 org/jointheleague/features/examples/third_features/plain_old_java_objects/news_api/ApiExampleWrapper.java
  org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper
-org/jointheleague/features/student/Riddle.java
- org.jointheleague.features.student.Riddle
-org/jointheleague/features/student/Attachment.java
- org.jointheleague.features.student.Attachment
+Launcher.java
+ Launcher
+org/jointheleague/features/student/questions/QuestionsWrapper.java
+ org.jointheleague.features.student.questions.QuestionsWrapper
 org/jointheleague/discord_bot/DiscordBot.java
  org.jointheleague.discord_bot.DiscordBot
+org/jointheleague/features/student/questions/Questions.java
+ org.jointheleague.features.student.questions.Questions

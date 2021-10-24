@@ -24,6 +24,17 @@ public class CatFactsApi extends Feature {
                 .builder()
                 .baseUrl(baseUrl)
                 .build();
+        //specify query param
+        /*String response = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("q", "pizza")
+                        .queryParam("sortBy", "popularity")
+                        .queryParam("apiKey", apiKey)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+*/
     }
 
     @Override
