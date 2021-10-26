@@ -5,6 +5,7 @@ import org.jointheleague.Client;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,27 +28,31 @@ public class Inventory extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
-            String[] inventory = (String[]) Client.findOne(event.getMessageAuthor().getIdAsString()).get("inventory");
-            String[] newInventory = (String[]) Arrays.stream(inventory).map(t -> {
-                if (t.equals("01")) return ":ring: Marriage Ring";
-                if (t.equals("02")) return ":diamond_shape_with_a_dot_inside: Diamond Crown";
-                if (t.equals("03")) return ":cowboy: Cowboy Hat";
-                if (t.equals("04")) return ":tomato: Tomato";
-                if (t.equals("05")) return ":candy: Candy";
+            ArrayList<String> inventory = (ArrayList<String>) Client.findOne(event.getMessageAuthor().getIdAsString()).get("inventory");
+            if (inventory.size() == 0) {
+                event.getChannel().sendMessage("You don't have any items in your inventory");
+                return;
+            }
+            String toSend = "";
+            for (String t : inventory) {
+                if (t.equals("01")) toSend += ":ring: Marriage Ring\n";
+                if (t.equals("02")) toSend += ":diamond_shape_with_a_dot_inside: Diamond Crown\n";
+                if (t.equals("03")) toSend += ":cowboy: Cowboy Hat\n";
+                if (t.equals("04")) toSend += ":tomato: Tomato\n";
+                if (t.equals("05")) toSend += ":candy: Candy\n";
                 if (t.equals("06"))
-                    return "Jellyfish";
-                if (t.equals("07")) return ":bear: Bear";
-                if (t.equals("08")) return ":cactus: Cactus";
-                if (t.equals("09")) return ":fire: Fire";
-                if (t.equals("10")) return "Lootbox";
-                if (t.equals("11")) return ":egg: Raw Egg";
-                if (t.equals("11-0")) return ":egg: Boiled Egg";
-                if (t.equals("11-1")) return ":egg: Scrambled Eggs";
-                if (t.equals("11-2")) return ":egg: Omelette";
-                if (t.equals("12")) return ":banana: Banana";
-                return null;
-            }).toArray();
-            event.getChannel().sendMessage(newInventory.toString());
+                    toSend += "Jellyfish\n";
+                if (t.equals("07")) toSend += ":bear: Bear\n";
+                if (t.equals("08")) toSend += ":cactus: Cactus\n";
+                if (t.equals("09")) toSend += ":fire: Fire\n";
+                if (t.equals("10")) toSend += "Lootbox\n";
+                if (t.equals("11")) toSend += ":egg: Raw Egg\n";
+                if (t.equals("11-0")) toSend += ":egg: Boiled Egg\n";
+                if (t.equals("11-1")) toSend += ":egg: Scrambled Eggs\n";
+                if (t.equals("11-2")) toSend += ":egg: Omelette\n";
+                if (t.equals("12")) toSend += ":banana: Banana\n";
+            };
+            event.getChannel().sendMessage(toSend);
         }
     }
 

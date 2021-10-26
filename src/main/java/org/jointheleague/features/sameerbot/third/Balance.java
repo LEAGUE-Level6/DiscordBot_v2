@@ -2,6 +2,7 @@ package org.jointheleague.features.sameerbot.third;
 
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.Client;
 import org.jointheleague.features.abstract_classes.Feature;
@@ -9,6 +10,7 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 import org.bson.Document;
 
 import java.awt.*;
+import java.util.List;
 
 public class Balance extends Feature {
 
@@ -29,11 +31,18 @@ public class Balance extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
-            Document data = Client.findOne(event.getMessageAuthor().getIdAsString());
+            List<User> users = event.getMessage().getMentionedUsers();
+            User user;
+            if (users.size() > 0) {
+                user = users.get(0);
+            } else {
+                user = event.getMessage().getUserAuthor().get();
+            }
+            Document data = Client.findOne(user.getIdAsString());
             int mincoDollars = (int) data.get("mincoDollars");
             int bank = (int) data.get("bank");
             EmbedBuilder embed = new EmbedBuilder()
-                    .setTitle("Minco Dollar Balance")
+                    .setTitle(user.getName() + "'s Balance")
                     .setDescription(":coin: Minco Dollars: " + mincoDollars + "\n:dollar: Bank: " + bank + "\n:moneybag: Total: " + (mincoDollars + bank))
                     .setColor(new Color(173,251,125));
             event.getChannel().sendMessage(embed);

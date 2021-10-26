@@ -55,6 +55,9 @@ public class DiscordBot {
         addFeature(new Balance(channelName));
         addFeature(new Beg(channelName));
         addFeature(new Inventory(channelName));
+        addFeature(new Gift(channelName));
+        addFeature(new Zoo(channelName));
+        addFeature(new Yee(channelName));
     }
 
     private void addFeature(Feature feature) {
