@@ -87,10 +87,10 @@ class FeatureTemplateTest {
         //Given
         String command = "";
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
-
+        when(messageCreateEvent.getMessageAuthor().isYourself()).thenReturn(false);
         //When
         featureTemplate.handle(messageCreateEvent);
-
+        
         //Then
         verify(textChannel, never()).sendMessage();
     }

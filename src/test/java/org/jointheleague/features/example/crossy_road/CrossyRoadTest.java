@@ -27,7 +27,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.never;
 
 class CrossyRoadTest {
 
@@ -126,7 +125,7 @@ class CrossyRoadTest {
 
         //Then
 
-        if(!(false /*gram instanceof FeatureTemplate*/)){
+        if(!(false /*road instanceof FeatureTemplate*/)){
             assertNotEquals("!command", command);
         }
 
@@ -138,16 +137,14 @@ class CrossyRoadTest {
 
     @Test
     void itShouldHandleMessagesWithCommand() {
-        //Given
-        HelpEmbed helpEmbed = new HelpEmbed(road.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(road.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-        when(messageCreateEvent.getMessageAuthor()).thenReturn(new myClass());
-        //When
-        road.handle(messageCreateEvent);
+    	   String command = "!road start";
+           when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
-        //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+           //When
+           road.handle(messageCreateEvent);
+
+           //Then
+           verify(textChannel, times(1)).sendMessage(anyString());
     }
 
     @Test

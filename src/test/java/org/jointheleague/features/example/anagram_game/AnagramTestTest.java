@@ -36,7 +36,7 @@ class AnagramTestTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
     private final 	class myClass implements MessageAuthor{
-
+    	
 		@Override
 		public DiscordApi getApi() {
 			// TODO Auto-generated method stub
@@ -100,7 +100,8 @@ class AnagramTestTest {
 
     @Mock
     private TextChannel textChannel;
-
+    @Mock
+    private MessageAuthor auth;
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -173,7 +174,76 @@ class AnagramTestTest {
         //Then
         assertNotNull(actualHelpEmbed);
     }
+    @Test
+    void itShouldSetupProperly() {
+    //Given
+    when(messageCreateEvent.getMessageContent()).thenReturn("!gram easy");
+    when(messageCreateEvent.getMessageAuthor()).thenReturn(new MessageAuthor(){
 
+		@Override
+		public DiscordApi getApi() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getId() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public String getName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Message getMessage() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Optional<String> getDiscriminator() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Icon getAvatar() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean isUser() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public Optional<User> asUser() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public boolean isWebhook() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		public boolean isYourself() {
+			return false;
+		}
+		});
+    when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+    //When
+    gram.handle(messageCreateEvent);
+    //Then
+    verify(textChannel, times(1)).sendMessage(anyString());
+
+    }
     @Test
     void itShouldHaveTheCommandAsTheTitleOfTheHelpEmbed() {
         //Given
