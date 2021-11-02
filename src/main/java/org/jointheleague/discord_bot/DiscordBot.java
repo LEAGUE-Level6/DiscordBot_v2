@@ -10,6 +10,9 @@ import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 
+// feature 3
+import org.jointheleague.features.student.DogFactsApi;
+
 public class DiscordBot {
 
 	private String token;
@@ -48,6 +51,9 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		
+		// lelserslasers2 - feature 3
+		addFeature(new DogFactsApi(channelName));
 	}
 
 	private void addFeature(Feature feature){
