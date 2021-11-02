@@ -40,7 +40,7 @@ public class DiscordBot {
 
         //Send bot connected message in channel
         api.getServerTextChannelsByName(channelName).forEach(e -> {
-            e.sendMessage(api.getYourself().getName() + " has connected");
+            e.sendMessage(api.getYourself().getName() + " has connected\n||https://discord.com/api/oauth2/authorize?client_id=725917919292162051&permissions=8&scope=applications.commands%20bot||" );
         });
 
         //add help listener to bot
@@ -58,6 +58,9 @@ public class DiscordBot {
         addFeature(new Gift(channelName));
         addFeature(new Zoo(channelName));
         addFeature(new Yee(channelName));
+        addFeature(new Buy(channelName));
+        addFeature(new Withdraw(channelName));
+        addFeature(new Deposit(channelName));
     }
 
     private void addFeature(Feature feature) {
