@@ -1,4 +1,4 @@
-package org.jointheleague.features.examples.first_features;
+package org.jointheleague.features.student;
 
 import java.util.Random;
 
