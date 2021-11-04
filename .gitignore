@@ -5,3 +5,5 @@
 .settings
 *.xml
 !pom.xml
+/.gradle/
+/build/
