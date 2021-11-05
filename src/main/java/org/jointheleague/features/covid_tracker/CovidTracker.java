@@ -106,6 +106,9 @@ private String vaccinations(String stateString) {
 return z;
 //era
 	}
+public void setWebClient(WebClient webClient) {
+    this.webClient = webClient;
+}
 	
 
 }

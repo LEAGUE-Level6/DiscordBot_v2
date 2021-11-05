@@ -21,7 +21,22 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 public class CrossyRoad extends Feature {
 	public final String COMMAND = "!road";
 	HashMap<MessageAuthor, Holder> games = new HashMap<MessageAuthor, Holder>();
-	MessageAuthor currentSetup = null;
+	public MessageAuthor currentSetup = null;
+	public boolean testCase = false;
+	String leaderboard[] = {"GGS - 32\n" , 
+			"PLA - 25\n" , 
+			"Oza - 17\n" , 
+			"SAD - 16\n" , 
+			"FUN - 16\n" , 
+			"TsT - 15\n" , 
+			"DMC - 14\n" , 
+			"CCA - 12\n" , 
+			"DMC - 11\n" , 
+			"Mna - 9\n" , 
+			"-_- - 8\n" , 
+			"yum - 6\n" , 
+			"HAP - 2\n" , 
+			"SAD - 1\n"};
 
 	public CrossyRoad(String channelName) {
 		super(channelName);
@@ -38,11 +53,6 @@ public class CrossyRoad extends Feature {
 	public void handle(MessageCreateEvent event) {
 		String messageContent = event.getMessageContent();
 		MessageAuthor auth = event.getMessageAuthor();
-		if (event.getMessageAuthor().isYourself() && messageContent.equals("setup")) {
-			games.put(currentSetup, setUpGame(event));
-			games.get(currentSetup).t.start();
-			currentSetup = null;
-		} else {
 		if (messageContent.startsWith(COMMAND)) {
 			if (messageContent.contentEquals(COMMAND + " start")) {
 				if (!games.containsKey(auth)) {
@@ -69,12 +79,19 @@ public class CrossyRoad extends Feature {
 					event.getChannel().sendMessage("You currently have no game to submit");
 				}
 			}
+		} else if (event.getMessageAuthor().isYourself() && messageContent.equals("setup")) {
+			games.put(currentSetup, setUpGame(event));
+			if(!testCase) {
+			games.get(currentSetup).t.start();
+			}
+			currentSetup = null;
 		}
 	}
-	}
+	
 
 	private void submitScore(String name, MessageCreateEvent event, int score) {
-		ArrayList<String> scores = new ArrayList<String>();
+		
+		/*ArrayList<String> scores = new ArrayList<String>();
 		try {
 			BufferedReader r = new BufferedReader(new FileReader(
 					"/Users/league/git/DiscordBot_v2/src/main/java/org/jointheleague/features/CrossyRoad/leaderboard"));
@@ -109,11 +126,14 @@ public class CrossyRoad extends Feature {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+*/
+		event.getChannel().sendMessage("Due to how the submission for the bot works, no new scores will be recorded");
 	}
 
 	private void readBoard(MessageCreateEvent event, boolean all) {
-		try {
+		
+		
+		/*try {
 			String message = "";
 			BufferedReader r = new BufferedReader(new FileReader(
 					"/Users/league/git/DiscordBot_v2/src/main/java/org/jointheleague/features/CrossyRoad/leaderboard"));
@@ -133,6 +153,18 @@ public class CrossyRoad extends Feature {
 		} catch (Exception e) {
 			event.getChannel().sendMessage("Failed to get leaderboard");
 		}
+		*/
+		String s = "";
+		if(all) {
+			for(int i =0; i < leaderboard.length;i++) {
+			s+= leaderboard[i];
+			} 
+		} else {
+			for(int i =0; i < 5;i++) {
+				s+= leaderboard[i];
+				} 
+		}
+		event.getChannel().sendMessage(s);
 	}
 
 	private Holder setUpGame(MessageCreateEvent e) {
@@ -149,8 +181,12 @@ public class CrossyRoad extends Feature {
 				rows[i] = new Row(3, false);
 			}
 		}
+		e.getChannel().sendMessage("The game is starting shortly");
 		rows[6] = new Row(0, true);
+		if(!testCase) {
 		runningGame r = new runningGame(rows, e, currentSetup);
 		return new Holder(new Thread(r), r);
+		}
+		return null;
 	}
 }
