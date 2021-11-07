@@ -12,7 +12,7 @@ public class Questions extends Feature {
     public final String COMMAND = "!questionsapi";
 
     private WebClient webClient;
-    private static final String baseUrl = "https://opentdb.com/api.php?amount=1";
+    private static final String baseUrl = "https://opentdb.com/api.php";
 
     public Questions(String channelName) {
         super(channelName);
@@ -28,21 +28,29 @@ public class Questions extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
-            String question = getQuestion();
+            String question = getQuestionAndAnswer()[0];
+            String answer = getQuestionAndAnswer()[1];
             event.getChannel().sendMessage(question);
+            if(messageContent.contains(answer)) {
+                event.getChannel().sendMessage("Good job.");
+            } else {
+                event.getChannel().sendMessage("Wrong.");
+            }
         }
     }
 
-    public String getQuestion() {
-        Mono<QuestionsWrapper> questionWrapperMono = webClient.get()
+    public String[] getQuestionAndAnswer() {
+        String questionData = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("amount", "1")
+                        .build())
                 .retrieve()
-                .bodyToMono(QuestionsWrapper.class);
-
-        QuestionsWrapper questionWrapper = questionWrapperMono.block();
-
-        String message = questionWrapper.getData().get(1);
-
-        return message;
+                .bodyToMono(String.class)
+                .block();
+        String[] cutQuestion = questionData.split("question\":\"");
+        String[] cutAnswer = cutQuestion[1].split("\",\"incorrect_answers");
+        String[] trimmedQA = cutAnswer[0].split("\",\"correct_answer\":\"");
+       return trimmedQA;
     }
 
     public void setWebClient(WebClient webClient) {
