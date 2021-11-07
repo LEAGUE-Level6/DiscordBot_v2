@@ -14,3 +14,5 @@ org/jointheleague/features/student/PunTest.java
  org.jointheleague.features.student.PunTest
 org/jointheleague/features/student/RiddleTest.java
  org.jointheleague.features.student.RiddleTest
+org/jointheleague/features/student/QuestionsTest.java
+ org.jointheleague.features.student.QuestionsTest

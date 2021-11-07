@@ -10,13 +10,16 @@ import java.util.List;
 
 public class Questions extends Feature {
     public final String COMMAND = "!questionsapi";
+    public final String ATTEMPT = "!attempt";
 
     private WebClient webClient;
     private static final String baseUrl = "https://opentdb.com/api.php";
 
+    public boolean gameStarted = false;
+
     public Questions(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Question");
+        helpEmbed = new HelpEmbed(COMMAND, "type !questionsapi for a question and !attempt to guess. ex: !guess duck");
 
         this.webClient = WebClient
                 .builder()
@@ -27,11 +30,15 @@ public class Questions extends Feature {
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
+        String question = getQuestionAndAnswer()[0];
+        String answer = getQuestionAndAnswer()[1];
+
         if (messageContent.startsWith(COMMAND)) {
-            String question = getQuestionAndAnswer()[0];
-            String answer = getQuestionAndAnswer()[1];
             event.getChannel().sendMessage(question);
-            if(messageContent.contains(answer)) {
+            gameStarted = true;
+        }
+        if (gameStarted == true && messageContent.contains(ATTEMPT)) {
+            if (messageContent.contains(answer)) {
                 event.getChannel().sendMessage("Good job.");
             } else {
                 event.getChannel().sendMessage("Wrong.");
@@ -50,6 +57,13 @@ public class Questions extends Feature {
         String[] cutQuestion = questionData.split("question\":\"");
         String[] cutAnswer = cutQuestion[1].split("\",\"incorrect_answers");
         String[] trimmedQA = cutAnswer[0].split("\",\"correct_answer\":\"");
+
+        while(trimmedQA[0].contains("&quot;")) {
+            trimmedQA[0] = trimmedQA[0].replace("&quot;","");
+        }
+        while(trimmedQA[0].contains("&#039;s")) {
+            trimmedQA[0] = trimmedQA[0].replace("&#039;s", "");
+        }
        return trimmedQA;
     }
 
