@@ -13,7 +13,8 @@ public class DogFactsApi extends Feature {
     public final String COMMAND = "!dogFacts";
 
     private WebClient webClient;
-    private static final String baseUrl = "https://dog-facts-api.herokuapp.com/api/v1/resources/dogs?number=";
+//    private static String baseUrl = "https://dog-facts-api.herokuapp.com/api/v1/resources/dogs?number=";
+    private static final String baseUrl = "https://dog-facts-api.herokuapp.com/api/v1/resources/dogs";
 
     public DogFactsApi(String channelName) {
         super(channelName);
@@ -30,18 +31,28 @@ public class DogFactsApi extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
         	String otherWord = messageContent.replaceAll(" ", "").replace(COMMAND, "");
-        	int numberOfFacts = 1;
-        	try {
-        		numberOfFacts = Integer.parseInt(otherWord);
+        	int numberOfFacts = 2; // not 1
+        	if (otherWord.contains("all")) {
+        		event.getChannel().sendMessage("ALL found");
+        		this.webClient = WebClient
+                        .builder()
+                        .baseUrl("https://dog-facts-api.herokuapp.com/api/v1/resources/dogs/all")
+                        .build();
         	}
-        	catch (NumberFormatException e) {} // leave as 1
-        	if (numberOfFacts < 1) {
+        	else {
         		numberOfFacts = 1;
-        	}
-        	this.webClient = WebClient
+        		try {
+        			numberOfFacts = Integer.parseInt(otherWord);
+        		}
+        		catch (NumberFormatException e) {} // leave as 1
+        		if (numberOfFacts < 1) {
+        			numberOfFacts = 1;
+        		}
+        		this.webClient = WebClient
                     .builder()
-                    .baseUrl(baseUrl + numberOfFacts)
+                    .baseUrl(baseUrl + "?number=" + numberOfFacts)
                     .build();
+        	}
             String dogFact = getDogFact(numberOfFacts);
             event.getChannel().sendMessage(dogFact);
         }
