@@ -35,16 +35,19 @@ public class DogFactsApi extends Feature {
         		numberOfFacts = Integer.parseInt(otherWord);
         	}
         	catch (NumberFormatException e) {} // leave as 1
+        	if (numberOfFacts < 1) {
+        		numberOfFacts = 1;
+        	}
         	this.webClient = WebClient
                     .builder()
                     .baseUrl(baseUrl + numberOfFacts)
                     .build();
-            String dogFact = getDogFact();
+            String dogFact = getDogFact(numberOfFacts);
             event.getChannel().sendMessage(dogFact);
         }
     }
 
-    public String getDogFact() {
+    public String getDogFact(int numberOfFacts) {
 
         Mono<DogFactsApiWrapper[]> dfMono = webClient.get()
                 .retrieve()
@@ -52,10 +55,17 @@ public class DogFactsApi extends Feature {
 
         DogFactsApiWrapper[] dfw = dfMono.block();
 
-        String message = "Dog Facts:\n";
-        for (int i = 0; i < dfw.length; i++) {
-        	int factNum = i + 1;
-        	message = message + factNum + ") " + dfw[i].getFact() + "\n";
+        String message;
+        
+        if (numberOfFacts == 1) {
+        	message = dfw[0].getFact() + "\n";
+        }
+        else {
+        	message = "Dog Facts:\n";
+        	for (int i = 0; i < dfw.length; i++) {
+        		int factNum = i + 1;
+        		message = message + factNum + ") " + dfw[i].getFact() + "\n";
+        	}
         }
 
         return message;
