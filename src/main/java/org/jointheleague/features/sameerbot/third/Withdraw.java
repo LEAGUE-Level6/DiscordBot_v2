@@ -9,9 +9,11 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 public class Withdraw extends Feature {
 
     public final String COMMAND = "!withdraw";
+    Client client;
 
-    public Withdraw(String channelName) {
+    public Withdraw(String channelName, Client client) {
         super(channelName);
+        this.client = client;
 
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
@@ -33,14 +35,14 @@ public class Withdraw extends Feature {
                 return;
             }
             String id = event.getMessageAuthor().getIdAsString();
-            int userBank = (int) Client.findOne(id).get("bank");
+            int userBank = (int) client.findOne(id).get("bank");
             if (depositAmount > userBank) {
                 event.getChannel().sendMessage("You don't have that amount of money to withdraw");
                 return;
             }
 
-            Client.findOneAndUpdate(id, Updates.inc("mincoDollars", depositAmount));
-            Client.findOneAndUpdate(id, Updates.inc("bank", -depositAmount));
+            client.findOneAndUpdate(id, Updates.inc("mincoDollars", depositAmount));
+            client.findOneAndUpdate(id, Updates.inc("bank", -depositAmount));
             event.getChannel().sendMessage("You withdrew " + depositAmount + " md from your bank");
         }
     }

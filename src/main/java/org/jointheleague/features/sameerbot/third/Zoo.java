@@ -15,9 +15,11 @@ import java.util.List;
 
 public class Zoo extends Feature {
     public final String COMMAND = "!zoo";
+    Client client;
 
-    public Zoo(String channelName) {
+    public Zoo(String channelName, Client client) {
         super(channelName);
+        this.client = client;
 
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
@@ -38,7 +40,7 @@ public class Zoo extends Feature {
                 user = event.getMessage().getUserAuthor().get();
             }
             String toSend = "";
-            Document profile = Client.findOne(user.getIdAsString());
+            Document profile = client.findOne(user.getIdAsString());
             ArrayList<Document> zoo = (ArrayList<Document>) profile.get("zoo");
             if (zoo.size() == 0) {
                 event.getChannel().sendMessage(user.getName() + " doesn't have any animals in their zoo");

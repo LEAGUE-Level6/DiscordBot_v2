@@ -1,9 +1,14 @@
-package org.jointheleague.features.templates;
+package org.jointheleague.features.sameerbot.third;
 
+
+import org.bson.Document;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageAuthor;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.Client;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,15 +19,17 @@ import org.mockito.MockitoAnnotations;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class FeatureTemplateTest {
+class BalanceTest {
 
     private final String testChannelName = "test";
-    private final FeatureTemplate featureTemplate = new FeatureTemplate(testChannelName);
+    private Balance balance;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -34,11 +41,20 @@ class FeatureTemplateTest {
     private TextChannel textChannel;
 
     @Mock
+    private Client client;
+
+    @Mock
     private Message message;
+
+    private Optional<User> userOptional;
+    
+    @Mock
+    private User user;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        balance = new Balance(testChannelName, client);
         System.setOut(new PrintStream(outContent));
     }
 
@@ -56,14 +72,9 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String command = featureTemplate.COMMAND;
+        String command = balance.COMMAND;
 
         //Then
-
-        if(!(featureTemplate instanceof FeatureTemplate)){
-            assertNotEquals("!command", command);
-        }
-
         assertNotEquals("", command);
         assertNotEquals("!", command);
         assertEquals('!', command.charAt(0));
@@ -73,16 +84,24 @@ class FeatureTemplateTest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureTemplate.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureTemplate.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        when(messageCreateEvent.getMessageContent()).thenReturn(balance.COMMAND);
+        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessage()).thenReturn(message);
         when(message.getMentionedUsers()).thenReturn(Collections.emptyList());
-        //When
-        featureTemplate.handle(messageCreateEvent);
+        userOptional = Optional.of(user);
+        when(message.getUserAuthor()).thenReturn(userOptional);
+        when(user.getName()).thenReturn("person");
 
+        when(user.getIdAsString()).thenReturn("724786310711214118");
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("mincoDollars", 50);
+        map.put("bank", 50);
+        when(client.findOne(anyString())).thenReturn(new Document(map));
+        //When
+        balance.handle(messageCreateEvent);
+        EmbedBuilder embed = new EmbedBuilder().setDescription("yee");
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(textChannel, times(1)).sendMessage(any(embed.getClass()));
     }
 
     @Test
@@ -92,7 +111,7 @@ class FeatureTemplateTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        balance.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -103,7 +122,7 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = featureTemplate.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = balance.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -114,8 +133,8 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String helpEmbedTitle = featureTemplate.getHelpEmbed().getTitle();
-        String command = featureTemplate.COMMAND;
+        String helpEmbedTitle = balance.getHelpEmbed().getTitle();
+        String command = balance.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

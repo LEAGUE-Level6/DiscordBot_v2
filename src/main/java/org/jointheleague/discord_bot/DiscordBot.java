@@ -47,20 +47,21 @@ public class DiscordBot {
         api.addMessageCreateListener(helpListener);
 
         //add features
+        Client client = new Client();
         addFeature(new RandomNumber(channelName));
         addFeature(new CurrentTime(channelName));
         addFeature(new HighLowGame(channelName));
         addFeature(new NewsApi(channelName));
         addFeature(new CatFactsApi(channelName));
-        addFeature(new Balance(channelName));
-        addFeature(new Beg(channelName));
-        addFeature(new Inventory(channelName));
-        addFeature(new Gift(channelName));
-        addFeature(new Zoo(channelName));
+        addFeature(new Balance(channelName, client));
+        addFeature(new Beg(channelName, client));
+        addFeature(new Inventory(channelName, client));
+        addFeature(new Gift(channelName, client));
+        addFeature(new Zoo(channelName, client));
         addFeature(new Yee(channelName));
-        addFeature(new Buy(channelName));
-        addFeature(new Withdraw(channelName));
-        addFeature(new Deposit(channelName));
+        addFeature(new Buy(channelName, client));
+        addFeature(new Withdraw(channelName, client));
+        addFeature(new Deposit(channelName, client));
     }
 
     private void addFeature(Feature feature) {

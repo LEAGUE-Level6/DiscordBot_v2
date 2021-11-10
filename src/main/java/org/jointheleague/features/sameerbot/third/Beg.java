@@ -14,9 +14,11 @@ public class Beg extends Feature {
     public HashMap<String, Integer> cooldowns = new HashMap<>();
     public final String COMMAND = "!beg";
     public final int COOLDOWN = 390000; // 6.5 minutes
+    Client client;
 
-    public Beg(String channelName) {
+    public Beg(String channelName, Client client) {
         super(channelName);
+        this.client = client;
 
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
@@ -32,7 +34,7 @@ public class Beg extends Feature {
             //respond to message here
             if (handleCooldowns(event)) return;
             int amount = new Random().nextInt(4)+4; // 4 to 7 inclusive
-            Client.findOneAndUpdate(event.getMessageAuthor().getIdAsString(), Updates.inc("mincoDollars", amount));
+            client.findOneAndUpdate(event.getMessageAuthor().getIdAsString(), Updates.inc("mincoDollars", amount));
             event.getChannel().sendMessage("You won " + amount + " Minco Dollars!");
 
         }

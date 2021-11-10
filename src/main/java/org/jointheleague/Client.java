@@ -11,13 +11,13 @@ import com.mongodb.client.model.Filters;
 import java.util.ArrayList;
 
 public class Client {
-    static MongoClient client = MongoClients.create(System.getenv("MONGO_URI"));
+    MongoClient client = MongoClients.create(System.getenv("MONGO_URI"));
 
-    public static MongoDatabase database = client.getDatabase("MincoPenguinDB");
+    public MongoDatabase database = client.getDatabase("MincoPenguinDB");
 
-    public static MongoCollection<Document> collection = database.getCollection("profilemodels");
+    public MongoCollection<Document> collection = database.getCollection("profilemodels");
 
-    public static Document findOne(String id) {
+    public Document findOne(String id) {
         Document c = collection.find(Filters.eq("userID", id)).first();
         if (c == null) {
             Document document = new Document("userID", id).append("mincoDollars", 50).append("bank", 0).append("inventory", new ArrayList<String>());
@@ -27,7 +27,7 @@ public class Client {
         return c;
     }
 
-    public static void findOneAndUpdate(String id, Bson newData) {
+    public void findOneAndUpdate(String id, Bson newData) {
         if (collection.find(Filters.eq("userID", id)).first() == null) {
             Document document = new Document("userID", id).append("mincoDollars", 50).append("bank", 0).append("inventory", new ArrayList<String>());
             collection.insertOne(document);

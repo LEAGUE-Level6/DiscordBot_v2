@@ -12,10 +12,11 @@ import java.util.List;
 public class Inventory extends Feature {
 
     public final String COMMAND = "!inventory";
+    Client client;
 
-    public Inventory(String channelName) {
+    public Inventory(String channelName, Client client) {
         super(channelName);
-
+        this.client = client;
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
@@ -28,7 +29,7 @@ public class Inventory extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
-            ArrayList<String> inventory = (ArrayList<String>) Client.findOne(event.getMessageAuthor().getIdAsString()).get("inventory");
+            ArrayList<String> inventory = (ArrayList<String>) client.findOne(event.getMessageAuthor().getIdAsString()).get("inventory");
             if (inventory.size() == 0) {
                 event.getChannel().sendMessage("You don't have any items in your inventory");
                 return;

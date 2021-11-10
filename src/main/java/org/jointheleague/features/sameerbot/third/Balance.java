@@ -15,10 +15,11 @@ import java.util.List;
 public class Balance extends Feature {
 
     public final String COMMAND = "!balance";
+    Client client;
 
-    public Balance(String channelName) {
+    public Balance(String channelName, Client client) {
         super(channelName);
-
+        this.client = client;
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
@@ -38,7 +39,7 @@ public class Balance extends Feature {
             } else {
                 user = event.getMessage().getUserAuthor().get();
             }
-            Document data = Client.findOne(user.getIdAsString());
+            Document data = client.findOne(user.getIdAsString());
             int mincoDollars = (int) data.get("mincoDollars");
             int bank = (int) data.get("bank");
             EmbedBuilder embed = new EmbedBuilder()

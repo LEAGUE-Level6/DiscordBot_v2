@@ -9,10 +9,11 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 public class Deposit extends Feature {
 
     public final String COMMAND = "!deposit";
+    Client client;
 
-    public Deposit(String channelName) {
+    public Deposit(String channelName, Client client) {
         super(channelName);
-
+        this.client = client;
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
@@ -33,14 +34,14 @@ public class Deposit extends Feature {
                 return;
             }
             String id = event.getMessageAuthor().getIdAsString();
-            int userMoney = (int) Client.findOne(id).get("mincoDollars");
+            int userMoney = (int) client.findOne(id).get("mincoDollars");
             if (depositAmount > userMoney) {
                 event.getChannel().sendMessage("You don't have that amount of money to deposit");
                 return;
             }
 
-            Client.findOneAndUpdate(id, Updates.inc("mincoDollars", -depositAmount));
-            Client.findOneAndUpdate(id, Updates.inc("bank", depositAmount));
+            client.findOneAndUpdate(id, Updates.inc("mincoDollars", -depositAmount));
+            client.findOneAndUpdate(id, Updates.inc("bank", depositAmount));
             event.getChannel().sendMessage("You deposited " + depositAmount + " md into your bank");
         }
     }

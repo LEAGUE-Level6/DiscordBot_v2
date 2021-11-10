@@ -16,9 +16,11 @@ import java.util.Random;
 public class Gift extends Feature {
 
     public final String COMMAND = "!gift";
+    Client client;
 
-    public Gift(String channelName) {
+    public Gift(String channelName, Client client) {
         super(channelName);
+        this.client = client;
 
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
@@ -44,14 +46,14 @@ public class Gift extends Feature {
                 event.getChannel().sendMessage("You wrote an invalid amount of minco dollars");
                 return;
             }
-            int userMoney = (int) Client.findOne(event.getMessageAuthor().getIdAsString()).get("mincoDollars");
+            int userMoney = (int) client.findOne(event.getMessageAuthor().getIdAsString()).get("mincoDollars");
             if (money > userMoney) {
                 event.getChannel().sendMessage("You don't have that many minco dollars!");
                 return;
             }
 
-            Client.findOneAndUpdate(users.get(0).getIdAsString(), new Document("$inc", new Document("mincoDollars", money)));
-            Client.findOneAndUpdate(event.getMessageAuthor().getIdAsString(), new Document("$inc", new Document("mincoDollars", -money)));
+            client.findOneAndUpdate(users.get(0).getIdAsString(), new Document("$inc", new Document("mincoDollars", money)));
+            client.findOneAndUpdate(event.getMessageAuthor().getIdAsString(), new Document("$inc", new Document("mincoDollars", -money)));
 
             event.getChannel().sendMessage("You gave " + money + " minco dollars to <@" + users.get(0).getIdAsString() + ">");
         }

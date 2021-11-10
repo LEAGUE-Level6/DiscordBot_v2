@@ -10,10 +10,11 @@ import com.mongodb.client.model.Updates;
 public class Buy extends Feature {
 
     public final String COMMAND = "!buy";
+    Client client;
 
-    public Buy(String channelName) {
+    public Buy(String channelName, Client client) {
         super(channelName);
-
+        this.client = client;
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
@@ -36,7 +37,7 @@ public class Buy extends Feature {
             switch (item) {
                 case "ring": {
                     try {
-                        updateUser(id, "01", 75);
+                        updateUser(id, "01", 75, client);
                         event.getChannel().sendMessage("You bought a **ring :ring:** for 75 md");
                     } catch (NotEnoughMoneyException e) {
                         event.getChannel().sendMessage("You need 75 md to buy a ring");
@@ -45,7 +46,7 @@ public class Buy extends Feature {
                 }
                 case "crown": {
                     try {
-                        updateUser(id, "02", 900);
+                        updateUser(id, "02", 900, client);
                         event.getChannel().sendMessage("You bought a **diamond crown :diamond_shape_with_a_dot_inside:** for 900 md");
                     } catch (NotEnoughMoneyException e) {
                         event.getChannel().sendMessage("You need 900 md to buy a diamond crown");
@@ -54,7 +55,7 @@ public class Buy extends Feature {
                 }
                 case "cowboy hat": {
                     try {
-                        updateUser(id, "03", 25);
+                        updateUser(id, "03", 25, client);
                         event.getChannel().sendMessage("You bought a **cowboy hat :cowboy:** for 25 md");
                     } catch (NotEnoughMoneyException e) {
                         event.getChannel().sendMessage("You need 25 md to buy a cowboy hat");
@@ -63,7 +64,7 @@ public class Buy extends Feature {
                 }
                 case "candy": {
                     try {
-                        updateUser(id, "05", 33);
+                        updateUser(id, "05", 33, client);
                         event.getChannel().sendMessage("You need 33 md to buy a candy");
                     } catch (NotEnoughMoneyException e) {
                         event.getChannel().sendMessage("You need 33 md to buy a cowboy hat");
@@ -78,13 +79,13 @@ public class Buy extends Feature {
         }
     }
 
-    public void updateUser(String id, String inventoryPush, int cost) throws NotEnoughMoneyException {
-        int userMoney = (int) Client.findOne(id).get("mincoDollars");
+    public void updateUser(String id, String inventoryPush, int cost, Client client) throws NotEnoughMoneyException {
+        int userMoney = (int) client.findOne(id).get("mincoDollars");
         if (userMoney < cost) {
             throw new NotEnoughMoneyException();
         }
-        Client.findOneAndUpdate(id, Updates.push("inventory", inventoryPush));
-        Client.findOneAndUpdate(id, Updates.inc("mincoDollars", -cost));
+        client.findOneAndUpdate(id, Updates.push("inventory", inventoryPush));
+        client.findOneAndUpdate(id, Updates.inc("mincoDollars", -cost));
     }
 }
 
