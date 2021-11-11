@@ -15,7 +15,7 @@ public class NasaPictureOfTheDay extends Feature{
     private WebClient webClient;
     private static final String baseUrl = "https://api.nasa.gov/planetary/apod";
     private final String apiKey = "Y01ELGRKSZuaczdrx5m4KJc3sf93yOh5jywRR51U";
-
+    private String date = java.time.LocalDate.now().toString();
     public NasaPictureOfTheDay(String channelName) {
         super(channelName);
         helpEmbed = new HelpEmbed(COMMAND, "explanation");
@@ -34,8 +34,10 @@ public class NasaPictureOfTheDay extends Feature{
             messageContent = messageContent
                     .replace(COMMAND, "")
                     .replace(" " , "");
-            
-            
+            		
+            if(messageContent.length()>0) {
+            	
+            }
                 String pictureInfo = findPicture();
                 event.getChannel().sendMessage(pictureInfo);
             
@@ -46,6 +48,7 @@ public class NasaPictureOfTheDay extends Feature{
         Mono<NasaPictureWrapper> apiExampleWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("api_key", apiKey)
+                        .queryParam("date", date)
                         .build())
                 .retrieve()
                 .bodyToMono(NasaPictureWrapper.class);
@@ -55,11 +58,12 @@ public class NasaPictureOfTheDay extends Feature{
 
     public String findPicture() {
     	NasaPictureWrapper nasaPictureWrapper = getSomethingSomething();
+    	String url = nasaPictureWrapper.getUrl();
     	String title = nasaPictureWrapper.getTitle();
+    	url = url.replace("embed/", "watch?v=");
     	
     	
-    	
-    	return title;
+    	return url;
     }
     
 //    public String findStory(String topic){
