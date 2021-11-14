@@ -36,6 +36,8 @@ public class Riddle extends Feature{
             } else {
                 event.getChannel().sendMessage("Good job.");
             }
+        } else if (gameStarted != true && messageContent.startsWith(GUESS)) {
+                event.getChannel().sendMessage("Game hasn't started.");
         }
     }
 

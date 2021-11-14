@@ -16,10 +16,11 @@ public class Questions extends Feature {
     private static final String baseUrl = "https://opentdb.com/api.php";
 
     public boolean gameStarted = false;
+    public int wrongCounter = 0;
 
     public Questions(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "type !questionsapi for a question and !attempt to guess. ex: !guess duck");
+        helpEmbed = new HelpEmbed(COMMAND, "type !questionsapi for a question and !attempt to guess. ex: !guess duck . after 3 guesses, use !request answer");
 
         this.webClient = WebClient
                 .builder()
@@ -42,7 +43,12 @@ public class Questions extends Feature {
                 event.getChannel().sendMessage("Good job.");
             } else {
                 event.getChannel().sendMessage("Wrong.");
+                wrongCounter ++;
             }
+        }
+        if (gameStarted == true && messageContent.contains("!request answer") && wrongCounter >= 3) {
+            event.getChannel().sendMessage(answer);
+            gameStarted = false;
         }
     }
 

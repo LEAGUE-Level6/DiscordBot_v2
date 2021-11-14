@@ -126,9 +126,9 @@ public class RiddleTest {
     @Test
     void itShouldNotAcceptGuessIfGameIsNotStarted() {
         //Given
-        String command = "!guess 4";
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getMessageContent()).thenReturn("!guess 4");
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        riddle.gameStarted = false;
 
         //When
         riddle.handle(messageCreateEvent);
