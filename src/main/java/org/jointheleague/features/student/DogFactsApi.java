@@ -1,5 +1,10 @@
 package org.jointheleague.features.student;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper;
@@ -18,7 +23,11 @@ public class DogFactsApi extends Feature {
 
     public DogFactsApi(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Gets facts about dogs (usage: !dogFacts [numOfFacts])");
+        helpEmbed = new HelpEmbed(COMMAND, "Gets facts about dogs! Usage:\n"
+        		+ "!dogFacts [numOfFacts] (without [])\n"
+        		+ "!dogFacts\n"
+        		+ "!dogFacts all (note there are a lot of facts, maybe try next command)\n"
+        		+ "!dogFacts all txt\n");
 
         this.webClient = WebClient
                 .builder()
@@ -32,12 +41,15 @@ public class DogFactsApi extends Feature {
         if (messageContent.startsWith(COMMAND)) {
         	String otherWord = messageContent.replaceAll(" ", "").replace(COMMAND, "");
         	int numberOfFacts = 2; // not 1
+        	boolean txtMode = false;
         	if (otherWord.contains("all")) {
-        		event.getChannel().sendMessage("ALL found");
         		this.webClient = WebClient
                         .builder()
                         .baseUrl("https://dog-facts-api.herokuapp.com/api/v1/resources/dogs/all")
                         .build();
+        		if (otherWord.contains("txt")) {
+        			txtMode = true;
+        		}
         	}
         	else {
         		numberOfFacts = 1;
@@ -53,12 +65,11 @@ public class DogFactsApi extends Feature {
                     .baseUrl(baseUrl + "?number=" + numberOfFacts)
                     .build();
         	}
-            String dogFact = getDogFact(numberOfFacts);
-            event.getChannel().sendMessage(dogFact);
+            getDogFact(numberOfFacts, event, txtMode);
         }
     }
 
-    public String getDogFact(int numberOfFacts) {
+    public void getDogFact(int numberOfFacts, MessageCreateEvent event, boolean txtMode) {
 
         Mono<DogFactsApiWrapper[]> dfMono = webClient.get()
                 .retrieve()
@@ -70,16 +81,48 @@ public class DogFactsApi extends Feature {
         
         if (numberOfFacts == 1) {
         	message = dfw[0].getFact() + "\n";
+            event.getChannel().sendMessage(message);
         }
         else {
-        	message = "Dog Facts:\n";
-        	for (int i = 0; i < dfw.length; i++) {
-        		int factNum = i + 1;
-        		message = message + factNum + ") " + dfw[i].getFact() + "\n";
+        	if (txtMode) {
+        		try {
+        			File f = new File("dogFacts.txt");
+        			f.createNewFile();
+        			
+        			FileWriter writer = new FileWriter("dogFacts.txt", false);
+        			message = "Dog Facts:\n";
+                	for (int i = 0; i < dfw.length; i++) {
+                		int factNum = i + 1;
+                		message =  message + factNum + ") " + dfw[i].getFact() + "\n";
+                	}
+                	writer.write(message);
+        			writer.close();
+        			
+        			File dogFactsFile = new File("dogFacts.txt"); 
+        			event.getChannel().sendMessage(dogFactsFile);
+        			try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						dogFactsFile.delete(); // prioritize deleting the file
+					}
+        			dogFactsFile.delete();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+        	else {
+        		message = "Dog Facts:\n";
+                event.getChannel().sendMessage(message);
+            	for (int i = 0; i < dfw.length; i++) {
+            		int factNum = i + 1;
+            		String line = factNum + ") " + dfw[i].getFact() + "\n";
+                    event.getChannel().sendMessage(line);
+            	}
         	}
         }
-
-        return message;
     }
 
     public void setWebClient(WebClient webClient) {
