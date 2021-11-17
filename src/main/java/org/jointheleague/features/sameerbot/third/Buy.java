@@ -7,6 +7,10 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 
 import com.mongodb.client.model.Updates;
 
+import org.bson.Document;
+
+import java.util.ArrayList;
+
 public class Buy extends Feature {
 
     public final String COMMAND = "!buy";
@@ -37,37 +41,45 @@ public class Buy extends Feature {
             switch (item) {
                 case "ring": {
                     try {
-                        updateUser(id, "01", 75, client);
+                        updateUser(id, "01", 75);
                         event.getChannel().sendMessage("You bought a **ring :ring:** for 75 md");
                     } catch (NotEnoughMoneyException e) {
                         event.getChannel().sendMessage("You need 75 md to buy a ring");
+                    } catch (AlreadyHaveItemException e) {
+                        event.getChannel().sendMessage("You already have a ring!");
                     }
                     break;
                 }
                 case "crown": {
                     try {
-                        updateUser(id, "02", 900, client);
+                        updateUser(id, "02", 900);
                         event.getChannel().sendMessage("You bought a **diamond crown :diamond_shape_with_a_dot_inside:** for 900 md");
                     } catch (NotEnoughMoneyException e) {
                         event.getChannel().sendMessage("You need 900 md to buy a diamond crown");
+                    } catch (AlreadyHaveItemException e) {
+                        event.getChannel().sendMessage("You already have a crown!");
                     }
                     break;
                 }
                 case "cowboy hat": {
                     try {
-                        updateUser(id, "03", 25, client);
+                        updateUser(id, "03", 25);
                         event.getChannel().sendMessage("You bought a **cowboy hat :cowboy:** for 25 md");
                     } catch (NotEnoughMoneyException e) {
                         event.getChannel().sendMessage("You need 25 md to buy a cowboy hat");
+                    } catch (AlreadyHaveItemException e) {
+                        event.getChannel().sendMessage("You already have a cowboy hat!");
                     }
                     break;
                 }
                 case "candy": {
                     try {
-                        updateUser(id, "05", 33, client);
-                        event.getChannel().sendMessage("You need 33 md to buy a candy");
+                        updateUser(id, "05", 33);
+                        event.getChannel().sendMessage("You bought a candy for 33 md");
                     } catch (NotEnoughMoneyException e) {
-                        event.getChannel().sendMessage("You need 33 md to buy a cowboy hat");
+                        event.getChannel().sendMessage("You need 33 md to buy a candy");
+                    } catch (AlreadyHaveItemException e) {
+                        event.getChannel().sendMessage("You already have a candy!");
                     }
                     break;
                 }
@@ -79,14 +91,23 @@ public class Buy extends Feature {
         }
     }
 
-    public void updateUser(String id, String inventoryPush, int cost, Client client) throws NotEnoughMoneyException {
-        int userMoney = (int) client.findOne(id).get("mincoDollars");
+    public void updateUser(String id, String inventoryPush, int cost) throws NotEnoughMoneyException, AlreadyHaveItemException {
+        Document doc = client.findOne(id);
+        int userMoney = (int) doc.get("mincoDollars");
+        ArrayList<String> inventory = (ArrayList<String>) doc.get("inventory");
         if (userMoney < cost) {
             throw new NotEnoughMoneyException();
+        }
+        if (inventory.contains(inventoryPush)) {
+            throw new AlreadyHaveItemException();
         }
         client.findOneAndUpdate(id, Updates.push("inventory", inventoryPush));
         client.findOneAndUpdate(id, Updates.inc("mincoDollars", -cost));
     }
 }
 
-class NotEnoughMoneyException extends Exception {}
+class NotEnoughMoneyException extends Exception {
+}
+
+class AlreadyHaveItemException extends Exception {
+}

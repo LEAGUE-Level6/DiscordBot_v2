@@ -1,11 +1,10 @@
 package org.jointheleague.features.sameerbot.third;
 
 
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAuthor;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.Client;
@@ -18,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -26,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class BalanceTest {
+class BuyTest {
 
     private final String testChannelName = "test";
-    private Balance balance;
+    private Buy buy;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -44,17 +43,17 @@ class BalanceTest {
     private Client client;
 
     @Mock
-    private Message message;
+    private MessageAuthor author;
 
     private Optional<User> userOptional;
-    
+
     @Mock
     private User user;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        balance = new Balance(testChannelName, client);
+        buy = new Buy(testChannelName, client);
         System.setOut(new PrintStream(outContent));
     }
 
@@ -72,7 +71,7 @@ class BalanceTest {
         //Given
 
         //When
-        String command = balance.COMMAND;
+        String command = buy.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -80,26 +79,64 @@ class BalanceTest {
         assertEquals('!', command.charAt(0));
         assertNotNull(command);
     }
-
+    // all tests are with candy
     @Test
-    void itShouldHandleMessagesWithCommand() {
+    void itShouldDecreaseMoney() {
         //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn(balance.COMMAND);
+        when(messageCreateEvent.getMessageContent()).thenReturn("!buy candy");
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
-        when(messageCreateEvent.getMessage()).thenReturn(message);
-        when(message.getMentionedUsers()).thenReturn(Collections.emptyList());
-        userOptional = Optional.of(user);
-        when(message.getUserAuthor()).thenReturn(userOptional);
-        when(user.getName()).thenReturn("person");
-        when(user.getIdAsString()).thenReturn("724786310711214118");
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
+        when(author.getIdAsString()).thenReturn("724786310711214118");
         HashMap<String, Object> map = new HashMap<>();
         map.put("mincoDollars", 50);
         map.put("bank", 50);
+        map.put("inventory", new ArrayList());
         when(client.findOne(anyString())).thenReturn(new Document(map));
+
         //When
-        balance.handle(messageCreateEvent);
+        buy.handle(messageCreateEvent);
         //Then
-        verify(textChannel, times(1)).sendMessage(any(EmbedBuilder.class));
+        verify(client, times(1)).findOneAndUpdate("724786310711214118", Updates.inc("mincoDollars", -33));
+    }
+
+    @Test
+    void itShouldNotWorkWithTooLittleMoney() {
+        when(messageCreateEvent.getMessageContent()).thenReturn("!buy candy");
+        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
+        when(author.getIdAsString()).thenReturn("724786310711214118");
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("mincoDollars", 1);
+        map.put("bank", 50000);
+        map.put("inventory", new ArrayList());
+        when(client.findOne(anyString())).thenReturn(new Document(map));
+
+        //When
+        buy.handle(messageCreateEvent);
+        //Then
+        verify(client, times(0)).findOneAndUpdate("724786310711214118", Updates.inc("mincoDollars", -33));
+        verify(textChannel, times(1)).sendMessage("You need 33 md to buy a candy");
+    }
+
+    @Test
+    void itShouldNotWorkIfItemAlreadyExists() {
+        when(messageCreateEvent.getMessageContent()).thenReturn("!buy candy");
+        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
+        when(author.getIdAsString()).thenReturn("724786310711214118");
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("mincoDollars", 50);
+        map.put("bank", 50);
+        ArrayList<String> list = new ArrayList<>();
+        list.add("05");
+        map.put("inventory", list);
+        when(client.findOne(anyString())).thenReturn(new Document(map));
+
+        //When
+        buy.handle(messageCreateEvent);
+        //Then
+        verify(client, times(0)).findOneAndUpdate("724786310711214118", Updates.inc("mincoDollars", -33));
+        verify(textChannel, times(1)).sendMessage("You already have a candy!");
     }
 
     @Test
@@ -109,7 +146,7 @@ class BalanceTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        balance.handle(messageCreateEvent);
+        buy.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -120,7 +157,7 @@ class BalanceTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = balance.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = buy.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -131,8 +168,8 @@ class BalanceTest {
         //Given
 
         //When
-        String helpEmbedTitle = balance.getHelpEmbed().getTitle();
-        String command = balance.COMMAND;
+        String helpEmbedTitle = buy.getHelpEmbed().getTitle();
+        String command = buy.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

@@ -3,9 +3,7 @@ package org.jointheleague.features.sameerbot.third;
 
 import org.bson.Document;
 import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAuthor;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.Client;
@@ -18,7 +16,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -26,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class BalanceTest {
+class BegTest {
 
     private final String testChannelName = "test";
-    private Balance balance;
+    private Beg beg;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -44,17 +41,17 @@ class BalanceTest {
     private Client client;
 
     @Mock
-    private Message message;
+    private MessageAuthor author;
 
     private Optional<User> userOptional;
-    
+
     @Mock
     private User user;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        balance = new Balance(testChannelName, client);
+        beg = new Beg(testChannelName, client);
         System.setOut(new PrintStream(outContent));
     }
 
@@ -72,7 +69,7 @@ class BalanceTest {
         //Given
 
         //When
-        String command = balance.COMMAND;
+        String command = beg.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -82,24 +79,22 @@ class BalanceTest {
     }
 
     @Test
-    void itShouldHandleMessagesWithCommand() {
+    void itShouldIncreaseMoney() {
         //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn(balance.COMMAND);
+        when(messageCreateEvent.getMessageContent()).thenReturn(beg.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
-        when(messageCreateEvent.getMessage()).thenReturn(message);
-        when(message.getMentionedUsers()).thenReturn(Collections.emptyList());
-        userOptional = Optional.of(user);
-        when(message.getUserAuthor()).thenReturn(userOptional);
-        when(user.getName()).thenReturn("person");
-        when(user.getIdAsString()).thenReturn("724786310711214118");
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
+        when(author.getIdAsString()).thenReturn("724786310711214118");
         HashMap<String, Object> map = new HashMap<>();
         map.put("mincoDollars", 50);
         map.put("bank", 50);
         when(client.findOne(anyString())).thenReturn(new Document(map));
+
         //When
-        balance.handle(messageCreateEvent);
+        beg.handle(messageCreateEvent);
         //Then
-        verify(textChannel, times(1)).sendMessage(any(EmbedBuilder.class));
+        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(client, times(1)).findOneAndUpdate("724786310711214118", any());
     }
 
     @Test
@@ -109,7 +104,7 @@ class BalanceTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        balance.handle(messageCreateEvent);
+        beg.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -120,7 +115,7 @@ class BalanceTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = balance.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = beg.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -131,8 +126,8 @@ class BalanceTest {
         //Given
 
         //When
-        String helpEmbedTitle = balance.getHelpEmbed().getTitle();
-        String command = balance.COMMAND;
+        String helpEmbedTitle = beg.getHelpEmbed().getTitle();
+        String command = beg.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
