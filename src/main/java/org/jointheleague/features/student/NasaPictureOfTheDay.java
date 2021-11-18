@@ -34,12 +34,24 @@ public class NasaPictureOfTheDay extends Feature{
             messageContent = messageContent
                     .replace(COMMAND, "")
                     .replace(" " , "");
-            		
+            String[] YMD = messageContent.split("-");		
             if(messageContent.length()>0) {
             	
+            	if(YMD[0].length()==4&&YMD[1].length()==2&&YMD[2].length()==2) {
+            		date = messageContent;
+            		String pictureInfo = findPicture();
+                    event.getChannel().sendMessage(pictureInfo);
+            	}
+            	else {
+            		event.getChannel().sendMessage("Date is not formmated correctly\nMust be formmated as (yyyy-mm-dd)");
+            	}
             }
-                String pictureInfo = findPicture();
+            else{
+            	date = java.time.LocalDate.now().toString();
+            	String pictureInfo = findPicture();
                 event.getChannel().sendMessage(pictureInfo);
+            }
+                
             
         }
     }
