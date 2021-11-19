@@ -11,6 +11,8 @@ import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.covid_tracker.Actuals;
 import org.jointheleague.features.covid_tracker.CovidTracker;
 import org.jointheleague.features.covid_tracker.Example;
+import org.jointheleague.features.covid_tracker.HospitalBeds;
+import org.jointheleague.features.covid_tracker.IcuBeds;
 import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
@@ -51,7 +53,13 @@ class CovidTrackerTest {
     @Mock
     Mono<Example> examples;
     @Mock
+    Example act;
+    @Mock
   Actuals actual;
+    @Mock
+    HospitalBeds hospitalBeds;
+    @Mock
+    IcuBeds ICUBeds;
     @Mock
     WebClient webClientMock;
 
@@ -109,7 +117,7 @@ class CovidTrackerTest {
     }
 
     @Test
-    void itShouldHandleMessagesWithCommand() {
+    void itShouldHandleCases() {
         //Given
         when(messageCreateEvent.getMessageContent()).thenReturn(covidTracker.COMMAND+" cases CA");
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
@@ -122,8 +130,10 @@ when(requestHeadersSpecMock.retrieve())
 when(responseSpecMock.bodyToMono(Example.class))
         .thenReturn(examples);
 //CONTINUE FROM HERE
-when(examples.block().getActuals())
-        .thenReturn(actual);
+when(examples.block())
+        .thenReturn(act);
+when(act.getActuals())
+.thenReturn(actual);
 
         //When
      
@@ -134,7 +144,119 @@ when(examples.block().getActuals())
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
     }
+    @Test
+    void itShouldHandleTest() {
+        //Given
+        when(messageCreateEvent.getMessageContent()).thenReturn(covidTracker.COMMAND+" tests CA");
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        when(webClientMock.get())
+        .thenReturn(requestHeadersUriSpecMock);
+when(requestHeadersUriSpecMock.uri((Function<UriBuilder, URI>) any()))
+        .thenReturn(requestHeadersSpecMock);
+when(requestHeadersSpecMock.retrieve())
+        .thenReturn(responseSpecMock);
+when(responseSpecMock.bodyToMono(Example.class))
+        .thenReturn(examples);
+//CONTINUE FROM HERE
+when(examples.block())
+        .thenReturn(act);
+when(act.getActuals())
+.thenReturn(actual);
 
+        //When
+     
+
+
+        covidTracker.handle(messageCreateEvent);
+
+        //Then
+        verify(textChannel, times(1)).sendMessage(anyString());
+    }
+    @Test
+    void itShouldHandleHospitalBeds() {
+        //Given
+        when(messageCreateEvent.getMessageContent()).thenReturn(covidTracker.COMMAND+" hospitals CA");
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        when(webClientMock.get())
+        .thenReturn(requestHeadersUriSpecMock);
+when(requestHeadersUriSpecMock.uri((Function<UriBuilder, URI>) any()))
+        .thenReturn(requestHeadersSpecMock);
+when(requestHeadersSpecMock.retrieve())
+        .thenReturn(responseSpecMock);
+when(responseSpecMock.bodyToMono(Example.class))
+        .thenReturn(examples);
+//CONTINUE FROM HERE
+when(examples.block())
+        .thenReturn(act);
+when(act.getActuals())
+.thenReturn(actual);
+when(actual.getHospitalBeds()).thenReturn(hospitalBeds);
+
+        //When
+     
+
+
+        covidTracker.handle(messageCreateEvent);
+
+        //Then
+        verify(textChannel, times(1)).sendMessage(anyString());
+    }
+    @Test
+    void itShouldHandleICUBeds() {
+        //Given
+        when(messageCreateEvent.getMessageContent()).thenReturn(covidTracker.COMMAND+" ICU CA");
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        when(webClientMock.get())
+        .thenReturn(requestHeadersUriSpecMock);
+when(requestHeadersUriSpecMock.uri((Function<UriBuilder, URI>) any()))
+        .thenReturn(requestHeadersSpecMock);
+when(requestHeadersSpecMock.retrieve())
+        .thenReturn(responseSpecMock);
+when(responseSpecMock.bodyToMono(Example.class))
+        .thenReturn(examples);
+//CONTINUE FROM HERE
+when(examples.block())
+        .thenReturn(act);
+when(act.getActuals())
+.thenReturn(actual);
+when(actual.getIcuBeds()).thenReturn(ICUBeds);
+        //When
+     
+
+
+        covidTracker.handle(messageCreateEvent);
+
+        //Then
+        verify(textChannel, times(1)).sendMessage(anyString());
+    }
+    @Test
+    void itShouldHandleVaccinations() {
+        //Given
+        when(messageCreateEvent.getMessageContent()).thenReturn(covidTracker.COMMAND+" vaccinations CA");
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        when(webClientMock.get())
+        .thenReturn(requestHeadersUriSpecMock);
+when(requestHeadersUriSpecMock.uri((Function<UriBuilder, URI>) any()))
+        .thenReturn(requestHeadersSpecMock);
+when(requestHeadersSpecMock.retrieve())
+        .thenReturn(responseSpecMock);
+when(responseSpecMock.bodyToMono(Example.class))
+        .thenReturn(examples);
+//CONTINUE FROM HERE
+when(examples.block())
+        .thenReturn(act);
+when(act.getActuals())
+.thenReturn(actual);
+
+        //When
+     
+
+
+        covidTracker.handle(messageCreateEvent);
+
+        //Then
+        verify(textChannel, times(1)).sendMessage(anyString());
+    }
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
         //Given

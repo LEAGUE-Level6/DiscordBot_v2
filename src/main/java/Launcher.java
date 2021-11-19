@@ -5,7 +5,7 @@ public class Launcher {
 
         //Initialize variables
         String channelName = "ozan";//System.getenv("CHANNEL_NAME");
-        String discordToken = "ODgwNjE4ODQ3OTg2NjQ3MDYx.YSg6Ng.FqD86B-HwHqXScgzQqP8lzaXyBg";//System.getenv("DISCORD_TOKEN"); 
+        String discordToken = "ODgwNjE4ODQ3OTg2NjQ3MDYx.YSg6Ng.Db0MuSPU2Y-POPlIs2sXjC6eN60";//System.getenv("DISCORD_TOKEN"); 
         boolean printDiscordInvite = true;
 
         //Instantiate DiscordBot and connect
