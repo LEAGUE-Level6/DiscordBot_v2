@@ -31,10 +31,14 @@ public class Questions extends Feature {
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
-        String question = getQuestionAndAnswer()[0];
-        String answer = getQuestionAndAnswer()[1];
+        String[] response;
+        String question = "";
+        String answer = "";
 
         if (messageContent.startsWith(COMMAND)) {
+            response = getQuestionAndAnswer();
+            question = response[0];
+            answer = response[1];
             event.getChannel().sendMessage(question);
             gameStarted = true;
         }
@@ -53,14 +57,17 @@ public class Questions extends Feature {
     }
 
     public String[] getQuestionAndAnswer() {
-        String questionData = webClient.get()
+        QuestionsWrapper questionData = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("amount", "1")
                         .build())
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(QuestionsWrapper.class)
                 .block();
-        String[] cutQuestion = questionData.split("question\":\"");
+        System.err.println(questionData.getResults().get(0).getQuestion());
+        System.err.println(questionData.getResults().get(0).getCorrectAnswer());
+        System.err.println(questionData.getResults().get(0).getType());
+        /*String[] cutQuestion = questionData.split("question\":\"");
         String[] cutAnswer = cutQuestion[1].split("\",\"incorrect_answers");
         String[] trimmedQA = cutAnswer[0].split("\",\"correct_answer\":\"");
 
@@ -70,7 +77,11 @@ public class Questions extends Feature {
         while(trimmedQA[0].contains("&#039;s")) {
             trimmedQA[0] = trimmedQA[0].replace("&#039;s", "");
         }
-       return trimmedQA;
+        for(int i = 0; i < trimmedQA.length; i++) {
+            System.err.println(trimmedQA[i]);
+        }
+       return trimmedQA;*/
+        return new String[1];
     }
 
     public void setWebClient(WebClient webClient) {
