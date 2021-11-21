@@ -18,6 +18,8 @@ public class Questions extends Feature {
     public boolean gameStarted = false;
     public int wrongCounter = 0;
 
+    String question = "", answer = "";
+
     public Questions(String channelName) {
         super(channelName);
         helpEmbed = new HelpEmbed(COMMAND, "type !questionsapi for a question and !attempt to guess. ex: !guess duck . after 3 guesses, use !request answer");
@@ -31,14 +33,18 @@ public class Questions extends Feature {
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
-        String question = getQuestionAndAnswer()[0];
-        String answer = getQuestionAndAnswer()[1];
 
         if (messageContent.startsWith(COMMAND)) {
+            String[] results = getQuestionAndAnswer();
+            question = results[0];
+            answer = results[1];
             event.getChannel().sendMessage(question);
             gameStarted = true;
         }
+
         if (gameStarted == true && messageContent.contains(ATTEMPT)) {
+            System.err.println(answer);
+            System.err.println(messageContent);
             if (messageContent.contains(answer)) {
                 event.getChannel().sendMessage("Good job.");
             } else {
@@ -46,9 +52,18 @@ public class Questions extends Feature {
                 wrongCounter ++;
             }
         }
-        if (gameStarted == true && messageContent.contains("!request answer") && wrongCounter >= 3) {
-            event.getChannel().sendMessage(answer);
-            gameStarted = false;
+        if (gameStarted == true && messageContent.contains("!request answer")) {
+            if(wrongCounter >= 3) {
+                event.getChannel().sendMessage(answer);
+                gameStarted = false;
+            } else {
+                event.getChannel().sendMessage("You must guess " + (3 - wrongCounter) + ".");
+            }
+        }
+
+        if(!gameStarted) {
+            question = "" ;
+            answer = "";
         }
     }
 
