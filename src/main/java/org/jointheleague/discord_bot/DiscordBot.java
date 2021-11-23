@@ -1,57 +1,23 @@
 package org.jointheleague.discord_bot;
 
-import org.javacord.api.DiscordApi;
-import org.javacord.api.DiscordApiBuilder;
-import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.second_features.HighLowGame;
-import org.jointheleague.features.examples.third_features.CatFactsApi;
-import org.jointheleague.features.examples.third_features.NewsApi;
-import org.jointheleague.features.examples.first_features.CurrentTime;
-import org.jointheleague.features.examples.first_features.RandomNumber;
-import org.jointheleague.features.help_embed.HelpListener;
+import org.javacord.api.*;
+import org.javacord.api.entity.emoji.*;
 
 public class DiscordBot {
-
-	private String token;
-
-	private String channelName;
-
-	DiscordApi api;
-
-	HelpListener helpListener;
-
-	public DiscordBot(String token, String channelName) {
-		this.token = token;
-		this.channelName = channelName;
-		helpListener = new HelpListener(channelName);
+	DiscordApi API;
+	public DiscordBot(String Token) {
+		this.API = new DiscordApiBuilder().setToken(Token).login().join();
 	}
-
-	public void connect(boolean printInvite) {
-		
-		api = new DiscordApiBuilder().setToken(token).login().join();
-
-		//Print the URL to invite the bot
-		if (printInvite) {
-			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
-					+"\n\tThis message can be disabled in Launcher.java");
-		}
-
-		//Send bot connected message in channel
-		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has connected"));
-
-		//add help listener to bot
-		api.addMessageCreateListener(helpListener);
-
-		//add features
-		addFeature(new RandomNumber(channelName));
-		addFeature(new CurrentTime(channelName));
-		addFeature(new HighLowGame(channelName));
-		addFeature(new NewsApi(channelName));
-		addFeature(new CatFactsApi(channelName));
-	}
-
-	private void addFeature(Feature feature){
-		api.addMessageCreateListener(feature);
-		helpListener.addHelpEmbed(feature.getHelpEmbed());
+	public void Connect() {
+		API.addMessageCreateListener(E -> {
+			String Content = E.getMessageContent();
+			if (Content.startsWith("BBot: ")) {
+				String[] Data = Content.substring(6).split(" ");
+				switch (Data[0]) {
+					case "Poll":
+						break;
+				}
+			}
+		});
 	}
 }
