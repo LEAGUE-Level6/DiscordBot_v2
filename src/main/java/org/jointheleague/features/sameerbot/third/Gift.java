@@ -1,5 +1,4 @@
 package org.jointheleague.features.sameerbot.third;
-import org.bson.Document;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.Client;
@@ -8,10 +7,7 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 
 import com.mongodb.client.model.Updates;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 public class Gift extends Feature {
 
@@ -52,10 +48,10 @@ public class Gift extends Feature {
                 return;
             }
 
-            client.findOneAndUpdate(users.get(0).getIdAsString(), new Document("$inc", new Document("mincoDollars", money)));
-            client.findOneAndUpdate(event.getMessageAuthor().getIdAsString(), new Document("$inc", new Document("mincoDollars", -money)));
+            client.findOneAndUpdate(users.get(0).getIdAsString(), Updates.inc("mincoDollars", money));
+            client.findOneAndUpdate(event.getMessageAuthor().getIdAsString(), Updates.inc("mincoDollars", -money));
 
-            event.getChannel().sendMessage("You gave " + money + " minco dollars to <@" + users.get(0).getIdAsString() + ">");
+            event.getChannel().sendMessage("You gifted " + money + " minco dollars to <@" + users.get(0).getIdAsString() + ">");
         }
     }
 }

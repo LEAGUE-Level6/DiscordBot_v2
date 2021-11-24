@@ -26,24 +26,28 @@ public class Withdraw extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
-            String moneyString = messageContent.substring(9);
-            int depositAmount;
+            if (messageContent.length() < 10) {
+                event.getChannel().sendMessage("You did not provide an integer parameter");
+                return;
+            }
+            String moneyString = messageContent.substring(10);
+            int withdrawAmount;
             try {
-                depositAmount = Integer.parseInt(moneyString);
+                withdrawAmount = Integer.parseInt(moneyString);
             } catch (NumberFormatException e) {
                 event.getChannel().sendMessage("You sent an invalid number");
                 return;
             }
             String id = event.getMessageAuthor().getIdAsString();
             int userBank = (int) client.findOne(id).get("bank");
-            if (depositAmount > userBank) {
+            if (withdrawAmount > userBank) {
                 event.getChannel().sendMessage("You don't have that amount of money to withdraw");
                 return;
             }
 
-            client.findOneAndUpdate(id, Updates.inc("mincoDollars", depositAmount));
-            client.findOneAndUpdate(id, Updates.inc("bank", -depositAmount));
-            event.getChannel().sendMessage("You withdrew " + depositAmount + " md from your bank");
+            client.findOneAndUpdate(id, Updates.inc("mincoDollars", withdrawAmount));
+            client.findOneAndUpdate(id, Updates.inc("bank", -withdrawAmount));
+            event.getChannel().sendMessage("You withdrew " + withdrawAmount + " md from your bank");
         }
     }
 }

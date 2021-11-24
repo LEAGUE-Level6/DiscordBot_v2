@@ -25,6 +25,10 @@ public class Deposit extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
+            if (messageContent.length() < 9) {
+                event.getChannel().sendMessage("You did not provide an integer parameter");
+                return;
+            }
             String moneyString = messageContent.substring(9);
             int depositAmount;
             try {

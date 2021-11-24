@@ -3,6 +3,7 @@ package org.jointheleague.features.sameerbot.third;
 
 import org.bson.Document;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -16,17 +17,15 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class BegTest {
+class ZooTest {
 
     private final String testChannelName = "test";
-    private Beg beg;
+    private Zoo zoo;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -48,10 +47,13 @@ class BegTest {
     @Mock
     private User user;
 
+    @Mock
+    private Message message;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        beg = new Beg(testChannelName, client);
+        zoo = new Zoo(testChannelName, client);
         System.setOut(new PrintStream(outContent));
     }
 
@@ -69,7 +71,7 @@ class BegTest {
         //Given
 
         //When
-        String command = beg.COMMAND;
+        String command = zoo.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -79,22 +81,26 @@ class BegTest {
     }
 
     @Test
-    void itShouldIncreaseMoney() {
+    void ifNoZooIsFound() {
         //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn(beg.COMMAND);
+        when(messageCreateEvent.getMessageContent()).thenReturn(zoo.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
+        when(messageCreateEvent.getMessage()).thenReturn(message);
+        when(message.getMentionedUsers()).thenReturn(Collections.emptyList());
+        userOptional = Optional.of(user);
+        when(message.getUserAuthor()).thenReturn(userOptional);
+        when(user.getName()).thenReturn("person");
+        when(user.getIdAsString()).thenReturn("724786310711214118");
         when(author.getIdAsString()).thenReturn("724786310711214118");
         HashMap<String, Object> map = new HashMap<>();
-        map.put("mincoDollars", 50);
-        map.put("bank", 50);
+        map.put("zoo", new ArrayList<String>());
         when(client.findOne("724786310711214118")).thenReturn(new Document(map));
 
         //When
-        beg.handle(messageCreateEvent);
+        zoo.handle(messageCreateEvent);
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
-        verify(client, times(1)).findOneAndUpdate("724786310711214118", any());
+        verify(textChannel, times(1)).sendMessage("person doesn't have any animals in their zoo");
     }
 
     @Test
@@ -104,7 +110,7 @@ class BegTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        beg.handle(messageCreateEvent);
+        zoo.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -115,7 +121,7 @@ class BegTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = beg.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = zoo.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -126,8 +132,8 @@ class BegTest {
         //Given
 
         //When
-        String helpEmbedTitle = beg.getHelpEmbed().getTitle();
-        String command = beg.COMMAND;
+        String helpEmbedTitle = zoo.getHelpEmbed().getTitle();
+        String command = zoo.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
