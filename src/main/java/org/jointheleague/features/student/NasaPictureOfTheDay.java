@@ -1,5 +1,9 @@
 package org.jointheleague.features.student;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
@@ -26,7 +30,7 @@ public class NasaPictureOfTheDay extends Feature{
                 .baseUrl(baseUrl)
                 .build();
     }
-
+//1995-06-20 is the lowest date for the picture
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
@@ -34,13 +38,47 @@ public class NasaPictureOfTheDay extends Feature{
             messageContent = messageContent
                     .replace(COMMAND, "")
                     .replace(" " , "");
-            String[] YMD = messageContent.split("-");		
+            
+            
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String bottom = "1995-06-20";
+            Date past = null;
+            Date user = null;
+            Date today = null;
+            try {
+				past = formatter.parse(bottom);
+				user = formatter.parse(messageContent);
+				today = formatter.parse(java.time.LocalDate.now().toString());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+//            final int YEARPAST = 1995;
+//            final int MONTHPAST = 6;
+//            final int DAYPAST = 20;
+            
+            String[] YMD = messageContent.split("-");	
+//            int year = Integer.parseInt(YMD[0]);
+//            int month = Integer.parseInt(YMD[1]);
+//            int day = Integer.parseInt(YMD[2]);
+//            
+//            String[] YMDToday = java.time.LocalDate.now().toString().split("-");
+//            int yearToday = Integer.parseInt(YMD[0]);
+//            int monthToday = Integer.parseInt(YMD[1]);
+//            int dayToday = Integer.parseInt(YMD[2]);
+            
             if(messageContent.length()>0) {
             	
             	if(YMD[0].length()==4&&YMD[1].length()==2&&YMD[2].length()==2) {
-            		date = messageContent;
-            		String pictureInfo = findPicture();
-                    event.getChannel().sendMessage(pictureInfo);
+            		if(user.before(past)||user.after(today)) {
+            			event.getChannel().sendMessage("Date is out of range");
+            		}
+            		
+            		
+            		else {
+            			date = messageContent;
+            			String pictureInfo = findPicture();
+            			event.getChannel().sendMessage(pictureInfo);
+            		}
             	}
             	else {
             		event.getChannel().sendMessage("Date is not formmated correctly\nMust be formmated as (yyyy-mm-dd)");
