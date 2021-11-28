@@ -5,8 +5,6 @@ import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.Pun;
-import org.jointheleague.features.student.Riddle;
-import org.jointheleague.features.student.questions.Questions;
 
 public class DiscordBot {
 
@@ -47,8 +45,6 @@ public class DiscordBot {
 		//addFeature(new NewsApi(channelName));
 		//addFeature(new CatFactsApi(channelName));
 		addFeature(new Pun(channelName));
-		addFeature(new Riddle(channelName));
-		addFeature(new Questions(channelName));
 	}
 
 	private void addFeature(Feature feature){
