@@ -4,37 +4,33 @@ org/jointheleague/features/examples/third_features/plain_old_java_objects/cat_fa
  org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper
 org/jointheleague/features/help_embed/plain_old_java_objects/help_embed/HelpEmbed.java
  org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed
-org/jointheleague/features/abstract_classes/Feature.java
- org.jointheleague.features.abstract_classes.Feature
+org/jointheleague/features/student/questions/QuestionsWrapper.java
+ org.jointheleague.features.student.questions.QuestionsWrapper
 org/jointheleague/features/examples/first_features/RandomNumber.java
  org.jointheleague.features.examples.first_features.RandomNumber
 org/jointheleague/features/examples/third_features/plain_old_java_objects/news_api/Source.java
  org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Source
 org/jointheleague/features/examples/third_features/CatFactsApi.java
  org.jointheleague.features.examples.third_features.CatFactsApi
-org/jointheleague/features/student/Riddle.java
- org.jointheleague.features.student.Riddle
 org/jointheleague/features/examples/third_features/plain_old_java_objects/news_api/Article.java
  org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article
 org/jointheleague/features/examples/second_features/HighLowGame.java
  org.jointheleague.features.examples.second_features.HighLowGame
-org/jointheleague/features/student/Pun.java
- org.jointheleague.features.student.Pun
 org/jointheleague/features/help_embed/HelpListener.java
  org.jointheleague.features.help_embed.HelpListener
 org/jointheleague/features/templates/FeatureTemplate.java
  org.jointheleague.features.templates.FeatureTemplate
-org/jointheleague/features/examples/third_features/NewsApi.java
- org.jointheleague.features.examples.third_features.NewsApi
+org/jointheleague/features/student/questions/Result.java
+ org.jointheleague.features.student.questions.Result
 org/jointheleague/features/examples/third_features/plain_old_java_objects/news_api/ApiExampleWrapper.java
  org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper
 org/jointheleague/features/examples/first_features/CurrentTime.java
  org.jointheleague.features.examples.first_features.CurrentTime
-org/jointheleague/features/student/questions/QuestionsWrapper.java
- org.jointheleague.features.student.questions.QuestionsWrapper
+org/jointheleague/features/abstract_classes/Feature.java
+ org.jointheleague.features.abstract_classes.Feature
+org/jointheleague/features/examples/third_features/NewsApi.java
+ org.jointheleague.features.examples.third_features.NewsApi
 org/jointheleague/discord_bot/DiscordBot.java
  org.jointheleague.discord_bot.DiscordBot
 org/jointheleague/features/student/questions/Questions.java
  org.jointheleague.features.student.questions.Questions
-org/jointheleague/features/student/questions/Result.java
- org.jointheleague.features.student.questions.Result

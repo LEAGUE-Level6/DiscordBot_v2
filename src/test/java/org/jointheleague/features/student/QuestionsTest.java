@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -117,10 +118,18 @@ public class QuestionsTest {
         String question = "What engine did the original Half-Life run on?";
         Result result = new Result();
         result.setQuestion(question);
+        /*result.setCorrectAnswer("a");
+        result.setCategory("b");
+        result.setDifficulty("c");
+        result.setType("d");
+        List<String> list = Arrays.asList("e", "f");
+        result.setIncorrectAnswers(list);*/
+
         List<Result> data = Collections.singletonList(result);
 
         QuestionsWrapper questionsWrapper = new QuestionsWrapper();
         questionsWrapper.setResults(data);
+        //questionsWrapper.setResponseCode(1);
 
         when(messageCreateEvent.getMessageContent()).thenReturn(questionsapi.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
