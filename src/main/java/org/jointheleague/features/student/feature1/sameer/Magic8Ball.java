@@ -1,4 +1,4 @@
-package org.jointheleague.features.sameer_bot.first;
+package org.jointheleague.features.student.feature1.sameer;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;

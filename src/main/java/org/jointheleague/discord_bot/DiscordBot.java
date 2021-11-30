@@ -9,7 +9,7 @@ import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
-import org.jointheleague.features.sameer_bot.first.*;
+import org.jointheleague.features.student.feature1.sameer.*;
 
 public class DiscordBot {
 

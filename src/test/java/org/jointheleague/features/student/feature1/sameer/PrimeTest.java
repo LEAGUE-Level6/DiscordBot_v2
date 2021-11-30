@@ -1,7 +1,5 @@
-package org.jointheleague.features.sameer_bot.first;
-
+package org.jointheleague.features.student.feature1.sameer;
 import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
@@ -18,10 +16,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-class DiceTest {
+class PrimeTest {
 
     private final String testChannelName = "test";
-    private final Dice dice = new Dice(testChannelName);
+    private final Prime prime = new Prime(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -52,29 +50,29 @@ class DiceTest {
         //Given
 
         //When
-        String command = dice.COMMAND;
+        String command = prime.COMMAND;
 
         //Then
 
         assertNotEquals("", command);
         assertNotEquals("!", command);
+        assertEquals("!prime", command);
         assertEquals('!', command.charAt(0));
-        assertEquals("!dice", command);
         assertNotNull(command);
     }
 
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(dice.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(dice.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(prime.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(prime.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        dice.handle(messageCreateEvent);
+        prime.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(any(EmbedBuilder.class));
+        verify(textChannel, times(1)).sendMessage(anyString());
     }
 
     @Test
@@ -84,7 +82,7 @@ class DiceTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        dice.handle(messageCreateEvent);
+        prime.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -95,7 +93,7 @@ class DiceTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = dice.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = prime.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -106,11 +104,18 @@ class DiceTest {
         //Given
 
         //When
-        String helpEmbedTitle = dice.getHelpEmbed().getTitle();
-        String command = dice.COMMAND;
+        String helpEmbedTitle = prime.getHelpEmbed().getTitle();
+        String command = prime.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
     }
 
+    @Test
+    void isPrime() {
+        assertEquals(prime.isPrime(2), "2 is prime");
+        assertEquals(prime.isPrime(5), "5 is prime");
+        assertEquals(prime.isPrime(10), "10 isn't prime because it is divisible by 2");
+        assertEquals(prime.isPrime(1), "1 is neither prime nor composite");
+    }
 }
