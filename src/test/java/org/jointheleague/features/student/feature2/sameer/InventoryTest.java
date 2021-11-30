@@ -1,8 +1,7 @@
-package org.jointheleague.features.sameer_bot.second;
+package org.jointheleague.features.student.feature2.sameer;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAuthor;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
@@ -13,18 +12,19 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-public class BuyTest {
+public class InventoryTest {
     private final String testChannelName = "test";
-    private final Buy buy = new Buy(testChannelName);
+    private final Inventory inventory = new Inventory(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
-
+    private ArrayList<String> inv = new ArrayList<>();
     @Mock
     private MessageCreateEvent messageCreateEvent;
 
@@ -48,6 +48,8 @@ public class BuyTest {
         assertEquals(expected, actual);
         System.out.println(actual);
         System.setOut(originalOut);
+        inv = new ArrayList<>();
+        Data.userToInventory.put("724786310711214118", inv);
     }
 
     @Test
@@ -55,7 +57,7 @@ public class BuyTest {
         //Given
 
         //When
-        String command = buy.COMMAND;
+        String command = inventory.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -70,7 +72,7 @@ public class BuyTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        buy.handle(messageCreateEvent);
+        inventory.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -81,78 +83,62 @@ public class BuyTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = buy.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = inventory.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
     }
 
     @Test
-    void itShouldSayNotSpecifyItem() {
-        //Given
-        String command = "!buy";
-        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
-
-        //When
-        buy.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage("You did not specify an item");
-    }
-
-    @Test
-    void itShouldNotWorkIfItemIsNotInShop() {
+    void itShouldShowNoItems() {
         // Given
-        String command="!buy aosidjaosidj";
-        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getMessageAuthor()).thenReturn(messageAuthor);
-        when(messageAuthor.getIdAsString()).thenReturn("724786310711214118");
-
-        //When
-        buy.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel,times(1)).sendMessage("That item isn't in the shop");
-    }
-
-    @Test
-    void buyMilk() {
-        // Given
-        String command = "!buy milk";
-        int price = 10;
+        String command = "!inventory";
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getMessageAuthor()).thenReturn(messageAuthor);
         when(messageAuthor.getIdAsString()).thenReturn("724786310711214118");
 
         // When
-        buy.handle(messageCreateEvent);
+        inventory.handle(messageCreateEvent);
 
         // Then
-        verify(textChannel,times(1)).sendMessage("You bought milk for :coin: 10");
-        assertEquals((int)Data.userToCoins.get("724786310711214118"), 40);
-        Data.userToCoins.put("724786310711214118", 50);
+        verify(textChannel, times(1)).sendMessage("Your inventory is empty");
     }
 
     @Test
-    void doesNotWorkIfUserDoesNotHaveEnoughMoney() {
+    void itShouldShowMilk() {
         // Given
-        Data.userToCoins.put("724786310711214118", 5);
-        String command = "!buy milk";
-        int price = 10;
+        String command = "!inventory";
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getMessageAuthor()).thenReturn(messageAuthor);
         when(messageAuthor.getIdAsString()).thenReturn("724786310711214118");
+        inv.add("milk");
+        Data.userToInventory.put("724786310711214118", inv);
 
         // When
-        buy.handle(messageCreateEvent);
+        inventory.handle(messageCreateEvent);
 
         // Then
-        verify(textChannel,times(1)).sendMessage("You need :coin: 10 to buy this item.");
-        assertEquals((int) Data.userToCoins.get("724786310711214118"), 5);
-        Data.userToCoins.put("724786310711214118", 50);
+        verify(textChannel, times(1)).sendMessage(":milk: Milk\n");
+    }
+
+    @Test
+    void itShouldShowMilkAndTomato() {
+        // Given
+        String command = "!inventory";
+        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(messageAuthor);
+        when(messageAuthor.getIdAsString()).thenReturn("724786310711214118");
+        inv.add("milk");
+        inv.add("tomato");
+        Data.userToInventory.put("724786310711214118", inv);
+
+        // When
+        inventory.handle(messageCreateEvent);
+
+        // Then
+        verify(textChannel, times(1)).sendMessage(":milk: Milk\n:tomato: Tomato\n");
     }
 }

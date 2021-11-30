@@ -1,29 +1,25 @@
-package org.jointheleague.features.sameer_bot.second;
+package org.jointheleague.features.student.feature2.sameer;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAuthor;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.jointheleague.features.sameer_bot.second.Data;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-public class BegTest {
+public class BuyTest {
     private final String testChannelName = "test";
-    private final Beg beg = new Beg(testChannelName);
+    private final Buy buy = new Buy(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -51,7 +47,6 @@ public class BegTest {
         assertEquals(expected, actual);
         System.out.println(actual);
         System.setOut(originalOut);
-        Data.userToCoins.put("724786310711214118", 50);
     }
 
     @Test
@@ -59,7 +54,7 @@ public class BegTest {
         //Given
 
         //When
-        String command = beg.COMMAND;
+        String command = buy.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -74,7 +69,7 @@ public class BegTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        beg.handle(messageCreateEvent);
+        buy.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -85,62 +80,78 @@ public class BegTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = beg.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = buy.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
     }
 
     @Test
-    void itShouldSendString() {
+    void itShouldSayNotSpecifyItem() {
         //Given
-        String command = "!beg";
+        String command = "!buy";
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getMessageAuthor()).thenReturn(messageAuthor);
-        when(messageAuthor.getIdAsString()).thenReturn("724786310711214118");
 
         //When
-        beg.handle(messageCreateEvent);
+        buy.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
-        beg.cooldowns = new HashMap<>();
+        verify(textChannel, times(1)).sendMessage("You did not specify an item");
     }
 
     @Test
-    void itShouldIncreaseMoney() {//Given
-        String command = "!beg";
+    void itShouldNotWorkIfItemIsNotInShop() {
+        // Given
+        String command="!buy aosidjaosidj";
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getMessageAuthor()).thenReturn(messageAuthor);
         when(messageAuthor.getIdAsString()).thenReturn("724786310711214118");
 
         //When
-
-        beg.handle(messageCreateEvent);
+        buy.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
-        assertNotNull(Data.userToCoins.get("724786310711214118"));
-        assertTrue(Data.userToCoins.get("724786310711214118") > 50);
-        beg.cooldowns = new HashMap<>();
+        verify(textChannel,times(1)).sendMessage("That item isn't in the shop");
     }
 
     @Test
-    void cooldownsShouldWork() {
-        String command = "!beg";
+    void buyMilk() {
+        // Given
+        String command = "!buy milk";
+        int price = 10;
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getMessageAuthor()).thenReturn(messageAuthor);
         when(messageAuthor.getIdAsString()).thenReturn("724786310711214118");
 
-        //When
+        // When
+        buy.handle(messageCreateEvent);
 
-        beg.handle(messageCreateEvent);
-        beg.handle(messageCreateEvent);
-
-        verify(textChannel, times(1)).sendMessage(ArgumentMatchers.startsWith("Please wait"));
+        // Then
+        verify(textChannel,times(1)).sendMessage("You bought milk for :coin: 10");
+        assertEquals((int)Data.userToCoins.get("724786310711214118"), 40);
+        Data.userToCoins.put("724786310711214118", 50);
     }
 
+    @Test
+    void doesNotWorkIfUserDoesNotHaveEnoughMoney() {
+        // Given
+        Data.userToCoins.put("724786310711214118", 5);
+        String command = "!buy milk";
+        int price = 10;
+        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(messageAuthor);
+        when(messageAuthor.getIdAsString()).thenReturn("724786310711214118");
+
+        // When
+        buy.handle(messageCreateEvent);
+
+        // Then
+        verify(textChannel,times(1)).sendMessage("You need :coin: 10 to buy this item.");
+        assertEquals((int) Data.userToCoins.get("724786310711214118"), 5);
+        Data.userToCoins.put("724786310711214118", 50);
+    }
 }

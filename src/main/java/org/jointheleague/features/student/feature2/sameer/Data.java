@@ -1,4 +1,4 @@
-package org.jointheleague.features.sameer_bot.second;
+package org.jointheleague.features.student.feature2.sameer;
 import java.util.HashMap;
 import java.util.ArrayList;
 public class Data {
