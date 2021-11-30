@@ -18,16 +18,17 @@ public class DogFactsApi extends Feature {
     public final String COMMAND = "!dogFacts";
 
     private WebClient webClient;
-//    private static String baseUrl = "https://dog-facts-api.herokuapp.com/api/v1/resources/dogs?number=";
-    private static final String baseUrl = "https://dog-facts-api.herokuapp.com/api/v1/resources/dogs";
+    private static final String baseUrl = "https://dogfacts-api.herokuapp.com/api/v1/resources/dogs";
 
     public DogFactsApi(String channelName) {
         super(channelName);
         helpEmbed = new HelpEmbed(COMMAND, "Gets facts about dogs! Usage:\n"
-        		+ "!dogFacts [numOfFacts] (without [])\n"
+        		+ "!dogFacts [numOfFacts] (without the [])\n"
         		+ "!dogFacts\n"
         		+ "!dogFacts all (note there are a lot of facts, maybe try next command)\n"
-        		+ "!dogFacts all txt\n");
+        		+ "!dogFacts all txt\n"
+        		+ "!dogFacts keyword [word] (without the [])\n"
+        		+ "!dogFacts keyword [word],[word2],[word3],[etc] (without the [], note: use comma to seperate search keywords, not spaces)\n");
 
         this.webClient = WebClient
                 .builder()
@@ -39,13 +40,23 @@ public class DogFactsApi extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
-        	String otherWord = messageContent.replaceAll(" ", "").replace(COMMAND, "");
+        	String otherWord = messageContent.replaceAll(" ", "").replace(COMMAND, "").toLowerCase();
         	int numberOfFacts = 2; // not 1
         	boolean txtMode = false;
-        	if (otherWord.contains("all")) {
+        	String keyword = "";
+        	String kws[] = {""};
+        	if (otherWord.contains("keyword")) {
+        		keyword = otherWord.replaceAll("keyword", "");
+        		kws = keyword.split(",");
         		this.webClient = WebClient
                         .builder()
-                        .baseUrl("https://dog-facts-api.herokuapp.com/api/v1/resources/dogs/all")
+                        .baseUrl(baseUrl)
+                        .build();
+        	}
+        	else if (otherWord.contains("all")) {
+        		this.webClient = WebClient
+                        .builder()
+                        .baseUrl(baseUrl)
                         .build();
         		if (otherWord.contains("txt")) {
         			txtMode = true;
@@ -65,11 +76,11 @@ public class DogFactsApi extends Feature {
                     .baseUrl(baseUrl + "?number=" + numberOfFacts)
                     .build();
         	}
-            getDogFact(numberOfFacts, event, txtMode);
+            getDogFact(numberOfFacts, event, txtMode, kws);
         }
     }
 
-    public void getDogFact(int numberOfFacts, MessageCreateEvent event, boolean txtMode) {
+    public void getDogFact(int numberOfFacts, MessageCreateEvent event, boolean txtMode, String[] kws) {
 
         Mono<DogFactsApiWrapper[]> dfMono = webClient.get()
                 .retrieve()
@@ -114,12 +125,38 @@ public class DogFactsApi extends Feature {
 				}
         	}
         	else {
-        		message = "Dog Facts:\n";
+//        		message = "Dog Facts:\n";
+        		if (kws[0].equals("")) {
+        			message = "Dog Facts:\n";
+        		}
+        		else {
+        			message = "Dog Facts containing";
+        			for (int i = 0; i < kws.length; i++) {
+        				message += " '" + kws[i] + "'";
+        			}
+        			message += ":\n";
+        		}
+        		int factNumAlso = 1;
                 event.getChannel().sendMessage(message);
             	for (int i = 0; i < dfw.length; i++) {
-            		int factNum = i + 1;
-            		String line = factNum + ") " + dfw[i].getFact() + "\n";
-                    event.getChannel().sendMessage(line);
+            		if (!kws[0].equals("")) {
+            			boolean keywordIn = false;
+            			for (int j = 0; j< kws.length; j++) {
+            				if (dfw[i].getFact().toLowerCase().contains(kws[j])) {
+            					keywordIn = true;
+            				}
+            			}
+            			if (keywordIn) {
+            				String line = factNumAlso + ") " + dfw[i].getFact() + "\n";
+                            event.getChannel().sendMessage(line);
+                            factNumAlso++;
+            			}
+            		}
+            		else {
+            			int factNum = i + 1;
+                		String line = factNum + ") " + dfw[i].getFact() + "\n";
+                        event.getChannel().sendMessage(line);
+            		}
             	}
         	}
         }
