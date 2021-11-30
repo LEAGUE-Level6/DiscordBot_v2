@@ -1,8 +1,8 @@
-package org.jointheleague.features.templates;
+package org.jointheleague.features.student.feature1.sameer;
 
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,14 +14,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-class FeatureTemplateTest {
+class DiceTest {
 
     private final String testChannelName = "test";
-    private final FeatureTemplate featureTemplate = new FeatureTemplate(testChannelName);
+    private final Dice dice = new Dice(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -52,28 +51,29 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String command = featureTemplate.COMMAND;
+        String command = dice.COMMAND;
 
         //Then
 
         assertNotEquals("", command);
         assertNotEquals("!", command);
         assertEquals('!', command.charAt(0));
+        assertEquals("!dice", command);
         assertNotNull(command);
     }
 
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureTemplate.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureTemplate.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(dice.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(dice.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        dice.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(textChannel, times(1)).sendMessage(any(EmbedBuilder.class));
     }
 
     @Test
@@ -83,7 +83,7 @@ class FeatureTemplateTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        dice.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -94,7 +94,7 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = featureTemplate.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = dice.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -105,8 +105,8 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String helpEmbedTitle = featureTemplate.getHelpEmbed().getTitle();
-        String command = featureTemplate.COMMAND;
+        String helpEmbedTitle = dice.getHelpEmbed().getTitle();
+        String command = dice.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
