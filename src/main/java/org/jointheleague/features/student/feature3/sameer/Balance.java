@@ -1,4 +1,4 @@
-package org.jointheleague.features.sameerbot.third;
+package org.jointheleague.features.student.feature3.sameer;
 
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;

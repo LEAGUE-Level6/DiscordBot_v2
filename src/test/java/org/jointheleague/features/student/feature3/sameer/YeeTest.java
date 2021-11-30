@@ -1,6 +1,7 @@
-package org.jointheleague.features.sameerbot.third;
+package org.jointheleague.features.student.feature3.sameer;
 
 
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAuthor;
@@ -16,17 +17,15 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class BegTest {
+class YeeTest {
 
     private final String testChannelName = "test";
-    private Beg beg;
+    private Yee yee = new Yee(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -51,7 +50,6 @@ class BegTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        beg = new Beg(testChannelName, client);
         System.setOut(new PrintStream(outContent));
     }
 
@@ -69,7 +67,7 @@ class BegTest {
         //Given
 
         //When
-        String command = beg.COMMAND;
+        String command = yee.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -77,26 +75,16 @@ class BegTest {
         assertEquals('!', command.charAt(0));
         assertNotNull(command);
     }
-
     @Test
-    void itShouldIncreaseMoney() {
-        //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn(beg.COMMAND);
+    void itShouldSendAYee() {
+        when(messageCreateEvent.getMessageContent()).thenReturn("!yee");
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
-        when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
-        when(author.getIdAsString()).thenReturn("724786310711214118");
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("mincoDollars", 50);
-        map.put("bank", 50);
-        when(client.findOne("724786310711214118")).thenReturn(new Document(map));
 
-        //When
-        beg.handle(messageCreateEvent);
-        //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
-        verify(client, times(1)).findOneAndUpdate("724786310711214118", any());
+        yee.handle(messageCreateEvent);
+
+        verify(textChannel,times(1)).sendMessage("https://tenor.com/view/yee-yeedinasour-dinasour-gif-4930781");
+        verify(textChannel,times(1)).sendMessage("https://youtu.be/q6EoRBvdVPQ");
     }
-
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
         //Given
@@ -104,7 +92,7 @@ class BegTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        beg.handle(messageCreateEvent);
+        yee.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -115,7 +103,7 @@ class BegTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = beg.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = yee.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -126,8 +114,8 @@ class BegTest {
         //Given
 
         //When
-        String helpEmbedTitle = beg.getHelpEmbed().getTitle();
-        String command = beg.COMMAND;
+        String helpEmbedTitle = yee.getHelpEmbed().getTitle();
+        String command = yee.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

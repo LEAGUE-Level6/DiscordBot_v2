@@ -1,4 +1,4 @@
-package org.jointheleague.features.sameerbot.third;
+package org.jointheleague.features.student.feature3.sameer;
 
 
 import com.mongodb.client.model.Updates;
@@ -6,7 +6,6 @@ import org.bson.Document;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAuthor;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.Client;
@@ -24,7 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class GiftTest {

@@ -1,7 +1,6 @@
-package org.jointheleague.features.sameerbot.third;
+package org.jointheleague.features.student.feature3.sameer;
 
 
-import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAuthor;
@@ -17,7 +16,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -25,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class BuyTest {
+class BegTest {
 
     private final String testChannelName = "test";
-    private Buy buy;
+    private Beg beg;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -53,7 +51,7 @@ class BuyTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        buy = new Buy(testChannelName, client);
+        beg = new Beg(testChannelName, client);
         System.setOut(new PrintStream(outContent));
     }
 
@@ -71,7 +69,7 @@ class BuyTest {
         //Given
 
         //When
-        String command = buy.COMMAND;
+        String command = beg.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -79,64 +77,24 @@ class BuyTest {
         assertEquals('!', command.charAt(0));
         assertNotNull(command);
     }
-    // all tests are with candy
+
     @Test
-    void itShouldDecreaseMoney() {
+    void itShouldIncreaseMoney() {
         //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn("!buy candy");
+        when(messageCreateEvent.getMessageContent()).thenReturn(beg.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
         when(author.getIdAsString()).thenReturn("724786310711214118");
         HashMap<String, Object> map = new HashMap<>();
         map.put("mincoDollars", 50);
         map.put("bank", 50);
-        map.put("inventory", new ArrayList());
-        when(client.findOne(anyString())).thenReturn(new Document(map));
+        when(client.findOne("724786310711214118")).thenReturn(new Document(map));
 
         //When
-        buy.handle(messageCreateEvent);
+        beg.handle(messageCreateEvent);
         //Then
-        verify(client, times(1)).findOneAndUpdate("724786310711214118", Updates.inc("mincoDollars", -33));
-    }
-
-    @Test
-    void itShouldNotWorkWithTooLittleMoney() {
-        when(messageCreateEvent.getMessageContent()).thenReturn("!buy candy");
-        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
-        when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
-        when(author.getIdAsString()).thenReturn("724786310711214118");
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("mincoDollars", 1);
-        map.put("bank", 50000);
-        map.put("inventory", new ArrayList());
-        when(client.findOne(anyString())).thenReturn(new Document(map));
-
-        //When
-        buy.handle(messageCreateEvent);
-        //Then
-        verify(client, times(0)).findOneAndUpdate("724786310711214118", Updates.inc("mincoDollars", -33));
-        verify(textChannel, times(1)).sendMessage("You need 33 md to buy a candy");
-    }
-
-    @Test
-    void itShouldNotWorkIfItemAlreadyExists() {
-        when(messageCreateEvent.getMessageContent()).thenReturn("!buy candy");
-        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
-        when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
-        when(author.getIdAsString()).thenReturn("724786310711214118");
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("mincoDollars", 50);
-        map.put("bank", 50);
-        ArrayList<String> list = new ArrayList<>();
-        list.add("05");
-        map.put("inventory", list);
-        when(client.findOne(anyString())).thenReturn(new Document(map));
-
-        //When
-        buy.handle(messageCreateEvent);
-        //Then
-        verify(client, times(0)).findOneAndUpdate("724786310711214118", Updates.inc("mincoDollars", -33));
-        verify(textChannel, times(1)).sendMessage("You already have a candy!");
+        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(client, times(1)).findOneAndUpdate("724786310711214118", any());
     }
 
     @Test
@@ -146,7 +104,7 @@ class BuyTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        buy.handle(messageCreateEvent);
+        beg.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -157,7 +115,7 @@ class BuyTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = buy.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = beg.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -168,8 +126,8 @@ class BuyTest {
         //Given
 
         //When
-        String helpEmbedTitle = buy.getHelpEmbed().getTitle();
-        String command = buy.COMMAND;
+        String helpEmbedTitle = beg.getHelpEmbed().getTitle();
+        String command = beg.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

@@ -1,4 +1,4 @@
-package org.jointheleague.features.sameerbot.third;
+package org.jointheleague.features.student.feature3.sameer;
 
 import com.mongodb.client.model.Updates;
 import org.javacord.api.event.message.MessageCreateEvent;

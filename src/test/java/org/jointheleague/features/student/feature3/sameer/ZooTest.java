@@ -1,9 +1,9 @@
-package org.jointheleague.features.sameerbot.third;
+package org.jointheleague.features.student.feature3.sameer;
 
 
-import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -17,17 +17,15 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class YeeTest {
+class ZooTest {
 
     private final String testChannelName = "test";
-    private Yee yee = new Yee(testChannelName);
+    private Zoo zoo;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -49,9 +47,13 @@ class YeeTest {
     @Mock
     private User user;
 
+    @Mock
+    private Message message;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        zoo = new Zoo(testChannelName, client);
         System.setOut(new PrintStream(outContent));
     }
 
@@ -69,7 +71,7 @@ class YeeTest {
         //Given
 
         //When
-        String command = yee.COMMAND;
+        String command = zoo.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -77,16 +79,30 @@ class YeeTest {
         assertEquals('!', command.charAt(0));
         assertNotNull(command);
     }
+
     @Test
-    void itShouldSendAYee() {
-        when(messageCreateEvent.getMessageContent()).thenReturn("!yee");
+    void ifNoZooIsFound() {
+        //Given
+        when(messageCreateEvent.getMessageContent()).thenReturn(zoo.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
+        when(messageCreateEvent.getMessage()).thenReturn(message);
+        when(message.getMentionedUsers()).thenReturn(Collections.emptyList());
+        userOptional = Optional.of(user);
+        when(message.getUserAuthor()).thenReturn(userOptional);
+        when(user.getName()).thenReturn("person");
+        when(user.getIdAsString()).thenReturn("724786310711214118");
+        when(author.getIdAsString()).thenReturn("724786310711214118");
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("zoo", new ArrayList<String>());
+        when(client.findOne("724786310711214118")).thenReturn(new Document(map));
 
-        yee.handle(messageCreateEvent);
-
-        verify(textChannel,times(1)).sendMessage("https://tenor.com/view/yee-yeedinasour-dinasour-gif-4930781");
-        verify(textChannel,times(1)).sendMessage("https://youtu.be/q6EoRBvdVPQ");
+        //When
+        zoo.handle(messageCreateEvent);
+        //Then
+        verify(textChannel, times(1)).sendMessage("person doesn't have any animals in their zoo");
     }
+
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
         //Given
@@ -94,7 +110,7 @@ class YeeTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        yee.handle(messageCreateEvent);
+        zoo.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -105,7 +121,7 @@ class YeeTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = yee.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = zoo.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -116,8 +132,8 @@ class YeeTest {
         //Given
 
         //When
-        String helpEmbedTitle = yee.getHelpEmbed().getTitle();
-        String command = yee.COMMAND;
+        String helpEmbedTitle = zoo.getHelpEmbed().getTitle();
+        String command = zoo.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

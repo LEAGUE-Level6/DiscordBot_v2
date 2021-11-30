@@ -1,12 +1,9 @@
-package org.jointheleague.features.sameerbot.third;
+package org.jointheleague.features.student.feature3.sameer;
 
 
 import org.bson.Document;
 import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAuthor;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.Client;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
@@ -18,18 +15,17 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class BalanceTest {
+class InventoryTest {
 
     private final String testChannelName = "test";
-    private Balance balance;
+    private Inventory inventory;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -44,17 +40,12 @@ class BalanceTest {
     private Client client;
 
     @Mock
-    private Message message;
-
-    private Optional<User> userOptional;
-    
-    @Mock
-    private User user;
+    private MessageAuthor author;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        balance = new Balance(testChannelName, client);
+        inventory = new Inventory(testChannelName, client);
         System.setOut(new PrintStream(outContent));
     }
 
@@ -72,7 +63,7 @@ class BalanceTest {
         //Given
 
         //When
-        String command = balance.COMMAND;
+        String command = inventory.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -82,24 +73,36 @@ class BalanceTest {
     }
 
     @Test
-    void itShouldHandleMessagesWithCommand() {
+    void ifNoInventoryIsFound() {
         //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn(balance.COMMAND);
+        when(messageCreateEvent.getMessageContent()).thenReturn(inventory.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
-        when(messageCreateEvent.getMessage()).thenReturn(message);
-        when(message.getMentionedUsers()).thenReturn(Collections.emptyList());
-        userOptional = Optional.of(user);
-        when(message.getUserAuthor()).thenReturn(userOptional);
-        when(user.getName()).thenReturn("person");
-        when(user.getIdAsString()).thenReturn("724786310711214118");
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
+        when(author.getIdAsString()).thenReturn("724786310711214118");
         HashMap<String, Object> map = new HashMap<>();
-        map.put("mincoDollars", 50);
-        map.put("bank", 50);
-        when(client.findOne(anyString())).thenReturn(new Document(map));
+        map.put("inventory", new ArrayList<String>());
+        when(client.findOne("724786310711214118")).thenReturn(new Document(map));
+
         //When
-        balance.handle(messageCreateEvent);
+        inventory.handle(messageCreateEvent);
         //Then
-        verify(textChannel, times(1)).sendMessage(any(EmbedBuilder.class));
+        verify(textChannel, times(1)).sendMessage("You don't have any items in your inventory");
+    }
+
+    @Test
+    void allItemsTest() {
+        when(messageCreateEvent.getMessageContent()).thenReturn(inventory.COMMAND);
+        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
+        when(author.getIdAsString()).thenReturn("724786310711214118");
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("inventory", new ArrayList<>(Arrays.asList(new String[]{"01","02","03","04","05","06","07","08","09","10","11","11-0", "11-1", "11-2", "12"})));
+        when(client.findOne("724786310711214118")).thenReturn(new Document(map));
+
+        //When
+        inventory.handle(messageCreateEvent);
+        //Then
+        verify(textChannel, times(1)).sendMessage(":ring: Marriage Ring\n:diamond_shape_with_a_dot_inside: Diamond Crown\n:cowboy: Cowboy Hat\n:tomato: Tomato\n:candy: Candy\nJellyfish\n:bear: Bear\n:cactus: Cactus\n:fire: Fire\nLootbox\n:egg: Raw Egg\n:egg: Boiled Egg\n:egg: Scrambled Eggs\n:egg: Omelette\n:banana: Banana\n");
     }
 
     @Test
@@ -109,7 +112,7 @@ class BalanceTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        balance.handle(messageCreateEvent);
+        inventory.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -120,7 +123,7 @@ class BalanceTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = balance.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = inventory.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -131,8 +134,8 @@ class BalanceTest {
         //Given
 
         //When
-        String helpEmbedTitle = balance.getHelpEmbed().getTitle();
-        String command = balance.COMMAND;
+        String helpEmbedTitle = inventory.getHelpEmbed().getTitle();
+        String command = inventory.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

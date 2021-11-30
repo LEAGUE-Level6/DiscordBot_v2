@@ -1,6 +1,7 @@
-package org.jointheleague.features.sameerbot.third;
+package org.jointheleague.features.student.feature3.sameer;
 
 
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAuthor;
@@ -17,7 +18,6 @@ import org.mockito.MockitoAnnotations;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class InventoryTest {
+class BuyTest {
 
     private final String testChannelName = "test";
-    private Inventory inventory;
+    private Buy buy;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -45,10 +45,15 @@ class InventoryTest {
     @Mock
     private MessageAuthor author;
 
+    private Optional<User> userOptional;
+
+    @Mock
+    private User user;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        inventory = new Inventory(testChannelName, client);
+        buy = new Buy(testChannelName, client);
         System.setOut(new PrintStream(outContent));
     }
 
@@ -66,7 +71,7 @@ class InventoryTest {
         //Given
 
         //When
-        String command = inventory.COMMAND;
+        String command = buy.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -74,38 +79,64 @@ class InventoryTest {
         assertEquals('!', command.charAt(0));
         assertNotNull(command);
     }
-
+    // all tests are with candy
     @Test
-    void ifNoInventoryIsFound() {
+    void itShouldDecreaseMoney() {
         //Given
-        when(messageCreateEvent.getMessageContent()).thenReturn(inventory.COMMAND);
+        when(messageCreateEvent.getMessageContent()).thenReturn("!buy candy");
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
         when(author.getIdAsString()).thenReturn("724786310711214118");
         HashMap<String, Object> map = new HashMap<>();
-        map.put("inventory", new ArrayList<String>());
-        when(client.findOne("724786310711214118")).thenReturn(new Document(map));
+        map.put("mincoDollars", 50);
+        map.put("bank", 50);
+        map.put("inventory", new ArrayList());
+        when(client.findOne(anyString())).thenReturn(new Document(map));
 
         //When
-        inventory.handle(messageCreateEvent);
+        buy.handle(messageCreateEvent);
         //Then
-        verify(textChannel, times(1)).sendMessage("You don't have any items in your inventory");
+        verify(client, times(1)).findOneAndUpdate("724786310711214118", Updates.inc("mincoDollars", -33));
     }
 
     @Test
-    void allItemsTest() {
-        when(messageCreateEvent.getMessageContent()).thenReturn(inventory.COMMAND);
+    void itShouldNotWorkWithTooLittleMoney() {
+        when(messageCreateEvent.getMessageContent()).thenReturn("!buy candy");
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
         when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
         when(author.getIdAsString()).thenReturn("724786310711214118");
         HashMap<String, Object> map = new HashMap<>();
-        map.put("inventory", new ArrayList<>(Arrays.asList(new String[]{"01","02","03","04","05","06","07","08","09","10","11","11-0", "11-1", "11-2", "12"})));
-        when(client.findOne("724786310711214118")).thenReturn(new Document(map));
+        map.put("mincoDollars", 1);
+        map.put("bank", 50000);
+        map.put("inventory", new ArrayList());
+        when(client.findOne(anyString())).thenReturn(new Document(map));
 
         //When
-        inventory.handle(messageCreateEvent);
+        buy.handle(messageCreateEvent);
         //Then
-        verify(textChannel, times(1)).sendMessage(":ring: Marriage Ring\n:diamond_shape_with_a_dot_inside: Diamond Crown\n:cowboy: Cowboy Hat\n:tomato: Tomato\n:candy: Candy\nJellyfish\n:bear: Bear\n:cactus: Cactus\n:fire: Fire\nLootbox\n:egg: Raw Egg\n:egg: Boiled Egg\n:egg: Scrambled Eggs\n:egg: Omelette\n:banana: Banana\n");
+        verify(client, times(0)).findOneAndUpdate("724786310711214118", Updates.inc("mincoDollars", -33));
+        verify(textChannel, times(1)).sendMessage("You need 33 md to buy a candy");
+    }
+
+    @Test
+    void itShouldNotWorkIfItemAlreadyExists() {
+        when(messageCreateEvent.getMessageContent()).thenReturn("!buy candy");
+        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+        when(messageCreateEvent.getMessageAuthor()).thenReturn(author);
+        when(author.getIdAsString()).thenReturn("724786310711214118");
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("mincoDollars", 50);
+        map.put("bank", 50);
+        ArrayList<String> list = new ArrayList<>();
+        list.add("05");
+        map.put("inventory", list);
+        when(client.findOne(anyString())).thenReturn(new Document(map));
+
+        //When
+        buy.handle(messageCreateEvent);
+        //Then
+        verify(client, times(0)).findOneAndUpdate("724786310711214118", Updates.inc("mincoDollars", -33));
+        verify(textChannel, times(1)).sendMessage("You already have a candy!");
     }
 
     @Test
@@ -115,7 +146,7 @@ class InventoryTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        inventory.handle(messageCreateEvent);
+        buy.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -126,7 +157,7 @@ class InventoryTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = inventory.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = buy.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -137,8 +168,8 @@ class InventoryTest {
         //Given
 
         //When
-        String helpEmbedTitle = inventory.getHelpEmbed().getTitle();
-        String command = inventory.COMMAND;
+        String helpEmbedTitle = buy.getHelpEmbed().getTitle();
+        String command = buy.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
