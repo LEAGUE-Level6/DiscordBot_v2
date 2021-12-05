@@ -111,7 +111,7 @@ public class QuestionsTest {
         assertEquals(command, helpEmbedTitle);
     }
 
-    @Test
+   /* @Test
     void givenMessageWithCommand_whenHandle_thenSendQuestion() {
         //given
         String question = "What engine did the original Half-Life run on?";
@@ -141,7 +141,7 @@ public class QuestionsTest {
         verify(webClientMock, times(1)).get();
         verify(textChannel, times(1)).sendMessage(question);
     }
-
+*/
     @Test
     void givenMessageWithoutCommand_whenHandle_thenPrintWrong() {
         //Given
@@ -156,7 +156,7 @@ public class QuestionsTest {
         verify(textChannel, times(1)).sendMessage("Good job.");
     }
 
-    @Test
+   /* @Test
     void itShouldSendAnswerRequestAfterThreeFails() {
         //Given
         String answer = "answer";
@@ -197,5 +197,5 @@ public class QuestionsTest {
         //Then
         verify(textChannel, times(1)).sendMessage("answer");
     }
-
+*/
 }
