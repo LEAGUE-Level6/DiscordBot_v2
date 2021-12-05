@@ -1,0 +1,24 @@
+V17:51:11.861 [Test worker] DEBUG reactor.util.Loggers - Using Slf4j logging framework
+Ö17:51:11.945 [Test worker] DEBUG io.netty.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+\17:51:11.949 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - Platform: MacOS
+h17:51:11.953 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - -Dio.netty.noUnsafe: false
+]17:51:11.960 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - Java version: 8
+r17:51:11.963 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - sun.misc.Unsafe.theUnsafe: available
+s17:51:11.964 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - sun.misc.Unsafe.copyMemory: available
+p17:51:11.965 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - java.nio.Buffer.address: available
+r17:51:11.966 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - direct buffer constructor: available
+v17:51:11.967 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - java.nio.Bits.unaligned: available, true
+¢17:51:11.967 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable prior to Java9
+Ñ17:51:11.967 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - java.nio.DirectByteBuffer.<init>(long, int): available
+g17:51:11.968 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - sun.misc.Unsafe: available
+°17:51:11.969 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - -Dio.netty.tmpdir: /var/folders/sl/lv58xnz12jb69mpv46nkn7rw0000gn/T (java.io.tmpdir)
+y17:51:11.969 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - -Dio.netty.bitMode: 64 (sun.arch.data.model)
+x17:51:11.972 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - -Dio.netty.maxDirectMemory: 477626368 bytes
+Å17:51:11.973 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - -Dio.netty.uninitializedArrayAllocationThreshold: -1
+p17:51:11.974 [Test worker] DEBUG io.netty.util.internal.CleanerJava6 - java.nio.ByteBuffer.cleaner(): available
+m17:51:11.974 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - -Dio.netty.noPreferDirect: false
+Õ17:51:12.012 [Test worker] DEBUG reactor.netty.tcp.TcpResources - [http] resources will use the default LoopResources: DefaultLoopResources {prefix=reactor-http, daemon=true, selectCount=8, workerCount=8}
+Ω17:51:12.012 [Test worker] DEBUG reactor.netty.tcp.TcpResources - [http] resources will use the default ConnectionProvider: reactor.netty.resources.DefaultPooledConnectionProvider@2b8864d2
+m17:51:12.121 [Test worker] DEBUG io.netty.util.ResourceLeakDetector - -Dio.netty.leakDetection.level: simple
+p17:51:12.122 [Test worker] DEBUG io.netty.util.ResourceLeakDetector - -Dio.netty.leakDetection.targetRecords: 4
+⁄17:51:12.615 [Test worker] WARN org.springframework.http.converter.json.Jackson2ObjectMapperBuilder - For Jackson Kotlin classes support please add "com.fasterxml.jackson.module:jackson-module-kotlin" to the classpath

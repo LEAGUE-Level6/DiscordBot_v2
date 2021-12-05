@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - Class org.jointheleague.features.examples.third_features.CatFactsApiTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>Class org.jointheleague.features.examples.third_features.CatFactsApiTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/org.jointheleague.features.examples.third_features.html">org.jointheleague.features.examples.third_features</a> &gt; CatFactsApiTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">2.798s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">givenMessageWithCommand_whenHandle_thenSendCatFact()</td>
+<td class="success">2.798s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>17:51:11.861 [Test worker] DEBUG reactor.util.Loggers - Using Slf4j logging framework
+17:51:11.945 [Test worker] DEBUG io.netty.util.internal.logging.InternalLoggerFactory - Using SLF4J as the default logging framework
+17:51:11.949 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - Platform: MacOS
+17:51:11.953 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - -Dio.netty.noUnsafe: false
+17:51:11.960 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - Java version: 8
+17:51:11.963 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - sun.misc.Unsafe.theUnsafe: available
+17:51:11.964 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - sun.misc.Unsafe.copyMemory: available
+17:51:11.965 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - java.nio.Buffer.address: available
+17:51:11.966 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - direct buffer constructor: available
+17:51:11.967 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - java.nio.Bits.unaligned: available, true
+17:51:11.967 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable prior to Java9
+17:51:11.967 [Test worker] DEBUG io.netty.util.internal.PlatformDependent0 - java.nio.DirectByteBuffer.&lt;init&gt;(long, int): available
+17:51:11.968 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - sun.misc.Unsafe: available
+17:51:11.969 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - -Dio.netty.tmpdir: /var/folders/sl/lv58xnz12jb69mpv46nkn7rw0000gn/T (java.io.tmpdir)
+17:51:11.969 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - -Dio.netty.bitMode: 64 (sun.arch.data.model)
+17:51:11.972 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - -Dio.netty.maxDirectMemory: 477626368 bytes
+17:51:11.973 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - -Dio.netty.uninitializedArrayAllocationThreshold: -1
+17:51:11.974 [Test worker] DEBUG io.netty.util.internal.CleanerJava6 - java.nio.ByteBuffer.cleaner(): available
+17:51:11.974 [Test worker] DEBUG io.netty.util.internal.PlatformDependent - -Dio.netty.noPreferDirect: false
+17:51:12.012 [Test worker] DEBUG reactor.netty.tcp.TcpResources - [http] resources will use the default LoopResources: DefaultLoopResources {prefix=reactor-http, daemon=true, selectCount=8, workerCount=8}
+17:51:12.012 [Test worker] DEBUG reactor.netty.tcp.TcpResources - [http] resources will use the default ConnectionProvider: reactor.netty.resources.DefaultPooledConnectionProvider@2b8864d2
+17:51:12.121 [Test worker] DEBUG io.netty.util.ResourceLeakDetector - -Dio.netty.leakDetection.level: simple
+17:51:12.122 [Test worker] DEBUG io.netty.util.ResourceLeakDetector - -Dio.netty.leakDetection.targetRecords: 4
+17:51:12.615 [Test worker] WARN org.springframework.http.converter.json.Jackson2ObjectMapperBuilder - For Jackson Kotlin classes support please add &quot;com.fasterxml.jackson.module:jackson-module-kotlin&quot; to the classpath
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 6.6.1</a> at Nov 13, 2021 5:51:13 PM</p>
+</div>
+</div>
+</body>
+</html>

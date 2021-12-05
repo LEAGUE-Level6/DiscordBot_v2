@@ -1,3 +1,4 @@
+
 import org.jointheleague.discord_bot.DiscordBot;
 
 public class Launcher {
