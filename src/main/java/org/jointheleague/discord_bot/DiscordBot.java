@@ -10,8 +10,10 @@ import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 
-// feature 3
+// lelserslasers feature 3
 import org.jointheleague.features.student.DogFactsApi;
+// lelserslasers feature 2
+import org.jointheleague.features.student.Translate;
 
 public class DiscordBot {
 
@@ -54,6 +56,8 @@ public class DiscordBot {
 		
 		// lelserslasers2 - feature 3
 		addFeature(new DogFactsApi(channelName));
+		// lelserslasers2 - feature 2 - !translate
+		addFeature(new Translate(channelName));
 	}
 
 	private void addFeature(Feature feature){
