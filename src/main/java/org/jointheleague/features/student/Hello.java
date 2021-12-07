@@ -24,18 +24,15 @@ public class Hello extends Feature {
             int hellosIndex = r.nextInt(hellos.length);
             String person;
 
-            String name = messageContent.replaceAll(" ", "").replace(COMMAND, "");
-
-            if (name.equals("")) {
-            	try {
-            		person = event.getMessageAuthor().getDisplayName();
-            	}
-            	catch (Exception e) {
-            		person = "";
-            	}
-            }
-            else {
-            	person = name;
+            try {
+                person = messageContent.substring(7);
+            } catch (StringIndexOutOfBoundsException e) {
+                try {
+                    person = event.getMessageAuthor().getDisplayName();
+                }
+                catch (Exception e1) {
+                    person = "";
+                }
             }
 
 
