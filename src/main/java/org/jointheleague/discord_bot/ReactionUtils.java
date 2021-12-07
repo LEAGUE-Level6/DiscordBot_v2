@@ -9,4 +9,7 @@ public class ReactionUtils {
 	static void ThumbsDown(MessageCreateEvent E) {
 		E.addReactionsToMessage("👎");
 	}
+	static void Laugh(MessageCreateEvent E) {
+		E.addReactionsToMessage("😂");
+	}
 }
