@@ -22,7 +22,8 @@ public class NasaPictureOfTheDay extends Feature{
     private String date = java.time.LocalDate.now().toString();
     public NasaPictureOfTheDay(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "explanation");
+        helpEmbed = new HelpEmbed(COMMAND, "Returns the picture for the NASA Astronomy Picture of The Day"
+        		+ " for the current date if nothing else is passed\nWill accept the paramaters for the date in the format: yyyy-mm-dd");
 
         //build the WebClient
         this.webClient = WebClient
