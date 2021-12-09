@@ -23,7 +23,7 @@ import static org.mockito.Mockito.never;
 class NasaPictureOfTheDayTest {
 
     private final String testChannelName = "test1";
-    private final NasaPictureOfTheDay featureTemplate = new NasaPictureOfTheDay(testChannelName);
+    private final NasaPictureOfTheDay nasaPictureOfTheDay = new NasaPictureOfTheDay(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -54,11 +54,11 @@ class NasaPictureOfTheDayTest {
         //Given
 
         //When
-        String command = featureTemplate.COMMAND;
+        String command = nasaPictureOfTheDay.COMMAND;
 
         //Then
 
-        if(!(featureTemplate instanceof NasaPictureOfTheDay)){
+        if(!(nasaPictureOfTheDay instanceof NasaPictureOfTheDay)){
             assertNotEquals("!command", command);
         }
 
@@ -71,13 +71,13 @@ class NasaPictureOfTheDayTest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-    	String command = featureTemplate.COMMAND;
+    	String command = nasaPictureOfTheDay.COMMAND;
         HelpEmbed helpEmbed = new HelpEmbed(command, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureTemplate.COMMAND);
+        when(messageCreateEvent.getMessageContent()).thenReturn(nasaPictureOfTheDay.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        nasaPictureOfTheDay.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -90,7 +90,7 @@ class NasaPictureOfTheDayTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        nasaPictureOfTheDay.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -101,7 +101,7 @@ class NasaPictureOfTheDayTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = featureTemplate.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = nasaPictureOfTheDay.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -112,8 +112,8 @@ class NasaPictureOfTheDayTest {
         //Given
 
         //When
-        String helpEmbedTitle = featureTemplate.getHelpEmbed().getTitle();
-        String command = featureTemplate.COMMAND;
+        String helpEmbedTitle = nasaPictureOfTheDay.getHelpEmbed().getTitle();
+        String command = nasaPictureOfTheDay.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
