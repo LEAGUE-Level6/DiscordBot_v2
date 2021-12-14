@@ -9,6 +9,7 @@ import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
+import org.jointheleague.features.student.Hello;
 
 // my feature 2
 import org.jointheleague.features.student.Translate;
@@ -30,7 +31,7 @@ public class DiscordBot {
 	}
 
 	public void connect(boolean printInvite) {
-		
+
 		api = new DiscordApiBuilder().setToken(token).login().join();
 
 		//Print the URL to invite the bot
@@ -51,7 +52,9 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
-		
+
+		// lelserslasers2 - Feature 1
+		addFeature(new Hello(channelName));
 		// lelserslasers2 - feature 2 - !translate
 		addFeature(new Translate(channelName));
 	}
