@@ -1,11 +1,12 @@
 package org.jointheleague.discord_bot;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
 import javax.swing.JOptionPane;
-
 import org.javacord.api.*;
 import org.javacord.api.entity.emoji.*;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.embed.*;
 import org.javacord.api.listener.message.*;
 import org.javacord.api.util.event.*;
@@ -29,7 +30,7 @@ public class DiscordBot {
 				switch (Data[0]) {
 					case "Annoy":
 						if (!AnnoyedChannels.containsKey(ChannelID)) {
-							ReactionUtils.ThumbsUp(E);
+							Channel.sendMessage("Done");
 							AnnoyedChannels.put(ChannelID, Channel.addMessageCreateListener(M -> {
 								if (M.getMessageAuthor().getId() != ClientID) {
 									Channel.sendMessage("\"" + M.getMessageContent() + "\"");
@@ -37,30 +38,43 @@ public class DiscordBot {
 							}));
 							AnnoyedChannelStarters.put(ChannelID, AuthorName);
 						} else {
-							ReactionUtils.ThumbsDown(E);
+							Channel.sendMessage("Already active");
 						}
 						break;
 					case "StopAnnoy":
 						if (!AnnoyedChannels.containsKey(ChannelID)) {
-							ReactionUtils.ThumbsDown(E);
+							Channel.sendMessage("Not active");
 						} else if (!AnnoyedChannelStarters.get(ChannelID).equals(AuthorName)) {
-							ReactionUtils.Laugh(E);
+							Channel.sendMessage("Nice try... Get the person who started it to run this");
 						} else {
-							ReactionUtils.ThumbsUp(E);
+							Channel.sendMessage("Done");
 							AnnoyedChannels.get(ChannelID).remove();
 							AnnoyedChannels.remove(ChannelID);
 							AnnoyedChannelStarters.remove(ChannelID);
 						}
 						break;
 					case "PollCreate":
-						if (Data.length > 1) {
-							ReactionUtils.ThumbsUp(E);
-							//TODO: continue
+						if (Channel.getType() == ChannelType.PRIVATE_CHANNEL) {
+							try {
+								Message ReactionMessage = Channel.sendMessage("React to this message with the options you want.").get();
+								ReactionMessage.addReactionAddListener(M -> {
+									
+								});
+								ReactionMessage.addReactionRemoveListener(M -> {
+									
+								});
+							} catch(Exception B) {
+								B.printStackTrace();
+							}
+							
 						} else {
-							ReactionUtils.ThumbsDown(E);
+							Channel.sendMessage("Only for DMs");
 						}
 						break;
 					case "Poll":
+						break;
+					default:
+						Channel.sendMessage("\"BBot: Help\" for help");
 						break;
 				}
 			}

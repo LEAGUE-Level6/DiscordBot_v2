@@ -1,0 +1,12 @@
+org/jointheleague/features/examples/second_features/HighLowGameTest.java
+ org.jointheleague.features.examples.second_features.HighLowGameTest
+org/jointheleague/features/templates/FeatureTemplateTest.java
+ org.jointheleague.features.templates.FeatureTemplateTest
+org/jointheleague/features/examples/first_features/CurrentTimeTest.java
+ org.jointheleague.features.examples.first_features.CurrentTimeTest
+org/jointheleague/features/examples/first_features/RandomNumberTest.java
+ org.jointheleague.features.examples.first_features.RandomNumberTest
+org/jointheleague/features/examples/third_features/NewsApiTest.java
+ org.jointheleague.features.examples.third_features.NewsApiTest
+org/jointheleague/features/examples/third_features/CatFactsApiTest.java
+ org.jointheleague.features.examples.third_features.CatFactsApiTest
