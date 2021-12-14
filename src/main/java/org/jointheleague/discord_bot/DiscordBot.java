@@ -11,6 +11,9 @@ import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.Hello;
 
+// my feature 2
+import org.jointheleague.features.student.Translate;
+
 public class DiscordBot {
 
 	private String token;
@@ -52,6 +55,8 @@ public class DiscordBot {
 
 		// lelserslasers2 - Feature 1
 		addFeature(new Hello(channelName));
+		// lelserslasers2 - feature 2 - !translate
+		addFeature(new Translate(channelName));
 	}
 
 	private void addFeature(Feature feature){
