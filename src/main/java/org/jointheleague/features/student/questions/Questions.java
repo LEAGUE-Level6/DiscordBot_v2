@@ -21,9 +21,12 @@ public class Questions extends Feature {
     String question = "", answer = "";
     String[] response;
 
+    public boolean completed = true;
+
     public Questions(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "type !questionsapi for a question and !attempt to guess. ex: !guess duck . after 3 guesses, use !request answer");
+        helpEmbed = new HelpEmbed(COMMAND, "type !questionsapi for a question and !attempt to guess. ex: !attempt duck . " +
+                "after 3 guesses, use !request answer. hint: capitals matter");
 
         this.webClient = WebClient
                 .builder()
@@ -35,17 +38,21 @@ public class Questions extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
 
-        if (messageContent.startsWith(COMMAND)) {
+        if (messageContent.equals(COMMAND) && completed == true) {
             response = getQuestionAndAnswer();
             question = response[0];
             answer = response[1];
+            if(answer.contains("true") || answer.contains("false")) {
+                question += " (true or false)";
+            }
             event.getChannel().sendMessage(question);
-            System.err.println(answer);
             gameStarted = true;
+            completed = false;
         }
 
         if (gameStarted == true && messageContent.contains(ATTEMPT)) {
             if (messageContent.contains(answer)) {
+                completed = true;
                 event.getChannel().sendMessage("Good job.");
             } else {
                 event.getChannel().sendMessage("Wrong.");
@@ -56,8 +63,10 @@ public class Questions extends Feature {
             if(wrongCounter >= 3) {
                 event.getChannel().sendMessage(answer);
                 gameStarted = false;
+                completed = true;
+                wrongCounter = 0;
             } else {
-                event.getChannel().sendMessage("You must guess " + (3 - wrongCounter) + ".");
+                event.getChannel().sendMessage("You must guess " + (3 - wrongCounter) + " more time(s).");
             }
         }
     }
