@@ -1,16 +1,11 @@
 package org.jointheleague.discord_bot;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import javax.swing.JOptionPane;
 import org.javacord.api.*;
-import org.javacord.api.entity.emoji.*;
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.embed.*;
+import org.javacord.api.entity.message.*;
 import org.javacord.api.listener.message.*;
 import org.javacord.api.util.event.*;
 import org.javacord.api.entity.channel.*;
+import org.javacord.api.entity.emoji.*;
 public class DiscordBot {
 	DiscordApi API;
 	public DiscordBot(String Token) {
@@ -45,7 +40,7 @@ public class DiscordBot {
 						if (!AnnoyedChannels.containsKey(ChannelID)) {
 							Channel.sendMessage("Not active");
 						} else if (!AnnoyedChannelStarters.get(ChannelID).equals(AuthorName)) {
-							Channel.sendMessage("Nice try... Get the person who started it to run this");
+							Channel.sendMessage("Nice try...");
 						} else {
 							Channel.sendMessage("Done");
 							AnnoyedChannels.get(ChannelID).remove();
@@ -56,9 +51,15 @@ public class DiscordBot {
 					case "PollCreate":
 						if (Channel.getType() == ChannelType.PRIVATE_CHANNEL) {
 							try {
-								Message ReactionMessage = Channel.sendMessage("React to this message with the options you want.").get();
+								Message ReactionMessage = Channel.sendMessage("React with options (" + Emojis.CheckBox + " when done)").get();
 								ReactionMessage.addReactionAddListener(M -> {
-									
+									Emoji TheEmoji = M.getEmoji();
+									if (TheEmoji.equalsEmoji(Emojis.CheckBox)) {
+										ReactionMessage.delete();
+										Channel.sendMessage("Yes");
+									} else {
+										ReactionMessage.addReaction(TheEmoji);
+									}
 								});
 								ReactionMessage.addReactionRemoveListener(M -> {
 									

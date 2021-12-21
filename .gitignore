@@ -6,3 +6,4 @@
 *.xml
 !pom.xml
 /.gradle/
+/build/
