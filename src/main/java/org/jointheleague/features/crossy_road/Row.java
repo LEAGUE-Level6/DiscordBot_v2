@@ -69,7 +69,7 @@ public boolean update(boolean mainOrNot) {
 	String er = "";
 	Random r = new Random();
 	if(type==1) {
-		if(r.nextInt(10)<3) {
+		if(r.nextInt(15)<3) {
 			if(r.nextBoolean()) {
 				er = ":blue_car:";
 			} else {
@@ -79,7 +79,7 @@ public boolean update(boolean mainOrNot) {
 		er = ":yellow_square:";
 		}
 	} else if (type==2) {
-		if(woodCounter>r.nextInt(5)) {
+		if(woodCounter>r.nextInt(6)) {
 		woodCounter = 0;
 		log = false;
 		}
@@ -87,14 +87,14 @@ public boolean update(boolean mainOrNot) {
 			er = ":wood:";
 			woodCounter++;
 		} else {
-			if(r.nextInt(12)<1) {
+			if(r.nextInt(8)<1) {
 			log = true;
 			}
 			er = ":blue_square:";
 		}
 		
 	} else {
-		if(trainCounter>9) {
+		if(trainCounter>8) {
 			trainCounter = 0;
 			train = false;
 			}
@@ -108,7 +108,7 @@ public boolean update(boolean mainOrNot) {
 				trainCounter++;
 				}
 			} else {
-				if(r.nextInt(20)<1) {
+				if(r.nextInt(18)<1) {
 				train = true;
 				}
 				if(gameRow[6].equals(":red_square:")) {
