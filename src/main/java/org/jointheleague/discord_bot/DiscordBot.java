@@ -9,7 +9,7 @@ import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
-
+import org.jointheleague.features.student.ReverseText;
 // my feature 2
 import org.jointheleague.features.student.Translate;
 
@@ -54,6 +54,8 @@ public class DiscordBot {
 		
 		// lelserslasers2 - feature 2 - !translate
 		addFeature(new Translate(channelName));
+		
+		addFeature(new ReverseText(channelName));
 	}
 
 	private void addFeature(Feature feature){
