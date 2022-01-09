@@ -2,93 +2,75 @@ package org.jointheleague.discord_bot;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-public class rimage extends Feature {
+public class plus extends Feature {
 
-    public final String COMMAND = "!rimage";
-    private WebClient webClient;
-    public String re;
+    public final String COMMAND = "!plus";
+    public int ans =0;
 
-    private static final String baseUrl = "https://picsum.photos/";
-    public rimage(String channelName) {
+    public plus(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "pic");
-        this.webClient = WebClient
-                .builder()
-                .baseUrl(baseUrl)
-                .build();
-    }
-//
-String ink = "";
-    int count =0;
 
+        //Create a help embed to describe feature when !help command is sent
+        helpEmbed = new HelpEmbed(
+                COMMAND,
+                "plius"
+        );
+    }
+    int amount=0;
+    int[] list;
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
-    //    event.getChannel().sendMessage("a");
 
         if (messageContent.startsWith(COMMAND)) {
-            messageContent = messageContent
-                    .replace(COMMAND, "")
-                    .replace(" " , "");
-            if (messageContent.equals("")) {
-                event.getChannel().sendMessage("grayscale,blur,size");
+            //respond to message here
+            if (ans == 0) {
+                if (messageContent.replaceAll(" ", "").replace(COMMAND, "").equals("")) {
+                    amount = (int) (Math.random() * 10);
+                    list = new int[amount];
+                    ans = 0;
+                    String ques = "";
+                    for (int i = 0; i < amount; i++) {
+                        list[i] = (int) (Math.random() * 100);
+                        ans += list[i];
+                        ques += list[i] + "+";
+                    }
+                    ques= ques.substring(0, ques.length() - 1);
+                    event.getChannel().sendMessage(ques);
+                }
+                else event.getChannel().sendMessage("._.");
+            } else {
+                String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND, "");
+                int aye = 0;
+                if (guessMessage.equals("")){
+                    //I KNOW I CAN SHORTEN THIS BY SO MUCH BUT I'M REALLY TOO LAZY
+                    amount = (int) (Math.random() * 10);
+                    list = new int[amount];
+                    ans = 0;
+                    String ques = "";
+                    for (int i = 0; i < amount; i++) {
+                        list[i] = (int) (Math.random() * 100);
+                        ans += list[i];
+                        ques += list[i] + "+";
+                    }
+                    ques=  ques.substring(0, ques.length() - 1);
+                    event.getChannel().sendMessage(ques);
+                }
+                else{
+                try {
+                    aye = Integer.parseInt(guessMessage);
+                } catch (NumberFormatException e) {
+                }
+                 if (ans == aye) {
+                    event.getChannel().sendMessage("correct");
+                    ans=0;
+                }
+                else event.getChannel().sendMessage("you suck");
+                }
             }
-//            else if (messageContent.startsWith("s")){
-//                messageContent=messageContent.replace("s","");
-//                event.getChannel().sendMessage("https://picsum.photos/"+Integer.parseInt(messageContent.substring(0, messageContent.indexOf('|')))+"/"+Integer.parseInt(messageContent.substring(messageContent.indexOf('|')+1, messageContent.length()))+"?random=1");
-//            }
-            if (messageContent.startsWith("grayscaleblur")){
-                messageContent = messageContent.replace("grayscaleblur", "");
-                ink = "?grayscaleblur=2";
-            }
-
-            else if (messageContent.startsWith("grayscale")){
-                messageContent = messageContent.replace("grayscale", "");
-                ink = "?grayscale";
-            }
-            else if (messageContent.startsWith("blur")){
-                messageContent = messageContent.replace("blur", "");
-                ink = "?blur";
-            }
-                int wid = Integer.parseInt(messageContent.substring(0, messageContent.indexOf('|')));
-                int len = Integer.parseInt(messageContent.substring(messageContent.indexOf('|')+1, messageContent.length()));
-                re = "https://picsum.photos/"+wid+"/"+len+ink+"random="+count;
-                event.getChannel().sendMessage("https://picsum.photos/"+wid+"/"+len+ink+"random="+count);
-                count++;
-//            }
+        }
     }
-
-//    public ApiData getimage(int a, int b) {
-//        Mono<ApiData> dataApiMono = webClient.get()
-//                .uri(uriBuilder -> uriBuilder
-//                        .queryParam("width", a)
-//                        .queryParam("height",b)
-//                        .build())
-//                .retrieve()
-//                .bodyToMono(ApiData.class);
-//        return dataApiMono.block();
-    }
-
-//    public String FIMage(int a, int b){
-//
-//        //Get a story from News API
-//        System.out.println("FIMage");
-//        ApiData apiData = getimage(a,b);
-//
-//        //Get the URL of the article
-//        String urll= apiData.getUrl();
-//
-//        //Send the message
-//        System.out.println(urll);
-//        return urll;
-//
-//
-//    }
 
 }
