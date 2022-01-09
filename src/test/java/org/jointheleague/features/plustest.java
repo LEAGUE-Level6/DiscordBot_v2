@@ -115,7 +115,7 @@ public class plustest {
     void itShouldTellTheUserIfTheirGuessIsCorrect() {
         //Given
         int guess = 100;
-        String command = "!highLow " + guess;
+        String command = "!plus" + guess;
         plus.ans = 100;
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
@@ -125,5 +125,20 @@ public class plustest {
 
         //Then
         verify(textChannel, times(1)).sendMessage("correct");
+    }
+
+    void itShouldSendErrorMessageIfTHEYGUESSEDWHENTHEYDONTNEEDTO() {
+        //Given
+        String guess = "100";
+        String command = "!plus " + guess;
+        plus.ans = 0;
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+
+        //When
+        plus.handle(messageCreateEvent);
+
+        //Then
+        verify(textChannel, times(1)).sendMessage("._.");
     }
 }
