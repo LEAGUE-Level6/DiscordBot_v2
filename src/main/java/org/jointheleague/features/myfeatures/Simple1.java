@@ -1,4 +1,4 @@
-package org.jointheleague.features.templates;
+package org.jointheleague.features.myfeatures;
 
 import java.util.Random;
 
