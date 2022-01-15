@@ -4,6 +4,7 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 import net.aksingh.owmjapis.api.APIException;
+import org.jointheleague.Client;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
 public abstract class Feature implements MessageCreateListener {

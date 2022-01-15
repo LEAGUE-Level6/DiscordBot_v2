@@ -1,9 +1,13 @@
-package org.jointheleague.features.templates;
+package org.jointheleague.features.student.feature3.sameer;
 
+
+import com.mongodb.client.model.Updates;
+import org.bson.Document;
 import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageAuthor;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.Client;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,16 +17,15 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class FeatureTemplateTest {
+class YeeTest {
 
     private final String testChannelName = "test";
-    private final FeatureTemplate featureTemplate = new FeatureTemplate(testChannelName);
+    private Yee yee = new Yee(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -34,7 +37,15 @@ class FeatureTemplateTest {
     private TextChannel textChannel;
 
     @Mock
-    private Message message;
+    private Client client;
+
+    @Mock
+    private MessageAuthor author;
+
+    private Optional<User> userOptional;
+
+    @Mock
+    private User user;
 
     @BeforeEach
     void setUp() {
@@ -56,35 +67,24 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String command = featureTemplate.COMMAND;
+        String command = yee.COMMAND;
 
         //Then
-
-        if(!(featureTemplate instanceof FeatureTemplate)){
-            assertNotEquals("!command", command);
-        }
-
         assertNotEquals("", command);
         assertNotEquals("!", command);
         assertEquals('!', command.charAt(0));
         assertNotNull(command);
     }
-
     @Test
-    void itShouldHandleMessagesWithCommand() {
-        //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureTemplate.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureTemplate.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-        when(messageCreateEvent.getMessage()).thenReturn(message);
-        when(message.getMentionedUsers()).thenReturn(Collections.emptyList());
-        //When
-        featureTemplate.handle(messageCreateEvent);
+    void itShouldSendAYee() {
+        when(messageCreateEvent.getMessageContent()).thenReturn("!yee");
+        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
 
-        //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+        yee.handle(messageCreateEvent);
+
+        verify(textChannel,times(1)).sendMessage("https://tenor.com/view/yee-yeedinasour-dinasour-gif-4930781");
+        verify(textChannel,times(1)).sendMessage("https://youtu.be/q6EoRBvdVPQ");
     }
-
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
         //Given
@@ -92,7 +92,7 @@ class FeatureTemplateTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        yee.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -103,7 +103,7 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = featureTemplate.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = yee.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -114,8 +114,8 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String helpEmbedTitle = featureTemplate.getHelpEmbed().getTitle();
-        String command = featureTemplate.COMMAND;
+        String helpEmbedTitle = yee.getHelpEmbed().getTitle();
+        String command = yee.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
