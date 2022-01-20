@@ -16,7 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 public class SimpleTest {
-    private final String testChannelName = "test";
+    private final String testChannelName = "jessie";
     private final Simple1 randomNumber = new Simple1(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
