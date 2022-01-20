@@ -18,6 +18,8 @@ org/jointheleague/features/help_embed/HelpListener.java
  org.jointheleague.features.help_embed.HelpListener
 org/jointheleague/features/templates/FeatureTemplate.java
  org.jointheleague.features.templates.FeatureTemplate
+org/jointheleague/features/myfeatures/Simple1.java
+ org.jointheleague.features.myfeatures.Simple1
 org/jointheleague/discord_bot/DiscordBot.java
  org.jointheleague.discord_bot.DiscordBot
 org/jointheleague/features/examples/third_features/plain_old_java_objects/news_api/ApiExampleWrapper.java
@@ -28,5 +30,3 @@ org/jointheleague/features/abstract_classes/Feature.java
  org.jointheleague.features.abstract_classes.Feature
 org/jointheleague/features/examples/third_features/NewsApi.java
  org.jointheleague.features.examples.third_features.NewsApi
-org/jointheleague/features/myfeatures/Simple1.java
- org.jointheleague.features.myfeatures.Simple1
