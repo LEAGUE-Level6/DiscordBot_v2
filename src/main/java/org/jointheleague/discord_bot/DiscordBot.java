@@ -44,11 +44,13 @@ public class DiscordBot {
 		api.addMessageCreateListener(helpListener);
 
 		//add features
-		addFeature(new RandomNumber(channelName));
+//		addFeature(new RandomNumber(channelName));
 		addFeature(new CurrentTime(channelName));
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+
+		// my features
 		addFeature(new Simple1(channelName));
 	}
 
