@@ -28,5 +28,5 @@ org/jointheleague/features/abstract_classes/Feature.java
  org.jointheleague.features.abstract_classes.Feature
 org/jointheleague/features/examples/third_features/NewsApi.java
  org.jointheleague.features.examples.third_features.NewsApi
-org/jointheleague/features/templates/Simple1.java
- org.jointheleague.features.templates.Simple1
+org/jointheleague/features/myfeatures/Simple1.java
+ org.jointheleague.features.myfeatures.Simple1
