@@ -33,7 +33,6 @@ public class CurrentTimeTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         System.setOut(new PrintStream(outContent));
-        System.out.println("h");
     }
 
     @AfterEach
@@ -49,7 +48,7 @@ public class CurrentTimeTest {
     @Test
     void itShouldHaveACommand() {
         //Given
-System.out.println("h");
+
         //When
         String command = currentTime.COMMAND;
 
