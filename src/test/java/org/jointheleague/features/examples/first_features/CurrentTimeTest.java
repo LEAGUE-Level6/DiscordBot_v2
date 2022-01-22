@@ -33,6 +33,7 @@ public class CurrentTimeTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         System.setOut(new PrintStream(outContent));
+        System.out.println("h");
     }
 
     @AfterEach
