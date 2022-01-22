@@ -48,7 +48,7 @@ public class CurrentTimeTest {
     @Test
     void itShouldHaveACommand() {
         //Given
-
+System.out.println("h");
         //When
         String command = currentTime.COMMAND;
 
