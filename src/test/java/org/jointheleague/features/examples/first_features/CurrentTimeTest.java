@@ -56,6 +56,8 @@ public class CurrentTimeTest {
         assertNotEquals("", command);
         assertNotEquals("!command", command);
         assertNotNull(command);
+
+        assertEquals(true, false);
     }
 
     @Test
