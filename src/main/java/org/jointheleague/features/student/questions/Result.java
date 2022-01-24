@@ -2,6 +2,8 @@ package org.jointheleague.features.student.questions;
 
 import java.util.List;
 import javax.annotation.Generated;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -20,7 +22,7 @@ public class Result {
     @SerializedName("question")
     @Expose
     private String question;
-    @SerializedName("correct_answer")
+    @JsonProperty("correct_answer")
     @Expose
     private String correctAnswer;
     @SerializedName("incorrect_answers")

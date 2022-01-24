@@ -39,6 +39,7 @@ public class Questions extends Feature {
             response = getQuestionAndAnswer();
             question = response[0];
             answer = response[1];
+            System.out.println(question + " " + answer);
             event.getChannel().sendMessage(question);
             gameStarted = true;
         }
