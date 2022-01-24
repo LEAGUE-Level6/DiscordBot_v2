@@ -8,3 +8,4 @@
 src/main/java/Launcher.java
 .classpath
 .project
+.travis.yml
