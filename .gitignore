@@ -6,3 +6,4 @@
 *.xml
 !pom.xml
 src/main/java/Launcher.java
+!logback.xml
