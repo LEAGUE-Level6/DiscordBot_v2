@@ -53,7 +53,8 @@ public class DiscordBot {
 
 		// my features
 		addFeature(new Simple1(channelName));
-//		addFeature(new UpdatedHighLow(channelName));
+		addFeature(new UpdatedHighLow(channelName));
+
 	}
 
 	private void addFeature(Feature feature){

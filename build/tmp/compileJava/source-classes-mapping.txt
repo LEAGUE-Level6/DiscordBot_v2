@@ -26,9 +26,9 @@ org/jointheleague/features/examples/third_features/plain_old_java_objects/news_a
  org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper
 org/jointheleague/features/examples/first_features/CurrentTime.java
  org.jointheleague.features.examples.first_features.CurrentTime
+org/jointheleague/features/myfeatures/UpdatedHighLow.java
+ org.jointheleague.features.myfeatures.UpdatedHighLow
 Launcher.java
  Launcher
 org/jointheleague/discord_bot/DiscordBot.java
  org.jointheleague.discord_bot.DiscordBot
-org/jointheleague/features/myfeatures/UpdatedHighLow.java
- org.jointheleague.features.myfeatures.UpdatedHighLow
