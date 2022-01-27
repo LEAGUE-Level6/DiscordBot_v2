@@ -9,6 +9,12 @@ import java.util.Random;
 public class UpdatedHighLow extends Feature {
 
     public final String COMMAND = "!game";
+    final Random random = new Random();
+
+    int numberToGuess;
+    int lives;
+    boolean isPlaying;
+    int max;
 
     public UpdatedHighLow(String channelName) {
         super(channelName);
@@ -18,39 +24,72 @@ public class UpdatedHighLow extends Feature {
     @Override
     public void handle(MessageCreateEvent event) {
         //all variables init here
-       final Random random = new Random();
-        int numberToGuess;
-
-
         String messageContent = event.getMessageContent();
-        if (messageContent.startsWith(COMMAND)) {
+
+
+        //starting game with command
+        if (messageContent.contentEquals(COMMAND)) {
             event.getChannel().sendMessage("What level of difficulty will you choose? Easy, medium, or hard? !game easy  for easy level");
 
         }
-        else if(messageContent.startsWith(COMMAND) && (messageContent.contains("easy") ||messageContent.contains("medium") || messageContent.contains("hard") )){
-            if(messageContent.contains("easy")){
-               // String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND, "");
+        //CHOOSING DIFFICULTY LEVEL!!
+        else if (messageContent.startsWith(COMMAND) && (messageContent.contains("easy") || messageContent.contains("medium") || messageContent.contains("hard"))) {
+            if (messageContent.contains("easy") && isPlaying == false) {
+                isPlaying = true;
                 numberToGuess = random.nextInt(20) + 1;
-                event.getChannel().sendMessage("EASY mode selected.");
-                event.getChannel().sendMessage("I have chosen an integer between 1-20 inclusive. You get 5 tries. Use e.g. !game 2 to play!");
+                lives = 8;
+                max = 20;
+                event.getChannel().sendMessage("EASY mode selected. I have selected a random integer from 1-20 inclusive. Use e.g. !game 2 to guess.");
+                event.getChannel().sendMessage("You get 8 tries to beat me.");
             }
-
-            if(messageContent.contains("medium")){
+            if (messageContent.contains("medium")) {
+                isPlaying = true;
                 numberToGuess = random.nextInt(100) + 1;
-                event.getChannel().sendMessage("MEDIUM mode selected.");
-                event.getChannel().sendMessage("I have chosen an integer between 1-100 inclusive. You get 10 tries. Use e.g. !game 2 to play!");
+                lives = 8;
+                max = 100;
+                event.getChannel().sendMessage("MEDIUM mode selected. I have selected a random integer from 1-100 inclusive. Use e.g. !game 2 to guess.");
+                event.getChannel().sendMessage("You get 8 tries to beat me.");
             }
-
-            if(messageContent.contains("hard")){
+            if (messageContent.contains("hard")) {
+                isPlaying = true;
                 numberToGuess = random.nextInt(1000) + 1;
-                event.getChannel().sendMessage("HARD mode selected.");
-                event.getChannel().sendMessage("I have chosen an integer between 1-1,000 inclusive. You get 20 tries. Use e.g. !game 2 to play!");
+                lives =  12;
+                max = 1000;
+
+                event.getChannel().sendMessage("HARD mode selected. I have selected a random integer from 1-1,000 inclusive. Use e.g. !game 2 to guess.");
+                event.getChannel().sendMessage("You get 12 tries to beat me.");
             }
         }
-        //easy, medium, vs hard difficulty
-        //easy: 1-50, medium: 1-500, hard: -500-500
-        //check numbers
-    }
+        else if(messageContent.startsWith(COMMAND) && isPlaying){
+           String stringGuess =  messageContent.split(" ")[1];
 
+           try{
+               int userGuess = Integer.parseInt(stringGuess);
+               if((userGuess > max) && lives > 0){
+                   event.getChannel().sendMessage("doofus. you're out of range. " + max + " is the highest you can go");
+                   lives --;
+               }
+               else if((userGuess == numberToGuess) && lives > 0){
+                   event.getChannel().sendMessage("Congrats! You guessed correctly!!");
+               }
+               else if((userGuess < numberToGuess) && lives > 0){
+                   event.getChannel().sendMessage("Too low.");
+                   lives --;
+                   event.getChannel().sendMessage("You have " + lives + " lives left.");
+               }
+               else if((userGuess > numberToGuess) && lives > 0){
+                   event.getChannel().sendMessage("Too high.");
+                   lives --;
+                   event.getChannel().sendMessage("You have " + lives + " lives left.");
+               }
+
+           }catch(NumberFormatException e){
+               event.getChannel().sendMessage("Not a valid thing");
+           }
+        }
+
+    }
 }
+
+
 
