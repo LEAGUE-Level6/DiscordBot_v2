@@ -11,6 +11,7 @@ import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 
 import feature1.Nathan.Feature1;
+import feature2.Nathan.Feature2;
 
 public class DiscordBot {
 
@@ -51,6 +52,8 @@ public class DiscordBot {
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new Feature1(channelName));
+		addFeature(new Feature2(channelName));
+		
 	}
 
 	private void addFeature(Feature feature){
