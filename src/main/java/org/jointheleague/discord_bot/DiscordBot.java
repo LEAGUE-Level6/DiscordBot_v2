@@ -10,6 +10,8 @@ import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 
+import feature1.Nathan.Feature1;
+
 public class DiscordBot {
 
 	private String token;

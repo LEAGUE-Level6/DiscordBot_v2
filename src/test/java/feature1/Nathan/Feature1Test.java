@@ -1,6 +1,6 @@
 
 
-	package discordBotTest;
+	package feature1.Nathan;
 
 	import org.javacord.api.entity.channel.TextChannel;
 	import org.javacord.api.event.message.MessageCreateEvent;
