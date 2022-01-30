@@ -83,7 +83,6 @@ public class CatFactsApiTest {
         String command = catFactsApi.COMMAND;
 
         //Then
-        assertNotEquals("!command", command);
         assertNotEquals("", command);
         assertNotEquals("!command", command);
         assertNotNull(command);

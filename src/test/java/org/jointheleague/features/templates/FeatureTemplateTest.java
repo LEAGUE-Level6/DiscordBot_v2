@@ -2,6 +2,7 @@ package org.jointheleague.features.templates;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,8 @@ import org.mockito.MockitoAnnotations;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -55,8 +58,10 @@ class FeatureTemplateTest {
 
         //Then
 
+        if(!(featureTemplate instanceof FeatureTemplate)){
+            assertNotEquals("!command", command);
+        }
 
-        //assertNotEquals("!command", command);
         assertNotEquals("", command);
         assertNotEquals("!", command);
         assertEquals('!', command.charAt(0));

@@ -1,20 +1,18 @@
-<br />
-
-[![Master Branch Build](https://github.com/LEAGUE-Level6/DiscordBot_v2/actions/workflows/MasterBranchBuild.yml/badge.svg)](https://github.com/LEAGUE-Level6/DiscordBot_v2/actions/workflows/MasterBranchBuild.yml) 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Development Branch Build](https://github.com/LEAGUE-Level6/DiscordBot_v2/actions/workflows/DevelopmentBranchBuild.yml/badge.svg)](https://github.com/LEAGUE-Level6/DiscordBot_v2/actions/workflows/DevelopmentBranchBuild.yml)
-
 <h1 style="text-align:center">Discord Bot v2</h1>
 
 > Java application that connects to a Discord channel, and responds to commands sent there.
->  Bot features are developed by students at The League of Amazing Programmers, as part of its Level 6 curriculum.
+>  Bot features are developed by students at The League of Amazing Programmers, as part of the Level 6 curriculum.
+
+<br />
+
+Travis CI  
+[![Build Status](https://travis-ci.com/LEAGUE-Level6/DiscordBot_v2.svg?token=sAmoAvbydsv8Qn1zzcNP&branch=master)](https://travis-ci.com/LEAGUE-Level6/DiscordBot_v2)
 
 <br />
 
 ## Documentation
 
 - Information on getting started can be found at [level6.jointheleague.org](https://level6.jointheleague.org)
-
-<br />
 
 ## Authors
 
