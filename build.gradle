@@ -40,7 +40,7 @@ tasks.withType(JavaCompile) {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'org.Launcher'
+                'Main-Class': 'org.jointheleague.Launcher'
         )
     }
 }
