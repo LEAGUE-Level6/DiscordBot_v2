@@ -40,6 +40,9 @@ public class AnimalSound extends Feature {
             else if (messageContent.contains("fox")) {
                 event.getChannel().sendMessage("Ring-ding-ding-ding-dingeringeding!! :fox:");
             }
+            else if (messageContent.equals(COMMAND)) {
+                event.getChannel().sendMessage("Make sure to put an animal's name!");
+            }
             else {
                 event.getChannel().sendMessage("Sorry, that animal isn't available at the moment. Try another!");
             }
