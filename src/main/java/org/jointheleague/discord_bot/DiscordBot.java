@@ -1,11 +1,11 @@
 package org.jointheleague.discord_bot;
-import java.util.*;
-import org.javacord.api.*;
-import org.javacord.api.entity.message.*;
-import org.javacord.api.listener.message.*;
-import org.javacord.api.util.event.*;
-import org.javacord.api.entity.channel.*;
-import org.javacord.api.entity.emoji.*;
+import java.util.HashMap;
+import org.javacord.api.DiscordApi;
+import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.listener.message.MessageCreateListener;
+import org.javacord.api.util.event.ListenerManager;
 public class DiscordBot {
 	DiscordApi API;
 	public DiscordBot(String Token) {
@@ -17,66 +17,63 @@ public class DiscordBot {
 		long ClientID = API.getClientId();
 		API.addMessageCreateListener(E -> {
 			String Content = E.getMessageContent();
-			String[] Data = Content.substring(6).split(" ");
-			TextChannel Channel = E.getChannel();
-			Long ChannelID = Channel.getId();
-			String AuthorName = E.getMessageAuthor().asUser().get().getName();
-			if (Content.startsWith("BBot: ")) {
-				switch (Data[0]) {
-					case "Annoy":
-						if (!AnnoyedChannels.containsKey(ChannelID)) {
-							Channel.sendMessage("Done");
-							AnnoyedChannels.put(ChannelID, Channel.addMessageCreateListener(M -> {
-								if (M.getMessageAuthor().getId() != ClientID) {
-									Channel.sendMessage("\"" + M.getMessageContent() + "\"");
-								}
-							}));
-							AnnoyedChannelStarters.put(ChannelID, AuthorName);
-						} else {
-							Channel.sendMessage("Already active");
-						}
-						break;
-					case "StopAnnoy":
-						if (!AnnoyedChannels.containsKey(ChannelID)) {
-							Channel.sendMessage("Not active");
-						} else if (!AnnoyedChannelStarters.get(ChannelID).equals(AuthorName)) {
-							Channel.sendMessage("Nice try...");
-						} else {
-							Channel.sendMessage("Done");
-							AnnoyedChannels.get(ChannelID).remove();
-							AnnoyedChannels.remove(ChannelID);
-							AnnoyedChannelStarters.remove(ChannelID);
-						}
-						break;
-					case "PollCreate":
-						if (Channel.getType() == ChannelType.PRIVATE_CHANNEL) {
-							try {
-								Message ReactionMessage = Channel.sendMessage("React with options (" + Emojis.CheckBox + " when done)").get();
-								ReactionMessage.addReactionAddListener(M -> {
-									Emoji TheEmoji = M.getEmoji();
-									if (TheEmoji.equalsEmoji(Emojis.CheckBox)) {
-										ReactionMessage.delete();
-										Channel.sendMessage("Yes");
-									} else {
-										ReactionMessage.addReaction(TheEmoji);
+			if (Content.length() > 6) {
+				String[] Data = Content.substring(6).split(" ");
+				TextChannel Channel = E.getChannel();
+				Long ChannelID = Channel.getId();
+				String AuthorName = E.getMessageAuthor().asUser().get().getName();
+				if (Content.startsWith("BBot: ")) {
+					switch (Data[0]) {
+						case "Annoy":
+							if (!AnnoyedChannels.containsKey(ChannelID)) {
+								Channel.sendMessage("Done");
+								AnnoyedChannels.put(ChannelID, Channel.addMessageCreateListener(M -> {
+									if (M.getMessageAuthor().getId() != ClientID) {
+										Channel.sendMessage("\"" + M.getMessageContent() + "\"");
 									}
-								});
-								ReactionMessage.addReactionRemoveListener(M -> {
-									
-								});
-							} catch(Exception B) {
-								B.printStackTrace();
+								}));
+								AnnoyedChannelStarters.put(ChannelID, AuthorName);
+							} else {
+								Channel.sendMessage("Already active");
 							}
-							
-						} else {
-							Channel.sendMessage("Only for DMs");
-						}
-						break;
-					case "Poll":
-						break;
-					default:
-						Channel.sendMessage("\"BBot: Help\" for help");
-						break;
+							break;
+						case "StopAnnoy":
+							if (!AnnoyedChannels.containsKey(ChannelID)) {
+								Channel.sendMessage("Not active");
+							} else if (!AnnoyedChannelStarters.get(ChannelID).equals(AuthorName)) {
+								Channel.sendMessage("Nice try...");
+							} else {
+								Channel.sendMessage("Done");
+								AnnoyedChannels.get(ChannelID).remove();
+								AnnoyedChannels.remove(ChannelID);
+								AnnoyedChannelStarters.remove(ChannelID);
+							}
+							break;
+						case "RPS":
+							new MessageBuilder().setContent("Choose one").addComponents(ActionRow.of(Button.success("Rock", "Rock"), Button.success("Paper", "Paper"), Button.success("Scissors", "Scissors"))).send(Channel);
+							API.addMessageComponentCreateListener(S -> {
+								MessageComponentInteraction Interaction = S.getMessageComponentInteraction();
+								String ID = Interaction.getCustomId();
+								switch(ID) {
+									case "Rock":
+										Channel.send("You lose! The opponent chose Paper");
+										break;
+									case "Paper":
+										Channel.send("You lose! The opponent chose Scissors");
+										break;
+									case "Scissors":
+										Channel.send("You lose! The opponent chose Rock");
+										break;
+									default:
+										Channel.send("???");
+										break;
+								}
+							});
+							break;
+						default:
+							Channel.sendMessage("\"BBot: Help\" for help");
+							break;
+					}
 				}
 			}
 		});

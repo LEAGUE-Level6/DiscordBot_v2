@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.javacord:javacord:3.1.1'
+    implementation 'org.javacord:javacord:3.4.0'
     implementation 'net.aksingh:owm-japis:2.5.3.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'javax.json:javax.json-api:1.1'
