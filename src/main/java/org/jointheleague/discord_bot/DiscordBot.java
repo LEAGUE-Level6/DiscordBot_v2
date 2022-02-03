@@ -11,6 +11,7 @@ import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.myfeatures.Simple1;
 import org.jointheleague.features.myfeatures.UpdatedHighLow;
+import org.jointheleague.features.myfeatures.YoutubeAPI;
 
 public class DiscordBot {
 
@@ -54,6 +55,7 @@ public class DiscordBot {
 		// my features
 		addFeature(new Simple1(channelName));
 		addFeature(new UpdatedHighLow(channelName));
+		addFeature(new YoutubeAPI(channelName));
 
 	}
 

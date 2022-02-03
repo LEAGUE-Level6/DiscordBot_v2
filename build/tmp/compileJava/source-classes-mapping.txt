@@ -26,11 +26,11 @@ org/jointheleague/features/abstract_classes/Feature.java
  org.jointheleague.features.abstract_classes.Feature
 org/jointheleague/features/examples/third_features/plain_old_java_objects/news_api/ApiExampleWrapper.java
  org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper
+org/jointheleague/features/myfeatures/Simple1.java
+ org.jointheleague.features.myfeatures.Simple1
 Launcher.java
  Launcher
 org/jointheleague/features/myfeatures/YoutubeAPI.java
  org.jointheleague.features.myfeatures.YoutubeAPI
-org/jointheleague/features/myfeatures/Simple1.java
- org.jointheleague.features.myfeatures.Simple1
 org/jointheleague/discord_bot/DiscordBot.java
  org.jointheleague.discord_bot.DiscordBot
