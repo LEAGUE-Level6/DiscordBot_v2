@@ -9,49 +9,52 @@ import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
+import org.jointheleague.features.student.second_feature.RockPaperScissors;
 
 public class DiscordBot {
 
-	private String token;
+    private String token;
 
-	private String channelName;
+    private String channelName;
 
-	DiscordApi api;
+    DiscordApi api;
 
-	HelpListener helpListener;
+    HelpListener helpListener;
 
-	public DiscordBot(String token, String channelName) {
-		this.token = token;
-		this.channelName = channelName;
-		helpListener = new HelpListener(channelName);
-	}
+    public DiscordBot(String token, String channelName) {
+        this.token = token;
+        this.channelName = channelName;
+        helpListener = new HelpListener(channelName);
+    }
 
-	public void connect(boolean printInvite) {
-		
-		api = new DiscordApiBuilder().setToken(token).login().join();
+    public void connect(boolean printInvite) {
 
-		//Print the URL to invite the bot
-		if (printInvite) {
-			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
-					+"\n\tThis message can be disabled in Launcher.java");
-		}
+        api = new DiscordApiBuilder().setToken(token).login().join();
 
-		//Send bot connected message in channel
-		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has connected"));
+        //Print the URL to invite the bot
+        if (printInvite) {
+            System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
+                    + "\n\tThis message can be disabled in Launcher.java");
+        }
 
-		//add help listener to bot
-		api.addMessageCreateListener(helpListener);
+        //Send bot connected message in channel
+        api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has connected"));
 
-		//add features
-		addFeature(new RandomNumber(channelName));
-		addFeature(new CurrentTime(channelName));
-		addFeature(new HighLowGame(channelName));
-		addFeature(new NewsApi(channelName));
-		addFeature(new CatFactsApi(channelName));
-	}
+        //add help listener to bot
+        api.addMessageCreateListener(helpListener);
 
-	private void addFeature(Feature feature){
-		api.addMessageCreateListener(feature);
-		helpListener.addHelpEmbed(feature.getHelpEmbed());
-	}
+        //add features
+        addFeature(new RandomNumber(channelName));
+        addFeature(new CurrentTime(channelName));
+        addFeature(new HighLowGame(channelName));
+        addFeature(new NewsApi(channelName));
+        addFeature(new CatFactsApi(channelName));
+        addFeature(new RockPaperScissors(channelName));
+
+    }
+
+    private void addFeature(Feature feature) {
+        api.addMessageCreateListener(feature);
+        helpListener.addHelpEmbed(feature.getHelpEmbed());
+    }
 }

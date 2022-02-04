@@ -12,7 +12,7 @@ public class RandomNumber extends Feature {
 
     public RandomNumber(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Allows you to get a random number between 0 and 1000)");
+        helpEmbed = new HelpEmbed(COMMAND, "Allows you to get a random number between 0 and 1000!");
     }
 
     @Override
