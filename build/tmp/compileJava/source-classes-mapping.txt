@@ -1,5 +1,7 @@
 Launcher.java
  Launcher
+feature2/Nathan/Feature2.java
+ feature2.Nathan.Feature2
 org/jointheleague/features/examples/third_features/plain_old_java_objects/cat_facts_api/CatWrapper.java
  org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper
 org/jointheleague/features/help_embed/plain_old_java_objects/help_embed/HelpEmbed.java
