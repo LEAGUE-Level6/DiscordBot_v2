@@ -12,7 +12,7 @@
 
 - Information on getting started can be found at [level6.jointheleague.org](https://level6.jointheleague.org)
 
-## Production Environment
+## Production Environment 
 
 The master branch of this project is automatically deployed to EC2 when a new version is published.
 The bot can be interacted with in the "discordbot" channel of the League's level 6 discord server.
