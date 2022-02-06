@@ -46,3 +46,5 @@ jar {
         )
     }
 }
+
+mainClassName = 'org.jointheleague.Launcher'
