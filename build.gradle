@@ -1,9 +1,7 @@
 
 plugins {
     id 'java'
-    id 'maven-publish'
     id 'application'
-    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 repositories {
@@ -37,14 +35,6 @@ test {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-}
-
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'org.jointheleague.Launcher'
-        )
-    }
 }
 
 mainClassName = 'org.jointheleague.Launcher'
