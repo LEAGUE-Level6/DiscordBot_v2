@@ -50,8 +50,6 @@ public class DiscordBot {
 		addFeature(new CatFactsApi(channelName));
 
 		addFeature(new weather(channelName));
-		addFeature(new plus(channelName));
-		addFeature(new rimage(channelName));
 
 
 	}

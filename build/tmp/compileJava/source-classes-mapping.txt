@@ -24,14 +24,10 @@ org/jointheleague/discord_bot/DiscordBot.java
  org.jointheleague.discord_bot.DiscordBot
 org/jointheleague/features/examples/third_features/plain_old_java_objects/news_api/ApiExampleWrapper.java
  org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper
-org/jointheleague/discord_bot/plus.java
- org.jointheleague.discord_bot.plus
 org/jointheleague/features/examples/first_features/CurrentTime.java
  org.jointheleague.features.examples.first_features.CurrentTime
 org/jointheleague/features/abstract_classes/Feature.java
  org.jointheleague.features.abstract_classes.Feature
-org/jointheleague/discord_bot/rimage.java
- org.jointheleague.discord_bot.rimage
 org/jointheleague/features/examples/third_features/NewsApi.java
  org.jointheleague.features.examples.third_features.NewsApi
 org/jointheleague/discord_bot/weather.java
