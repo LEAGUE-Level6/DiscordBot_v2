@@ -8,4 +8,4 @@ cd /home/ec2-user/DiscordBot_v2
 #Assembling all outputs and running all checks
 ./gradlew clean build
 #Run the project
-nohup ./gradlew run
+setsid nohup ./gradlew run
