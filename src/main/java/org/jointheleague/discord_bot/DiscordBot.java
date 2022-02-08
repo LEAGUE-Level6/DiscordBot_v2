@@ -27,13 +27,13 @@ public class DiscordBot {
 	}
 
 	public void connect(boolean printInvite) {
-		
+
 		api = new DiscordApiBuilder().setToken(token).login().join();
 
 		//Print the URL to invite the bot
 		if (printInvite) {
 			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
-					+"\n\tThis message can be disabled in Launcher.java");
+					+"\n\tThis message can be disabled in org.jointheleague.Launcher.java");
 		}
 
 		//Send bot connected message in channel
