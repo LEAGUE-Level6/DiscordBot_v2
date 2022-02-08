@@ -7,5 +7,5 @@ ps ax | awk '/[D]iscordBot/ { print $1 }' | xargs kill
 cd /home/ec2-user/DiscordBot_v2
 #Assembling all outputs and running all checks
 ./gradlew clean build
-#Run the project
+#Run the project - redirect stdout and stderr to prevent deployment from timing out
 nohup ./gradlew run > /dev/null 2> /dev/null < /dev/null &
