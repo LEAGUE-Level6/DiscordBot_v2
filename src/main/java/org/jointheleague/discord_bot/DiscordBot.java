@@ -1,5 +1,6 @@
 package org.jointheleague.discord_bot;
 import java.util.HashMap;
+import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.TextChannel;
@@ -49,26 +50,8 @@ public class DiscordBot {
 								AnnoyedChannelStarters.remove(ChannelID);
 							}
 							break;
-						case "RPS":
-							new MessageBuilder().setContent("Choose one").addComponents(ActionRow.of(Button.success("Rock", "Rock"), Button.success("Paper", "Paper"), Button.success("Scissors", "Scissors"))).send(Channel);
-							API.addMessageComponentCreateListener(S -> {
-								MessageComponentInteraction Interaction = S.getMessageComponentInteraction();
-								String ID = Interaction.getCustomId();
-								switch(ID) {
-									case "Rock":
-										Channel.send("You lose! The opponent chose Paper");
-										break;
-									case "Paper":
-										Channel.send("You lose! The opponent chose Scissors");
-										break;
-									case "Scissors":
-										Channel.send("You lose! The opponent chose Rock");
-										break;
-									default:
-										Channel.send("???");
-										break;
-								}
-							});
+						case "ButtonTest":
+							new MessageBuilder().setContent("Test").addComponents(components).send(Channel);
 							break;
 						default:
 							Channel.sendMessage("\"BBot: Help\" for help");
