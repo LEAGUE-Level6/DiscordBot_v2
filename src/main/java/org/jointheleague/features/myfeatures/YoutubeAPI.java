@@ -2,10 +2,11 @@ package org.jointheleague.features.myfeatures;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.myfeatures.YoutubeAPI.ApiExampleWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.util.ArrayList;
 
 public class YoutubeAPI extends Feature{
     public final String COMMAND = "!video";
@@ -42,17 +43,19 @@ public class YoutubeAPI extends Feature{
         }
     }
 
-    public ApiExampleWrapper getNewsStoryByTopic(String topic) {
-        Mono<ApiExampleWrapper> apiExampleWrapperMono = webClient.get()
+    public VideosList getVideoByTopic(String topic) {
+        Mono<VideosList> mono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .queryParam("q", topic)
-                        .queryParam("sortBy", "popularity")
-                        .queryParam("apiKey", apiKey)
+                        .queryParam("chart", "mostPopular")
+//                        .queryParam()
+//                        .queryParam("q", topic)
+//                        .queryParam("sortBy", "popularity")
+//                        .queryParam("apiKey", apiKey)
                         .build())
                 .retrieve()
-                .bodyToMono(ApiExampleWrapper.class);
-
-        return apiExampleWrapperMono.block();
+                .bodyToMono(VideosList.class);
+System.out.println(mono);
+        return mono.block();
     }
 
     public String findStory(String topic){
@@ -71,26 +74,27 @@ public class YoutubeAPI extends Feature{
 
 
         //collect the response into a java object using the classes you just created
-     ApiExampleWrapper[] results =  getVideoByTopic(topic);
+     VideosList results =  getVideoByTopic(topic);
 
         //take the first Result in the array
-        ApiExampleWrapper = results[0];
-
-        //get the first article
-        String bookTitle = result.getTitle();
-
-        //get the title of the article
-        String bookLink = result.getLink();
+//        VideosList = results[0];
+//
+//        //get the first article
+//        String bookTitle = result.getTitle();
+//
+//        //get the title of the article
+//        String bookLink = result.getLink();
 
 
         //Create the message
-        String message =
-                articleTitle + " -\n"
-                        + articleContent
-                        + "\nVideo " + articleUrl;
+//        String message =
+//                articleTitle + " -\n"
+//                        + articleContent
+//                        + "\nVideo " + articleUrl;
 
         //Send the message
-        return message;
+//        return message;
+        return null;
     }
 
 
