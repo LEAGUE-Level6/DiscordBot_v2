@@ -1,8 +1,11 @@
 package feature2.Nathan;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
@@ -13,7 +16,9 @@ public class Feature2 extends Feature {
     public final String COMMAND = "!animal";
     Random r=new Random();
     int animalNumber;
- 
+ //put a variable here that keeps track of the # of times handle is called
+ //this will ensure that the code picks the animal message that corresponds with the calling variable's index for the distinct random # arraylist
+   
     public Feature2(String channelName) {
         super(channelName);
 
@@ -27,34 +32,39 @@ public class Feature2 extends Feature {
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
+        if (messageContent.startsWith(COMMAND)) {
             //respond to message here
         	//r.nextInt(10);
-        	ArrayList<Integer> animalNumbers=new ArrayList<Integer>();
-        	for(int i=0; i<10; i++) {
-        		animalNumber=r.nextInt(10);
-        		animalNumbers.add(animalNumber);
-        	}
-        	
-        	for(int j=0; j<10; j++) {
-        		if (messageContent.startsWith(COMMAND)) {
+         
+        int animalNumbers=r.nextInt(10);
         			
-        	if(animalNumbers.get(j)==0) {
+        	if(animalNumbers==0) {
             event.getChannel().sendMessage("Long legs, short bodies, bony horns");
-            String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND, "");
+            
+            /*String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND, "");
             if(guessMessage=="giraffe" || guessMessage=="Giraffe") {
                 event.getChannel().sendMessage("Correct!");     
             }
+            else {
+            	event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a giraffe");
+            }*/
         	}
         	
-        	if(animalNumbers.get(j)==1) {
+        	if(animalNumbers==1) {
         		//monkey
         		event.getChannel().sendMessage("forward facing eyes, grasping hands, nails, large brains");
         	}
-        	if(animalNumbers.get(j)==2) {
+        	if(animalNumbers==2) {
         		//alligator
         		event.getChannel().sendMessage("long body, thick scales, short legs");
         	}
-        	if(animalNumbers.get(j)==3) {
+        	else {
+        		event.getChannel().sendMessage("message is sent");
+        	}
+        	
+        	
+        	
+        	/* if(animalNumbers.get(j)==3) {
         		//panda
         		event.getChannel().sendMessage("black fur, black ears, white head");
         	}
@@ -81,9 +91,20 @@ public class Feature2 extends Feature {
         	if(animalNumbers.get(j)==9) {
         		//bear
         		event.getChannel().sendMessage("large bodies, stocky legs, short tail, shaggy hair");
-        	}
+        	}*/
         }
     }
     }
 
-}
+
+
+
+
+//Set<Integer> set = new LinkedHashSet<Integer>();
+//while (set.size() < 10) {
+//	   set.add(r.nextInt(10));
+//	}
+//
+
+// List<Integer> animalNumbers = new ArrayList<Integer>(set);  	
+
