@@ -51,7 +51,7 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
-		
+		addFeature(new rimage(channelName));
 		// lelserslasers2 - feature 2 - !translate
 		addFeature(new Translate(channelName));
 	}

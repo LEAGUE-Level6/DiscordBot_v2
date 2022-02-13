@@ -59,10 +59,10 @@ String ink = "";
                 int wid = Integer.parseInt(messageContent.substring(0, messageContent.indexOf('|')));
                 int len = Integer.parseInt(messageContent.substring(messageContent.indexOf('|')+1, messageContent.length()));
                 re = "https://picsum.photos/"+wid+"/"+len+ink+"random="+count;
-                event.getChannel().sendMessage("https://picsum.photos/"+wid+"/"+len+ink+"random="+count);
+                event.getChannel().sendMessage("https://picsum.photos/"+wid+"/"+len+ink+"?random="+count);
                 count++;
 //            }
-    }
+    }//"random="+count
 
 //    public ApiData getimage(int a, int b) {
 //        Mono<ApiData> dataApiMono = webClient.get()
