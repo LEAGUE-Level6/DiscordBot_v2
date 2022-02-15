@@ -1,9 +1,15 @@
 package org.jointheleague.discord_bot;
 import java.util.HashMap;
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
+
 import org.javacord.api.entity.message.component.ActionRow;
+import org.javacord.api.entity.message.component.Button;
+import org.javacord.api.interaction.MessageComponentInteraction;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.javacord.api.util.event.ListenerManager;
@@ -14,6 +20,7 @@ public class DiscordBot {
 	}
 	HashMap<Long, ListenerManager<MessageCreateListener>> AnnoyedChannels = new HashMap<Long, ListenerManager<MessageCreateListener>>();
 	HashMap<Long, String> AnnoyedChannelStarters = new HashMap<Long, String>();
+	Random Rand = new Random();
 	public void Connect() {
 		long ClientID = API.getClientId();
 		API.addMessageCreateListener(E -> {
@@ -42,7 +49,7 @@ public class DiscordBot {
 							if (!AnnoyedChannels.containsKey(ChannelID)) {
 								Channel.sendMessage("Not active");
 							} else if (!AnnoyedChannelStarters.get(ChannelID).equals(AuthorName)) {
-								Channel.sendMessage("Nice try...");
+								Channel.sendMessage("No");
 							} else {
 								Channel.sendMessage("Done");
 								AnnoyedChannels.get(ChannelID).remove();
@@ -50,8 +57,28 @@ public class DiscordBot {
 								AnnoyedChannelStarters.remove(ChannelID);
 							}
 							break;
-						case "ButtonTest":
-							new MessageBuilder().setContent("Test").addComponents(components).send(Channel);
+						case "RPS":
+							try {
+								Message M = new MessageBuilder().setContent("Test").addComponents(ActionRow.of(Button.success("Rock", "Rock"), Button.success("Paper", "Paper"), Button.success("Scissors", "Scissors"))).send(Channel).get();
+								API.addMessageComponentCreateListener(S -> {
+									MessageComponentInteraction Interaction = S.getMessageComponentInteraction();
+									int Result = Rand.nextInt(100);
+									if (Result < 75) {
+										Interaction.createImmediateResponder().setContent("You lost!").respond();
+									} else if (Result < 90) {
+										Interaction.createImmediateResponder().setContent("Tie!").respond();
+									} else {
+										Interaction.createImmediateResponder().setContent("You won!").respond();
+									}
+									M.delete();
+								});
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (ExecutionException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							break;
 						default:
 							Channel.sendMessage("\"BBot: Help\" for help");
