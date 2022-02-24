@@ -6,6 +6,7 @@ import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.myfeatures.apifeature.RecipeAPI;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,10 +29,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.*;
 
-public class YoutubeAPITest {
+public class RecipeAPITest {
 
     private final String testChannelName = "test";
-    private NewsApi newsApi;
+    private RecipeAPI recipeApi;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -61,8 +62,8 @@ public class YoutubeAPITest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        newsApi = new NewsApi(testChannelName);
-        newsApi.setWebClient(webClientMock);
+        recipeApi = new RecipeAPI(testChannelName);
+        recipeApi.setWebClient(webClientMock);
         System.setOut(new PrintStream(outContent));
     }
 
@@ -80,7 +81,7 @@ public class YoutubeAPITest {
         //Given
 
         //When
-        String command = newsApi.COMMAND;
+        String command = recipeApi.COMMAND;
 
         //Then
 
@@ -94,7 +95,7 @@ public class YoutubeAPITest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = newsApi.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = recipeApi.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -105,8 +106,8 @@ public class YoutubeAPITest {
         //Given
 
         //When
-        String helpEmbedTitle = newsApi.getHelpEmbed().getTitle();
-        String command = newsApi.COMMAND;
+        String helpEmbedTitle = recipeApi.getHelpEmbed().getTitle();
+        String command = recipeApi.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
@@ -115,15 +116,15 @@ public class YoutubeAPITest {
     @Test
     void givenMessageWithCommandAndNoTopic_whenHandle_thenSendErrorMessage() {
         //given
-        when(messageCreateEvent.getMessageContent()).thenReturn(newsApi.COMMAND);
+        when(messageCreateEvent.getMessageContent()).thenReturn(recipeApi.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
 
         //when
-        newsApi.handle(messageCreateEvent);
+        recipeApi.handle(messageCreateEvent);
 
         //then
         verify(webClientMock, never()).get();
-        verify(textChannel, times(1)).sendMessage("Please put a topic after the command (e.g. " + newsApi.COMMAND + " cats)");
+        verify(textChannel, times(1)).sendMessage("Please put a topic after the command (e.g. " + recipeApi.COMMAND + " cats)");
     }
 
     @Test
@@ -143,7 +144,7 @@ public class YoutubeAPITest {
         ApiExampleWrapper expectedApiExampleWrapper = new ApiExampleWrapper();
         expectedApiExampleWrapper.setArticles(expectedArticles);
 
-        when(messageCreateEvent.getMessageContent()).thenReturn(newsApi.COMMAND + topic);
+        when(messageCreateEvent.getMessageContent()).thenReturn(recipeApi.COMMAND + topic);
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
 
         when(webClientMock.get())
@@ -162,7 +163,7 @@ public class YoutubeAPITest {
                 + "\nFull article: " + articleUrl;
 
         //when
-        newsApi.handle(messageCreateEvent);
+        recipeApi.handle(messageCreateEvent);
 
         //then
         verify(webClientMock, times(1)).get();
@@ -176,7 +177,7 @@ public class YoutubeAPITest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        newsApi.handle(messageCreateEvent);
+        recipeApi.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();

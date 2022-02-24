@@ -5,12 +5,15 @@ import com.google.gson.annotations.SerializedName;
 
 public class Recipe {
 
-    @SerializedName("titles")
+    @SerializedName("id")
     @Expose
-    private String titles;
+    private int id;
+    @SerializedName("title")
+    @Expose
+    private String title;
     @SerializedName("calories")
     @Expose
-    private Integer calories;
+    private int calories;
     @SerializedName("carbs")
     @Expose
     private String carbs;
@@ -22,19 +25,19 @@ public class Recipe {
     private String protein;
 
 
-    public String getTitles() {
-        return titles;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitles(String titles) {
-        this.titles = titles;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public Integer getCalories() {
+    public int getCalories() {
         return calories;
     }
 
-    public void setCalories(Integer calories) {
+    public void setCalories(int calories) {
         this.calories = calories;
     }
 
@@ -62,4 +65,11 @@ public class Recipe {
         this.protein = protein;
     }
 
+    public int getId(){
+        return id;
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
 }

@@ -50,7 +50,7 @@ public class DiscordBot {
 //		addFeature(new RandomNumber(channelName));
 //		addFeature(new CurrentTime(channelName));
 //		addFeature(new HighLowGame(channelName));
-		addFeature(new NewsApi(channelName));
+//		addFeature(new NewsApi(channelName));
 //		addFeature(new CatFactsApi(channelName));
 
 		// my features

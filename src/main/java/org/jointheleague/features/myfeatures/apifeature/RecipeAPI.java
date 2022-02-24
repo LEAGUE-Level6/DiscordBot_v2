@@ -14,6 +14,8 @@ public class RecipeAPI extends Feature {
     private WebClient webClient;
     private static final String baseUrl = "https://api.spoonacular.com/recipes/complexSearch";
 
+    private String apiKey = "a3e9c275cba8484cb80898a8423e9c34";
+
     public RecipeAPI(String channelName) {
         super(channelName);
 
@@ -28,15 +30,22 @@ public class RecipeAPI extends Feature {
 
     @Override
     public void handle(MessageCreateEvent event){
+
         String messageContent = event.getMessageContent();
-        if (messageContent.equals("!food")) {
+        String[] messageArr = messageContent.split(" ");
+        if (messageContent.equals(COMMAND)) {
             event.getChannel().sendMessage("Use the command '!food dish' to find a new recipe");
+        }
+        if(messageArr[0].equals(COMMAND) && messageArr.length > 1 && messageArr[1]!= null){
+            String toPrint = findRecipe(messageArr[1]);
+            event.getChannel().sendMessage(toPrint);
         }
     }
 
     public RecipeWrapper getRecipeFromTopic(String topic) {
         Mono<RecipeWrapper> recipeWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
+                        .queryParam("apiKey", apiKey)
                         .queryParam("query", topic)
                         .queryParam("sort", "popularity")
                         .build())
@@ -46,7 +55,7 @@ public class RecipeAPI extends Feature {
         return recipeWrapperMono.block();
     }
 
-    public String findStory(String topic){
+    public String findRecipe(String topic){
 
         //Get a story from News API
   RecipeWrapper rw = getRecipeFromTopic(topic);
@@ -59,15 +68,35 @@ public class RecipeAPI extends Feature {
                 //results[0];
 
         //Get the title of the recipe
-        String recipeTitle = newRecipe.getTitles();
+        String recipeTitle = newRecipe.getTitle();
 
         //get image
         String recipeImage = newRecipe.getImage();
 
+        //get calories
+        int recipeCalories = newRecipe.getCalories();
+
+        //get id
+        int recipeId = newRecipe.getId();
+
+       // TEXT WItHIN LINK TO SEND
+        String linkText = "";
+        String[] sendArr = recipeTitle.split(" ");
+        for(int i = 0; i < sendArr.length; i++){
+            linkText = sendArr[i] + "-";
+        }
+
+
         //Create the message
         String message =
-                recipeTitle + " -\n"
-                        + recipeImage;
+                recipeTitle + "\n"
+//                        + recipeCalories + "\n"
+                        + recipeImage + "\n"
+                        + "Link to recipe: https://spoonacular.com/" + linkText + recipeId;
+
+
+
+        //"https://spoonacular.com/pasta-with-garlic-scallions-cauliflower-breadcrumbs-716429"
 
 
 
