@@ -59,7 +59,7 @@ public class DiscordBot {
 							break;
 						case "RPS":
 							try {
-								Message M = new MessageBuilder().setContent("Test").addComponents(ActionRow.of(Button.success("Rock", "Rock"), Button.success("Paper", "Paper"), Button.success("Scissors", "Scissors"))).send(Channel).get();
+								Message M = new MessageBuilder().setContent("Choose one").addComponents(ActionRow.of(Button.success("Rock", "Rock"), Button.success("Paper", "Paper"), Button.success("Scissors", "Scissors"))).send(Channel).get();
 								API.addMessageComponentCreateListener(S -> {
 									MessageComponentInteraction Interaction = S.getMessageComponentInteraction();
 									int Result = Rand.nextInt(100);
@@ -72,14 +72,10 @@ public class DiscordBot {
 									}
 									M.delete();
 								});
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (ExecutionException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							} catch(Exception S) {	
 							}
 							break;
+						
 						default:
 							Channel.sendMessage("\"BBot: Help\" for help");
 							break;
