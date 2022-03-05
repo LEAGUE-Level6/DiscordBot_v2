@@ -36,7 +36,8 @@ public class Feature2 extends Feature {
             //respond to message here
         	//r.nextInt(10);
          
-        int animalNumbers=r.nextInt(10);
+        int animalNumbers=r.nextInt(3);
+        System.out.println(animalNumbers);
         			
         	if(animalNumbers==0) {
             event.getChannel().sendMessage("Long legs, short bodies, bony horns");
@@ -50,11 +51,11 @@ public class Feature2 extends Feature {
             }*/
         	}
         	
-        	if(animalNumbers==1) {
+        	else if(animalNumbers==1) {
         		//monkey
         		event.getChannel().sendMessage("forward facing eyes, grasping hands, nails, large brains");
         	}
-        	if(animalNumbers==2) {
+        	else if(animalNumbers==2) {
         		//alligator
         		event.getChannel().sendMessage("long body, thick scales, short legs");
         	}
