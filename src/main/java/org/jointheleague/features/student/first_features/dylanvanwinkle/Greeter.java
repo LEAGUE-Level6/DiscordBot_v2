@@ -15,7 +15,7 @@ public class Greeter extends Feature {
     }
 
     @Override
-    public void handle(MessageCreateEvent event) throws APIException {
+    public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             event.getChannel().sendMessage("Hello " + event.getMessageAuthor().getName() + ".");
