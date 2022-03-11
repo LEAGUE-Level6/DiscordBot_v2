@@ -60,7 +60,7 @@ public class WeatherApi extends Feature {
                 "\nThe temperature feels like "+weatherData.current.feelslike_f+"℉"
                 ;
 
-        //Send the message.
+        //Send the message
         return message;
     }
 
