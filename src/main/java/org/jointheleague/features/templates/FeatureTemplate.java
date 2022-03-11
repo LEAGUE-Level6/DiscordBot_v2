@@ -1,7 +1,7 @@
 package org.jointheleague.features.templates;
 
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.features.examples.first_features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
 public class FeatureTemplate extends Feature {

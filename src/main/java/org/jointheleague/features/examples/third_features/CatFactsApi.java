@@ -1,7 +1,7 @@
 package org.jointheleague.features.examples.third_features;
 
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.features.examples.first_features.abstract_classes.Feature;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
