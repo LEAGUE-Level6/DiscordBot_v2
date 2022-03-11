@@ -1,4 +1,4 @@
-package org.jointheleague.features.abstract_classes;
+package org.jointheleague.features.examples.first_features.abstract_classes;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
