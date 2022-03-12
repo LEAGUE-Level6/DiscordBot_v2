@@ -18,6 +18,8 @@ public class Feature2 extends Feature {
 	int animalNumber;
 	int state=0;
 	int animalNumbers = r.nextInt(1);
+	String guessMessage1="Long legs, short bodies, bony horns";
+	String guessMessage2="Longlegs,shortbodies,bonyhorns";
 	// put a variable here that keeps track of the # of times handle is called
 	// this will ensure that the code picks the animal message that corresponds with
 	// the calling variable's index for the distinct random # arraylist
@@ -32,14 +34,14 @@ public class Feature2 extends Feature {
 
 	@Override
 	public void handle(MessageCreateEvent event) {
+		//whenever I input a message, it should call handle
 		String messageContent = event.getMessageContent();
-		if(event.getMessageAuthor().isYourself()){
-		//if(event.getMessageAuthor()==this.);
+		//if(event.getMessageAuthor().isYourself()){
+		//if(event.getMessageAuthor()==this.);	
 		if(state==0) {
 		if (messageContent.startsWith(COMMAND)) {
 			// respond to message here
 			// r.nextInt(10);
-			System.out.println(event.getMessageAuthor());
 			if (animalNumbers == 0) {
 				event.getChannel().sendMessage("Long legs, short bodies, bony horns");
 			}
@@ -69,25 +71,31 @@ public class Feature2 extends Feature {
 			 * ); } if(animalNumbers.get(j)==9) { //bear event.getChannel().
 			 * sendMessage("large bodies, stocky legs, short tail, shaggy hair"); }
 			 */
-			state+=1;
+			
 		}
 		}
-		}
-		String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND, "");
+		
+		//String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND, "");
 		
 		if(event.getMessageAuthor().isYourself()){
+			if(event.getMessageContent()!="!animal") {
+				if(event.getMessageContent()!=guessMessage1) {
+					if(event.getMessageContent().length()>1) {
+					state+=1;
 		if(state==1) {
-		//if(event.getMessageAuthor().getDisplayName().equals("Nathan Young")) {
-		if ((guessMessage=="Giraffe") || guessMessage=="giraffe") {
+		if( event.getMessageContent().equals("Giraffe") || event.getMessageContent().equals("giraffe") ) {
 			if (animalNumbers == 0) {
 				event.getChannel().sendMessage("Correct!");
 			} 
 		}
-		else if(guessMessage.length()>1){
+		else if(event.getMessageContent().length()>1){
+			System.out.println(event.getMessageContent());
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a giraffe");
 		}
-		//}
 	}
+				}
+}
+}
 }
 }
 }
