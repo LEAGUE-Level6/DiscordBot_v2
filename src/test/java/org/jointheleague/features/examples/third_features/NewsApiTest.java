@@ -2,10 +2,9 @@ package org.jointheleague.features.examples.third_features;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
+import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiWrapper;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +53,7 @@ public class NewsApiTest {
     WebClient.ResponseSpec responseSpecMock;
 
     @Mock
-    Mono<ApiExampleWrapper> apiExampleWrapperMonoMock;
+    Mono<ApiWrapper> apiExampleWrapperMonoMock;
 
     @BeforeEach
     void setUp() {
@@ -139,8 +138,8 @@ public class NewsApiTest {
         expectedArticle.setUrl(articleUrl);
         List<Article> expectedArticles = Collections.singletonList(expectedArticle);
 
-        ApiExampleWrapper expectedApiExampleWrapper = new ApiExampleWrapper();
-        expectedApiExampleWrapper.setArticles(expectedArticles);
+        ApiWrapper expectedApiWrapper = new ApiWrapper();
+        expectedApiWrapper.setArticles(expectedArticles);
 
         when(messageCreateEvent.getMessageContent()).thenReturn(newsApi.COMMAND + topic);
         when(messageCreateEvent.getChannel()).thenReturn(textChannel);
@@ -151,10 +150,10 @@ public class NewsApiTest {
                 .thenReturn(requestHeadersSpecMock);
         when(requestHeadersSpecMock.retrieve())
                 .thenReturn(responseSpecMock);
-        when(responseSpecMock.bodyToMono(ApiExampleWrapper.class))
+        when(responseSpecMock.bodyToMono(ApiWrapper.class))
                 .thenReturn(apiExampleWrapperMonoMock);
         when(apiExampleWrapperMonoMock.block())
-                .thenReturn(expectedApiExampleWrapper);
+                .thenReturn(expectedApiWrapper);
 
         String expectedStory = articleTitle + " -\n"
                 + articleContent
