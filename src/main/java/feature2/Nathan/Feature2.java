@@ -15,11 +15,9 @@ public class Feature2 extends Feature {
 
 	public final String COMMAND = "!animal";
 	Random r = new Random();
-	int animalNumber;
-	int state=0;
-	int animalNumbers = r.nextInt(1);
-	String guessMessage1="Long legs, short bodies, bony horns";
-	String guessMessage2="Longlegs,shortbodies,bonyhorns";
+	int state = 0;
+	int animalNumbers;
+	
 	// put a variable here that keeps track of the # of times handle is called
 	// this will ensure that the code picks the animal message that corresponds with
 	// the calling variable's index for the distinct random # arraylist
@@ -34,72 +32,209 @@ public class Feature2 extends Feature {
 
 	@Override
 	public void handle(MessageCreateEvent event) {
-		//whenever I input a message, it should call handle
+		// whenever I input a message, it should call handle
 		String messageContent = event.getMessageContent();
-		//if(event.getMessageAuthor().isYourself()){
-		//if(event.getMessageAuthor()==this.);	
-		if(state==0) {
-		if (messageContent.startsWith(COMMAND)) {
-			// respond to message here
-			// r.nextInt(10);
-			if (animalNumbers == 0) {
-				event.getChannel().sendMessage("Long legs, short bodies, bony horns");
-			}
-
-			/*
-			 * else if(animalNumbers==1) { //monkey event.getChannel().
-			 * sendMessage("forward facing eyes, grasping hands, nails, large brains"); }
-			 * else if(animalNumbers==2) { //alligator
-			 * event.getChannel().sendMessage("long body, thick scales, short legs"); } else
-			 * { event.getChannel().sendMessage("message is sent"); }
-			 * 
-			 */
-
-			/*
-			 * if(animalNumbers.get(j)==3) { //panda
-			 * event.getChannel().sendMessage("black fur, black ears, white head"); }
-			 * if(animalNumbers.get(j)==4) { //elephant
-			 * event.getChannel().sendMessage("big head, wide ears, think skin"); }
-			 * if(animalNumbers.get(j)==5) { //whale
-			 * event.getChannel().sendMessage("long body, blue-gray colored skin"); }
-			 * if(animalNumbers.get(j)==6) { //tiger
-			 * event.getChannel().sendMessage("powerful carnivore, sharp teeth, agile body"
-			 * ); } if(animalNumbers.get(j)==7) { //llama
-			 * event.getChannel().sendMessage("long neck, thick fur, split upper lip"); }
-			 * if(animalNumbers.get(j)==8) { //kangaroo
-			 * event.getChannel().sendMessage("muscular tail, large feet, long pointed ears"
-			 * ); } if(animalNumbers.get(j)==9) { //bear event.getChannel().
-			 * sendMessage("large bodies, stocky legs, short tail, shaggy hair"); }
-			 */
+		// if(event.getMessageAuthor().isYourself()){
+		// if(event.getMessageAuthor()==this.);
+		
+		ArrayList<Integer> distinctRandom=new ArrayList<Integer>();
+		if (state == 0) {
+			if (messageContent.startsWith(COMMAND)) {
+				animalNumbers=r.nextInt(9);
+				// respond to message here
+				// r.nextInt(10);
+				
+				//giraffe
+				if (animalNumbers == 0) {
+					event.getChannel().sendMessage("Long legs, short bodies, bony horns");
+				}
+				
+				//monkey
+				 else if(animalNumbers==1) {  event.getChannel().
+				 sendMessage("forward facing eyes, grasping hands, nails, large brains");
+				 }
+				 
+				//alligator
+				 else if(animalNumbers==2) { 
+				  event.getChannel().sendMessage("long body, thick scales, short legs"); 
+				  }
+				
+				//panda
+				 else if(animalNumbers==3) {
+					 event.getChannel().sendMessage("black fur, black ears, white head"); 
+				 }
+				
+				//elephant
+				 else if(animalNumbers==4) {
+					 event.getChannel().sendMessage("big head, wide ears, think skin"); 
+				 }
+				
+				//whale
+				 else if(animalNumbers==5) {
+					 event.getChannel().sendMessage("long body, blue-gray colored skin"); 
+				 }
+				
+				//tiger
+				 else if(animalNumbers==6) {
+					 event.getChannel().sendMessage("powerful carnivore, sharp teeth, agile body");
+				 }
+				
+				//llama
+				 else if(animalNumbers==7) {
+					 event.getChannel().sendMessage("long neck, thick fur, split upper lip");
+				 }
+				
+				//kangaroo
+				 else if(animalNumbers==8) {
+					 event.getChannel().sendMessage("muscular tail, large feet, long pointed ears");
+				 }
+				
+				//bear
+				 else if(animalNumbers==9) {
+					 event.getChannel().sendMessage("large bodies, stocky legs, short tail, shaggy hair");
+				 }
 			
+				 else
+				 { event.getChannel().sendMessage("There is a problem. Look at animalNumbers."); }
+				 
+			}
 		}
-		}
-		
-		//String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND, "");
-		
-		if(event.getMessageAuthor().isYourself()){
-			if(event.getMessageContent()!="!animal") {
-				if(event.getMessageContent()!=guessMessage1) {
-					if(event.getMessageContent().length()>1) {
-					state+=1;
-		if(state==1) {
-		if( event.getMessageContent().equals("Giraffe") || event.getMessageContent().equals("giraffe") ) {
-			if (animalNumbers == 0) {
-				event.getChannel().sendMessage("Correct!");
-			} 
-		}
-		else if(event.getMessageContent().length()>1){
-			System.out.println(event.getMessageContent());
-				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a giraffe");
+
+		// String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND,
+		// "");
+
+		if (!event.getMessageAuthor().isYourself()) {
+			if (!event.getMessageContent().equals("!animal")) {
+				// if(event.getMessageContent()!=guessMessage1) {
+				if (event.getMessageContent().length() > 1) {
+					state += 1;
+					if (state == 1) {
+						if(animalNumbers==0) {
+						if (event.getMessageContent().equals("Giraffe")
+								|| event.getMessageContent().equals("giraffe")) {
+								event.getChannel().sendMessage("Correct!");
+								state=0;
+						} else if (event.getMessageContent().length() > 1) {
+							System.out.println(event.getMessageContent());
+							event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a giraffe");
+							state=0;
+						}
+						}
+						
+						else if(animalNumbers==1) {
+							if (event.getMessageContent().equals("monkey")
+									|| event.getMessageContent().equals("Monkey")) {
+									event.getChannel().sendMessage("Correct!");
+									state=0;
+							} else if (event.getMessageContent().length() > 1) {
+								System.out.println(event.getMessageContent());
+								event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a monkey");
+								state=0;
+							}
+							}
+						
+						else if(animalNumbers==2) {
+							if (event.getMessageContent().equals("alligator")
+									|| event.getMessageContent().equals("Alligator")) {
+									event.getChannel().sendMessage("Correct!");
+									state=0;
+							} else if (event.getMessageContent().length() > 1) {
+								System.out.println(event.getMessageContent());
+								event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a alligator");
+								state=0;
+							}
+							}
+						
+						else if(animalNumbers==3) {
+							if (event.getMessageContent().equals("panda")
+									|| event.getMessageContent().equals("Panda")) {
+									event.getChannel().sendMessage("Correct!");
+									state=0;
+							} else if (event.getMessageContent().length() > 1) {
+								System.out.println(event.getMessageContent());
+								event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a panda");
+								state=0;
+							}
+							}
+						
+						else if(animalNumbers==4) {
+							if (event.getMessageContent().equals("elephant")
+									|| event.getMessageContent().equals("Elephant")) {
+									event.getChannel().sendMessage("Correct!");
+									state=0;
+							} else if (event.getMessageContent().length() > 1) {
+								System.out.println(event.getMessageContent());
+								event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a elephant");
+								state=0;
+							}
+							}
+						
+						else if(animalNumbers==5) {
+							if (event.getMessageContent().equals("whale")
+									|| event.getMessageContent().equals("Whale")) {
+									event.getChannel().sendMessage("Correct!");
+									state=0;
+							} else if (event.getMessageContent().length() > 1) {
+								System.out.println(event.getMessageContent());
+								event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a whale");
+								state=0;
+							}
+							}
+						
+						else if(animalNumbers==6) {
+							if (event.getMessageContent().equals("tiger")
+									|| event.getMessageContent().equals("Tiger")) {
+									event.getChannel().sendMessage("Correct!");
+									state=0;
+							} else if (event.getMessageContent().length() > 1) {
+								System.out.println(event.getMessageContent());
+								event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a tiger");
+								state=0;
+							}
+							}
+						
+						else if(animalNumbers==7) {
+							if (event.getMessageContent().equals("llama")
+									|| event.getMessageContent().equals("Llama")) {
+									event.getChannel().sendMessage("Correct!");
+									state=0;
+							} else if (event.getMessageContent().length() > 1) {
+								System.out.println(event.getMessageContent());
+								event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a llama");
+								state=0;
+							}
+							}
+						
+						else if(animalNumbers==8) {
+							if (event.getMessageContent().equals("kangaroo")
+									|| event.getMessageContent().equals("Kangaroo")) {
+									event.getChannel().sendMessage("Correct!");
+									state=0;
+							} else if (event.getMessageContent().length() > 1) {
+								System.out.println(event.getMessageContent());
+								event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a kangaroo");
+								state=0;
+							}
+							}
+						
+						else if(animalNumbers==9) {
+							if (event.getMessageContent().equals("bear")
+									|| event.getMessageContent().equals("Bear")) {
+									event.getChannel().sendMessage("Correct!");
+									state=0;
+							} else if (event.getMessageContent().length() > 1) {
+								System.out.println(event.getMessageContent());
+								event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a bear");
+								state=0;
+							}
+							}
+					}
+				}
+			}
 		}
 	}
-				}
 }
-}
-}
-}
-}
-
+//}
 
 // Set<Integer> set = new LinkedHashSet<Integer>();
 // while (set.size() < 10) {
