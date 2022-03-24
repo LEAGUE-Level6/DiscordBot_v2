@@ -1,10 +1,16 @@
 package org.jointheleague.features.student.grace04;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 //import org.jointheleague.features.student.grace04.tetr_api.ApiWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+import java.io.IOException;
 
 public class HearthstoneAPI extends Feature {
 
@@ -45,30 +51,26 @@ public class HearthstoneAPI extends Feature {
         }
     }
 
-    /*public ApiWrapper getUserByName(String name) {
-        Mono<ApiWrapper> apiWrapperMono = webClient.get()
+    public HearthstoneWrapper getCardByCard(String card) {
+        Mono<String> hsWrapperMono = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("uri", "https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/%7Bname%7D")
+                        .queryParam("X-RapidAPI-Host", "omgvamp-hearthstone-v1.p.rapidapi.com")
+                        .queryParam("X-RapidAPI-Key", "6fa354383amsh1ff11039b032073p1ed12cjsn5a0682d5c183")
+                        .build())
                 .retrieve()
-                .bodyToMono(ApiWrapper.class);
+                .bodyToMono(String.class);
 
-        return apiWrapperMono.block();
+        String result = hsWrapperMono.block();
+        System.out.println(result);
+        return null;
+    }
 
-        HttpRequest request = HttpRequest.newBuilder()
-		    .uri(URI.create("https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/%7Bname%7D"))
-		    .header("x-rapidapi-host", "omgvamp-hearthstone-v1.p.rapidapi.com")
-		    .header("x-rapidapi-key", "SIGN-UP-FOR-KEY")
-		    .method("GET", HttpRequest.BodyPublishers.noBody())
-		    .build();
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
-    }*/
+    public String getCard(String card){
 
-    public String getCard(String name){
+        HearthstoneWrapper hsWrapper = getCardByCard(card);
 
-        //Get a story from News API
-        ApiWrapper apiWrapper = getUserByName(name);
-
-        //Get the first article
-        User user = apiWrapper.getArticles().get(0);
+        /*String name = hsWrapper.getName();
 
         //Get the title of the article
         String articleTitle = article.getTitle();
@@ -86,7 +88,8 @@ public class HearthstoneAPI extends Feature {
                         + "\nFull article: " + articleUrl;
 
         //Send the message
-        return message;
+        return message;*/
+        return null;
     }
 
     public void setWebClient(WebClient webClient) {
