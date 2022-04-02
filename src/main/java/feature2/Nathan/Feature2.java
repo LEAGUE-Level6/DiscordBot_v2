@@ -33,10 +33,11 @@ public class Feature2 extends Feature {
 	}
 
 	public void distinctRandom() {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3;) {
 			animalNumbers = r.nextInt(3);
 			if (!values.contains(animalNumbers)) {
 				values.add(animalNumbers);
+				i++;
 			}
 		}
 		System.out.println(values);
@@ -49,88 +50,92 @@ public class Feature2 extends Feature {
 		// if(event.getMessageAuthor().isYourself()){
 		// if(event.getMessageAuthor()==this.);
 		distinctRandom();
-		for (int i = 0; i < 3; i++) {
-			if (messageContent.startsWith(COMMAND)) {
-				// animalNumbers=r.nextInt(9);
-				// respond to message here
-				// r.nextInt(10);
-				if (state == 0) {
+		for (int i = 0; i < 3;) {
+			if (state == 0) {
+				if (messageContent.startsWith(COMMAND)) {
+					state = 1;
+				}
+			}
 
-					// giraffe
-					if (values.get(i) == 0) {
-						event.getChannel().sendMessage("Long legs, short bodies, bony horns");
-						if (!event.getMessageAuthor().isYourself()) {
-							if (!event.getMessageContent().equals("!animal")) {
-								// if(event.getMessageContent()!=guessMessage1) {
-								if (event.getMessageContent().length() > 1) {
-									state += 1;
-									if (state == 1) {
-										if (event.getMessageContent().equals("Giraffe")
-												|| event.getMessageContent().equals("giraffe")) {
-											event.getChannel().sendMessage("Correct!");
-											state = 0;
-										} else if (event.getMessageContent().length() > 1) {
-											System.out.println(event.getMessageContent());
-											event.getChannel()
-													.sendMessage("Sorry, incorrect. The correct answer is a giraffe");
-											state = 0;
-										}
-									}
-								}
-							}
+			if (state == 1) {
+				// giraffe
+				if (values.get(i) == 0) {
+					event.getChannel().sendMessage("Long legs, short bodies, bony horns");
+					state = 4;
+				} else {
+					state = 2;
+				}
+			}
+
+			else if (state == 2) {
+				// monkey
+				if (values.get(i) == 1) {
+					event.getChannel().sendMessage("forward facing eyes, grasping hands, nails, large brains");
+					state = 4;
+				} else {
+					state = 3;
+				}
+			}
+
+			else if (state == 3) {
+				// alligator
+				if (values.get(i) == 2) {
+					event.getChannel().sendMessage("long body, thick scales, short legs");
+					state = 4;
+				} else {
+					System.out.println("An error occured");
+				}
+			}
+
+			else if (state == 4) {
+				if (event.getMessageAuthor().isYourself()) {
+					if (!event.getMessageContent().equals("!animal")) {
+						if (event.getMessageContent().length() > 1) {
+							state = 5;
 						}
 					}
+				}
+			}
 
-					// monkey
-					else if (values.get(i) == 1) {
-						event.getChannel().sendMessage("forward facing eyes, grasping hands, nails, large brains");
-						if (!event.getMessageAuthor().isYourself()) {
-							if (!event.getMessageContent().equals("!animal")) {
-								// if(event.getMessageContent()!=guessMessage1) {
-								if (event.getMessageContent().length() > 1) {
-									state += 1;
-									if (state == 1) {
-										if (event.getMessageContent().equals("monkey")
-												|| event.getMessageContent().equals("Monkey")) {
-											event.getChannel().sendMessage("Correct!");
-											state = 0;
-										} else if (event.getMessageContent().length() > 1) {
-											System.out.println(event.getMessageContent());
-											event.getChannel()
-													.sendMessage("Sorry, incorrect. The correct answer is a monkey");
-											state = 0;
-										}
-									}
-								}
-							}
-						}
+			else if (state == 5) {
+				if (values.get(i) == 0) {
+					if (event.getMessageContent().equals("Giraffe") || event.getMessageContent().equals("giraffe")) {
+						event.getChannel().sendMessage("Correct!");
+						state = 0;
+						i++;
+					} else if (event.getMessageContent().length() > 1) {
+						// System.out.println(event.getMessageContent());
+						event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a giraffe");
+						state = 0;
+						i++;
 					}
+				}
 
-					// alligator
-					else if (values.get(i) == 2) {
-						event.getChannel().sendMessage("long body, thick scales, short legs");
-						if (!event.getMessageAuthor().isYourself()) {
-							if (!event.getMessageContent().equals("!animal")) {
-								// if(event.getMessageContent()!=guessMessage1) {
-								if (event.getMessageContent().length() > 1) {
-									state += 1;
-									if (state == 1) {
-										if (event.getMessageContent().equals("alligator")
-												|| event.getMessageContent().equals("Alligator")) {
-											event.getChannel().sendMessage("Correct!");
-											state = 0;
-										} else if (event.getMessageContent().length() > 1) {
-											System.out.println(event.getMessageContent());
-											event.getChannel()
-													.sendMessage("Sorry, incorrect. The correct answer is a alligator");
-											state = 0;
-										}
-									}
-								}
-							}
-						}
+				else if (values.get(i) == 1) {
+					if (event.getMessageContent().equals("monkey") || event.getMessageContent().equals("Monkey")) {
+						event.getChannel().sendMessage("Correct!");
+						state = 0;
+						i++;
+					} else if (event.getMessageContent().length() > 1) {
+						System.out.println(event.getMessageContent());
+						event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a monkey");
+						state = 0;
+						i++;
 					}
+				}
 
+				else if (values.get(i) == 2) {
+					if (event.getMessageContent().equals("alligator")
+							|| event.getMessageContent().equals("Alligator")) {
+						event.getChannel().sendMessage("Correct!");
+						state = 0;
+						i++;
+					} else if (event.getMessageContent().length() > 1) {
+						System.out.println(event.getMessageContent());
+						event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a alligator");
+						state = 0;
+						i++;
+					}
 				}
 
 			}
