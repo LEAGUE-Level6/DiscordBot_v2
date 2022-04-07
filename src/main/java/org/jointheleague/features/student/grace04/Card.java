@@ -75,4 +75,130 @@ public class Card {
     @SerializedName("locale")
     @Expose
     private String locale;
+
+    public String getCardID() {
+        return cardID;
+    }
+    public void setCardID(String cardID) {
+        this.cardID = cardID;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCardSet() {
+        return cardSet;
+    }
+    public void setCardSet(String cardSet) {
+        this.cardSet = cardSet;
+    }
+
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getFaction() {
+        return faction;
+    }
+    public void setFaction(String faction) {
+        this.faction = faction;
+    }
+
+    public String getRarity() {
+        return rarity;
+    }
+    public void setRarity(String rarity) {
+        this.rarity= rarity;
+    }
+
+    public int getCost(){
+        return cost;
+    }
+    public void setCost(int cost){
+        this.cost = cost;
+    }
+
+    public int getAttack(){
+        return attack;
+    }
+    public void setAttack(int attack){
+        this.attack = attack;
+    }
+
+    public int getHealth(){
+        return health;
+    }
+    public void setHealth(int health){
+        this.health = health;
+    }
+
+    public String getText() {
+        return text;
+    }
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getFlavor() {
+        return flavor;
+    }
+    public void setFlavor(String flavor) {
+        this.flavor = flavor;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    public boolean isCollectible() {
+        return collectible;
+    }
+    public void setCollectible(boolean collectible) {
+        this.collectible = collectible;
+    }
+
+    public boolean isElite() {
+        return elite;
+    }
+    public void setElite(boolean elite) {
+        this.elite = elite;
+    }
+
+    public String getRace() {
+        return race;
+    }
+    public void setRace(String race) {
+        this.race = race;
+    }
+
+    public String getImg() {
+        return img;
+    }
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    public String getImgGold() {
+        return imgGold;
+    }
+    public void setImgGold(String imgGold) {
+        this.imgGold = imgGold;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
 }

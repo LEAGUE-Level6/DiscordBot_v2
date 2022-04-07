@@ -1,16 +1,10 @@
 package org.jointheleague.features.student.grace04;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
-//import org.jointheleague.features.student.grace04.tetr_api.ApiWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.io.IOException;
 
 public class HearthstoneAPI extends Feature {
 
@@ -51,45 +45,48 @@ public class HearthstoneAPI extends Feature {
         }
     }
 
-    public HearthstoneWrapper getCardByCard(String card) {
-        Mono<String> hsWrapperMono = webClient.get()
+    public Card getCardByCard(String card) {
+        Mono<Card> cardMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("uri", "https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/%7Bname%7D")
                         .queryParam("X-RapidAPI-Host", "omgvamp-hearthstone-v1.p.rapidapi.com")
                         .queryParam("X-RapidAPI-Key", "6fa354383amsh1ff11039b032073p1ed12cjsn5a0682d5c183")
                         .build())
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(Card.class);
 
-        String result = hsWrapperMono.block();
+        Card result = cardMono.block();
         System.out.println(result);
-        return null;
+        return result;
     }
 
     public String getCard(String card){
 
-        HearthstoneWrapper hsWrapper = getCardByCard(card);
+        Card drac = getCardByCard(card);
 
-        /*String name = hsWrapper.getName();
+        String name = drac.getName();
 
-        //Get the title of the article
-        String articleTitle = article.getTitle();
+        String faction = drac.getFaction();
 
-        //Get the content of the article
-        String articleContent = article.getContent();
+        String type = drac.getType();
 
-        //Get the URL of the article
-        String articleUrl = article.getUrl();
+        int cost = drac.getCost();
+
+        int attack = drac.getAttack();
+
+        int health = drac.getHealth();
+
+        String text = drac.getText();
+
+        String flavor = drac.getFlavor();
 
         //Create the message
         String message =
-                articleTitle + " -\n"
-                        + articleContent
-                        + "\nFull article: " + articleUrl;
+                name + " - " + faction + " " + type + " (" + cost + "/" + attack + "/" + health + ")"
+                        + "\nCard text: " + text + "\nFlavor: " + flavor;
 
         //Send the message
-        return message;*/
-        return null;
+        return message;
     }
 
     public void setWebClient(WebClient webClient) {

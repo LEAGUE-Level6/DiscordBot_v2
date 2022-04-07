@@ -12,7 +12,7 @@ public class HearthstoneWrapper {
     private Integer number;
     @SerializedName("results")
     @Expose
-    private Hearthstone[] results;
+    private Card[] results;
 
     public Integer getNumber() {
         return number;
@@ -22,11 +22,11 @@ public class HearthstoneWrapper {
         this.number = number;
     }
 
-    public Hearthstone[] getResults() {
+    public Card[] getResults() {
         return results;
     }
 
-    public void setResults(Hearthstone[] results) {
+    public void setResults(Card[] results) {
         this.results = results;
     }
 
