@@ -1,29 +1,30 @@
-package org.jointheleague.features.templates;
+package org.jointheleague.features.student.grace04;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.student.grace04.HearthstoneAPI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.never;
 
-class FeatureTemplateTest {
+class HearthstoneAPITest<ApiExampleWrapper> {
 
     private final String testChannelName = "test";
-    private final FeatureTemplate featureTemplate = new FeatureTemplate(testChannelName);
+    private final HearthstoneAPI hearthstoneAPI = new HearthstoneAPI(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -33,6 +34,21 @@ class FeatureTemplateTest {
 
     @Mock
     private TextChannel textChannel;
+
+    @Mock
+    WebClient webClientMock;
+
+    @Mock
+    WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock;
+
+    @Mock
+    WebClient.RequestHeadersSpec requestHeadersSpecMock;
+
+    @Mock
+    WebClient.ResponseSpec responseSpecMock;
+
+    @Mock
+    Mono<ApiExampleWrapper> apiExampleWrapperMonoMock;
 
     @BeforeEach
     void setUp() {
@@ -54,11 +70,11 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String command = featureTemplate.COMMAND;
+        String command = hearthstoneAPI.COMMAND;
 
         //Then
 
-        if(!(featureTemplate instanceof FeatureTemplate)){
+        if(!(hearthstoneAPI instanceof HearthstoneAPI)){
             assertNotEquals("!command", command);
         }
 
@@ -71,12 +87,12 @@ class FeatureTemplateTest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureTemplate.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureTemplate.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(hearthstoneAPI.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(hearthstoneAPI.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        hearthstoneAPI.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -89,7 +105,7 @@ class FeatureTemplateTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        hearthstoneAPI.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -100,7 +116,7 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = featureTemplate.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = hearthstoneAPI.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -111,8 +127,8 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String helpEmbedTitle = featureTemplate.getHelpEmbed().getTitle();
-        String command = featureTemplate.COMMAND;
+        String helpEmbedTitle = hearthstoneAPI.getHelpEmbed().getTitle();
+        String command = hearthstoneAPI.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

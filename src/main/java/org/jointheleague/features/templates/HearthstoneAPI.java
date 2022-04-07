@@ -4,11 +4,11 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
-public class FeatureTemplate extends Feature {
+public class HearthstoneAPI extends Feature {
 
     public final String COMMAND = "!command";
 
-    public FeatureTemplate(String channelName) {
+    public HearthstoneAPI(String channelName) {
         super(channelName);
 
         //Create a help embed to describe feature when !help command is sent
