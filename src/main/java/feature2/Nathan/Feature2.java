@@ -16,8 +16,10 @@ public class Feature2 extends Feature {
 
 	public final String COMMAND = "!animal";
 	Random r = new Random();
-	int state = 0;
 	int animalNumbers;
+	int i = 0;
+	String response = "message not set";
+	String guessMessage = "";
 	ArrayList<Integer> values = new ArrayList<Integer>();
 
 	// put a variable here that keeps track of the # of times handle is called
@@ -50,96 +52,68 @@ public class Feature2 extends Feature {
 		// if(event.getMessageAuthor().isYourself()){
 		// if(event.getMessageAuthor()==this.);
 		distinctRandom();
-		for (int i = 0; i < 3;) {
-			if (state == 0) {
-				if (messageContent.startsWith(COMMAND)) {
-					state = 1;
-				}
-			}
-
-			if (state == 1) {
-				// giraffe
+		
+		if (!event.getMessageAuthor().isYourself()) {
+			if (messageContent.equals(COMMAND)) {
+				//giraffe
 				if (values.get(i) == 0) {
 					event.getChannel().sendMessage("Long legs, short bodies, bony horns");
-					state = 4;
-				} else {
-					state = 2;
 				}
-			}
 
-			else if (state == 2) {
 				// monkey
 				if (values.get(i) == 1) {
 					event.getChannel().sendMessage("forward facing eyes, grasping hands, nails, large brains");
-					state = 4;
-				} else {
-					state = 3;
 				}
-			}
 
-			else if (state == 3) {
 				// alligator
 				if (values.get(i) == 2) {
 					event.getChannel().sendMessage("long body, thick scales, short legs");
-					state = 4;
-				} else {
-					System.out.println("An error occured");
 				}
-			}
-
-			else if (state == 4) {
-				if (event.getMessageAuthor().isYourself()) {
-					if (!event.getMessageContent().equals("!animal")) {
-						if (event.getMessageContent().length() > 1) {
-							state = 5;
-						}
-					}
-				}
-			}
-
-			else if (state == 5) {
-				if (values.get(i) == 0) {
-					if (event.getMessageContent().equals("Giraffe") || event.getMessageContent().equals("giraffe")) {
-						event.getChannel().sendMessage("Correct!");
-						state = 0;
-						i++;
-					} else if (event.getMessageContent().length() > 1) {
-						// System.out.println(event.getMessageContent());
-						event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a giraffe");
-						state = 0;
-						i++;
-					}
-				}
-
-				else if (values.get(i) == 1) {
-					if (event.getMessageContent().equals("monkey") || event.getMessageContent().equals("Monkey")) {
-						event.getChannel().sendMessage("Correct!");
-						state = 0;
-						i++;
-					} else if (event.getMessageContent().length() > 1) {
-						System.out.println(event.getMessageContent());
-						event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a monkey");
-						state = 0;
-						i++;
-					}
-				}
-
-				else if (values.get(i) == 2) {
-					if (event.getMessageContent().equals("alligator")
-							|| event.getMessageContent().equals("Alligator")) {
-						event.getChannel().sendMessage("Correct!");
-						state = 0;
-						i++;
-					} else if (event.getMessageContent().length() > 1) {
-						System.out.println(event.getMessageContent());
-						event.getChannel().sendMessage("Sorry, incorrect. The correct answer is a alligator");
-						state = 0;
-						i++;
-					}
-				}
-
 			}
 		}
+
+		else if (messageContent.contains(COMMAND)) {
+			        String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND, "");
+					interpretGuess(event, guessMessage);
+			}
+	}
+
+	public void interpretGuess(MessageCreateEvent event, String guess) {
+		if (values.get(i) == 0) {
+			if (guess.equalsIgnoreCase("Giraffe")) {
+				response = "Correct!";
+				i++;
+			} else if (guessMessage.length() > 1) {
+				// System.out.println(event.getMessageContent());
+				response = "Sorry, incorrect. The correct answer is a giraffe";
+				i++;
+			}
+		}
+
+		else if (values.get(i) == 1) {
+			if (guess.equalsIgnoreCase("monkey")) {
+				response="Correct!";
+				i++;
+			} else if (guess.length() > 1) {
+				//System.out.println(event.getMessageContent());
+				response="Sorry, incorrect. The correct answer is a monkey";
+				i++;
+			}
+		}
+
+		else if (values.get(i) == 2) {
+			if (guess.equalsIgnoreCase("alligator")) {
+				response= "Correct!";
+				i++;
+			} else if (guess.length() > 1) {
+				System.out.println(event.getMessageContent());
+				response="Sorry, incorrect. The correct answer is a alligator";
+				i++;
+			}
+		}
+		
+		event.getChannel().sendMessage(response);
+
 	}
 }
 
