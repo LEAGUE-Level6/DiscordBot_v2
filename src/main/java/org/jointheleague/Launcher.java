@@ -12,7 +12,6 @@ public class Launcher {
 
         //Instantiate DiscordBot and connect
         DiscordBot discordBot =  new DiscordBot(discordToken, channelName);
-        discordBot.connect(printDiscordInvite);
 
     }
 }
