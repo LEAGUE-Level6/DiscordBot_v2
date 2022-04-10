@@ -29,7 +29,7 @@ public class Hello_There extends Feature {
             //respond to message here
             event.getChannel().sendMessage("General Kenobi!");
             //EmbedBuilder embed = new EmbedBuilder().setTitle("GENERAL KENOBI!").setAuthor("General Grievous")
-                  //  .addField("You are a bold one", "Your lightsaber will make a fine addition to my collection")
+                  ////  .addField("You are a bold one", "Your lightsaber will make a fine addition to my collection")
                   //  .setColor(Color.BLUE).setImage("https://lumiere-a.akamaihd.net/v1/images/General-Grievous_c9df9cb5.jpeg?region=0%2C0%2C1200%2C675&width=960")
                   //  .setFooter("So uncivilized");
         }

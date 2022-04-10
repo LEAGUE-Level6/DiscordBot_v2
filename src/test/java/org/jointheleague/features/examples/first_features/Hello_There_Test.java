@@ -84,7 +84,7 @@ public class Hello_There_Test {
 
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
-        //Given
+        //Given//
         String command = "";
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
