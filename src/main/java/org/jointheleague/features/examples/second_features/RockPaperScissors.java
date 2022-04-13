@@ -12,6 +12,9 @@ public class RockPaperScissors extends Feature {
 
 	public final String COMMAND = "!rps";
 	private final Random random = new Random();
+	boolean shootRPS=false;
+	int r=0;
+	String messageContent;
 
 	public RockPaperScissors(String channelName) {
 		super(channelName);
@@ -20,40 +23,48 @@ public class RockPaperScissors extends Feature {
 
 	@Override
 	public void handle(MessageCreateEvent event) {
-		String messageContent = event.getMessageContent();
-		int r = random.nextInt(3);
+		 messageContent = event.getMessageContent();
+		 r = random.nextInt(3);
 
-		if (messageContent.startsWith(COMMAND)) {
+		if (messageContent.startsWith(COMMAND)&&shootRPS==false) {
 
 			event.getChannel().sendMessage("3");
 			try {
-				Thread.sleep(300);
+				Thread.sleep(1500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			event.getChannel().sendMessage("2");
 			try {
-				Thread.sleep(300);
+				Thread.sleep(1500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			event.getChannel().sendMessage("1");
 			try {
-				Thread.sleep(300);
+				Thread.sleep(1500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			event.getChannel().sendMessage("Shoot!");
 			try {
-				Thread.sleep(500);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			shootRPS=true;
+			return;
+		}
+			
+		
 
+		else if(shootRPS){
+	
+		
 			if (r == 0) {
 				event.getChannel().sendMessage("Rock");
 			} else if (r == 1) {
@@ -62,21 +73,49 @@ public class RockPaperScissors extends Feature {
 				event.getChannel().sendMessage("Scissors");
 			}
 
-			if (messageContent.contains("rock")) {
+			
 
+			messageContent = event.getMessageContent();
+			
+			if (messageContent.startsWith("rock")&&r==0) {
+				event.getChannel().sendMessage("Tie. Good try, to play again type !rps.");
 			}
-			else if (messageContent.contains("scissors")||messageContent.contains("scissor")) {
-
+			else if (messageContent.startsWith("rock")&&r==1) {
+				event.getChannel().sendMessage("Dang, you win. Good job! To play again type !rps.");
 			}
-			else if (messageContent.contains("paper")) {
-
+			else if (messageContent.startsWith("rock")&&r==2) {
+				event.getChannel().sendMessage("Ha, you lost, I won. Good try, to play again type !rps.");
 			}
+			
+			
+			else if (messageContent.contains("scissors")&&r==0) {
+				event.getChannel().sendMessage("Dang, you win. Good job! To play again type !rps.");
+			}
+			else if (messageContent.contains("scissors")&&r==1) {
+				event.getChannel().sendMessage("Ha, you lost, I won. Good try, to play again type !rps.");
+			}
+			else if (messageContent.contains("scissors")&&r==2) {
+				event.getChannel().sendMessage("Tie. Good try, to play again type !rps.");
+			}
+			
+			
+			else if (messageContent.contains("paper")&&r==0) {
+				event.getChannel().sendMessage("Ha, you lost, I won. Good try, to play again type !rps.");
+			}
+			else if (messageContent.contains("paper")&&r==1) {
+				event.getChannel().sendMessage("Tie. Good try, to play again type !rps.");
+			}
+			else if (messageContent.contains("paper")&&r==2) {
+				event.getChannel().sendMessage("Dang, you win. Good job! To play again type !rps.");
+			}
+			
+			
+			
 			else {
-				
+				event.getChannel().sendMessage("To play the game, you can only choose rock, paper, or scissors.");
 			}
-			event.getChannel().sendMessage("");
-
 		}
+		
 	}
 
 }
