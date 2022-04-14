@@ -3,7 +3,7 @@ package org.jointheleague.features.student.grace04;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.jointheleague.features.student.grace04.HearthstoneAPI;
+import org.jointheleague.features.student.grace04.hearthstone.HearthstoneAPI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

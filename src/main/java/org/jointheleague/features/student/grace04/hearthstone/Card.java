@@ -1,4 +1,4 @@
-package org.jointheleague.features.student.grace04;
+package org.jointheleague.features.student.grace04.hearthstone;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
