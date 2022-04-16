@@ -21,7 +21,7 @@ import org.junit.jupiter.api.AfterEach;
 	import static org.mockito.Mockito.*;
 	import static org.mockito.Mockito.never;
 
-	class FeatureTemplateTest {
+	class Feature2Test {
 
 	    private final String testChannelName = "test";
 	    private final Feature2 feature2 = new Feature2(testChannelName);
