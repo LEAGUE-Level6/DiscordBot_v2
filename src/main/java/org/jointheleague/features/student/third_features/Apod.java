@@ -4,6 +4,7 @@ import org.javacord.api.entity.message.Message;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.student.third_features.plain_old_java_objects.ApodApi.ApodWrapper;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -50,28 +51,27 @@ public class Apod extends Feature {
 
 
     public String apod(String date) {
-        Mono<String> apodWrapperMono = webClient.get()
+        Mono<ApodWrapper> apodWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("api_key", apiKey)
                         .queryParam("date", date)
                         .build())
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(ApodWrapper.class);
 
-        String message = apodWrapperMono.block();
-System.out.println("test");
+        String message = apodWrapperMono.block().getUrl();
         //send the message
         return message;
     }
     public String apod() {
-        Mono<String> apodWrapperMono = webClient.get()
+        Mono<ApodWrapper> apodWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("api_key", apiKey)
                         .build())
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(ApodWrapper.class);
 
-        String message = apodWrapperMono.block();
+        String message = apodWrapperMono.block().getUrl();
         //send the message
         return message;
     }
