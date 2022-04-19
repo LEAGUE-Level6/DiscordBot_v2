@@ -1,10 +1,13 @@
 package org.jointheleague.discord_bot;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
 import javax.swing.Timer;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -13,42 +16,125 @@ import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.Button;
-import org.javacord.api.interaction.MessageComponentInteraction;
+import org.javacord.api.entity.message.component.LowLevelComponent;
+class Cons {
+	boolean Left, Right, Up, Down;
+	Cons(HashMap<String, Boolean> Cons) {
+		this.Left = Cons.get("Left");
+		this.Right = Cons.get("Right");
+		this.Up = Cons.get("Up");
+		this.Down = Cons.get("Down");
+	}
+}
+class Enemy {
+	int X, Y;
+	Enemy() {
+		X = (int) Math.round(Math.random() * 999);
+		Y = (int) Math.round(Math.random() * 499);
+		int Choice = (int) Math.round(Math.random() * 3);
+		if (Choice == 1) {
+			X = 0;
+		} else if (Choice == 2) {
+			X = 999;
+		} else if (Choice == 3) {
+			Y = 499;
+		} else {
+			Y = 0;
+		}
+	}
+	void Tick() {
+		if (Math.random() > 0.5) {
+			X += 10;
+		} else {
+			X -= 10;
+		}
+		if (Math.random() > 0.5) {
+			Y += 10;
+		} else {
+			Y -= 10;
+		}
+		if (X < 0) {
+			X = 990;
+		} else if (X > 990) {
+			X = 0;
+		}
+		if (Y < 0) {
+			Y = 490;
+		} else if (Y > 490) {
+			Y = 0;
+		}
+	}
+}
 class Game implements ActionListener {
 	DiscordApi API;
 	Message Msg, OldMsg;
 	BufferedImage Img;
 	Graphics2D Canv;
 	TextChannel Chan;
-	HashMap<String, String> Inputs = new HashMap<String, String>();
+	HashMap<String, Boolean> ConsDown = new HashMap<String, Boolean>();
+	Timer Timer;
 	Game(DiscordApi API, Message Msg) {
 		this.API = API;
 		this.OldMsg = Msg;
 		this.Img = new BufferedImage(1000, 500, BufferedImage.TYPE_INT_RGB);
 		this.Canv = Img.createGraphics();
 		this.Chan = Msg.getChannel();
-		
-		new Timer(1000, this).start();
+		Timer = new Timer(1000, this);
+		Timer.start();
+		ConsDown.put("Left", false);
+		ConsDown.put("Right", false);
+		ConsDown.put("Up", false);
+		ConsDown.put("Down", false);
 		API.addMessageComponentCreateListener(Evt -> {
-			MessageComponentInteraction Interaction = Evt.getMessageComponentInteraction();
-			String ID = Interaction.getCustomId();
-			Interaction.createImmediateResponder().respond();
+			String ID = Evt.getMessageComponentInteraction().getCustomId();
+			ConsDown.put(ID, !ConsDown.get(ID));
 		});
 	}
+	int PlayerX = 500;
+	int PlayerY = 250;
+	List<Enemy> Enemies = new ArrayList<Enemy>();
 	@Override
 	public void actionPerformed(ActionEvent Evt) {
-		OldMsg.delete();
-		
-		this.Canv.fillRect((int) Math.round(Math.random() * 500) + 250, (int) Math.round(Math.random() * 250) + 125, 10, 10);
+		Cons Cons = new Cons(ConsDown);
+		this.Canv.clearRect(0, 0, 1000, 500);
+		if (Cons.Left) PlayerX -= 10;
+		if (Cons.Right) PlayerX += 10;
+		if (Cons.Up) PlayerY -= 10;
+		if (Cons.Down) PlayerY += 10;
+		if (PlayerX < 0) {
+			PlayerX = 970;
+		} else if (PlayerX > 970) {
+			PlayerX = 0;
+		}
+		if (PlayerY < 0) {
+			PlayerY = 470;
+		} else if (PlayerY > 470) {
+			PlayerY = 0;
+		}
+		this.Canv.setColor(Color.GREEN);
+		this.Canv.fillRect(PlayerX, PlayerY, 30, 30);
+		if (Enemies.size() < 20) {
+			Enemies.add(new Enemy());
+		}
+		this.Canv.setColor(Color.RED);
+		Enemies.forEach(Enemy -> {
+			Enemy.Tick();
+			this.Canv.fillRect(Enemy.X, Enemy.Y, 10, 10);
+			if (PlayerX < Enemy.X + 10 && PlayerX + 30 > Enemy.X && PlayerY < Enemy.Y + 10 && PlayerY + 30 > Enemy.X) {
+				this.Canv.clearRect(0, 0, 1000, 500);
+				this.Canv.drawString("YOU DIED!!!", 10, 10);
+				Timer.stop();
+			}
+		});
 		try {
-			OldMsg = new MessageBuilder()
-			.addAttachment(this.Img, "Image.png")
-			.addComponents(ActionRow.of(Button.secondary("Left", "Left"),
-			Button.secondary("Down", "Down"),
-			Button.secondary("Right", "Right"),
-			Button.secondary("Up", "Up"),
-			Button.danger("Stop", "Stop")))
-			.send(Chan).get();
+			MessageBuilder Builder = new MessageBuilder().addAttachment(this.Img, "Image.png");
+			List<LowLevelComponent> Buttons = new ArrayList<LowLevelComponent>();
+			ConsDown.keySet().forEach(Con -> {
+				Buttons.add(ConsDown.get(Con) ? Button.primary(Con, Con) : Button.secondary(Con, Con));
+			});
+			Message ActualOldMsg = OldMsg;
+			OldMsg = Builder.addComponents(ActionRow.of(Buttons)).send(Chan).get();
+			ActualOldMsg.delete();
 		} catch (Exception Exc) {Exc.printStackTrace();}
 	}
 }
