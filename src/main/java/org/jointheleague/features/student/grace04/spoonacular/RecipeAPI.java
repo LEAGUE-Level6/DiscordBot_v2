@@ -9,17 +9,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 public class RecipeAPI extends Feature {
-    public final String COMMAND = "!food";
+    public final String COMMAND = "!recipe";
 
     private WebClient webClient;
     private static final String baseUrl = "https://api.spoonacular.com/recipes/complexSearch";
 
-    private String apiKey = "82bf60da1dd4e54de778776ad0bd1af90319e417";
+    private String apiKey = "0044c0e3c7ec461fa85dd894f7a760d4";
 
     public RecipeAPI(String channelName) {
         super(channelName);
 
-        helpEmbed = new HelpEmbed(COMMAND, "Find a recipe :)");
+        helpEmbed = new HelpEmbed(COMMAND, "Find a recipe");
 
         //build the WebClient
         this.webClient = WebClient
@@ -34,7 +34,7 @@ public class RecipeAPI extends Feature {
         String messageContent = event.getMessageContent();
         String[] messageArr = messageContent.split(" ");
         if (messageContent.equals(COMMAND)) {
-            event.getChannel().sendMessage("Use the command '!food dish' to find a new recipe");
+            event.getChannel().sendMessage("Use the command '!recipe [dish]' to find a recipe");
         }
         if(messageArr[0].equals(COMMAND) && messageArr.length > 1 && messageArr[1]!= null){
             String toPrint = findRecipe(messageArr[1]);
@@ -72,9 +72,6 @@ public class RecipeAPI extends Feature {
 
         //get image
         String recipeImage = newRecipe.getImage();
-
-        //get calories
-        int recipeCalories = newRecipe.getCalories();
 
         //get id
         int recipeId = newRecipe.getId();

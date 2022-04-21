@@ -11,7 +11,8 @@ public class HearthstoneAPI extends Feature {
     public final String COMMAND = "!hsAPI";
 
     private WebClient webClient;
-    private static final String baseUrl = "https://rapidapi.com/omgvamp/api/hearthstone/";
+    private static final String baseUrl = "rapidapi.com/omgvamp-hearthstone-v1.p.rapidapi.com";
+    private String apiKey = "6fa354383amsh1ff11039b032073p1ed12cjsn5a0682d5c183";
 
     public HearthstoneAPI(String channelName) {
         super(channelName);
@@ -49,8 +50,8 @@ public class HearthstoneAPI extends Feature {
         Mono<Card> cardMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("uri", "https://omgvamp-hearthstone-v1.p.rapidapi.com/cards/%7Bname%7D")
-                        .queryParam("X-RapidAPI-Host", "omgvamp-hearthstone-v1.p.rapidapi.com")
-                        .queryParam("X-RapidAPI-Key", "6fa354383amsh1ff11039b032073p1ed12cjsn5a0682d5c183")
+                        .queryParam("X-RapidAPI-Host", baseUrl)
+                        .queryParam("X-RapidAPI-Key", apiKey)
                         .build())
                 .retrieve()
                 .bodyToMono(Card.class);

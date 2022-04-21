@@ -1,28 +1,30 @@
-package org.jointheleague.features.templates;
+package org.jointheleague.features.student.grace04;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.student.grace04.spoonacular.RecipeAPI;
+import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.never;
 
-class HearthstoneAPITest {
+class RecipeAPITest {
 
     private final String testChannelName = "test";
-    private final HearthstoneAPI featureTemplate = new HearthstoneAPI(testChannelName);
+    private RecipeAPI recipeApi;
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -32,6 +34,18 @@ class HearthstoneAPITest {
 
     @Mock
     private TextChannel textChannel;
+
+    @Mock
+    WebClient webClientMock;
+
+    @Mock
+    WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock;
+
+    @Mock
+    WebClient.RequestHeadersSpec requestHeadersSpecMock;
+
+    @Mock
+    WebClient.ResponseSpec responseSpecMock;
 
     @BeforeEach
     void setUp() {
@@ -53,11 +67,11 @@ class HearthstoneAPITest {
         //Given
 
         //When
-        String command = featureTemplate.COMMAND;
+        String command = recipeApi.COMMAND;
 
         //Then
 
-        if(!(featureTemplate instanceof HearthstoneAPI)){
+        if(!(recipeApi instanceof RecipeAPI)){
             assertNotEquals("!command", command);
         }
 
@@ -70,12 +84,12 @@ class HearthstoneAPITest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureTemplate.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureTemplate.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(recipeApi.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(recipeApi.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        recipeApi.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -88,7 +102,7 @@ class HearthstoneAPITest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        recipeApi.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -99,7 +113,7 @@ class HearthstoneAPITest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = featureTemplate.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = recipeApi.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -110,8 +124,8 @@ class HearthstoneAPITest {
         //Given
 
         //When
-        String helpEmbedTitle = featureTemplate.getHelpEmbed().getTitle();
-        String command = featureTemplate.COMMAND;
+        String helpEmbedTitle = recipeApi.getHelpEmbed().getTitle();
+        String command = recipeApi.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

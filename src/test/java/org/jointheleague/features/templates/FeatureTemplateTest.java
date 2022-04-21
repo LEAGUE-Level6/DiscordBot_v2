@@ -1,30 +1,28 @@
-package org.jointheleague.features.student.grace04;
+package org.jointheleague.features.templates;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.jointheleague.features.student.grace04.hearthstone.HearthstoneAPI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
 
-class HearthstoneAPITest<ApiExampleWrapper> {
+class FeatureTemplateTest {
 
     private final String testChannelName = "test";
-    private final HearthstoneAPI hearthstoneAPI = new HearthstoneAPI(testChannelName);
+    private final FeatureTemplate featureTemplate = new FeatureTemplate(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -34,21 +32,6 @@ class HearthstoneAPITest<ApiExampleWrapper> {
 
     @Mock
     private TextChannel textChannel;
-
-    @Mock
-    WebClient webClientMock;
-
-    @Mock
-    WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock;
-
-    @Mock
-    WebClient.RequestHeadersSpec requestHeadersSpecMock;
-
-    @Mock
-    WebClient.ResponseSpec responseSpecMock;
-
-    @Mock
-    Mono<ApiExampleWrapper> apiExampleWrapperMonoMock;
 
     @BeforeEach
     void setUp() {
@@ -70,11 +53,11 @@ class HearthstoneAPITest<ApiExampleWrapper> {
         //Given
 
         //When
-        String command = hearthstoneAPI.COMMAND;
+        String command = featureTemplate.COMMAND;
 
         //Then
 
-        if(!(hearthstoneAPI instanceof HearthstoneAPI)){
+        if(!(featureTemplate instanceof FeatureTemplate)){
             assertNotEquals("!command", command);
         }
 
@@ -87,12 +70,12 @@ class HearthstoneAPITest<ApiExampleWrapper> {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(hearthstoneAPI.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(hearthstoneAPI.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(featureTemplate.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(featureTemplate.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        hearthstoneAPI.handle(messageCreateEvent);
+        featureTemplate.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -105,7 +88,7 @@ class HearthstoneAPITest<ApiExampleWrapper> {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        hearthstoneAPI.handle(messageCreateEvent);
+        featureTemplate.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -116,7 +99,7 @@ class HearthstoneAPITest<ApiExampleWrapper> {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = hearthstoneAPI.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = featureTemplate.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -127,8 +110,8 @@ class HearthstoneAPITest<ApiExampleWrapper> {
         //Given
 
         //When
-        String helpEmbedTitle = hearthstoneAPI.getHelpEmbed().getTitle();
-        String command = hearthstoneAPI.COMMAND;
+        String helpEmbedTitle = featureTemplate.getHelpEmbed().getTitle();
+        String command = featureTemplate.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
