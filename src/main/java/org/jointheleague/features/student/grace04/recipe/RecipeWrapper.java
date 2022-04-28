@@ -1,10 +1,7 @@
-package org.jointheleague.features.student.grace04.spoonacular;
+package org.jointheleague.features.student.grace04.recipe;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
-
-import java.util.List;
 
 public class RecipeWrapper {
     @SerializedName("number")

@@ -10,7 +10,8 @@ import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.grace04.hearthstone.HearthstoneAPI;
-import org.jointheleague.features.student.grace04.spoonacular.RecipeAPI;
+import org.jointheleague.features.student.grace04.recipe.RecipeAPI;
+import org.jointheleague.features.student.grace04.tetra.TetrAPI;
 
 public class DiscordBot {
 
@@ -52,6 +53,7 @@ public class DiscordBot {
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new HearthstoneAPI(channelName));
 		addFeature(new RecipeAPI(channelName));
+		addFeature(new TetrAPI(channelName));
 	}
 
 	private void addFeature(Feature feature){
