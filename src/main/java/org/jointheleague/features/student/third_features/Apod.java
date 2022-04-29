@@ -34,15 +34,32 @@ public class Apod extends Feature {
         String messageContent = event.getMessageContent();
         System.out.println(messageContent);
         if (messageContent.startsWith(COMMAND)) {
-            String[] stringSplit = messageContent.split(" ");
+     String[] stringSplit = messageContent.split(" ");
+
             System.out.println(stringSplit.length);
             if (stringSplit.length == 1){
                 String picture = apod();
                 event.getChannel().sendMessage(picture);
             }else{
+                String[] stringSplit2 = stringSplit[1].split("-");
+                if (stringSplit2[0].length() != 4) {
+                    event.getChannel().sendMessage("Enter either !Apod, or !Apod <date>. Enter Date like YYYY-MM-DD");
+                }
+                for (int i = 1; i< stringSplit2.length; i++){
+                    if (stringSplit2[i].length() != 2 && stringSplit2[i].length() != 1) {
+                            event.getChannel().sendMessage("Enter either !Apod, or !Apod <date>. Enter Date like YYYY-MM-DD");
+                            break;
+                        }
+                }
                 String date = stringSplit[1];
-                String picture = apod(date);
-                event.getChannel().sendMessage(picture);
+                if (date.contains("-")){
+                    String picture = apod(date);
+                    event.getChannel().sendMessage(picture);
+                }else{
+                    System.out.println("test");
+                    event.getChannel().sendMessage("Enter either !Apod, or !Apod <date>. Type !help for more information.");
+                }
+
             }
 
 
@@ -58,8 +75,9 @@ public class Apod extends Feature {
                         .build())
                 .retrieve()
                 .bodyToMono(ApodWrapper.class);
-
-        String message = apodWrapperMono.block().getUrl();
+       // apodWrapperMono.defaultIfEmpty(new ApodWrapper("This date is not available."));
+        ApodWrapper aw = apodWrapperMono.block();
+        String message = aw.getUrl();
         //send the message
         return message;
     }
