@@ -8,12 +8,16 @@ import org.jointheleague.features.student.third_features.plain_old_java_objects.
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+
 import javax.xml.ws.handler.MessageContext;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 //A swagger page for this very simple API can be found here: https://app.swaggerhub.com/apis-docs/whiterabbit8/meowfacts/1.0.0
 public class Apod extends Feature {
 
-
+    private String date = java.time.LocalDate.now().toString();
     public final String COMMAND = "!Apod";
     private WebClient webClient;
     private static final String baseUrl = "https://api.nasa.gov/planetary/apod";
@@ -41,23 +45,22 @@ public class Apod extends Feature {
                 String picture = apod();
                 event.getChannel().sendMessage(picture);
             }else{
-                String[] stringSplit2 = stringSplit[1].split("-");
-                if (stringSplit2[0].length() != 4) {
-                    event.getChannel().sendMessage("Enter either !Apod, or !Apod <date>. Enter Date like YYYY-MM-DD");
-                }
-                for (int i = 1; i< stringSplit2.length; i++){
-                    if (stringSplit2[i].length() != 2 && stringSplit2[i].length() != 1) {
-                            event.getChannel().sendMessage("Enter either !Apod, or !Apod <date>. Enter Date like YYYY-MM-DD");
-                            break;
-                        }
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date parsedDate = formatter.parse(stringSplit[1]);
+                    Date lastDate = formatter.parse("1995-06-20");
+                    Date todayDate = formatter.parse(date);
+                   if (parsedDate.before(lastDate) || parsedDate.after(todayDate)){
+                       event.getChannel().sendMessage("There is no image for that date, true using a date that is after 1995-06-20, and before today.");
+                   }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    event.getChannel().sendMessage("Enter either !Apod, or !Apod <date>. Type !help for more information.");
                 }
                 String date = stringSplit[1];
                 if (date.contains("-")){
                     String picture = apod(date);
                     event.getChannel().sendMessage(picture);
-                }else{
-                    System.out.println("test");
-                    event.getChannel().sendMessage("Enter either !Apod, or !Apod <date>. Type !help for more information.");
                 }
 
             }
