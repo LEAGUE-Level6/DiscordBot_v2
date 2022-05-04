@@ -2,6 +2,9 @@ package org.jointheleague.discord_bot;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.jointheleague.GetUTC;
+import org.jointheleague.SendEmbed;
+import org.jointheleague.SnakeGame;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
@@ -29,7 +32,6 @@ public class DiscordBot {
 	public void connect(boolean printInvite) {
 
 		api = new DiscordApiBuilder().setToken(token).login().join();
-
 		//Print the URL to invite the bot
 		if (printInvite) {
 			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
@@ -43,15 +45,27 @@ public class DiscordBot {
 		api.addMessageCreateListener(helpListener);
 
 		//add features
-		addFeature(new RandomNumber(channelName));
-		addFeature(new CurrentTime(channelName));
-		addFeature(new HighLowGame(channelName));
-		addFeature(new NewsApi(channelName));
-		addFeature(new CatFactsApi(channelName));
+		addFeature(new GetUTC(channelName));
+		addFeature(new SendEmbed(channelName, api.getYourself()));
+		addFeature(new SnakeGame(channelName, api.getYourself()));
+//		addFeature(new RandomNumber(channelName));
+//		addFeature(new CurrentTime(channelName));
+//		addFeature(new HighLowGame(channelName));
+//		addFeature(new NewsApi(channelName));
+//		addFeature(new CatFactsApi(channelName));
+//		addFeature(feature);
 	}
 
 	private void addFeature(Feature feature){
-		api.addMessageCreateListener(feature);
+//		api.addMessageCreateListener(feature);
+		api.addListener(feature);
 		helpListener.addHelpEmbed(feature.getHelpEmbed());
 	}
+	
+
+
+//	private void addReactionFeature(Feature feature){
+//		api.addListener(feature);
+//		helpListener.addHelpEmbed(feature.getHelpEmbed());
+//	}
 }
