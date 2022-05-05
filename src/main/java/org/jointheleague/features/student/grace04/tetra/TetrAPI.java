@@ -40,20 +40,24 @@ public class TetrAPI extends Feature {
         }
     }
 
-    public TetrWrapper getUserFromName(String name) {
-        Mono<TetrWrapper> tetrWrapperMono = webClient.get()
+    public String getUserFromName(String name) {
+        Mono<String> tetrWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .queryParam(":user", name)
+                        //.queryParam(":user", name)
+                        .path(":user/"+ name)
                         .build())
                 .retrieve()
-                .bodyToMono(TetrWrapper.class);
+                .bodyToMono(String.class);
 
         return tetrWrapperMono.block();
     }
 
     public String findUser(String name){
-        TetrWrapper tw = getUserFromName(name);
-        System.out.println(tw==null);
+        String tw = getUserFromName(name);
+        System.out.println(tw);
+
+        /*System.out.println(tw.getSuccess());
+        System.out.println(tw.getError());
 
         Tetr data = tw.getData();
 
@@ -80,6 +84,9 @@ public class TetrAPI extends Feature {
                         + rating + " - " + rank + " - " + standing + " - " + percentile;
 
         //Send the message
+
+         */
+        String message = "";
         return message;
     }
 
