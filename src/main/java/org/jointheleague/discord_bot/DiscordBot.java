@@ -7,6 +7,7 @@ import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.second_features.RockPaperScissors;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
+import org.jointheleague.features.examples.third_features.PremierLeagueScores;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomEmotion;
 import org.jointheleague.features.examples.first_features.RandomNumber;
@@ -52,7 +53,7 @@ public class DiscordBot {
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new RandomEmotion(channelName));
 		addFeature(new RockPaperScissors(channelName));
-		
+		addFeature(new PremierLeagueScores(channelName));
 	}
 
 	private void addFeature(Feature feature){
