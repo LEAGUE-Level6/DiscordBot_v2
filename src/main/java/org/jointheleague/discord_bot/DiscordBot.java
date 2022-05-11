@@ -17,6 +17,9 @@ import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.message.component.LowLevelComponent;
+
+//This program should be combined with the DiscordBotOld
+
 class Cons {
 	boolean Left, Right, Up, Down;
 	Cons(HashMap<String, Boolean> Cons) {
@@ -65,6 +68,7 @@ class Enemy {
 		}
 	}
 }
+//This game is very confusing on how to play, you should give instructions on what the game is.
 class Game implements ActionListener {
 	DiscordApi API;
 	Message Msg, OldMsg;
@@ -79,7 +83,7 @@ class Game implements ActionListener {
 		this.Img = new BufferedImage(1000, 500, BufferedImage.TYPE_INT_RGB);
 		this.Canv = Img.createGraphics();
 		this.Chan = Msg.getChannel();
-		Timer = new Timer(1000, this);
+		Timer = new Timer(1000, this);//You should increase the time delay slightly as you get packets that go too fast causing discord to refuse some of them for a bit.
 		Timer.start();
 		ConsDown.put("Left", false);
 		ConsDown.put("Right", false);
@@ -122,7 +126,7 @@ class Game implements ActionListener {
 			this.Canv.fillRect(Enemy.X, Enemy.Y, 10, 10);
 			if (PlayerX < Enemy.X + 10 && PlayerX + 30 > Enemy.X && PlayerY < Enemy.Y + 10 && PlayerY + 30 > Enemy.X) {
 				this.Canv.clearRect(0, 0, 1000, 500);
-				this.Canv.drawString("YOU DIED!!!", 10, 10);
+				this.Canv.drawString("YOU DIED!!!", 10, 10);//You should center this, also it would be nice to have a score
 				Timer.stop();
 			}
 		});
@@ -147,7 +151,7 @@ public class DiscordBot {
 		this.API.addMessageCreateListener(Message -> {
 			if (Message.getMessageContent().equals("BBot: Test")) {
 				try {new Game(this.API, Message.getChannel().sendMessage("Loading...").get());}
-				catch (Exception Exc) {Exc.printStackTrace();}
+				catch (Exception Exc) {Exc.printStackTrace();}//You should notify the user that there was an error
 			}
 		});
 	}

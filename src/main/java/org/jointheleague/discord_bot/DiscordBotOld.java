@@ -26,7 +26,7 @@ public class DiscordBotOld {
 		API.addMessageCreateListener(E -> {
 			String Content = E.getMessageContent();
 			if (Content.length() > 6) {
-				String[] Data = Content.substring(6).split(" ");
+				String[] Data = Content.substring(6).split(" ");//you might want to check for the first space instead of just 6 characters as the user could accidentally enter BBot:  command
 				TextChannel Channel = E.getChannel();
 				Long ChannelID = Channel.getId();
 				String AuthorName = E.getMessageAuthor().asUser().get().getName();
@@ -48,7 +48,7 @@ public class DiscordBotOld {
 						case "StopAnnoy":
 							if (!AnnoyedChannels.containsKey(ChannelID)) {
 								Channel.sendMessage("Not active");
-							} else if (!AnnoyedChannelStarters.get(ChannelID).equals(AuthorName)) {
+							} else if (!AnnoyedChannelStarters.get(ChannelID).equals(AuthorName)) {//Using usernames is not a safe verification method, you should instead use the full user class, ex: User x = getMessageAuthor().asUser().get()
 								Channel.sendMessage("No");
 							} else {
 								Channel.sendMessage("Done");
@@ -58,6 +58,8 @@ public class DiscordBotOld {
 							}
 							break;
 						case "RPS":
+							//You should have the bot tell the user what it picked
+							//Also this game is not really RPS but more like roulette, you should change how the bot makes a selection if you wanted to actually have an RPS game
 							try {
 								Message M = new MessageBuilder().setContent("Choose one").addComponents(ActionRow.of(Button.success("Rock", "Rock"), Button.success("Paper", "Paper"), Button.success("Scissors", "Scissors"))).send(Channel).get();
 								API.addMessageComponentCreateListener(S -> {
@@ -77,6 +79,7 @@ public class DiscordBotOld {
 							break;
 						
 						default:
+							//No Help command is ever implemented, this should be implemented to tell the user what command options there are.
 							Channel.sendMessage("\"BBot: Help\" for help");
 							break;
 					}
