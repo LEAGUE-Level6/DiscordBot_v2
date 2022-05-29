@@ -4,6 +4,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.first_features.WebSearch;
+import org.jointheleague.features.examples.second_features.Encrypter;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
@@ -50,6 +51,7 @@ public class DiscordBot {
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new WebSearch(channelName));
+		addFeature(new Encrypter(channelName));
 	}
 
 	private void addFeature(Feature feature){

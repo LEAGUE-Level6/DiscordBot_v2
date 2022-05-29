@@ -121,7 +121,7 @@ public class HighLowGameTest {
         highLowGame.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage("Please start the game first using just the command");
+        verify(textChannel, times(1)).sendMessage(anyString());
 
     }
 
