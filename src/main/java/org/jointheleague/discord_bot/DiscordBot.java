@@ -3,6 +3,7 @@ package org.jointheleague.discord_bot;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.features.examples.first_features.WebSearch;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
@@ -37,7 +38,7 @@ public class DiscordBot {
 		}
 
 		//Send bot connected message in channel
-		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has connected"));
+		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has connected.  Please try to keep it in one piece."));
 
 		//add help listener to bot
 		api.addMessageCreateListener(helpListener);
@@ -48,6 +49,7 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		addFeature(new WebSearch(channelName));
 	}
 
 	private void addFeature(Feature feature){
