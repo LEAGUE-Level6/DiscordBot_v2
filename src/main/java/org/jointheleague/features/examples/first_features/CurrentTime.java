@@ -25,6 +25,7 @@ public class CurrentTime extends Feature {
 			SimpleDateFormat formatter = new SimpleDateFormat("'The time is 'HH:mm:ss z' on 'MM-dd-yyyy'.'");
 			event.getChannel().sendMessage(formatter.format(date));
 		}
+		
 	}
 
 }
