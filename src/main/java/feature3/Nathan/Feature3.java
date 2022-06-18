@@ -28,10 +28,6 @@ public class Feature3 extends Feature {
 				"This is a game where the player can buy items using money. When !balance is entered, the amount of money the user has will be displayed."
 						+ " To earn money, type in !work and you will be shown a food item and you will guess the cuisine the food item is from by saying !guess + (your guess). You earn $10 from each correct guess (without upgrades)."
 						+ " To shop, type !shop and you will be given a list of items and upgrades to buy. To buy an item type in !buy (the item you want to buy).");
-		// upgrades? hints? multiple guesses for work? categories? what will the user do
-		// with the items? what's the objective?
-		// for the work game, right now, the user has to type in !work for every guess.
-		// Maybe change it so that the user will be shown a new image automatically.
 	}
 
 	public void distinctRandom() {
@@ -156,7 +152,7 @@ public class Feature3 extends Feature {
 	public void interpretGuess(MessageCreateEvent event, String guess) {
 		if (foodList.get(i).equals("https://tinyurl.com/4xk9eff3")) {
 			if (guess.equalsIgnoreCase("American")) {
-				event.getChannel().sendMessage("Correct! You earned $10!");
+				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is American");
@@ -165,7 +161,7 @@ public class Feature3 extends Feature {
 
 		else if (foodList.get(i).equals("https://tinyurl.com/28ecpmpz")) {
 			if (guess.equalsIgnoreCase("American")) {
-				event.getChannel().sendMessage("Correct! You earned $10!");
+				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is American");
@@ -174,7 +170,7 @@ public class Feature3 extends Feature {
 
 		else if (foodList.get(i).equals("https://tinyurl.com/mvybcvte")) {
 			if (guess.equalsIgnoreCase("Mexican")) {
-				event.getChannel().sendMessage("Correct! You earned $10!");
+				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Mexican");
@@ -183,7 +179,7 @@ public class Feature3 extends Feature {
 
 		else if (foodList.get(i).equals("https://tinyurl.com/4fkam3pc")) {
 			if (guess.equalsIgnoreCase("Mexican")) {
-				event.getChannel().sendMessage("Correct! You earned $10!");
+				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Mexican");
@@ -192,7 +188,7 @@ public class Feature3 extends Feature {
 
 		else if (foodList.get(i).equals("https://tinyurl.com/3ezycxb4")) {
 			if (guess.equalsIgnoreCase("Italian")) {
-				event.getChannel().sendMessage("Correct! You earned $10!");
+				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Italian");
@@ -201,7 +197,7 @@ public class Feature3 extends Feature {
 
 		else if (foodList.get(i).equals("https://tinyurl.com/ybrv2dvb")) {
 			if (guess.equalsIgnoreCase("Italian")) {
-				event.getChannel().sendMessage("Correct! You earned $10!");
+				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Italian");
@@ -210,7 +206,7 @@ public class Feature3 extends Feature {
 
 		else if (foodList.get(i).equals("https://tinyurl.com/56wbwy29")) {
 			if (guess.equalsIgnoreCase("Chinese")) {
-				event.getChannel().sendMessage("Correct! You earned $10!");
+				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Chinese");
@@ -219,7 +215,7 @@ public class Feature3 extends Feature {
 
 		else if (foodList.get(i).equals("https://tinyurl.com/2nr9k8sc")) {
 			if (guess.equalsIgnoreCase("Chinese")) {
-				event.getChannel().sendMessage("Correct! You earned $10!");
+				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Chinese");
@@ -228,7 +224,7 @@ public class Feature3 extends Feature {
 
 		else if (foodList.get(i).equals("https://tinyurl.com/abcndwh7")) {
 			if (guess.equalsIgnoreCase("Korean")) {
-				event.getChannel().sendMessage("Correct! You earned $10!");
+				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Korean");
@@ -237,7 +233,7 @@ public class Feature3 extends Feature {
 
 		else if (foodList.get(i).equals("https://tinyurl.com/mrwf8xa7")) {
 			if (guess.equalsIgnoreCase("Korean")) {
-				event.getChannel().sendMessage("Correct! You earned $10!");
+				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Korean");
@@ -299,6 +295,80 @@ public class Feature3 extends Feature {
 			else {
 				event.getChannel().sendMessage("Sorry, you do not have enough money to purchase this item");
 			}
+		}
+		
+		else if (item.equalsIgnoreCase("TV")) {
+			if(currentBalance>=700) {
+			event.getChannel().sendMessage("The TV has been bought");
+			itemsList.remove("TV $700");
+			currentBalance -= 700;
+			}
+			else {
+				event.getChannel().sendMessage("Sorry, you do not have enough money to purchase this item");
+			}
+		}
+		
+		else if (item.equalsIgnoreCase("Computer")) {
+			if(currentBalance>=1000) {
+			event.getChannel().sendMessage("The computer has been bought");
+			itemsList.remove("computer $1000");
+			currentBalance -= 1000;
+			}
+			else {
+				event.getChannel().sendMessage("Sorry, you do not have enough money to purchase this item");
+			}
+		}
+		
+		else if (item.equalsIgnoreCase("2xmoremoneyupgrade")) {
+			if(currentBalance>=50) {
+			event.getChannel().sendMessage("The 2x upgrade has been bought");
+			itemsList.remove("2x more money upgrade $50");
+			currentBalance -= 50;
+			moneyAdded=20;
+			}
+			else {
+				event.getChannel().sendMessage("Sorry, you do not have enough money to purchase this item");
+			}
+		}
+		
+		else if (item.equalsIgnoreCase("3xmoremoneyupgrade")) {
+			if(currentBalance>=140) {
+			event.getChannel().sendMessage("The 3x upgrade has been bought");
+			itemsList.remove("3x more money upgrade $140");
+			currentBalance -= 140;
+			moneyAdded=30;
+			}
+			else {
+				event.getChannel().sendMessage("Sorry, you do not have enough money to purchase this item");
+			}
+		}
+		
+		else if (item.equalsIgnoreCase("4xmoremoneyupgrade")) {
+			if(currentBalance>=240) {
+			event.getChannel().sendMessage("The 4x upgrade has been bought");
+			itemsList.remove("4x more money upgrade $240");
+			currentBalance -= 240;
+			moneyAdded=40;
+			}
+			else {
+				event.getChannel().sendMessage("Sorry, you do not have enough money to purchase this item");
+			}
+		}
+		
+		else if (item.equalsIgnoreCase("5xmoremoneyupgrade")) {
+			if(currentBalance>=500) {
+			event.getChannel().sendMessage("The 5x upgrade has been bought");
+			itemsList.remove("5x more money upgrade $500");
+			currentBalance -= 500;
+			moneyAdded=50;
+			}
+			else {
+				event.getChannel().sendMessage("Sorry, you do not have enough money to purchase this item");
+			}
+		}
+		
+		else {
+			event.getChannel().sendMessage("Sorry, this item is not available or has already been bought. Put !shop to see all available items");
 		}
 	}
 }
