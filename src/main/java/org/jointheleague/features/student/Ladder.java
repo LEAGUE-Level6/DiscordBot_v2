@@ -8,17 +8,17 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
-public class RecentCreation extends Feature {
+public class Ladder extends Feature {
 
-    public final String COMMAND = "!delete";
+    public final String COMMAND = "!ladder";
 
-    public RecentCreation(String channelName) {
+    public Ladder(String channelName) {
         super(channelName);
 
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "Returns all the users that were created within the past week, using !recent."
+                "Keeps track of the total number of times this command has been called"
         );
     }
 
@@ -30,17 +30,17 @@ public class RecentCreation extends Feature {
             Stream<Message> m = event.getChannel().getMessagesAroundAsStream(event.getMessage());
             
             Object arr[] = m.toArray();
-            event.getChannel().sendMessage("$Retrieved " + arr.length + " messages");
-
-            int lim = 5;
-            for(int i = 0; i < lim; i++) {
-            	Message current = (Message) arr[i];
-            	if(current.getReadableContent().startsWith("$") || current.getReadableContent().startsWith("!")){
-            		lim++;
-            		continue;
+            int max = 0;
+            for(int i = 0; i < arr.length; i++) {
+            	if(((Message) arr[i]).getReadableContent().toString().startsWith("The ladder is now") && ((Message) arr[i]).getAuthor().getName().equals("BotBot")){
+            		int num = Integer.parseInt(((Message) arr[i]).getReadableContent().toString().split(" ")[4]);
+            		if(num > max) {
+            			max = num;
+            			break;
+            		}
             	}
-            	event.getChannel().sendMessage("$" + i + " Messages ago: " + current.getReadableContent());
             }
+            event.getChannel().sendMessage("The ladder is now " + (max + 1) + " users high!");
             
         }
     }
