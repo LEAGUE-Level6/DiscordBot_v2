@@ -6,6 +6,7 @@ import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
+import org.jointheleague.features.examples.third_features.RiddleApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
@@ -17,7 +18,7 @@ public class DiscordBot {
 	private String channelName;
 
 	DiscordApi api;
-
+ 
 	HelpListener helpListener;
 
 	public DiscordBot(String token, String channelName) {
