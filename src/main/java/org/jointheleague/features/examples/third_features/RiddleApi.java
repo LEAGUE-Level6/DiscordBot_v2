@@ -34,7 +34,7 @@ public class RiddleApi extends Feature{
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
-        	String name=messageContent.substring(8);
+        	String name=messageContent.substring(5);
         	Result riddle = getRiddle(name);
         	int age=riddle.getAge()-15;
         	event.getChannel().sendMessage(name+"'s predicted age is: "+age);
