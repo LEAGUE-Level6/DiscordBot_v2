@@ -14,14 +14,14 @@ import reactor.core.publisher.Mono;
 
 public class RiddleApi extends Feature{
 
-	 public final String COMMAND = "!riddle";
+	 public final String COMMAND = "!age";
 
 	    private WebClient webClient;
 	    private static final String baseUrl = "https://api.agify.io";
  
 	public RiddleApi(String channelName) {
 		super(channelName);
-		helpEmbed = new HelpEmbed(COMMAND, "Example of using an API to get information from another service.  This returns a cat fact");
+		helpEmbed = new HelpEmbed(COMMAND, "Use the syntax '!riddle NAME' to start");
 
         //build the WebClient
         this.webClient = WebClient
@@ -34,11 +34,14 @@ public class RiddleApi extends Feature{
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
-      //finish how to get user input name
-        	Result riddle = getRiddle("daniel");
- 
-          event.getChannel().sendMessage(riddle.getAge()+"");
+        	String name=messageContent.substring(8);
+        	Result riddle = getRiddle(name);
+        	int age=riddle.getAge()-15;
+        	event.getChannel().sendMessage(name+"'s predicted age is: "+age);
         }
+        
+
+    	
     }
 
 	
