@@ -16,7 +16,7 @@ public class Feature3 extends Feature {
 	int foodNumber;
 	Random r = new Random();
 	ArrayList<Integer> values = new ArrayList<Integer>();
-	int i = -1;
+	int i = 0;
 	ArrayList<String> itemsList = new ArrayList<String>();
 	int moneyAdded = 10;
 
@@ -106,23 +106,27 @@ public class Feature3 extends Feature {
 		}
 
 		else if (messageContent.startsWith("!work")) {
-			if (i == -1) {
-				i++;
+			//check foodListt.size()
+			if (i == 0) {
+				System.out.println(i);
 				makingFoodList();
 				event.getChannel().sendMessage(foodList.get(i));
+				i++;
 			}
 
-			else if (i != foodList.size() - 1) {
-				i++;
+			else if (i < foodList.size() - 1) {
+				System.out.println(i);
 				event.getChannel().sendMessage(foodList.get(i));
+				i++;
 			}
 
 			else if (i == foodList.size() - 1) {
-				i = 0;
-				makingFoodList();
+				System.out.println("reached the end of the food list" + i);
 				event.getChannel().sendMessage(foodList.get(i));
+				i = 0;
 			}
-
+			
+			
 		}
 
 		else if (messageContent.startsWith("!guess")) {
