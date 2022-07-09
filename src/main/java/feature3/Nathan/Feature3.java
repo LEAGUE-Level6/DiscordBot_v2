@@ -17,6 +17,7 @@ public class Feature3 extends Feature {
 	Random r = new Random();
 	ArrayList<Integer> values = new ArrayList<Integer>();
 	int i = 0;
+	int j=0;
 	ArrayList<String> itemsList = new ArrayList<String>();
 	int moneyAdded = 10;
 
@@ -31,6 +32,7 @@ public class Feature3 extends Feature {
 	}
 
 	public void distinctRandom() {
+		values.clear();
 		for (int i = 0; i < 10;) {
 			foodNumber = r.nextInt(10);
 			if (!values.contains(foodNumber)) {
@@ -42,6 +44,7 @@ public class Feature3 extends Feature {
 
 	public void makingFoodList() {
 		distinctRandom();
+		foodList.clear();
 		for (int i = 0; i < 10; i++) {
 			// american
 			if (values.get(i) == 0) {
@@ -108,20 +111,17 @@ public class Feature3 extends Feature {
 		else if (messageContent.startsWith("!work")) {
 			//check foodListt.size()
 			if (i == 0) {
-				System.out.println(i);
 				makingFoodList();
 				event.getChannel().sendMessage(foodList.get(i));
 				i++;
 			}
 
 			else if (i < foodList.size() - 1) {
-				System.out.println(i);
 				event.getChannel().sendMessage(foodList.get(i));
 				i++;
 			}
 
 			else if (i == foodList.size() - 1) {
-				System.out.println("reached the end of the food list" + i);
 				event.getChannel().sendMessage(foodList.get(i));
 				i = 0;
 			}
@@ -147,100 +147,157 @@ public class Feature3 extends Feature {
 			interpretPurchase(event, buyMessage);
 		}
 
-		/*
-		 * else { event.getChannel().sendMessage("An error occurred"); }
-		 */
 
 	}
 
 	public void interpretGuess(MessageCreateEvent event, String guess) {
-		if (foodList.get(i).equals("https://tinyurl.com/4xk9eff3")) {
+		if (foodList.get(j).equals("https://tinyurl.com/4xk9eff3")) {
 			if (guess.equalsIgnoreCase("American")) {
 				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is American");
 			}
+			if(j<foodList.size()-1) {
+				j++;
+			}
+			else if(j==foodList.size()-1) {
+				j=0;
+			}
 		}
 
-		else if (foodList.get(i).equals("https://tinyurl.com/28ecpmpz")) {
+		else if (foodList.get(j).equals("https://tinyurl.com/28ecpmpz")) {
 			if (guess.equalsIgnoreCase("American")) {
 				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is American");
 			}
+			if(j<foodList.size()-1) {
+				j++;
+			}
+			else if(j==foodList.size()-1) {
+				j=0;
+			}
 		}
 
-		else if (foodList.get(i).equals("https://tinyurl.com/mvybcvte")) {
+		else if (foodList.get(j).equals("https://tinyurl.com/mvybcvte")) {
 			if (guess.equalsIgnoreCase("Mexican")) {
 				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Mexican");
 			}
+			if(j<foodList.size()-1) {
+				j++;
+			}
+			else if(j==foodList.size()-1) {
+				j=0;
+			}
 		}
 
-		else if (foodList.get(i).equals("https://tinyurl.com/4fkam3pc")) {
+		else if (foodList.get(j).equals("https://tinyurl.com/4fkam3pc")) {
 			if (guess.equalsIgnoreCase("Mexican")) {
 				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Mexican");
 			}
+			if(j<foodList.size()-1) {
+				j++;
+			}
+			else if(j==foodList.size()-1) {
+				j=0;
+			}
 		}
 
-		else if (foodList.get(i).equals("https://tinyurl.com/3ezycxb4")) {
+		else if (foodList.get(j).equals("https://tinyurl.com/3ezycxb4")) {
 			if (guess.equalsIgnoreCase("Italian")) {
 				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Italian");
 			}
+			if(j<foodList.size()-1) {
+				j++;
+			}
+			else if(j==foodList.size()-1) {
+				j=0;
+			}
 		}
 
-		else if (foodList.get(i).equals("https://tinyurl.com/ybrv2dvb")) {
+		else if (foodList.get(j).equals("https://tinyurl.com/ybrv2dvb")) {
 			if (guess.equalsIgnoreCase("Italian")) {
 				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Italian");
 			}
+			if(j<foodList.size()-1) {
+				j++;
+			}
+			else if(j==foodList.size()-1) {
+				j=0;
+			}
 		}
 
-		else if (foodList.get(i).equals("https://tinyurl.com/56wbwy29")) {
+		else if (foodList.get(j).equals("https://tinyurl.com/56wbwy29")) {
 			if (guess.equalsIgnoreCase("Chinese")) {
 				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Chinese");
 			}
+			if(j<foodList.size()-1) {
+				j++;
+			}
+			else if(j==foodList.size()-1) {
+				j=0;
+			}
 		}
 
-		else if (foodList.get(i).equals("https://tinyurl.com/2nr9k8sc")) {
+		else if (foodList.get(j).equals("https://tinyurl.com/2nr9k8sc")) {
 			if (guess.equalsIgnoreCase("Chinese")) {
 				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Chinese");
 			}
+			if(j<foodList.size()-1) {
+				j++;
+			}
+			else if(j==foodList.size()-1) {
+				j=0;
+			}
 		}
 
-		else if (foodList.get(i).equals("https://tinyurl.com/abcndwh7")) {
+		else if (foodList.get(j).equals("https://tinyurl.com/abcndwh7")) {
 			if (guess.equalsIgnoreCase("Korean")) {
 				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Korean");
 			}
+			if(j<foodList.size()-1) {
+				j++;
+			}
+			else if(j==foodList.size()-1) {
+				j=0;
+			}
 		}
 
-		else if (foodList.get(i).equals("https://tinyurl.com/mrwf8xa7")) {
+		else if (foodList.get(j).equals("https://tinyurl.com/mrwf8xa7")) {
 			if (guess.equalsIgnoreCase("Korean")) {
 				event.getChannel().sendMessage("Correct! You earned $" + moneyAdded);
 				currentBalance += moneyAdded;
 			} else {
 				event.getChannel().sendMessage("Sorry, incorrect. The correct answer is Korean");
+			}
+			if(j<foodList.size()-1) {
+				j++;
+			}
+			else if(j==foodList.size()-1) {
+				j=0;
 			}
 		}
 	}
