@@ -1,5 +1,6 @@
 package org.jointheleague.features.examples.first_features;
 
+import java.time.Instant;
 import java.util.Random;
 
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -21,6 +22,7 @@ public class RandomNumber extends Feature {
         if (messageContent.startsWith(COMMAND)) {
             Random r = new Random();
             event.getChannel().sendMessage("Your random number is " + r.nextInt(1001));
+        
         }
     }
 
