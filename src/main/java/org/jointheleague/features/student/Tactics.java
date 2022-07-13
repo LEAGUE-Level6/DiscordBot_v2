@@ -1,5 +1,5 @@
 
-package ChessClasses;
+package org.jointheleague.features.student;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,50 +13,37 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "rating",
-    "date",
-    "rd"
+    "highest",
+    "lowest"
 })
 @Generated("jsonschema2pojo")
-public class Last__3 {
+public class Tactics {
 
-    @JsonProperty("rating")
-    private Integer rating;
-    @JsonProperty("date")
-    private Integer date;
-    @JsonProperty("rd")
-    private Integer rd;
+    @JsonProperty("highest")
+    private Highest highest;
+    @JsonProperty("lowest")
+    private Lowest lowest;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("rating")
-    public Integer getRating() {
-        return rating;
+    @JsonProperty("highest")
+    public Highest getHighest() {
+        return highest;
     }
 
-    @JsonProperty("rating")
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    @JsonProperty("highest")
+    public void setHighest(Highest highest) {
+        this.highest = highest;
     }
 
-    @JsonProperty("date")
-    public Integer getDate() {
-        return date;
+    @JsonProperty("lowest")
+    public Lowest getLowest() {
+        return lowest;
     }
 
-    @JsonProperty("date")
-    public void setDate(Integer date) {
-        this.date = date;
-    }
-
-    @JsonProperty("rd")
-    public Integer getRd() {
-        return rd;
-    }
-
-    @JsonProperty("rd")
-    public void setRd(Integer rd) {
-        this.rd = rd;
+    @JsonProperty("lowest")
+    public void setLowest(Lowest lowest) {
+        this.lowest = lowest;
     }
 
     @JsonAnyGetter

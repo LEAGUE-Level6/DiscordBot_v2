@@ -1,5 +1,5 @@
 
-package ChessClasses;
+package org.jointheleague.features.student;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,50 +13,50 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "win",
-    "loss",
-    "draw"
+    "rating",
+    "date",
+    "rd"
 })
 @Generated("jsonschema2pojo")
-public class Record__4 {
+public class Last__2 {
 
-    @JsonProperty("win")
-    private Integer win;
-    @JsonProperty("loss")
-    private Integer loss;
-    @JsonProperty("draw")
-    private Integer draw;
+    @JsonProperty("rating")
+    private Integer rating;
+    @JsonProperty("date")
+    private Integer date;
+    @JsonProperty("rd")
+    private Integer rd;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("win")
-    public Integer getWin() {
-        return win;
+    @JsonProperty("rating")
+    public Integer getRating() {
+        return rating;
     }
 
-    @JsonProperty("win")
-    public void setWin(Integer win) {
-        this.win = win;
+    @JsonProperty("rating")
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 
-    @JsonProperty("loss")
-    public Integer getLoss() {
-        return loss;
+    @JsonProperty("date")
+    public Integer getDate() {
+        return date;
     }
 
-    @JsonProperty("loss")
-    public void setLoss(Integer loss) {
-        this.loss = loss;
+    @JsonProperty("date")
+    public void setDate(Integer date) {
+        this.date = date;
     }
 
-    @JsonProperty("draw")
-    public Integer getDraw() {
-        return draw;
+    @JsonProperty("rd")
+    public Integer getRd() {
+        return rd;
     }
 
-    @JsonProperty("draw")
-    public void setDraw(Integer draw) {
-        this.draw = draw;
+    @JsonProperty("rd")
+    public void setRd(Integer rd) {
+        this.rd = rd;
     }
 
     @JsonAnyGetter

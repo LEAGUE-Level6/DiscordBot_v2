@@ -1,5 +1,5 @@
 
-package ChessClasses;
+package org.jointheleague.features.student;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,44 +18,44 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "record"
 })
 @Generated("jsonschema2pojo")
-public class ChessRapid {
+public class ChessDaily {
 
     @JsonProperty("last")
-    private Last__2 last;
+    private Last last;
     @JsonProperty("best")
-    private Best__2 best;
+    private Best best;
     @JsonProperty("record")
-    private Record__2 record;
+    private Record record;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("last")
-    public Last__2 getLast() {
+    public Last getLast() {
         return last;
     }
 
     @JsonProperty("last")
-    public void setLast(Last__2 last) {
+    public void setLast(Last last) {
         this.last = last;
     }
 
     @JsonProperty("best")
-    public Best__2 getBest() {
+    public Best getBest() {
         return best;
     }
 
     @JsonProperty("best")
-    public void setBest(Best__2 best) {
+    public void setBest(Best best) {
         this.best = best;
     }
 
     @JsonProperty("record")
-    public Record__2 getRecord() {
+    public Record getRecord() {
         return record;
     }
 
     @JsonProperty("record")
-    public void setRecord(Record__2 record) {
+    public void setRecord(Record record) {
         this.record = record;
     }
 

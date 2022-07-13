@@ -1,5 +1,5 @@
 
-package ChessClasses;
+package org.jointheleague.features.student;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,50 +13,50 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "rating",
-    "date",
-    "game"
+    "last",
+    "best",
+    "record"
 })
 @Generated("jsonschema2pojo")
-public class Best__1 {
+public class ChessBlitz {
 
-    @JsonProperty("rating")
-    private Integer rating;
-    @JsonProperty("date")
-    private Integer date;
-    @JsonProperty("game")
-    private String game;
+    @JsonProperty("last")
+    private Last__4 last;
+    @JsonProperty("best")
+    private Best__4 best;
+    @JsonProperty("record")
+    private Record__4 record;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("rating")
-    public Integer getRating() {
-        return rating;
+    @JsonProperty("last")
+    public Last__4 getLast() {
+        return last;
     }
 
-    @JsonProperty("rating")
-    public void setRating(Integer rating) {
-        this.rating = rating;
+    @JsonProperty("last")
+    public void setLast(Last__4 last) {
+        this.last = last;
     }
 
-    @JsonProperty("date")
-    public Integer getDate() {
-        return date;
+    @JsonProperty("best")
+    public Best__4 getBest() {
+        return best;
     }
 
-    @JsonProperty("date")
-    public void setDate(Integer date) {
-        this.date = date;
+    @JsonProperty("best")
+    public void setBest(Best__4 best) {
+        this.best = best;
     }
 
-    @JsonProperty("game")
-    public String getGame() {
-        return game;
+    @JsonProperty("record")
+    public Record__4 getRecord() {
+        return record;
     }
 
-    @JsonProperty("game")
-    public void setGame(String game) {
-        this.game = game;
+    @JsonProperty("record")
+    public void setRecord(Record__4 record) {
+        this.record = record;
     }
 
     @JsonAnyGetter

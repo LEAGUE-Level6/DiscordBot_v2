@@ -1,6 +1,5 @@
 package org.jointheleague.features.student;
 
-import javax.annotation.Generated;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
@@ -9,12 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
-import ChessClasses.PlayerInfo;
-import ChessClasses.PlayerStats;
-import reactor.core.publisher.Mono;
 
 public class ChessStats extends Feature {
 
@@ -128,7 +122,6 @@ public class ChessStats extends Feature {
 								+ last.getChessRapid().getRecord().getDraw());
 			}
 		}
-
 	}
 
 	String convertDate(int m) {

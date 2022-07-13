@@ -1,5 +1,5 @@
 
-package ChessClasses;
+package org.jointheleague.features.student;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,10 +15,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "win",
     "loss",
-    "draw"
+    "draw",
+    "time_per_move",
+    "timeout_percent"
 })
 @Generated("jsonschema2pojo")
-public class Record__2 {
+public class Record {
 
     @JsonProperty("win")
     private Integer win;
@@ -26,6 +28,10 @@ public class Record__2 {
     private Integer loss;
     @JsonProperty("draw")
     private Integer draw;
+    @JsonProperty("time_per_move")
+    private Integer timePerMove;
+    @JsonProperty("timeout_percent")
+    private Integer timeoutPercent;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -57,6 +63,26 @@ public class Record__2 {
     @JsonProperty("draw")
     public void setDraw(Integer draw) {
         this.draw = draw;
+    }
+
+    @JsonProperty("time_per_move")
+    public Integer getTimePerMove() {
+        return timePerMove;
+    }
+
+    @JsonProperty("time_per_move")
+    public void setTimePerMove(Integer timePerMove) {
+        this.timePerMove = timePerMove;
+    }
+
+    @JsonProperty("timeout_percent")
+    public Integer getTimeoutPercent() {
+        return timeoutPercent;
+    }
+
+    @JsonProperty("timeout_percent")
+    public void setTimeoutPercent(Integer timeoutPercent) {
+        this.timeoutPercent = timeoutPercent;
     }
 
     @JsonAnyGetter

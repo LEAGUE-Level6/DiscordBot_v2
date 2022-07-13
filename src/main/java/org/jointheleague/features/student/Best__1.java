@@ -1,5 +1,5 @@
 
-package ChessClasses;
+package org.jointheleague.features.student;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "game"
 })
 @Generated("jsonschema2pojo")
-public class Best__4 {
+public class Best__1 {
 
     @JsonProperty("rating")
     private Integer rating;

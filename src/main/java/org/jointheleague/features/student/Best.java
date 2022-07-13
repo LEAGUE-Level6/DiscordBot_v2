@@ -1,5 +1,5 @@
 
-package ChessClasses;
+package org.jointheleague.features.student;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,15 +14,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "rating",
-    "date"
+    "date",
+    "game"
 })
 @Generated("jsonschema2pojo")
-public class Highest {
+public class Best {
 
     @JsonProperty("rating")
     private Integer rating;
     @JsonProperty("date")
     private Integer date;
+    @JsonProperty("game")
+    private String game;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -44,6 +47,16 @@ public class Highest {
     @JsonProperty("date")
     public void setDate(Integer date) {
         this.date = date;
+    }
+
+    @JsonProperty("game")
+    public String getGame() {
+        return game;
+    }
+
+    @JsonProperty("game")
+    public void setGame(String game) {
+        this.game = game;
     }
 
     @JsonAnyGetter

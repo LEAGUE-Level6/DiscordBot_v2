@@ -1,5 +1,5 @@
 
-package ChessClasses;
+package org.jointheleague.features.student;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,50 +13,50 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "last",
-    "best",
-    "record"
+    "rating",
+    "date",
+    "rd"
 })
 @Generated("jsonschema2pojo")
-public class ChessBullet {
+public class Last__3 {
 
-    @JsonProperty("last")
-    private Last__3 last;
-    @JsonProperty("best")
-    private Best__3 best;
-    @JsonProperty("record")
-    private Record__3 record;
+    @JsonProperty("rating")
+    private Integer rating;
+    @JsonProperty("date")
+    private Integer date;
+    @JsonProperty("rd")
+    private Integer rd;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("last")
-    public Last__3 getLast() {
-        return last;
+    @JsonProperty("rating")
+    public Integer getRating() {
+        return rating;
     }
 
-    @JsonProperty("last")
-    public void setLast(Last__3 last) {
-        this.last = last;
+    @JsonProperty("rating")
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 
-    @JsonProperty("best")
-    public Best__3 getBest() {
-        return best;
+    @JsonProperty("date")
+    public Integer getDate() {
+        return date;
     }
 
-    @JsonProperty("best")
-    public void setBest(Best__3 best) {
-        this.best = best;
+    @JsonProperty("date")
+    public void setDate(Integer date) {
+        this.date = date;
     }
 
-    @JsonProperty("record")
-    public Record__3 getRecord() {
-        return record;
+    @JsonProperty("rd")
+    public Integer getRd() {
+        return rd;
     }
 
-    @JsonProperty("record")
-    public void setRecord(Record__3 record) {
-        this.record = record;
+    @JsonProperty("rd")
+    public void setRd(Integer rd) {
+        this.rd = rd;
     }
 
     @JsonAnyGetter

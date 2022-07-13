@@ -1,5 +1,5 @@
 
-package ChessClasses;
+package org.jointheleague.features.student;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "timeout_percent"
 })
 @Generated("jsonschema2pojo")
-public class Record {
+public class Record__1 {
 
     @JsonProperty("win")
     private Integer win;

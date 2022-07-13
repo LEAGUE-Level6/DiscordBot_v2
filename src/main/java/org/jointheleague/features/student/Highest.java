@@ -1,5 +1,5 @@
 
-package ChessClasses;
+package org.jointheleague.features.student;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,50 +13,37 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "last",
-    "best",
-    "record"
+    "rating",
+    "date"
 })
 @Generated("jsonschema2pojo")
-public class ChessBlitz {
+public class Highest {
 
-    @JsonProperty("last")
-    private Last__4 last;
-    @JsonProperty("best")
-    private Best__4 best;
-    @JsonProperty("record")
-    private Record__4 record;
+    @JsonProperty("rating")
+    private Integer rating;
+    @JsonProperty("date")
+    private Integer date;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("last")
-    public Last__4 getLast() {
-        return last;
+    @JsonProperty("rating")
+    public Integer getRating() {
+        return rating;
     }
 
-    @JsonProperty("last")
-    public void setLast(Last__4 last) {
-        this.last = last;
+    @JsonProperty("rating")
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 
-    @JsonProperty("best")
-    public Best__4 getBest() {
-        return best;
+    @JsonProperty("date")
+    public Integer getDate() {
+        return date;
     }
 
-    @JsonProperty("best")
-    public void setBest(Best__4 best) {
-        this.best = best;
-    }
-
-    @JsonProperty("record")
-    public Record__4 getRecord() {
-        return record;
-    }
-
-    @JsonProperty("record")
-    public void setRecord(Record__4 record) {
-        this.record = record;
+    @JsonProperty("date")
+    public void setDate(Integer date) {
+        this.date = date;
     }
 
     @JsonAnyGetter
