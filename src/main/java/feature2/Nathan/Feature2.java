@@ -22,10 +22,6 @@ public class Feature2 extends Feature {
 	String guessMessage = "";
 	ArrayList<Integer> values = new ArrayList<Integer>();
 
-	// put a variable here that keeps track of the # of times handle is called
-	// this will ensure that the code picks the animal message that corresponds with
-	// the calling variable's index for the distinct random # arraylist
-
 	public Feature2(String channelName) {
 		super(channelName);
 

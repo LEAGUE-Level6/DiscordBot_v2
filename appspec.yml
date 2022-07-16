@@ -1,0 +1,12 @@
+#This file is used by CodeDeploy to deploy new versions of code to EC2
+
+version: 0.0
+os: linux
+files:
+  - source: .
+    destination: /home/ec2-user/DiscordBot_v2
+hooks:
+  ApplicationStart:
+    - location: run.sh
+      timeout: 300
+      runas: root
