@@ -1,11 +1,12 @@
 
 plugins {
     id 'java'
-    id 'application'
+    id 'maven-publish'
 }
 
 repositories {
     repositories {
+        jcenter()
         mavenCentral()
     }
 }
@@ -36,5 +37,3 @@ test {
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
-
-mainClassName = 'org.jointheleague.Launcher'
