@@ -2,7 +2,7 @@ package org.jointheleague.features.examples.third_features;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
+import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiWrapper;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -45,15 +45,15 @@ public class NewsApi extends Feature {
         }
     }
 
-    public ApiExampleWrapper getNewsStoryByTopic(String topic) {
-        Mono<ApiExampleWrapper> apiExampleWrapperMono = webClient.get()
+    public ApiWrapper getNewsStoryByTopic(String topic) {
+        Mono<ApiWrapper> apiExampleWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("q", topic)
                         .queryParam("sortBy", "popularity")
                         .queryParam("apiKey", apiKey)
                         .build())
                 .retrieve()
-                .bodyToMono(ApiExampleWrapper.class);
+                .bodyToMono(ApiWrapper.class);
 
         return apiExampleWrapperMono.block();
     }
@@ -61,10 +61,10 @@ public class NewsApi extends Feature {
     public String findStory(String topic){
 
         //Get a story from News API
-        ApiExampleWrapper apiExampleWrapper = getNewsStoryByTopic(topic);
+        ApiWrapper apiWrapper = getNewsStoryByTopic(topic);
 
         //Get the first article
-        Article article = apiExampleWrapper.getArticles().get(0);
+        Article article = apiWrapper.getArticles().get(0);
 
         //Get the title of the article
         String articleTitle = article.getTitle();
