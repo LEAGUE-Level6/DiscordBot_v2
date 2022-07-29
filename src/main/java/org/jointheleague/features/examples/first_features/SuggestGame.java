@@ -25,8 +25,7 @@ public class SuggestGame extends Feature {
 		String message = event.getMessageContent();
 		if (message.startsWith(COMMAND)) {
             Random r = new Random();
-            //event.getChannel().sendMessage(GAMES[r.nextInt(4)]);
-            event.getChannel().sendMessage("wrews");
+            event.getChannel().sendMessage(GAMES[r.nextInt(4)]);
         }
 	}
 }
