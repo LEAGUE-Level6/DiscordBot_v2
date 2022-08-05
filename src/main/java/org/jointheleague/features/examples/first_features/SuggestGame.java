@@ -11,12 +11,11 @@ import net.aksingh.owmjapis.api.APIException;
 public class SuggestGame extends Feature {
 
 	public final String COMMAND = "!suggestion";
-	public final String EXPLANATION = "Suggests an online game to play";
 	public final String[] GAMES = {"https://www.nytimes.com/games/wordle/index.html", "https://wafflegame.net/", "https://offline-dino-game.firebaseapp.com/", "https://www.google.com/doodles/valentines-day-2017-day-1"};
 	
 	public SuggestGame(String channelName) {
 		super(channelName);
-		helpEmbed = new HelpEmbed(COMMAND, EXPLANATION);
+		helpEmbed = new HelpEmbed(COMMAND, "Suggests an online game to play");
 	}
 
 	@Override
