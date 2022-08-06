@@ -10,7 +10,7 @@ public class Feature1 extends Feature{
 
     public Feature1(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Allows the user to get greeted by the bot upon command)");
+        helpEmbed = new HelpEmbed(COMMAND, "Allows the user to get greeted by the bot upon command");
     }
 
     @Override
