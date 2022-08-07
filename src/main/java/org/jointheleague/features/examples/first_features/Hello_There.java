@@ -1,4 +1,4 @@
-package org.jointheleague.features.Feature_1;
+package org.jointheleague.features.examples.first_features;
 
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
