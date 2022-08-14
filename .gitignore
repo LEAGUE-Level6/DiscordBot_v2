@@ -10,3 +10,4 @@ src/main/java/org.jointheleague.Launcher.java
 .travis.yml
 run.sh
 appspec.yml
+/bin/
