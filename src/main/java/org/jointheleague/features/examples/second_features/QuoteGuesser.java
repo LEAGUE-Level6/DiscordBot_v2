@@ -13,7 +13,7 @@ public class QuoteGuesser extends Feature {
 	Random r = new Random();
 	int play;
 	String[] playList = {"MacBeth", "Julius Caesar", "Hamlet", "Antony and Cleopatra", "The Tempest"};
-	String[] quoteList = {"The bell intives me. Hear it not, Duncan; for it is a knell that summons thee to heaven or hell.", "The fault, dear Brutus, is not in our stars/ But in ourselves, that we are underlings.", "The Lady doth protest too much, methinks.", "Finish, good lady; the bright day is done,/ And we are for the Dark.", "My library was dukedom large enough."};
+	String[] quoteList = {"The bell invites me. Hear it not, Duncan; for it is a knell that summons thee to heaven or hell.", "Your hand, your tongue. Look like the innocent flower,/ But be the serpent under't.", "The fault, dear Brutus, is not in our stars/ But in ourselves, that we are underlings.", "Cowards die many times before their deaths; / The valiant never taste of death but once.", "The Lady doth protest too much, methinks.", "This above all: to thine own self be true,", "Finish, good lady; the bright day is done,/ And we are for the Dark.", "The breaking of so great a thing should make / A greater crack", "My library was dukedom large enough.", "O, brave new world / that has such people in't!"};
 	
 	public final String COMMAND = "!shakespeareGuess";
 	boolean quoteGuessed = true;
@@ -30,7 +30,7 @@ public class QuoteGuesser extends Feature {
 		
 		if(messageContent.equals(COMMAND)) {
 			play = r.nextInt(5);
-			event.getChannel().sendMessage(quoteList[play]);
+			event.getChannel().sendMessage(quoteList[play*2]);
 			quoteGuessed = false;
 		}
 		
