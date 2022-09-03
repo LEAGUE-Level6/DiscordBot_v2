@@ -11,3 +11,4 @@ src/main/java/org.jointheleague.Launcher.java
 run.sh
 appspec.yml
 /.gradle/
+/build/

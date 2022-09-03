@@ -7,6 +7,7 @@ import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.second_features.QuoteGuesser;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
+import org.jointheleague.features.examples.third_features.SynonymFinder;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.examples.first_features.SuggestGame;
@@ -53,6 +54,7 @@ public class DiscordBot {
 		
 		addFeature(new SuggestGame(channelName));
 		addFeature(new QuoteGuesser(channelName));
+		addFeature(new SynonymFinder(channelName));
 	}
 
 	private void addFeature(Feature feature){
