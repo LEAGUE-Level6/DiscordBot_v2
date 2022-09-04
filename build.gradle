@@ -26,7 +26,7 @@ dependencies {
 group = 'org.jointheleague'
 version = '2.0'
 description = 'discordbot'
-sourceCompatibility = '1.8'
+sourceCompatibility = "17"
 
 
 test {
@@ -38,3 +38,4 @@ tasks.withType(JavaCompile) {
 }
 
 mainClassName = 'org.jointheleague.Launcher'
+targetCompatibility = JavaVersion.VERSION_17
