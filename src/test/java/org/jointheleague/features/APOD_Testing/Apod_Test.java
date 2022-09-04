@@ -79,7 +79,7 @@ public class Apod_Test {
         ApodTest.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(2)).sendMessage(anyString());
+        verify(textChannel, times(1)).sendMessage(anyString());
     }
 
     @Test
@@ -117,8 +117,40 @@ public class Apod_Test {
         //Then
         assertEquals(command, helpEmbedTitle);
     }
+    @Test
+    void itShouldHaveExplanation(){
+       // assertEquals()
+        String exp = "Did you see the transit? While some watched by webcast, sky gazers in Europe, the Middle East, " +
+                "Africa, and Asia were able to witness the complete 6 hour journey of Venus' silhouetted disk across the " +
+                "face of the Sun. As seen from North America, the much heralded Venus Transit of 2004 was nearing its " +
+                "final stages at sunrise yesterday in this telescopic image. The view looks across the Atlantic from " +
+                "Tybee Island near Savannah, Georgia, USA. In fact, many in eastern North America experienced a dramatic " +
+                "view of a perfect, dark, round Venus against a reddened Sun filtered by banks of low clouds. Ironically, the " +
+                "Sun takes on the appearance of a cloud covered planet itself " +
+                "as Venus marches toward the right through this dreamlike scene.";
+        String cmd = "!apod 2004-06-09";
+        when(messageCreateEvent.getMessageContent()).thenReturn(cmd);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
+        ApodTest.handle(messageCreateEvent);
 
+        verify(textChannel, times(1)).sendMessage(exp);
+
+    }
+
+    @Test
+    void itShouldHaveImage(){
+        // assertEquals()
+        String img = "https://apod.nasa.gov/apod/image/0406/vt2004_westlake_c1.jpg";
+        String cmd = "!apod 2004-06-09";
+        when(messageCreateEvent.getMessageContent()).thenReturn(cmd);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+
+        ApodTest.handle(messageCreateEvent);
+
+        verify(textChannel, times(1)).sendMessage(img);
+
+    }
 }
 
 

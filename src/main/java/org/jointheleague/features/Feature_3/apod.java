@@ -2,7 +2,6 @@ package org.jointheleague.features.Feature_3;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.apod_wrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -14,7 +13,7 @@ public class apod extends Feature {
     private String baseURL = "https://api.nasa.gov/planetary/apod";
     private String key = "e1lM6Bw3Fkx4vhDjBmg5GlXhB5uclDnRwZJfiG8f";
     private WebClient client;
-    private String explanation;
+    public String explanation;
     public apod(String channelName) {
             super(channelName);
 
@@ -32,12 +31,38 @@ public class apod extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
-            event.getChannel().sendMessage(apod());
-            event.getChannel().sendMessage(explanation);
+            try {
+                String[] split = messageContent.split(" ");
+                //System.out.println(split[0]);
+                //System.out.println(split[1]);
+                if (split[1] == null) {
+                    //if the date isn't entered
+                    event.getChannel().sendMessage("Enter a date, you gungan");
+                    //event.getChannel().sendMessage(apod());
+                    //event.getChannel().sendMessage(explanation);
+                } else {
+                    //if the date is entered
+                    event.getChannel().sendMessage(apodDate(split[1]));
+                    event.getChannel().sendMessage(explanation);
+                }
+            }
+            catch(Exception e){
+                event.getChannel().sendMessage("Enter a date in the YYYY-MM-DD format you Kowakian Lizard Monkey!");
+            }
         }
     }
-
-    public String apod(){
+    //date
+    public String apodDate(String date){
+        Mono<apod_wrapper> apodMono = client.get()
+                .uri(uriBuilder -> uriBuilder.queryParam("api_key", key).queryParam("date", date).build())
+                .retrieve()
+                .bodyToMono(apod_wrapper.class);
+        String output = apodMono.block().getURL();
+        explanation = apodMono.block().getExplanation();
+        return output;
+    }
+   //no date
+   /* public String apod(){
         Mono<apod_wrapper> apodMono = client.get()
                 .uri(uriBuilder -> uriBuilder.queryParam("api_key", key).build())
                 .retrieve()
@@ -46,5 +71,5 @@ public class apod extends Feature {
         String output = apodMono.block().getURL();
         explanation = apodMono.block().getExplanation();
         return output;
-    }
+    }*/
 }

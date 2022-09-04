@@ -1,4 +1,4 @@
-package org.jointheleague.features.examples.third_features.plain_old_java_objects;
+package org.jointheleague.features.Feature_3;
 import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
