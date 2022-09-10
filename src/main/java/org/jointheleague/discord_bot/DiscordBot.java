@@ -40,7 +40,7 @@ public class DiscordBot {
 		}
 
 		//Send bot connected message in channel
-		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has connected"));
+		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has awakened."));
 
 		//add help listener to bot
 		api.addMessageCreateListener(helpListener);
