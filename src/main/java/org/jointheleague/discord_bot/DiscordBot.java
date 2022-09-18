@@ -3,8 +3,12 @@ package org.jointheleague.discord_bot;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.features.examples.first_features.Riddle;
+import org.jointheleague.features.examples.first_features.RiddleGame;
+import org.jointheleague.features.examples.second_features.treasureHunt;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
+import org.jointheleague.features.examples.third_features.Hangman;
 import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
@@ -48,6 +52,8 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		addFeature(new treasureHunt(channelName));
+		addFeature(new Riddle(channelName));
 	}
 
 	private void addFeature(Feature feature){

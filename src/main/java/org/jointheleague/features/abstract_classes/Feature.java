@@ -24,6 +24,8 @@ public abstract class Feature implements MessageCreateListener {
                     handle(event);
                 } catch (APIException e1) {
                     e1.printStackTrace();
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
@@ -33,6 +35,6 @@ public abstract class Feature implements MessageCreateListener {
         return this.helpEmbed;
     }
 
-    public abstract void handle(MessageCreateEvent event) throws APIException;
+    public abstract void handle(MessageCreateEvent event) throws APIException, InterruptedException;
 
 }
