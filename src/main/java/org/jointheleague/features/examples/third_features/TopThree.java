@@ -1,5 +1,7 @@
 package org.jointheleague.features.examples.third_features;
 
+import java.util.List;
+
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
@@ -10,19 +12,19 @@ import org.springframework.web.reactive.function.client.WebClient;
 import net.aksingh.owmjapis.api.APIException;
 import reactor.core.publisher.Mono;
 
-public class ArticlePrint extends Feature {
+public class TopThree extends Feature {
 
-	public final String COMMAND = "!articlePrint";
+	public final String COMMAND = "!topThree";
 	
 	
 	private WebClient webClient;
 	private static final String baseUrl = "http://newsapi.org/v2/everything";
     private final String apiKey = "59ac01326c584ac0a069a29798794bec";
 	
-	public ArticlePrint(String channelName) {
+	public TopThree(String channelName) {
 		super(channelName);
 		// TODO Auto-generated constructor stub
-		helpEmbed = new HelpEmbed(COMMAND, "Prints an entire article given a word to search for");
+		helpEmbed = new HelpEmbed(COMMAND, "Gives the most popular articles based on a word to search for");
 		
 		this.webClient = WebClient
 				.builder()
@@ -37,36 +39,26 @@ public class ArticlePrint extends Feature {
 		if(messageContent.contains(COMMAND)) {
 			messageContent = messageContent.replaceAll(" ", "").replace(COMMAND, "");
 			if(messageContent.equals("")) {
-				event.getChannel().sendMessage("Please format your command: '!synonym [word]");
+				event.getChannel().sendMessage("Please format your command: '!topThree [word]");
 			}
 			
 			else {
-				printArticle(messageContent, event);
+				giveArticles(messageContent, event);
 			}
 			
 		}
 	}
 	
-	public void printArticle(String inquiry, MessageCreateEvent event) {
+	public void giveArticles(String inquiry, MessageCreateEvent event) {
 		
-		Article article = getNewsStoryByTopic(inquiry)
-				.getArticles()
-				.get(0);
+		List<Article> article = getNewsStoryByTopic(inquiry).getArticles();
 		
-		String title = article.getTitle();
-		String author = article.getAuthor();
-		String content = article.getContent();
-		
-		
-		event.getChannel().sendMessage(title + ", by " + author);
-		
-		for(int i = 0; i < content.length(); i+=1000) {
-			if(i+1000<content.length()) {
-				event.getChannel().sendMessage(content.substring(i, i+1000));
-			}
-			else {
-				event.getChannel().sendMessage(content.substring(i, content.length()-1));
-			}
+		for(int i = 0; i < 3; i++) {
+			String title = article.get(i).getTitle();
+			String author = article.get(i).getAuthor();
+			String content = article.get(i).getUrl();
+			event.getChannel().sendMessage(title + ", by " + author + ": " + content);
+			
 		}
 	}
 	

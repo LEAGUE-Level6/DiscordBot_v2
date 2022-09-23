@@ -5,7 +5,7 @@ import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.second_features.QuoteGuesser;
-import org.jointheleague.features.examples.third_features.ArticlePrint;
+import org.jointheleague.features.examples.third_features.TopThree;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
@@ -54,7 +54,7 @@ public class DiscordBot {
 		
 		addFeature(new SuggestGame(channelName));
 		addFeature(new QuoteGuesser(channelName));
-		addFeature(new ArticlePrint(channelName));
+		addFeature(new TopThree(channelName));
 	}
 
 	private void addFeature(Feature feature){
