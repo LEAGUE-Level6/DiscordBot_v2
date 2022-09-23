@@ -4,10 +4,13 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
+import org.jointheleague.features.examples.second_features.QuoteGuesser;
+import org.jointheleague.features.examples.third_features.TopThree;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
+import org.jointheleague.features.examples.first_features.SuggestGame;
 import org.jointheleague.features.help_embed.HelpListener;
 
 public class DiscordBot {
@@ -37,7 +40,7 @@ public class DiscordBot {
 		}
 
 		//Send bot connected message in channel
-		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has connected"));
+		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has awakened."));
 
 		//add help listener to bot
 		api.addMessageCreateListener(helpListener);
@@ -48,6 +51,10 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		
+		addFeature(new SuggestGame(channelName));
+		addFeature(new QuoteGuesser(channelName));
+		addFeature(new TopThree(channelName));
 	}
 
 	private void addFeature(Feature feature){
