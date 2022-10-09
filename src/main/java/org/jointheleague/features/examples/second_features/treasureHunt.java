@@ -38,8 +38,7 @@ public class treasureHunt extends Feature {
 
 
             String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND, "");
-
-            int guess = 0;
+ int guess = Integer.parseInt(guessMessage);
 
 
             if (guess > location) {
