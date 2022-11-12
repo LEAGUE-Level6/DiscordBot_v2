@@ -4,6 +4,7 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 import net.aksingh.owmjapis.api.APIException;
+import org.jetbrains.annotations.NotNull;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
 public abstract class Feature implements MessageCreateListener {
@@ -17,7 +18,7 @@ public abstract class Feature implements MessageCreateListener {
     }
 
     @Override
-    public void onMessageCreate(MessageCreateEvent event) {
+    @NotNull public void onMessageCreate(@NotNull MessageCreateEvent event) {
         event.getServerTextChannel().ifPresent(e -> {
             if (e.getName().equals(channelName)) {
                 try {

@@ -1,12 +1,11 @@
-package org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api;
+package org.jointheleague.features.examples.third_features.plain_old_java_objects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class CatWrapper {
-
+public class SmashWrapper {
     @SerializedName("data")
     @Expose
     private List<String> data = null;
@@ -18,5 +17,4 @@ public class CatWrapper {
     public void setData(List<String> data) {
         this.data = data;
     }
-
 }
