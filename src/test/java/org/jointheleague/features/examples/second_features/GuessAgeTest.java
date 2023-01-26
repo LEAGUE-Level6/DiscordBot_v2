@@ -1,5 +1,6 @@
 package org.jointheleague.features.examples.second_features;
 
+import net.aksingh.owmjapis.api.APIException;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
@@ -8,17 +9,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Mockito.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public class HighLowGameTest {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
+public class GuessAgeTest {
     private final String testChannelName = "test";
-    private final HighLowGame highLowGame = new HighLowGame(testChannelName);
+    private final GuessAge guessAge = new GuessAge(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -50,7 +54,7 @@ public class HighLowGameTest {
         //Given
 
         //When
-        String command = highLowGame.COMMAND;
+        String command = guessAge.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -59,27 +63,27 @@ public class HighLowGameTest {
     }
 
     @Test
-    void itShouldHandleMessagesWithCommand() {
+    void itShouldHandleMessagesWithCommand(){
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(highLowGame.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(highLowGame.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(guessAge.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(guessAge.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        highLowGame.handle(messageCreateEvent);
+        guessAge.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
     }
 
     @Test
-    void itShouldNotHandleMessagesWithoutCommand() {
+    void itShouldNotHandleMessagesWithoutCommand() throws APIException {
         //Given
         String command = "";
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        highLowGame.handle(messageCreateEvent);
+        guessAge.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -90,7 +94,7 @@ public class HighLowGameTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = highLowGame.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = guessAge.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -101,8 +105,8 @@ public class HighLowGameTest {
         //Given
 
         //When
-        String helpEmbedTitle = highLowGame.getHelpEmbed().getTitle();
-        String command = highLowGame.COMMAND;
+        String helpEmbedTitle = guessAge.getHelpEmbed().getTitle();
+        String command = guessAge.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
@@ -111,14 +115,14 @@ public class HighLowGameTest {
 //FEATURE-SPECIFIC  TESTS
 
     @Test
-    void itShouldNotAcceptGuessIfGameIsNotStarted() {
+    void itShouldNotAcceptGuessIfGameIsNotStarted(){
         //Given
         String command = "!guessAge 5";
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        highLowGame.handle(messageCreateEvent);
+        guessAge.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage("Please start the game first using just the command");
@@ -126,16 +130,16 @@ public class HighLowGameTest {
     }
 
     @Test
-    void itShouldTellTheUserIfTheirGuessIsTooLow() {
+    void itShouldTellTheUserIfTheirGuessIsTooLow(){
         //Given
         int guess = 1;
-        String command = "!highLow " + guess;
-        highLowGame.numberToGuess = 100;
+        String command = "!guessAge " + guess;
+        guessAge.ageGuess = 100;
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        highLowGame.handle(messageCreateEvent);
+        guessAge.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(guess + " is too low.  Guess again!");
@@ -146,48 +150,48 @@ public class HighLowGameTest {
     void itShouldTellTheUserIfTheirGuessIsTooHigh() {
         //Given
         int guess = 100;
-        String command = "!highLow " + guess;
-        highLowGame.numberToGuess = 1;
+        String command = "!guessAge " + guess;
+        guessAge.ageGuess = 1;
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        highLowGame.handle(messageCreateEvent);
+        guessAge.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(guess + " is too high.  Guess again!");
+        verify(textChannel, times(1)).sendMessage("You are old enough to drive!");
 
     }
 
     @Test
-    void itShouldTellTheUserIfTheirGuessIsCorrect() {
+    void itShouldTellTheUserIfTheirGuessIsCorrect(){
         //Given
-        int guess = 100;
-        String command = "!highLow " + guess;
-        highLowGame.numberToGuess = 100;
+        int years = 100;
+        String command = "!guessAge " + years;
+        guessAge.ageGuess = 100;
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        highLowGame.handle(messageCreateEvent);
+        guessAge.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage("Correct!  The number I picked was " + guess);
+        verify(textChannel, times(1)).sendMessage("Unfortunately you need to be" + years + " to drive");
     }
 
     @Test
     void itShouldSendErrorMessageIfGuessIsNotANumber() {
         //Given
         String guess = "ten";
-        String command = "!highLow " + guess;
-        highLowGame.numberToGuess = 100;
+        String command = "!GuessAge " + guess;
+        guessAge.ageGuess = 100;
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        highLowGame.handle(messageCreateEvent);
+        guessAge.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage("Please format your guess like this: " + highLowGame.COMMAND + " 5");
+        verify(textChannel, times(1)).sendMessage("Please format your guess like this: " + guessAge.COMMAND + " 5");
     }
 }

@@ -52,6 +52,7 @@ public class DiscordBot {
 
 	private void addFeature(Feature feature){
 		api.addMessageCreateListener(feature);
+
 		helpListener.addHelpEmbed(feature.getHelpEmbed());
 	}
 }

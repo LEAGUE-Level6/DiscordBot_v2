@@ -11,10 +11,10 @@ import reactor.core.publisher.Mono;
 public class SmashAPI extends Feature {
     public final String COMMAND = "!smashAPI";
     private WebClient webClient;
-    private static final String baseUrl = "https://www.smashbros.com/en_US/";
+    private static final String baseUrl = "https://api.nasa.gov/planetary/apod?api_key=1Rm2YO36nkeQJYE2cxqo6rxMq6ap4zXd4ylT6gmW";
     public SmashAPI(String channelName){
         super(channelName);
-        HelpEmbed smash = new HelpEmbed("", "");
+        helpEmbed = new HelpEmbed(COMMAND, "");
 
         this.webClient = WebClient
                 .builder()
@@ -24,12 +24,23 @@ public class SmashAPI extends Feature {
 
     @Override
     public void handle(MessageCreateEvent event) throws APIException {
-
+        String messageContent = event.getMessageContent();
+        if (messageContent.startsWith(COMMAND)) {
+            String smashFact = getFact();
+            event.getChannel().sendMessage(smashFact);
+        }
     }
     public String getFact(){
+        //Make the request, accepting the response as a plain old java object you created
+
         Mono<SmashWrapper> smashWrapperMono = webClient.get().retrieve().bodyToMono(SmashWrapper.class);
+
         SmashWrapper smash = smashWrapperMono.block();
         String message = smash.getData().get(0);
         return message;
+    }
+
+    public void setWebClient(WebClient webClient) {
+        this.webClient = webClient;
     }
 }
