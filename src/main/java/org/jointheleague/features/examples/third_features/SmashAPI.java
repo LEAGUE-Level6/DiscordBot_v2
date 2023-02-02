@@ -20,6 +20,7 @@ public class SmashAPI extends Feature {
                 .builder()
                 .baseUrl(baseUrl)
                 .build();
+
     }
 
     @Override
@@ -29,6 +30,7 @@ public class SmashAPI extends Feature {
             String smashFact = getFact();
             event.getChannel().sendMessage(smashFact);
         }
+
     }
     public String getFact(){
         //Make the request, accepting the response as a plain old java object you created
@@ -43,4 +45,5 @@ public class SmashAPI extends Feature {
     public void setWebClient(WebClient webClient) {
         this.webClient = webClient;
     }
+
 }

@@ -147,5 +147,6 @@ public class SmashAPITest {
         //Then
         verify(textChannel, never()).sendMessage();
     }
-
 }
+
+

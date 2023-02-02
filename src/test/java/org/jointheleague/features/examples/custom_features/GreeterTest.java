@@ -3,21 +3,22 @@ package org.jointheleague.features.examples.custom_features;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.Mockito.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+public class GreeterTest {
 
-public class CreateShapesTest {
     private final String testChannelName = "test";
-    private final CreateShapes shapes = new CreateShapes(testChannelName);
+    private final Greeter greeter = new Greeter(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -49,7 +50,7 @@ public class CreateShapesTest {
         //Given
 
         //When
-        String command = shapes.COMMAND;
+        String command = greeter.COMMAND;
 
         //Then
         assertNotEquals("", command);
@@ -65,7 +66,7 @@ public class CreateShapesTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        shapes.handle(messageCreateEvent);
+        greeter.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -76,7 +77,7 @@ public class CreateShapesTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = shapes.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = greeter.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -87,10 +88,11 @@ public class CreateShapesTest {
         //Given
 
         //When
-        String helpEmbedTitle = shapes.getHelpEmbed().getTitle();
-        String command = shapes.COMMAND;
+        String helpEmbedTitle = greeter.getHelpEmbed().getTitle();
+        String command = greeter.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
     }
+
 }
