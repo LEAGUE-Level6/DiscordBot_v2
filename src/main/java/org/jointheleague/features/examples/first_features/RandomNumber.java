@@ -18,6 +18,7 @@ public class RandomNumber extends Feature {
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
+        System.out.println(messageContent);
         if (messageContent.startsWith(COMMAND)) {
             Random r = new Random();
             event.getChannel().sendMessage("Your random number is " + r.nextInt(1001));
