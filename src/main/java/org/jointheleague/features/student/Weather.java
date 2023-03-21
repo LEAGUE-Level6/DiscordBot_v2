@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 public class Weather extends Feature {
@@ -58,9 +60,9 @@ public class Weather extends Feature {
                         .build())
                 .retrieve()
                 .bodyToMono(String.class);
-        System.out.println("hhhhhhhhhh");
-        Optional<String> result = stringMono.blockOptional();
-        if (result.equals(Optional.empty())){
+        try {
+            String result = stringMono.block(Duration.of(1000, ChronoUnit.MILLIS));
+        }catch(Exception e){
             return "Error";
         }
         System.out.println("passed");
