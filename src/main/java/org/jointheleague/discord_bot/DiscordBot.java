@@ -3,6 +3,7 @@ package org.jointheleague.discord_bot;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.features.examples.first_features.BadJoke;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
@@ -32,8 +33,8 @@ public class DiscordBot {
 
 		//Print the URL to invite the bot
 		if (printInvite) {
-			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
-					+"\n\tThis message can be disabled in org.jointheleague.Launcher.java");
+//			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
+//					+"\n\tThis message can be disabled in org.jointheleague.Launcher.java");
 		}
 
 		//Send bot connected message in channel
@@ -48,6 +49,7 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		addFeature(new BadJoke(channelName));
 	}
 
 	private void addFeature(Feature feature){
