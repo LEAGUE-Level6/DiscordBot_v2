@@ -3,6 +3,7 @@ package org.jointheleague.discord_bot;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.features.examples.second_features.AdventureGame;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
@@ -48,6 +49,7 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		addFeature(new AdventureGame(channelName));
 	}
 
 	private void addFeature(Feature feature){
