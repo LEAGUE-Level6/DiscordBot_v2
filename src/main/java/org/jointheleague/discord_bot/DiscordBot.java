@@ -9,6 +9,7 @@ import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
+import org.jointheleague.features.student.Blackjack;
 import org.jointheleague.features.student.calculator;
 import org.jointheleague.features.student.Weather;
 
@@ -56,6 +57,7 @@ public class DiscordBot {
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new calculator(channelName));
 		addFeature(new Weather(channelName));
+		addFeature(new Blackjack(channelName));
 	}
 
 	private void addFeature(Feature feature){
