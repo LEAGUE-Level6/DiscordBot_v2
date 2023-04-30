@@ -1,5 +1,5 @@
 
-package org.jointheleague.features.student.wrappers;
+package org.jointheleague.features.student.weatherwrapper;
 
 import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;

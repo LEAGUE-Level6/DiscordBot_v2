@@ -1,5 +1,5 @@
 
-package org.jointheleague.features.student.wrappers;
+package org.jointheleague.features.student.weatherwrapper;
 
 import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
@@ -13,7 +13,7 @@ public class Current {
     private Integer lastUpdatedEpoch;
     @SerializedName("last_updated")
     @Expose
-    private String lastUpdated;
+    private String last_updated;
     @SerializedName("temp_c")
     @Expose
     private Double tempC;
@@ -87,11 +87,11 @@ public class Current {
     }
 
     public String getLastUpdated() {
-        return lastUpdated;
+        return last_updated;
     }
 
     public void setLastUpdated(String lastUpdated) {
-        this.lastUpdated = lastUpdated;
+        this.last_updated = lastUpdated;
     }
 
     public Double getTempC() {
