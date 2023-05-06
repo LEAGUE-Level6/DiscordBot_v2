@@ -3,78 +3,78 @@ package org.jointheleague.features.student.weatherwrapper;
 
 import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Generated("jsonschema2pojo")
 public class Current {
 
-    @SerializedName("last_updated_epoch")
+    @JsonProperty("last_updated_epoch")
     @Expose
     private Integer lastUpdatedEpoch;
-    @SerializedName("last_updated")
+    @JsonProperty("last_updated")
     @Expose
     private String last_updated;
-    @SerializedName("temp_c")
+    @JsonProperty("temp_c")
     @Expose
     private Double tempC;
-    @SerializedName("temp_f")
+    @JsonProperty("temp_f")
     @Expose
     private Double tempF;
-    @SerializedName("is_day")
+    @JsonProperty("is_day")
     @Expose
     private Integer isDay;
-    @SerializedName("condition")
+    @JsonProperty("condition")
     @Expose
     private Condition condition;
-    @SerializedName("wind_mph")
+    @JsonProperty("wind_mph")
     @Expose
     private Double windMph;
-    @SerializedName("wind_kph")
+    @JsonProperty("wind_kph")
     @Expose
     private Double windKph;
-    @SerializedName("wind_degree")
+    @JsonProperty("wind_degree")
     @Expose
     private Integer windDegree;
-    @SerializedName("wind_dir")
+    @JsonProperty("wind_dir")
     @Expose
     private String windDir;
-    @SerializedName("pressure_mb")
+    @JsonProperty("pressure_mb")
     @Expose
     private Double pressureMb;
-    @SerializedName("pressure_in")
+    @JsonProperty("pressure_in")
     @Expose
     private Double pressureIn;
-    @SerializedName("precip_mm")
+    @JsonProperty("precip_mm")
     @Expose
     private Double precipMm;
-    @SerializedName("precip_in")
+    @JsonProperty("precip_in")
     @Expose
     private Double precipIn;
-    @SerializedName("humidity")
+    @JsonProperty("humidity")
     @Expose
     private Integer humidity;
-    @SerializedName("cloud")
+    @JsonProperty("cloud")
     @Expose
     private Integer cloud;
-    @SerializedName("feelslike_c")
+    @JsonProperty("feelslike_c")
     @Expose
     private Double feelslikeC;
-    @SerializedName("feelslike_f")
+    @JsonProperty("feelslike_f")
     @Expose
     private Double feelslikeF;
-    @SerializedName("vis_km")
+    @JsonProperty("vis_km")
     @Expose
     private Double visKm;
-    @SerializedName("vis_miles")
+    @JsonProperty("vis_miles")
     @Expose
     private Double visMiles;
-    @SerializedName("uv")
+    @JsonProperty("uv")
     @Expose
     private Double uv;
-    @SerializedName("gust_mph")
+    @JsonProperty("gust_mph")
     @Expose
     private Double gustMph;
-    @SerializedName("gust_kph")
+    @JsonProperty("gust_kph")
     @Expose
     private Double gustKph;
 

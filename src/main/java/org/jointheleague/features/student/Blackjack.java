@@ -4,7 +4,16 @@ import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.student.blackjack_wrapper.BlackjackWrapper;
+import org.jointheleague.features.student.weatherwrapper.WeatherWrapper;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
 public class Blackjack extends Feature {
@@ -21,6 +30,10 @@ public class Blackjack extends Feature {
     public long availableMoney = 0;
 
 
+    private WebClient newDeckClient;
+
+    String newDeckUrl = "https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1";
+
     public Blackjack(String channelName) {
         super(channelName);
 
@@ -29,6 +42,12 @@ public class Blackjack extends Feature {
                 COMMAND,
                 "A popular and addictive card game that causes many to lose money"
         );
+
+        this.newDeckClient = WebClient
+                .builder()
+                .baseUrl(newDeckUrl)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
     }
 
     @Override
@@ -48,7 +67,15 @@ public class Blackjack extends Feature {
             if (isNum(messageContent)) {
                 availableMoney = Long.parseLong(messageContent);
                 event.getChannel().sendMessage("Great! You are now using $" + availableMoney + "! Let's get started!");
-                gameState = DRAWING;
+                event.getChannel().sendMessage(newDeck());
+                gameState = HIT_STAND;
+            }
+        }
+
+        if(gameState != NOT_STARTED){
+            if (messageContent.equals("Quit Blackjack Now")){
+                event.getChannel().sendMessage("Alright! Thank's for playing! Hopefully we see you again soon!");
+                gameState = NOT_STARTED;
             }
         }
     }
@@ -72,4 +99,21 @@ public class Blackjack extends Feature {
         return true;
     }
 
+    public String drawCards(){
+        String deckID = newDeck();
+        return deckID;
+    }
+
+    public String newDeck(){
+        Mono<BlackjackWrapper> stringMono = newDeckClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .build())
+                .retrieve()
+                .bodyToMono(BlackjackWrapper.class);
+
+        BlackjackWrapper deck = stringMono.block();
+
+        return deck.getDeckId();
+    }
 }
