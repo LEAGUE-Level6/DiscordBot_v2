@@ -2,7 +2,10 @@ package org.jointheleague.discord_bot;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.intent.Intent;
 import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.features.examples.first_features.BasicCookieFeature;
+import org.jointheleague.features.examples.second_features.GuessTheCookie;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
@@ -28,7 +31,7 @@ public class DiscordBot {
 
 	public void connect(boolean printInvite) {
 
-		api = new DiscordApiBuilder().setToken(token).login().join();
+		api = new DiscordApiBuilder().setToken(token).addIntents(Intent.MESSAGE_CONTENT).login().join();
 
 		//Print the URL to invite the bot
 		if (printInvite) {
@@ -48,6 +51,9 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		addFeature(new BasicCookieFeature(channelName));
+		addFeature(new GuessTheCookie(channelName));
+
 	}
 
 	private void addFeature(Feature feature){

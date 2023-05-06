@@ -19,6 +19,7 @@ public abstract class Feature implements MessageCreateListener {
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
         event.getServerTextChannel().ifPresent(e -> {
+
             if (e.getName().equals(channelName)) {
                 try {
                     handle(event);

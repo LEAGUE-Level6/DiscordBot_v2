@@ -1,4 +1,4 @@
-package org.jointheleague.features.templates;
+package org.jointheleague.features.student;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
