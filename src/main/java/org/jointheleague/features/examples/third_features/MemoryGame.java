@@ -1,4 +1,4 @@
-package org.jointheleague.features.templates;
+package org.jointheleague.features.examples.third_features;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
@@ -6,11 +6,11 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 
 import java.util.Locale;
 
-public class FeatureTemplate extends Feature {
+public class MemoryGame extends Feature {
 
     public final String COMMAND = "q!command";
 
-    public FeatureTemplate(String channelName) {
+    public MemoryGame(String channelName) {
         super(channelName);
 
         //Create a help embed to describe feature when !help command is sent
@@ -24,9 +24,15 @@ public class FeatureTemplate extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent().toLowerCase(Locale.ROOT);
         if (messageContent.startsWith(COMMAND)) {
-            //respond to message here
-            event.getChannel().sendMessage("Sending a message to the channel");
+            //generate pattern
+            event.getChannel().sendMessage("Pattern");
+            //edit message to hide pattern:
+            //event.getChannel().getMessages(1).get().getNewestMessage()
+            //ask for pattern
+            //listen for input
+            //issue score
         }
     }
+
 
 }

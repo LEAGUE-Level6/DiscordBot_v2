@@ -1,4 +1,4 @@
-package org.jointheleague.features.templates;
+package org.jointheleague.features.examples.first_features;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -20,10 +20,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-class FeatureTemplateTest {
+class WebSearchTest {
 
     private final String testChannelName = "test";
-    private final FeatureTemplate featureTemplate = new FeatureTemplate(testChannelName);
+    private final WebSearch webSearch = new WebSearch(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -54,11 +54,11 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String command = featureTemplate.COMMAND;
+        String command = webSearch.COMMAND;
 
         //Then
 
-        if(!(featureTemplate instanceof FeatureTemplate)){
+        if(!(webSearch instanceof WebSearch)){
             assertNotEquals("q!command", command);
         }
 
@@ -71,12 +71,12 @@ class FeatureTemplateTest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureTemplate.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureTemplate.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(webSearch.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(webSearch.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        webSearch.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -89,7 +89,7 @@ class FeatureTemplateTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        webSearch.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -100,7 +100,7 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = featureTemplate.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = webSearch.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -111,8 +111,8 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String helpEmbedTitle = featureTemplate.getHelpEmbed().getTitle();
-        String command = featureTemplate.COMMAND;
+        String helpEmbedTitle = webSearch.getHelpEmbed().getTitle();
+        String command = webSearch.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

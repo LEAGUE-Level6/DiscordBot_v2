@@ -1,8 +1,7 @@
-package org.jointheleague.features.templates;
+package org.jointheleague.features.examples.second_features;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,15 +14,14 @@ import java.io.PrintStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.never;
 
-class FeatureTemplateTest {
+public class EncrypterTest {
 
     private final String testChannelName = "test";
-    private final FeatureTemplate featureTemplate = new FeatureTemplate(testChannelName);
+    private final Encrypter encrypter = new Encrypter(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -54,13 +52,9 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String command = featureTemplate.COMMAND;
+        String command = encrypter.COMMAND;
 
         //Then
-
-        if(!(featureTemplate instanceof FeatureTemplate)){
-            assertNotEquals("q!command", command);
-        }
 
         assertNotEquals("", command);
         assertNotEquals("q!", command);
@@ -71,12 +65,12 @@ class FeatureTemplateTest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureTemplate.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureTemplate.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(encrypter.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(encrypter.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        encrypter.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -89,7 +83,7 @@ class FeatureTemplateTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        encrypter.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -100,7 +94,7 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = featureTemplate.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = encrypter.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -111,11 +105,47 @@ class FeatureTemplateTest {
         //Given
 
         //When
-        String helpEmbedTitle = featureTemplate.getHelpEmbed().getTitle();
-        String command = featureTemplate.COMMAND;
+        String helpEmbedTitle = encrypter.getHelpEmbed().getTitle();
+        String command = encrypter.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
+    }
+
+    @Test
+    void itShouldSendErrorMessageIfNoMessageIsGiven() {
+        String command = "q!encrypt G";
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        encrypter.handle(messageCreateEvent);
+        verify(textChannel, times(1)).sendMessage("Please include both a [shiftSequence] and a [message].");
+    }
+
+    @Test
+    void itShouldSendErrorMessageIfNoInputIsGiven() {
+        String command = "q!encrypt ";
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        encrypter.handle(messageCreateEvent);
+        verify(textChannel, times(1)).sendMessage("Please include both a [shiftSequence] and a [message].");
+    }
+
+    @Test
+    void itShouldSendErrorMessageIfOnlyCommandIsGiven() {
+        String command = "q!encrypt";
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        encrypter.handle(messageCreateEvent);
+        verify(textChannel, times(1)).sendMessage("Please include both a [shiftSequence] and a [message].");
+    }
+
+    @Test
+    void itShouldEncryptTheEntireMessage() {
+        String command = "q!encrypt GHIJKLMNOPQRST ABCDEFGHIJKLMNOP";
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        encrypter.handle(messageCreateEvent);
+        verify(textChannel, times(1)).sendMessage("GIKMOQSUWYACEGHI");
     }
 
 }
