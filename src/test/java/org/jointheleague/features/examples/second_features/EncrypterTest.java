@@ -3,22 +3,25 @@ package org.jointheleague.features.examples.second_features;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Mockito.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public class HighLowGameTest {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
+public class EncrypterTest {
 
     private final String testChannelName = "test";
-    private final HighLowGame highLowGame = new HighLowGame(testChannelName);
+    private final Encrypter encrypter = new Encrypter(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -41,7 +44,6 @@ public class HighLowGameTest {
         String actual = outContent.toString();
 
         assertEquals(expected, actual);
-        System.out.println(actual);
         System.setOut(originalOut);
     }
 
@@ -50,23 +52,25 @@ public class HighLowGameTest {
         //Given
 
         //When
-        String command = highLowGame.COMMAND;
+        String command = encrypter.COMMAND;
 
         //Then
+
         assertNotEquals("", command);
-        assertNotEquals("!command", command);
+        assertNotEquals("q!", command);
+        assertEquals('q', command.charAt(0));
         assertNotNull(command);
     }
 
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(highLowGame.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(highLowGame.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(encrypter.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(encrypter.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        highLowGame.handle(messageCreateEvent);
+        encrypter.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -79,7 +83,7 @@ public class HighLowGameTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        highLowGame.handle(messageCreateEvent);
+        encrypter.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage();
@@ -90,7 +94,7 @@ public class HighLowGameTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = highLowGame.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = encrypter.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -101,93 +105,47 @@ public class HighLowGameTest {
         //Given
 
         //When
-        String helpEmbedTitle = highLowGame.getHelpEmbed().getTitle();
-        String command = highLowGame.COMMAND;
+        String helpEmbedTitle = encrypter.getHelpEmbed().getTitle();
+        String command = encrypter.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
     }
 
-//FEATURE-SPECIFIC  TESTS
-
     @Test
-    void itShouldNotAcceptGuessIfGameIsNotStarted() {
-        //Given
-        String command = "!highLow 5";
+    void itShouldSendErrorMessageIfNoMessageIsGiven() {
+        String command = "q!encrypt G";
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        highLowGame.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
-
+        encrypter.handle(messageCreateEvent);
+        verify(textChannel, times(1)).sendMessage("Please include both a [shiftSequence] and a [message].");
     }
 
     @Test
-    void itShouldTellTheUserIfTheirGuessIsTooLow() {
-        //Given
-        int guess = 1;
-        String command = "!highLow " + guess;
-        highLowGame.numberToGuess = 100;
+    void itShouldSendErrorMessageIfNoInputIsGiven() {
+        String command = "q!encrypt ";
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        highLowGame.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage(guess + " is too low.  Guess again!");
-
+        encrypter.handle(messageCreateEvent);
+        verify(textChannel, times(1)).sendMessage("Please include both a [shiftSequence] and a [message].");
     }
 
     @Test
-    void itShouldTellTheUserIfTheirGuessIsTooHigh() {
-        //Given
-        int guess = 100;
-        String command = "!highLow " + guess;
-        highLowGame.numberToGuess = 1;
+    void itShouldSendErrorMessageIfOnlyCommandIsGiven() {
+        String command = "q!encrypt";
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        highLowGame.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage(guess + " is too high.  Guess again!");
-
+        encrypter.handle(messageCreateEvent);
+        verify(textChannel, times(1)).sendMessage("Please include both a [shiftSequence] and a [message].");
     }
 
     @Test
-    void itShouldTellTheUserIfTheirGuessIsCorrect() {
-        //Given
-        int guess = 100;
-        String command = "!highLow " + guess;
-        highLowGame.numberToGuess = 100;
+    void itShouldEncryptTheEntireMessage() {
+        String command = "q!encrypt GHIJKLMNOPQRST ABCDEFGHIJKLMNOP";
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        highLowGame.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage("Correct!  The number I picked was " + guess);
+        encrypter.handle(messageCreateEvent);
+        verify(textChannel, times(1)).sendMessage("GIKMOQSUWYACEGHI");
     }
 
-    @Test
-    void itShouldSendErrorMessageIfGuessIsNotANumber() {
-        //Given
-        String guess = "ten";
-        String command = "!highLow " + guess;
-        highLowGame.numberToGuess = 100;
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        highLowGame.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage("Please format your guess like this: " + highLowGame.COMMAND + " 5");
-    }
 }

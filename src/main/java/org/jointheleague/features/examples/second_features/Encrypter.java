@@ -28,28 +28,38 @@ public class Encrypter extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent().toLowerCase(Locale.ROOT);
         if (messageContent.startsWith(COMMAND)) {
-            //Something isn't working, no input is returned
-            String cipher = messageContent.substring(messageContent.indexOf(' ')+1, messageContent.substring(messageContent.indexOf(' ')).indexOf(' ')).toUpperCase();
-            messageContent = messageContent.substring(messageContent.indexOf(' ')+1);
-            String msg = messageContent.substring(messageContent.indexOf(' ')).toUpperCase();
-            String message = "";
-            for (int i = 0; i < msg.length(); i++) {
-                if (Character.isLetter(msg.charAt(i))) {
-                    if (i < cipher.length()) {
-                        message += encrypt(cipher.charAt(i), msg.charAt(i));
-                    } else {
-                        message += encrypt(cipher.charAt(cipher.length() - 1), msg.charAt(i));
-                    }
-                }
+            if (messageContent.indexOf(' ') == -1) {
+                event.getChannel().sendMessage("Please include both a [shiftSequence] and a [message].");
+                return;
             }
-            event.getChannel().sendMessage(message);
+            messageContent = messageContent.substring(messageContent.indexOf(' ') + 1);
+            if (messageContent.equals("") ||messageContent.indexOf(' ') == -1|| messageContent.substring(messageContent.indexOf(' ')).length() <= 1) {
+                event.getChannel().sendMessage("Please include both a [shiftSequence] and a [message].");
+                return;
+            }
+            String cipher = messageContent.substring(0, messageContent.indexOf(' ')).toUpperCase();
+            String msg = messageContent.substring(messageContent.indexOf(' ') + 1).toUpperCase();
+            event.getChannel().sendMessage(encrypt(cipher, msg));
         }
     }
 
-    public char encrypt(char shift, char message) {
-        message += (char)(shift-'A');
-        if(message > 'Z') message -= 26;
-        return message;
+    public String encrypt(String shift, String message) {
+        String op = "";
+        char m;
+        for (int i = 0; i < message.length(); i++) {
+            if (Character.isLetter(message.charAt(i))) {
+                if (i < shift.length()) {
+                    m = (char)(message.charAt(i)-'A'+shift.charAt(i));
+                    if(m > 'Z') m -= 26;
+                    op += m;
+                } else {
+                    m = (char)(message.charAt(i)-'A'+shift.charAt(shift.length()-1));
+                    if(m > 'Z') m -= 26;
+                    op += m;
+                }
+            }
+        }
+        return op;
     }
 
 }
