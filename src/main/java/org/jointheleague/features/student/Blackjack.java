@@ -27,17 +27,21 @@ public class Blackjack extends Feature {
     final int INIT_MONEY = 1;
     final int BETTING = 2;
     final int HIT_STAND = 3;
-    final int DRAWING = 4;
+    final int ANOTHER_ROUND = 4;
     int gameState = NOT_STARTED;
 
     private long availableMoney;
 
     private long bet;
 
+    private int playerTotal = 0;
+
+    private int dealerTotal = 0;
+
+    private ArrayList<Card> deck = new ArrayList<Card>();
+
 
     private WebClient newDeckClient;
-    private WebClient drawCardsClient;
-    private WebClient drawCardClient;
 
     private ArrayList<Card> dealerHand;
     private ArrayList<Card> playerHand;
@@ -46,8 +50,6 @@ public class Blackjack extends Feature {
     private String playerHandString;
 
     String newDeckUrl = "https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1";
-
-    String deckID;
 
     public Blackjack(String channelName) {
         super(channelName);
@@ -82,7 +84,7 @@ public class Blackjack extends Feature {
             if (isNum(messageContent)) {
                 availableMoney = Long.parseLong(messageContent);
                 event.getChannel().sendMessage("Great! You are now using $" + availableMoney + "! Let's get started!");
-                deckID = newDeck();
+                newDeck();
                 event.getChannel().sendMessage("How much are you betting?");
                 event.getChannel().sendMessage("*I'll wait if you put down more than you have, or if you don't bet anything.");
                 gameState = BETTING;
@@ -102,11 +104,55 @@ public class Blackjack extends Feature {
                 drawPlayerCard();
                 event.getChannel().sendMessage(dealerHandString);
                 event.getChannel().sendMessage(playerHandString);
-                int total = 0;
+                playerTotal = 0;
                 for (int i = 0; i < playerHand.size(); i++){
-                    total = total + value2int(playerHand.get(i).getValue());
+                    playerTotal = playerTotal + value2int(playerHand.get(i).getValue());
                 }
-                event.getChannel().sendMessage("[H]it or [S]tand?");
+                if (playerTotal > 21){
+                    event.getChannel().sendMessage("Bust!!!");
+                    playerLost(event);
+                }else {
+                    event.getChannel().sendMessage("[H]it or [S]tand?");
+                }
+            }
+            else if (messageContent.equalsIgnoreCase("s")){
+                dealerTotal = 0;
+                dealerHandString = "The dealer has a " + dealerHand.get(0).getSuit() + " of " + dealerHand.get(0).getValue() + " and " + dealerHand.get(1).getSuit() + " of " + dealerHand.get(1).getValue();
+                for (int i = 0; i < dealerHand.size(); i++){
+                    dealerTotal = value2int(dealerHand.get(i).getValue()) + dealerTotal;
+                }
+
+                event.getChannel().sendMessage(dealerHandString);
+
+                while (dealerTotal < 17){
+                    event.getChannel().sendMessage("The Dealer Hits.");
+                    drawDealerCard();
+                    dealerTotal = dealerTotal + value2int(dealerHand.get(dealerHand.size()-1).getValue());
+                    dealerHandString = dealerHandString + "\nand " + dealerHand.get(dealerHand.size()-1).getSuit() + " of " + dealerHand.get(dealerHand.size()-1).getValue();
+                    event.getChannel().sendMessage(dealerHandString);
+                }
+
+                if (dealerTotal>21){
+                    event.getChannel().sendMessage("The Dealer Busts!");
+                    playerWon(event);
+                }else{
+                    event.getChannel().sendMessage(playerHandString);
+                    if (playerTotal > dealerTotal){
+                        playerWon(event);
+                    }else{
+                        playerLost(event);
+                    }
+                }
+            }
+        }else if (gameState == ANOTHER_ROUND){
+            if (messageContent.equalsIgnoreCase("y")){
+                event.getChannel().sendMessage("Good Choice!");
+                event.getChannel().sendMessage("How much are you betting?");
+                event.getChannel().sendMessage("*I'll wait if you put down more than you have, or if you don't bet anything.");
+                gameState = BETTING;
+            }else if (messageContent.equalsIgnoreCase("n")){
+                event.getChannel().sendMessage("Alright. You're leaving with $" + availableMoney + ". Have a great day!");
+                gameState = NOT_STARTED;
             }
         }
 
@@ -116,15 +162,6 @@ public class Blackjack extends Feature {
                 gameState = NOT_STARTED;
             }
         }
-    }
-
-    public String response(MessageCreateEvent event){
-        String lastMessage = event.getMessageContent();
-        String newMessage = lastMessage;
-        while (newMessage == lastMessage){
-            newMessage = event.getMessageContent();
-        }
-        return newMessage;
     }
 
     public boolean isNum(String message){
@@ -138,15 +175,6 @@ public class Blackjack extends Feature {
     }
 
     public void drawCards(){
-        Mono<DrawCardsWrapper> stringMono = drawCardsClient
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .build())
-                .retrieve()
-                .bodyToMono(DrawCardsWrapper.class);
-
-        DrawCardsWrapper cards = stringMono.block();
-
         dealerHand = new ArrayList<Card>();
         dealerHand.add(cards.getCards().get(0));
         dealerHand.add(cards.getCards().get(1));
@@ -160,21 +188,18 @@ public class Blackjack extends Feature {
     }
 
     public void drawPlayerCard(){
-        Mono<DrawCardsWrapper> stringMono = drawCardClient
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .build())
-                .retrieve()
-                .bodyToMono(DrawCardsWrapper.class);
-
-        DrawCardsWrapper cards = stringMono.block();
-
         playerHand.add(cards.getCards().get(0));
 
         playerHandString = playerHandString + "\nand " + cards.getCards().get(0).getValue() + " of " + cards.getCards().get(0).getSuit();
     }
 
-    public String newDeck(){
+    public void drawDealerCard(){
+        dealerHand.add(cards.getCards().get(0));
+
+        dealerHandString = dealerHandString + "\nand " + cards.getCards().get(0).getValue() + " of " + cards.getCards().get(0).getSuit();
+    }
+
+    public void newDeck(){
         Mono<BlackjackWrapper> stringMono = newDeckClient
                 .get()
                 .uri(uriBuilder -> uriBuilder
@@ -182,21 +207,27 @@ public class Blackjack extends Feature {
                 .retrieve()
                 .bodyToMono(BlackjackWrapper.class);
 
-        BlackjackWrapper deck = stringMono.block();
+        BlackjackWrapper deckBlock = stringMono.block();
 
-        drawCardsClient = WebClient
+        WebClient drawCardsClient = WebClient
                 .builder()
-                .baseUrl("https://deckofcardsapi.com/api/deck/"+deck.getDeckId()+"/draw/?count=4")
+                .baseUrl("https://deckofcardsapi.com/api/deck/"+deckBlock.getDeckId()+"/draw/?count=52")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
 
-        drawCardClient = WebClient
-                .builder()
-                .baseUrl("https://deckofcardsapi.com/api/deck/"+deck.getDeckId()+"/draw/?count=1")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
+        Mono<DrawCardsWrapper> cardsMono = drawCardsClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .build())
+                .retrieve()
+                .bodyToMono(DrawCardsWrapper.class);
 
-        return deck.getDeckId();
+        DrawCardsWrapper cards = cardsMono.block();
+
+        deck = new ArrayList<Card>();
+        for (int i = 0; i < 52; i++){
+            deck.add(cards.getCards().get(i));
+        }
     }
 
     public int value2int(String value){
@@ -229,5 +260,27 @@ public class Blackjack extends Feature {
                 return 10;
         }
         return 0;
+    }
+
+    public void playerLost(MessageCreateEvent event){
+        event.getChannel().sendMessage("The Dealer Won. :(");
+        event.getChannel().sendMessage("You just lost $" + bet);
+        availableMoney = availableMoney - bet;
+        if (availableMoney == 0){
+            event.getChannel().sendMessage("Looks like you're broke! Thanks for playing!");
+            gameState = NOT_STARTED;
+        }else{
+            event.getChannel().sendMessage("You have only $" + availableMoney + " left!");
+            event.getChannel().sendMessage("Play another round? [Y]es or [N]o");
+            gameState = ANOTHER_ROUND;
+        }
+    }
+
+    public void playerWon(MessageCreateEvent event){
+        event.getChannel().sendMessage("You won!");
+        availableMoney = availableMoney + bet;
+        event.getChannel().sendMessage("You gained $" + bet + ", so you now have $" + availableMoney);
+        event.getChannel().sendMessage("Play another round? [Y]es or [N]o");
+        gameState = ANOTHER_ROUND;
     }
 }
