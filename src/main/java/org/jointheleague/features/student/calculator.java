@@ -14,7 +14,7 @@ public class calculator extends Feature {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "A simple calculator for addition, subtraction, multiplication, and division"
+                "A simple calculator for addition, subtraction, multiplication, and division.\nOnly positive numbers are allowed.\nPlease only use one symbol per equasion.\nThank you!"
         );
     }
 
@@ -62,7 +62,7 @@ public class calculator extends Feature {
                     event.getChannel().sendMessage("Illegal expression.  Please try again.");
                 }
             }else{
-                event.getChannel().sendMessage("bad");
+                event.getChannel().sendMessage("Illegal use of command.  Please try again.");
             }
         }
     }

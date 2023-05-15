@@ -73,7 +73,8 @@ public class Blackjack extends Feature {
         if (messageContent.startsWith(COMMAND)) {
             if (gameState == NOT_STARTED) {
                 //respond to message here
-                event.getChannel().sendMessage("Welcome to blackjack!");
+                event.getChannel().sendMessage("Welcome to Las Vegas in San Diego!");
+                event.getChannel().sendMessage("You're playing blackjack!");
                 event.getChannel().sendMessage("How much money are you using in dollars? (Change is not allowed)");
                 event.getChannel().sendMessage("*And if you give me anything other that an integer, I'll just wait.");
                 gameState = INIT_MONEY;
@@ -105,8 +106,17 @@ public class Blackjack extends Feature {
                 event.getChannel().sendMessage(dealerHandString);
                 event.getChannel().sendMessage(playerHandString);
                 playerTotal = 0;
+                int aceCount = 0;
                 for (int i = 0; i < playerHand.size(); i++){
                     playerTotal = playerTotal + value2int(playerHand.get(i).getValue());
+                    if (playerHand.get(i).getValue().equals("ACE")){
+                        aceCount++;
+                    }
+                }
+                for (int i = 0; i < aceCount; i++){
+                    if (playerTotal > 21){
+                        playerTotal = playerTotal - 10;
+                    }
                 }
                 if (playerTotal > 21){
                     event.getChannel().sendMessage("Bust!!!");
@@ -117,7 +127,7 @@ public class Blackjack extends Feature {
             }
             else if (messageContent.equalsIgnoreCase("s")){
                 dealerTotal = 0;
-                dealerHandString = "The dealer has a " + dealerHand.get(0).getSuit() + " of " + dealerHand.get(0).getValue() + " and " + dealerHand.get(1).getSuit() + " of " + dealerHand.get(1).getValue();
+                dealerHandString = "The dealer's hand:\n" + dealerHand.get(0).getImages().getPng() + " " + dealerHand.get(1).getImages().getPng();
                 for (int i = 0; i < dealerHand.size(); i++){
                     dealerTotal = value2int(dealerHand.get(i).getValue()) + dealerTotal;
                 }
@@ -128,7 +138,7 @@ public class Blackjack extends Feature {
                     event.getChannel().sendMessage("The Dealer Hits.");
                     drawDealerCard();
                     dealerTotal = dealerTotal + value2int(dealerHand.get(dealerHand.size()-1).getValue());
-                    dealerHandString = dealerHandString + "\nand " + dealerHand.get(dealerHand.size()-1).getSuit() + " of " + dealerHand.get(dealerHand.size()-1).getValue();
+                    dealerHandString = dealerHandString + " " + dealerHand.get(dealerHand.size()-1).getImages().getPng();
                     event.getChannel().sendMessage(dealerHandString);
                 }
 
@@ -139,8 +149,10 @@ public class Blackjack extends Feature {
                     event.getChannel().sendMessage(playerHandString);
                     if (playerTotal > dealerTotal){
                         playerWon(event);
-                    }else{
+                    }else if (dealerTotal > playerTotal){
                         playerLost(event);
+                    }else{
+                        tie(event);
                     }
                 }
             }
@@ -176,27 +188,38 @@ public class Blackjack extends Feature {
 
     public void drawCards(){
         dealerHand = new ArrayList<Card>();
-        dealerHand.add(cards.getCards().get(0));
-        dealerHand.add(cards.getCards().get(1));
+        dealerHand.add(getCard());
+        dealerHand.add(getCard());
 
         playerHand = new ArrayList<Card>();
-        playerHand.add(cards.getCards().get(2));
-        playerHand.add(cards.getCards().get(3));
+        playerHand.add(getCard());
+        playerHand.add(getCard());
 
-        dealerHandString = "The dealer is showing a " + dealerHand.get(0).getValue() + " of " + dealerHand.get(0).getSuit();
-        playerHandString = "You have a " + playerHand.get(0).getValue() + " of " + playerHand.get(0).getSuit() + " and " + playerHand.get(1).getValue() + " of " + playerHand.get(1).getSuit();
+        dealerHandString = "The dealer's hand:\n" + dealerHand.get(0).getImages().getPng() + " " + "https://cdnb.artstation.com/p/assets/images/images/009/160/389/original/gui-ramalho-golden-leaf.gif?1517441655";
+        playerHandString = "Your hand:\n" + playerHand.get(0).getImages().getPng() + " " + playerHand.get(1).getImages().getPng();
+
     }
 
     public void drawPlayerCard(){
-        playerHand.add(cards.getCards().get(0));
+        playerHand.add(getCard());
 
-        playerHandString = playerHandString + "\nand " + cards.getCards().get(0).getValue() + " of " + cards.getCards().get(0).getSuit();
+        playerHandString = playerHandString + " " + playerHand.get(playerHand.size()-1).getImages().getPng();
     }
 
     public void drawDealerCard(){
-        dealerHand.add(cards.getCards().get(0));
+        dealerHand.add(getCard());
+        dealerHandString = dealerHandString + " " + dealerHand.get(dealerHand.size()-1).getImages().getPng();
+    }
 
-        dealerHandString = dealerHandString + "\nand " + cards.getCards().get(0).getValue() + " of " + cards.getCards().get(0).getSuit();
+    public Card getCard(){
+        if (deck.size() == 0){
+            newDeck();
+        }
+
+        Card draw = deck.get(0);
+        deck.remove(0);
+
+        return draw;
     }
 
     public void newDeck(){
@@ -233,7 +256,7 @@ public class Blackjack extends Feature {
     public int value2int(String value){
         switch (value){
             case "ACE":
-                return 1;
+                return 11;
             case "2":
                 return 2;
             case "3":
@@ -280,6 +303,13 @@ public class Blackjack extends Feature {
         event.getChannel().sendMessage("You won!");
         availableMoney = availableMoney + bet;
         event.getChannel().sendMessage("You gained $" + bet + ", so you now have $" + availableMoney);
+        event.getChannel().sendMessage("Play another round? [Y]es or [N]o");
+        gameState = ANOTHER_ROUND;
+    }
+
+    public void tie(MessageCreateEvent event){
+        event.getChannel().sendMessage("It's a tie!");
+        event.getChannel().sendMessage("You get your $" + bet + " back.");
         event.getChannel().sendMessage("Play another round? [Y]es or [N]o");
         gameState = ANOTHER_ROUND;
     }
