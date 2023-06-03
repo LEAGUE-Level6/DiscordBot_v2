@@ -8,6 +8,7 @@ import org.jointheleague.features.examples.first_features.BasicCookieFeature;
 import org.jointheleague.features.examples.second_features.GuessTheCookie;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
+import org.jointheleague.features.examples.third_features.CookieRecipeApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
@@ -53,6 +54,7 @@ public class DiscordBot {
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new BasicCookieFeature(channelName));
 		addFeature(new GuessTheCookie(channelName));
+		addFeature(new CookieRecipeApi(channelName));
 
 	}
 
