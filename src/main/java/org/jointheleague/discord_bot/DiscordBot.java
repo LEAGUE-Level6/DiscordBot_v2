@@ -10,6 +10,8 @@ import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 
+
+//delete
 public class DiscordBot {
 
 	private String token;
@@ -27,6 +29,7 @@ public class DiscordBot {
 	}
 
 	public void connect(boolean printInvite) {
+
 
 		api = new DiscordApiBuilder().setToken(token).login().join();
 
