@@ -11,6 +11,7 @@ import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.RockPaperScissors;
+import org.jointheleague.features.student.RockPaperScissorsGame;
 
 
 //delete
@@ -48,6 +49,7 @@ public class DiscordBot {
 		api.addMessageCreateListener(helpListener);
 
 		//add features
+		addFeature(new RockPaperScissorsGame(channelName));
 		addFeature(new RockPaperScissors(channelName));
 		addFeature(new RandomNumber(channelName));
 		addFeature(new CurrentTime(channelName));

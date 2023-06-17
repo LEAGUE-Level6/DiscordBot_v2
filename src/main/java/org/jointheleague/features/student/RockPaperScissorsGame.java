@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class RockPaperScissorsGame extends Feature {
 
-    public final String COMMAND = "!rpsg";
+    public final String COMMAND = "!grps";
 
     public RockPaperScissorsGame(String channelName) {
         super(channelName);
@@ -24,7 +24,8 @@ public class RockPaperScissorsGame extends Feature {
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
-        if (messageContent.startsWith(COMMAND)) {
+
+        if ((messageContent.startsWith(COMMAND) && messageContent.contains("Rock")) || (messageContent.startsWith(COMMAND) && messageContent.contains("Paper")) || (messageContent.startsWith(COMMAND) && messageContent.contains("Scissors"))) {
             //respond to message here
 
             Random ran = new Random();
@@ -32,11 +33,37 @@ public class RockPaperScissorsGame extends Feature {
 
             if(random == 0){
                 event.getChannel().sendMessage("Rock");
-                event.getChannel().sendMessage("Your Turn");
+                if(messageContent.contains("Rock")){
+                    event.getChannel().sendMessage("Its a draw");
+                }
+                if(messageContent.contains("Paper")){
+                    event.getChannel().sendMessage("You win");
+                }
+                if(messageContent.contains("Scissors")){
+                    event.getChannel().sendMessage("I win");
+                }
             }else if(random == 1){
                 event.getChannel().sendMessage("Paper");
+                if(messageContent.contains("Rock")){
+                    event.getChannel().sendMessage("I win");
+                }
+                if(messageContent.contains("Paper")){
+                    event.getChannel().sendMessage("Its a draw");
+                }
+                if(messageContent.contains("Scissors")){
+                    event.getChannel().sendMessage("I lose");
+                }
             }else if(random == 2){
                 event.getChannel().sendMessage("Scissors");
+                if(messageContent.contains("Rock")){
+                    event.getChannel().sendMessage("I lose");
+                }
+                if(messageContent.contains("Paper")){
+                    event.getChannel().sendMessage("I win");
+                }
+                if(messageContent.contains("Scissors")){
+                    event.getChannel().sendMessage("Its a draw");
+                }
             }
         }
 
