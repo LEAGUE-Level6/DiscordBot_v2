@@ -2,13 +2,10 @@ package org.jointheleague.features.examples.third_features;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-//Documentation for the API can be found here: https://newsapi.org/docs/get-started
 public class CookieRecipeApi extends Feature {
 
     public final String COMMAND = "!CookieRecipe";
@@ -45,29 +42,34 @@ public class CookieRecipeApi extends Feature {
             }
         }
     }
-
-    public ResultsList getRecipes(String query) {
-        Mono<ResultsList> resultsMono = webClient.get()
+    //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
+//make into string and parse instead
+    public RecipeList getRecipes(String query) {
+        Mono<RecipeList> resultsMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .queryParam("q", query)
+                        .queryParam("query", query)
                         .queryParam("apiKey", apiKey)
+                        .queryParam("sort", "popularity")
                         .build())
                 .retrieve()
-                .bodyToMono(ResultsList.class);
+                .bodyToMono(RecipeList.class);
 
         return resultsMono.block();
     }
 
     public String findRecipe(String topic){
-       ResultsList results = getRecipes(topic);
+       //String result = getRecipes(topic);
+       RecipeList results = getRecipes(topic);
+       Recipe[] resultsArray= results.getResultsList();
+       System.out.println(resultsArray);
        try {
-           System.out.println("This is" + results.getResultsList().size() + " array length");
+           System.out.println("This is" + resultsArray.length + " array length");
        }
        catch (Exception e){
-           System.out.println("ERROR");
+         e.printStackTrace();
 
        }
-        Results recipe= results.getResultsList().get(0);
+        Recipe recipe= results.getResultsList()[0];
 
 
         int recipeId= recipe.getId();

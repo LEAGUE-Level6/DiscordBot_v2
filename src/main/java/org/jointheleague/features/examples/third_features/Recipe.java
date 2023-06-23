@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
-public class Results {
+public class Recipe {
     @SerializedName("id")
     @Expose
     private int id;
@@ -46,7 +46,7 @@ public class Results {
         return imageType;
     }
 
-    public void setImageType(String title) {
+    public void setImageType(String imageType) {
         this.imageType = imageType;
     }
 }

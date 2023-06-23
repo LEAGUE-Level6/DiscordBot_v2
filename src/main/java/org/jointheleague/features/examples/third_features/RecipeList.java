@@ -2,12 +2,11 @@ package org.jointheleague.features.examples.third_features;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import java.util.List;
 
-public class ResultsList {
+public class RecipeList {
     @SerializedName("results")
     @Expose
-    private List<Results> results=null;
+    private Recipe[] results;
 
     @SerializedName("offset")
     @Expose
@@ -17,8 +16,12 @@ public class ResultsList {
     @Expose
     private int number;
 
-    public List<Results> getResultsList(){return results;}
-    public void setResultsList(List<Results> result){this.results=result;}
+    public Recipe[] getResultsList(){
+        return results;
+    }
+    public void setResultsList(Recipe[] results){
+        this.results=results;
+    }
 
     public int getOffset() {
         return offset;
