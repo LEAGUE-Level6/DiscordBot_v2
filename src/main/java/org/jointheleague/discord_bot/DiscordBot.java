@@ -10,6 +10,7 @@ import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
+import org.jointheleague.features.student.Feature3;
 import org.jointheleague.features.student.RockPaperScissors;
 import org.jointheleague.features.student.RockPaperScissorsGame;
 
@@ -49,6 +50,7 @@ public class DiscordBot {
 		api.addMessageCreateListener(helpListener);
 
 		//add features
+		addFeature(new Feature3(channelName));
 		addFeature(new RockPaperScissorsGame(channelName));
 		addFeature(new RockPaperScissors(channelName));
 		addFeature(new RandomNumber(channelName));
