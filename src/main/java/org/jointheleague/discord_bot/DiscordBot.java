@@ -2,6 +2,7 @@ package org.jointheleague.discord_bot;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.intent.Intent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
@@ -9,7 +10,12 @@ import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
+import org.jointheleague.features.student.Feature3;
+import org.jointheleague.features.student.RockPaperScissors;
+import org.jointheleague.features.student.RockPaperScissorsGame;
 
+
+//delete
 public class DiscordBot {
 
 	private String token;
@@ -28,7 +34,8 @@ public class DiscordBot {
 
 	public void connect(boolean printInvite) {
 
-		api = new DiscordApiBuilder().setToken(token).login().join();
+
+		api = new DiscordApiBuilder().addIntents(Intent.MESSAGE_CONTENT).setToken(token).login().join();
 
 		//Print the URL to invite the bot
 		if (printInvite) {
@@ -43,6 +50,9 @@ public class DiscordBot {
 		api.addMessageCreateListener(helpListener);
 
 		//add features
+		addFeature(new Feature3(channelName));
+		addFeature(new RockPaperScissorsGame(channelName));
+		addFeature(new RockPaperScissors(channelName));
 		addFeature(new RandomNumber(channelName));
 		addFeature(new CurrentTime(channelName));
 		addFeature(new HighLowGame(channelName));
