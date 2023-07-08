@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 public class CookieRecipeApi extends Feature {
 
-    public final String COMMAND = "!CookieRecipe";
+    public final String COMMAND = "!Recipe";
 
     private WebClient webClient;
     private static final String baseUrl = "https://api.spoonacular.com/recipes/complexSearch";
@@ -16,7 +16,7 @@ public class CookieRecipeApi extends Feature {
 
     public CookieRecipeApi(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "AN EXTENSIVE DIVE INTO COOKIES");
+        helpEmbed = new HelpEmbed(COMMAND, "I have failed the Cookie, Use this to get recipes... not always a cookie");
 
         //build the WebClient
         this.webClient = WebClient
@@ -34,22 +34,31 @@ public class CookieRecipeApi extends Feature {
                     .replace(COMMAND, "")
                     .replace(" " , "");
             if (messageContent.equals("")) {
-                event.getChannel().sendMessage("Please put a flavor after the command (e.g. " + COMMAND + " sugar cookie)");
+                event.getChannel().sendMessage("Please put a recipe after the command (e.g. " + COMMAND + " sugar cookie)");
             }
             else{
-                String recipe = findRecipe(messageContent);
-                event.getChannel().sendMessage(recipe);
+                if(messageContent.contains("Cookie")||messageContent.contains("cookie")){
+                    String recipe = findRecipe(messageContent);
+                    event.getChannel().sendMessage(recipe);
+                }
+                else {
+                    event.getChannel().sendMessage("No Cookie?? \n https://media.pocketgamer.com/artwork/na-35277-1680078860/cookie-clicker-grandmapocalypse-artwork-1.jpg");
+                    String recipe = findRecipe(messageContent);
+                    event.getChannel().sendMessage(recipe);
+                }
             }
         }
     }
-    //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
+
 //make into string and parse instead
-    public RecipeList getRecipes(String query) {
+    public RecipeList getRecipes(String recipe) {
         Mono<RecipeList> resultsMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .queryParam("query", query)
+                        .queryParam("query", recipe)
                         .queryParam("apiKey", apiKey)
+                        .queryParam("titleMatch","Cookie")
                         .queryParam("sort", "popularity")
+                        .queryParam("includeIngredients","Sugar","Flour" )
                         .build())
                 .retrieve()
                 .bodyToMono(RecipeList.class);
@@ -58,10 +67,10 @@ public class CookieRecipeApi extends Feature {
     }
 
     public String findRecipe(String topic){
-       //String result = getRecipes(topic);
+
        RecipeList results = getRecipes(topic);
-       Recipe[] resultsArray= results.getResultsList();
-       System.out.println(resultsArray);
+       Recipe[] resultsArray= results.getResults();
+
        try {
            System.out.println("This is" + resultsArray.length + " array length");
        }
@@ -69,15 +78,24 @@ public class CookieRecipeApi extends Feature {
          e.printStackTrace();
 
        }
-        Recipe recipe= results.getResultsList()[0];
+
+        Recipe recipe= results.getResults()[0];
 
 
         int recipeId= recipe.getId();
         String title = recipe.getTitle();
         String image= recipe.getImage();
-        String imageType= recipe.getImageType();
+      //  String imageType= recipe.getImageType();
         String id= String.valueOf(recipeId);
-        String message = id+ "-\n"+title+"- \n"+ image+ "-\n"+ imageType;
+
+
+        String link = "https://spoonacular.com/";
+        String[] sendArr = title.split(" ");
+        int length= sendArr.length;
+        String stringId= Integer.toString(recipeId);
+        link=link+=sendArr[length-1]+"-"+stringId;
+
+        String message =title+"- \n"+ image+"\n "+link;
         return message;
     }
 

@@ -16,10 +16,10 @@ public class RecipeList {
     @Expose
     private int number;
 
-    public Recipe[] getResultsList(){
+    public Recipe[] getResults(){
         return results;
     }
-    public void setResultsList(Recipe[] results){
+    public void setResults(Recipe[] results){
         this.results=results;
     }
 
