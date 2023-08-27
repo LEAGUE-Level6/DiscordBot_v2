@@ -16,7 +16,7 @@ public class FeatureOne extends FeatureTemplate {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "This command prints cheesy jokes. Remember to make unit tests for this."
+                "This command prints cheesy jokes."
         );
     }
 //IGNORE
