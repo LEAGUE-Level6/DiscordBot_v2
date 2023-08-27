@@ -1,24 +1,28 @@
-package org.jointheleague.features.examples.first_features;
+package org.jointheleague.features.student.first_feature;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Mockito.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public class CurrentTimeTest {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
 
+public class FeatureOneTest {
     private final String testChannelName = "test";
-    private final CurrentTime currentTime = new CurrentTime(testChannelName);
+    private final FeatureOne featureOne = new FeatureOne(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -41,7 +45,6 @@ public class CurrentTimeTest {
         String actual = outContent.toString();
 
         assertEquals(expected, actual);
-        System.out.println(actual);
         System.setOut(originalOut);
     }
 
@@ -50,23 +53,30 @@ public class CurrentTimeTest {
         //Given
 
         //When
-        String command = currentTime.COMMAND;
+        String command = featureOne.COMMAND;
 
         //Then
+
+        if(!(featureOne instanceof FeatureTemplate)){
+            assertNotEquals("!command", command);
+        }
+
         assertNotEquals("", command);
+        assertNotEquals("!", command);
         assertNotEquals("!command", command);
+        assertEquals('!', command.charAt(0));
         assertNotNull(command);
     }
 
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(currentTime.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(currentTime.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(featureOne.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(featureOne.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        currentTime.handle(messageCreateEvent);
+        featureOne.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -79,7 +89,7 @@ public class CurrentTimeTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        currentTime.handle(messageCreateEvent);
+        featureOne.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage("");
@@ -90,7 +100,7 @@ public class CurrentTimeTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = currentTime.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = featureOne.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -101,8 +111,8 @@ public class CurrentTimeTest {
         //Given
 
         //When
-        String helpEmbedTitle = currentTime.getHelpEmbed().getTitle();
-        String command = currentTime.COMMAND;
+        String helpEmbedTitle = featureOne.getHelpEmbed().getTitle();
+        String command = featureOne.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
