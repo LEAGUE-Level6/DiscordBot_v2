@@ -82,7 +82,7 @@ public class HighLowGameTest {
         highLowGame.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, never()).sendMessage();
+        verify(textChannel, never()).sendMessage("");
     }
 
     @Test

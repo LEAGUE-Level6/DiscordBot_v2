@@ -1,24 +1,28 @@
-package org.jointheleague.features.examples.first_features;
+package org.jointheleague.features.student.second_feature;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Mockito.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public class RandomNumberTest {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
 
+public class FeatureTwoTest {
     private final String testChannelName = "test";
-    private final RandomNumber randomNumber = new RandomNumber(testChannelName);
+    private final FeatureTwo featureTwo = new FeatureTwo(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -49,23 +53,29 @@ public class RandomNumberTest {
         //Given
 
         //When
-        String command = randomNumber.COMMAND;
+        String command = featureTwo.COMMAND;
 
         //Then
+
+        if(!(featureTwo instanceof FeatureTemplate)){
+            assertNotEquals("!command", command);
+        }
+
         assertNotEquals("", command);
-        assertNotEquals("!command", command);
+        assertNotEquals("!", command);
+        assertEquals('!', command.charAt(0));
         assertNotNull(command);
     }
 
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(randomNumber.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(randomNumber.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(featureTwo.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(featureTwo.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        randomNumber.handle(messageCreateEvent);
+        featureTwo.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -78,7 +88,7 @@ public class RandomNumberTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        randomNumber.handle(messageCreateEvent);
+        featureTwo.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage("");
@@ -89,7 +99,7 @@ public class RandomNumberTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = randomNumber.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = featureTwo.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -100,11 +110,22 @@ public class RandomNumberTest {
         //Given
 
         //When
-        String helpEmbedTitle = randomNumber.getHelpEmbed().getTitle();
-        String command = randomNumber.COMMAND;
+        String helpEmbedTitle = featureTwo.getHelpEmbed().getTitle();
+        String command = featureTwo.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
     }
 
+//void itShouldNotAcceptGuessIfGameIsNotStarted(){
+    // Do the same thing as HighLowGameTest.java
+    //}
+
+//void itShouldTellUserTheirAnswerIsCorrect(){
+    //Have it check point addition, message printing, and other things related to the answer being correct/incorrect.
+    //}
+
+//void itShouldTellUserTheirAnswerIsIncorrect(){
+    //Have it check point addition, message printing, and other things related to the answer being correct/incorrect.
+    //}
 }
