@@ -35,7 +35,7 @@ public class FeatureTwo extends FeatureTemplate {
             event.getChannel().sendMessage("Please be sure to start the game before adding any answer prompt. Start the game by typing !\u200Epopquiz.");
         }
         else if (messageContent.contains(COMMAND) && questionNumber == 1){
-           if(messageContent.equalsIgnoreCase(COMMAND+" Supercooling") || messageContent.equalsIgnoreCase(COMMAND+" B")){
+           if(messageContent.equalsIgnoreCase(COMMAND+" Supercooling") || messageContent.equalsIgnoreCase(COMMAND+" B") || messageContent.equalsIgnoreCase(COMMAND + " 2")){
                points++;
                event.getChannel().sendMessage("Correct! Adding one point to your score. Alright onto the next question!");
                questionNumber++;
@@ -48,7 +48,7 @@ public class FeatureTwo extends FeatureTemplate {
            }
         }
         else if (messageContent.contains(COMMAND) && questionNumber ==2){
-            if(messageContent.equalsIgnoreCase(COMMAND + " Oganesson") || messageContent.equalsIgnoreCase(COMMAND + " G")){
+            if(messageContent.equalsIgnoreCase(COMMAND + " Oganesson") || messageContent.equalsIgnoreCase(COMMAND + " G") || messageContent.equalsIgnoreCase(COMMAND + " 7")){
                 points++;
                 event.getChannel().sendMessage("Correct! Adding one point to your score. Alright onto the next question!");
                 questionNumber++;
@@ -61,7 +61,7 @@ public class FeatureTwo extends FeatureTemplate {
             }
         }
         else if (messageContent.contains(COMMAND) && questionNumber ==3){
-            if(messageContent.equalsIgnoreCase(COMMAND + " Yes, (almost) all elements can be magnetic with electromagnetism.") || messageContent.equalsIgnoreCase(COMMAND + " B")){
+            if(messageContent.equalsIgnoreCase(COMMAND + " Yes, (almost) all elements can be magnetic with electromagnetism.") || messageContent.equalsIgnoreCase(COMMAND + " B") || messageContent.equalsIgnoreCase(COMMAND + " 2")){
                 points++;
                 event.getChannel().sendMessage("Correct! Adding one point to your score. Alright onto the next question!");
                 questionNumber++;
@@ -74,7 +74,7 @@ public class FeatureTwo extends FeatureTemplate {
             }
         }
         else if (messageContent.contains(COMMAND) && questionNumber ==4) {
-            if (messageContent.equalsIgnoreCase(COMMAND + " Limestone, which is made up of Calcite") || messageContent.equalsIgnoreCase(COMMAND + " B")) {
+            if (messageContent.equalsIgnoreCase(COMMAND + " Limestone, which is made up of Calcite") || messageContent.equalsIgnoreCase(COMMAND + " B") || messageContent.equalsIgnoreCase(COMMAND + " 2")) {
                 points++;
                 event.getChannel().sendMessage("Correct! Adding one point to your score. Alright onto the next question!");
                 questionNumber++;
@@ -87,14 +87,14 @@ public class FeatureTwo extends FeatureTemplate {
             }
         }
         else if (messageContent.contains(COMMAND) && questionNumber ==5) {
-            if (messageContent.equalsIgnoreCase(COMMAND + " Mangrove") || messageContent.equalsIgnoreCase(COMMAND + " A")) {
+            if (messageContent.equalsIgnoreCase(COMMAND + " Mangrove") || messageContent.equalsIgnoreCase(COMMAND + " A") || messageContent.equalsIgnoreCase(COMMAND + " 1")) {
                 points++;
-                event.getChannel().sendMessage("Correct! Adding one point to your score. Alright onto the next question!");
+                event.getChannel().sendMessage("Correct! Adding one point to your score. Time to tally your final score!");
                 event.getChannel().sendMessage("Your final score is " + points+" points!");
                 questionNumber=0;
             }
             else{
-                event.getChannel().sendMessage("Ooh, so close. Sadly we cannot give points for incorrect answers. Alright onto the next question!");
+                event.getChannel().sendMessage("Ooh, so close. Sadly we cannot give points for incorrect answers. Time to tally your final score!");
                 event.getChannel().sendMessage("Your final score is " + points+" points!");
                 questionNumber=0;
             }

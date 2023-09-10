@@ -116,16 +116,42 @@ public class FeatureTwoTest {
         //Then
         assertEquals(command, helpEmbedTitle);
     }
-
-//void itShouldNotAcceptGuessIfGameIsNotStarted(){
+@Test
+void itShouldNotAcceptGuessIfGameIsNotStarted(){
     // Do the same thing as HighLowGameTest.java
-    //}
+    String command = "!popquiz do something";
+    when(messageCreateEvent.getMessageContent()).thenReturn(command);
+    when(messageCreateEvent.getChannel()).thenReturn(textChannel);
 
-//void itShouldTellUserTheirAnswerIsCorrect(){
-    //Have it check point addition, message printing, and other things related to the answer being correct/incorrect.
-    //}
+    featureTwo.handle(messageCreateEvent);
 
-//void itShouldTellUserTheirAnswerIsIncorrect(){
+    verify(textChannel, times(1)).sendMessage("Please be sure to start the game before adding any answer prompt. Start the game by typing !\u200Epopquiz.");
+    }
+@Test
+void itShouldTellUserTheirAnswerIsCorrect(){
+    featureTwo.questionNumber = 5;
+    featureTwo.points = 4;
+    String command = "!popquiz A";
+    when(messageCreateEvent.getMessageContent()).thenReturn(command);
+    when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+
+    featureTwo.handle(messageCreateEvent);
+
+    verify(textChannel, times(1)).sendMessage("Correct! Adding one point to your score. Time to tally your final score!");
+    assertEquals(5, featureTwo.points);
+    }
+@Test
+void itShouldTellUserTheirAnswerIsIncorrect(){
     //Have it check point addition, message printing, and other things related to the answer being correct/incorrect.
-    //}
+    featureTwo.questionNumber = 5;
+    featureTwo.points = 4;
+    String command = "!popquiz C";
+    when(messageCreateEvent.getMessageContent()).thenReturn(command);
+    when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+
+    featureTwo.handle(messageCreateEvent);
+
+    verify(textChannel, times(1)).sendMessage("Ooh, so close. Sadly we cannot give points for incorrect answers. Time to tally your final score!");
+    assertEquals(4, featureTwo.points);
+    }
 }
