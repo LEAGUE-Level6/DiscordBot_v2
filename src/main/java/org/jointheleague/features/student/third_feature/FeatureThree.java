@@ -16,6 +16,8 @@ import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.templates.FeatureTemplate;
 
+import java.util.Random;
+
 public class FeatureThree extends FeatureTemplate {
     public final String COMMAND = "!fish";
 
@@ -44,15 +46,20 @@ public class FeatureThree extends FeatureTemplate {
         }
         else if (messageContent.equalsIgnoreCase(COMMAND + " menu")){
            // event.getChannel().sendMessage("Message to test whether TextChannel broke again.");
-            new MessageBuilder().setContent("Current Money: " + money+" | Current Location: PLACEHOLDER | Luck Modifier: PLACEHOLDER").addComponents(ActionRow.of(Button.success("fish", "Go Fishing"),Button.secondary("modify", "Modify Set-Up"),Button.secondary("save", "Save Game"))).send(channel);
+            new MessageBuilder().setContent("Current Money: $" + money+" | Current Location: PLACEHOLDER | Luck Modifier: PLACEHOLDER").addComponents(ActionRow.of(Button.success("fish", "Go Fishing"),Button.secondary("modify", "Modify Set-Up"),Button.secondary("save", "Save Game"))).send(channel);
             event.getApi().addMessageComponentCreateListener(event2 -> {
                MessageComponentInteraction mci = event2.getMessageComponentInteraction();
                String cID = mci.getCustomId();
 
                switch(cID){
                    case "fish":
-
-                       event.getChannel().sendMessage("FISHING");
+                       event.getChannel().sendMessage("Going fishing...");
+                       randomFish("Sea", event);
+                       randomFish("Sea", event);
+                       randomFish("Sea", event);
+                       randomFish("Sea", event);
+                       randomFish("Sea", event);
+                       randomFish("Sea", event);
                        break;
                    case "modify":
                        event.getChannel().sendMessage("CHANGING");
@@ -66,4 +73,42 @@ public class FeatureThree extends FeatureTemplate {
             });
         }
     }
+
+    public void setMoney(double money) {
+        this.money = money;
+    }
+
+    public void addMoney(double money) {
+        this.money = this.money + money;
+    }
+    public void randomFish(String location, MessageCreateEvent event){
+        Random random = new Random();
+        lootTableA[] list = lootTableA.values();
+        double totalWeight = 0.0;
+        double ran;
+        lootTableA lt = lootTableA.Sardine;
+        if(location.equals("Sea")){
+           for(int i =0; i < list.length; i++){
+                   totalWeight = totalWeight + list[i].getChance();
+           }
+            ran = random.nextDouble(totalWeight);
+           totalWeight =0;
+           for(int i =0; i < list.length; i++){
+               totalWeight = totalWeight + list[i].getChance();
+               if(totalWeight>ran){
+                   lt = list[i];
+                   break;
+               }
+
+           }
+                   event.getChannel().sendMessage(" You caught a "+lt.name() + "!");
+                   addMoney(lt.getValue());
+                   event.getChannel().sendMessage("You sold this fish for $"+lt.getValue()+" | Your bank account is now at $" + money);
+
+
+
+        }
+    }
+
+
 }
