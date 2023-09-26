@@ -23,6 +23,8 @@ public class FeatureThree extends FeatureTemplate {
 
     TextChannel channel;
     public double money = 0;
+    public double luckModifier = 0.00;
+    String location = "Sea";
 
 
 
@@ -46,7 +48,7 @@ public class FeatureThree extends FeatureTemplate {
         }
         else if (messageContent.equalsIgnoreCase(COMMAND + " menu")){
            // event.getChannel().sendMessage("Message to test whether TextChannel broke again.");
-            new MessageBuilder().setContent("Current Money: $" + money+" | Current Location: PLACEHOLDER | Luck Modifier: PLACEHOLDER").addComponents(ActionRow.of(Button.success("fish", "Go Fishing"),Button.secondary("modify", "Modify Set-Up"),Button.secondary("save", "Save Game"))).send(channel);
+            new MessageBuilder().setContent("| Current Money: $" + money+" | Current Location: "+location+" | Luck Modifier: +" + luckModifier/5+" points |").addComponents(ActionRow.of(Button.success("fish", "Go Fishing"),Button.secondary("modify", "Modify Set-Up"),Button.secondary("save", "Save Game"))).send(channel);
             event.getApi().addMessageComponentCreateListener(event2 -> {
                MessageComponentInteraction mci = event2.getMessageComponentInteraction();
                String cID = mci.getCustomId();
@@ -54,15 +56,15 @@ public class FeatureThree extends FeatureTemplate {
                switch(cID){
                    case "fish":
                        event.getChannel().sendMessage("Going fishing...");
-                       randomFish("Sea", event);
-                       randomFish("Sea", event);
-                       randomFish("Sea", event);
-                       randomFish("Sea", event);
-                       randomFish("Sea", event);
-                       randomFish("Sea", event);
+                       randomFish(location, event);
+                       randomFish(location, event);
+                       randomFish(location, event);
+                       randomFish(location, event);
+                       randomFish(location, event);
+                       randomFish(location, event);
                        break;
                    case "modify":
-                       event.getChannel().sendMessage("CHANGING");
+                       setupModification(event);
                        break;
                    case "save" :
                        event.getChannel().sendMessage("SAVING");
@@ -71,6 +73,10 @@ public class FeatureThree extends FeatureTemplate {
 
 
             });
+        }
+        else if(messageContent.equals(COMMAND + " testMoney")){
+            money = money + 10000000;
+            luckModifier = luckModifier + 21354.5;
         }
     }
 
@@ -95,20 +101,85 @@ public class FeatureThree extends FeatureTemplate {
            totalWeight =0;
            for(int i =0; i < list.length; i++){
                totalWeight = totalWeight + list[i].getChance();
-               if(totalWeight>ran){
+               if(totalWeight>ran){ //test luck addition system
                    lt = list[i];
                    break;
                }
 
            }
-                   event.getChannel().sendMessage(" You caught a "+lt.name() + "!");
                    addMoney(lt.getValue());
-                   event.getChannel().sendMessage("You sold this fish for $"+lt.getValue()+" | Your bank account is now at $" + money);
+                   event.getChannel().sendMessage(" You caught a "+lt.name() + "! "+"| You sold this fish for $"+lt.getValue()+" | Your bank account is now at $" + money);
 
 
 
         }
     }
 
+    public void setupModification(MessageCreateEvent event){
+        new MessageBuilder().setContent("What would you like to modify in your set-up?").addComponents(ActionRow.of(Button.success("upgrade", "Buy Upgrades"),Button.success("location", "Change Location"), Button.danger("leave", "Cancel"))).send(channel);
+        event.getApi().addMessageComponentCreateListener(event2 -> {
+            MessageComponentInteraction mci = event2.getMessageComponentInteraction();
+            String cID = mci.getCustomId();
 
-}
+        switch(cID){
+            case "upgrade":
+                upgradeMenu(event);
+                break;
+            case "location":
+                break;
+            case "leave":
+                //clear old message here
+                event.getChannel().sendMessage("Cancelling modification menu. Please go back to !fish menu.");
+            break;
+            default:
+                break;
+        }
+        });
+        }
+        public void upgradeMenu(MessageCreateEvent event) {
+            new MessageBuilder().setContent("What would you like to buy").addComponents(ActionRow.of(Button.success("0", "Carbon Fibre Rod | $125.25"), Button.success("1", "Deep-Dive Lure | $35.50"), Button.danger("2", "Better Boat Service | $1250.75"))).send(channel);
+            event.getApi().addMessageComponentCreateListener(event2 -> {
+            MessageComponentInteraction mci = event2.getMessageComponentInteraction();
+            String cID = mci.getCustomId();
+            //add system to stop purchasing multiple  plus a buy message.
+            switch (cID) {
+                case "0":
+                    if(money>=125.25) {
+                        money = money - 125.25;
+                        luckModifier = luckModifier + 25;
+                        event.getChannel().sendMessage("Congrats, you now own a carbon fibre fishing rod!");
+                    }
+                    else{
+                        event.getChannel().sendMessage("You cannot afford this item.");
+                    }
+                    break;
+                case "1":
+                    if(money>=35.50) {
+                        money = money - 35.50;
+                        luckModifier = luckModifier + 5.75;
+                        event.getChannel().sendMessage("Congrats, you now own a deep-dive lure!");
+                    }
+                    else{
+                        event.getChannel().sendMessage("You cannot afford this item.");
+                    }
+                    break;
+                case "2":
+                    if(money>=1250.75) {
+                        money = money - 1250.75;
+                        luckModifier = luckModifier + 12.5;
+                        event.getChannel().sendMessage("Congrats, you now have a better boat service!");
+                        //new location available
+                    }
+                    else{
+                        event.getChannel().sendMessage("You cannot afford this item.");
+                    }
+                    break;
+            }
+        });
+        }
+        }
+
+
+
+
+
