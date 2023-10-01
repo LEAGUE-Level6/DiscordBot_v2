@@ -1,11 +1,15 @@
 package org.jointheleague.discord_bot;
 
 import org.javacord.api.DiscordApi;
+
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
+import org.jointheleague.features.examples.third_features.ImgurApi;
+import org.jointheleague.features.examples.third_features.MazeGame;
 import org.jointheleague.features.examples.third_features.NewsApi;
+import org.jointheleague.features.examples.third_features.RockPaperSciApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
@@ -24,12 +28,13 @@ public class DiscordBot {
 		this.token = token;
 		this.channelName = channelName;
 		helpListener = new HelpListener(channelName);
+		System.out.println(channelName);
 	}
 
 	public void connect(boolean printInvite) {
 
-		api = new DiscordApiBuilder().setToken(token).login().join();
-
+		api = new DiscordApiBuilder().setAllIntents().setToken(token).login().join();
+		
 		//Print the URL to invite the bot
 		if (printInvite) {
 			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
@@ -48,6 +53,9 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		addFeature(new ImgurApi(channelName));
+		addFeature(new RockPaperSciApi(channelName));
+		addFeature(new MazeGame(channelName));
 	}
 
 	private void addFeature(Feature feature){
