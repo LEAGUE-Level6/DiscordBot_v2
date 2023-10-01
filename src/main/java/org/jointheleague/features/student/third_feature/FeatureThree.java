@@ -7,6 +7,8 @@ import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.Button;
+import org.javacord.api.entity.message.component.SelectMenu;
+import org.javacord.api.entity.message.component.SelectMenuOption;
 import org.javacord.api.event.interaction.MessageComponentCreateEvent;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.interaction.MessageComponentInteraction;
@@ -16,6 +18,8 @@ import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.templates.FeatureTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class FeatureThree extends FeatureTemplate {
@@ -24,7 +28,10 @@ public class FeatureThree extends FeatureTemplate {
     TextChannel channel;
     public double money = 0;
     public double luckModifier = 0.00;
-    String location = "Sea";
+    public String location = "Sea";
+    public boolean[] bought = new boolean[3]; //Number in boolean is the total number of upgrades at the current moment.
+    public List<String> locations = new ArrayList<String>();
+
 
 
 
@@ -36,6 +43,7 @@ public class FeatureThree extends FeatureTemplate {
                 COMMAND,
                 "A luck based fishing game with lots of fish, sizes of fish, qualities of fish, upgrades, and more. If new to !\u200Efish, please start with !\u200Efish tutorial. REMEMBER TO ADD A SAVING FEATURE TO ADD A TEXT KEY TO RESTORE PROGRESS"
         );
+        locations.add(location);
     }
 
     @Override
@@ -105,13 +113,9 @@ public class FeatureThree extends FeatureTemplate {
                    lt = list[i];
                    break;
                }
-
            }
                    addMoney(lt.getValue());
                    event.getChannel().sendMessage(" You caught a "+lt.name() + "! "+"| You sold this fish for $"+lt.getValue()+" | Your bank account is now at $" + money);
-
-
-
         }
     }
 
@@ -126,6 +130,7 @@ public class FeatureThree extends FeatureTemplate {
                 upgradeMenu(event);
                 break;
             case "location":
+                changeLocation(event);
                 break;
             case "leave":
                 //clear old message here
@@ -137,45 +142,84 @@ public class FeatureThree extends FeatureTemplate {
         });
         }
         public void upgradeMenu(MessageCreateEvent event) {
-            new MessageBuilder().setContent("What would you like to buy").addComponents(ActionRow.of(Button.success("0", "Carbon Fibre Rod | $125.25"), Button.success("1", "Deep-Dive Lure | $35.50"), Button.danger("2", "Better Boat Service | $1250.75"))).send(channel);
+            new MessageBuilder().setContent("What would you like to buy").addComponents(ActionRow.of(Button.secondary("0", "Carbon Fibre Rod | $125.25"), Button.secondary("1", "Deep-Dive Lure | $35.50"), Button.secondary("2", "Better Boat Service | $1250.75"))).send(channel);
             event.getApi().addMessageComponentCreateListener(event2 -> {
             MessageComponentInteraction mci = event2.getMessageComponentInteraction();
             String cID = mci.getCustomId();
             //add system to stop purchasing multiple  plus a buy message.
             switch (cID) {
                 case "0":
-                    if(money>=125.25) {
+                    if(money>=125.25 && !bought[0]) {
                         money = money - 125.25;
                         luckModifier = luckModifier + 25;
-                        event.getChannel().sendMessage("Congrats, you now own a carbon fibre fishing rod!");
+                        event.getChannel().sendMessage("Congrats, you now own a carbon fibre fishing rod! This upgrades increases your luck.");
+                        bought[0] = true;
+                    }
+                    else if(money<125.25 && !bought[0]){
+                        event.getChannel().sendMessage("You cannot afford this item.");
                     }
                     else{
-                        event.getChannel().sendMessage("You cannot afford this item.");
+                        event.getChannel().sendMessage("You cannot buy an item you already have.");
                     }
                     break;
                 case "1":
-                    if(money>=35.50) {
+                    if(money>=35.50 && !bought[1]) {
                         money = money - 35.50;
                         luckModifier = luckModifier + 5.75;
-                        event.getChannel().sendMessage("Congrats, you now own a deep-dive lure!");
+                        event.getChannel().sendMessage("Congrats, you now own a deep-dive lure! This upgrades slightly increases your luck.");
+                        bought[1] = true;
+                    }
+                    else if(money<35.50 && !bought[1]){
+                        event.getChannel().sendMessage("You cannot afford this item.");
                     }
                     else{
-                        event.getChannel().sendMessage("You cannot afford this item.");
+                        event.getChannel().sendMessage("You cannot buy an item you already have.");
                     }
                     break;
                 case "2":
-                    if(money>=1250.75) {
+                    if(money>=1250.75 && !bought[2]) {
                         money = money - 1250.75;
                         luckModifier = luckModifier + 12.5;
-                        event.getChannel().sendMessage("Congrats, you now have a better boat service!");
+                        event.getChannel().sendMessage("Congrats, you now have a better boat service!  This upgrades slightly increases your luck and allows you to travel to a new location, the trench.");
+                        bought[2] = true;
+                        locations.add("Trench");
                         //new location available
                     }
-                    else{
+                    else if(money<1250.75 && !bought[2]){
                         event.getChannel().sendMessage("You cannot afford this item.");
+                    }
+                    else{
+                        event.getChannel().sendMessage("You cannot buy an item you already have.");
                     }
                     break;
             }
         });
+        }
+        public void changeLocation (MessageCreateEvent event){
+        List<SelectMenuOption> temp = new ArrayList<SelectMenuOption>();
+        //for(int i=0; i < locations.size(); i++){
+            //temp.add(SelectMenuOption.create(locations.get(i), "Click here to travel to " + locations.get(i)));
+       // }
+            MessageBuilder mb = new MessageBuilder();
+            //SelectMenu menu = SelectMenu.createStringMenu("locationSelect", temp);
+                    mb.setContent("Choose Your New Location");
+                    for(int i =0; i < locations.size(); i++){
+                        mb.addComponents(ActionRow.of(Button.secondary(locations.get(i),locations.get(i))));
+                    }
+                    mb.send(channel);
+            event.getApi().addMessageComponentCreateListener(event2 -> {
+                MessageComponentInteraction mci = event2.getMessageComponentInteraction();
+                String cID = mci.getCustomId();
+                switch(cID){
+                    case "Sea":
+                        location = "Sea";
+                        break;
+                    case "Trench":
+                        location = "Trench";
+                        break;
+                }
+            });
+
         }
         }
 
