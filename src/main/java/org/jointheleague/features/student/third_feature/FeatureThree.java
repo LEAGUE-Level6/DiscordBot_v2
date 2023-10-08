@@ -13,6 +13,7 @@ import org.javacord.api.event.interaction.MessageComponentCreateEvent;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.interaction.MessageComponentInteraction;
 import org.javacord.api.listener.interaction.MessageComponentCreateListener;
+import org.javacord.api.util.event.ListenerManager;
 import org.jointheleague.discord_bot.DiscordBot;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
@@ -21,6 +22,7 @@ import org.jointheleague.features.templates.FeatureTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class FeatureThree extends FeatureTemplate {
     public final String COMMAND = "!fish";
@@ -31,6 +33,8 @@ public class FeatureThree extends FeatureTemplate {
     public String location = "Sea";
     public boolean[] bought = new boolean[3]; //Number in boolean is the total number of upgrades at the current moment.
     public List<String> locations = new ArrayList<String>();
+
+    ArrayList<ListenerManager<MessageComponentCreateListener>> lm = new ArrayList<ListenerManager<MessageComponentCreateListener>>();
 
 
 
@@ -44,6 +48,7 @@ public class FeatureThree extends FeatureTemplate {
                 "A luck based fishing game with lots of fish, sizes of fish, qualities of fish, upgrades, and more. If new to !\u200Efish, please start with !\u200Efish tutorial. REMEMBER TO ADD A SAVING FEATURE TO ADD A TEXT KEY TO RESTORE PROGRESS"
         );
         locations.add(location);
+
     }
 
     @Override
@@ -57,7 +62,10 @@ public class FeatureThree extends FeatureTemplate {
         else if (messageContent.equalsIgnoreCase(COMMAND + " menu")){
            // event.getChannel().sendMessage("Message to test whether TextChannel broke again.");
             new MessageBuilder().setContent("| Current Money: $" + money+" | Current Location: "+location+" | Luck Modifier: +" + luckModifier/5+" points |").addComponents(ActionRow.of(Button.success("fish", "Go Fishing"),Button.secondary("modify", "Modify Set-Up"),Button.secondary("save", "Save Game"))).send(channel);
-            event.getApi().addMessageComponentCreateListener(event2 -> {
+            for (ListenerManager<MessageComponentCreateListener> i: lm){
+                i.remove();
+            }
+            lm.add(event.getApi().addMessageComponentCreateListener(event2 -> {
                MessageComponentInteraction mci = event2.getMessageComponentInteraction();
                String cID = mci.getCustomId();
 
@@ -80,7 +88,7 @@ public class FeatureThree extends FeatureTemplate {
                }
 
 
-            });
+            }));
         }
         else if(messageContent.equals(COMMAND + " testMoney")){
             money = money + 10000000;
@@ -109,10 +117,10 @@ public class FeatureThree extends FeatureTemplate {
            totalWeight =0;
            for(int i =0; i < list.length; i++){
                totalWeight = totalWeight + list[i].getChance();
-               if(totalWeight>ran){ //test luck addition system
-                   lt = list[i];
-                   break;
-               }
+               //if(totalWeight>ran){ //test luck addition system
+               //    lt = list[i];
+               //    break;
+              // }
            }
                    addMoney(lt.getValue());
                    event.getChannel().sendMessage(" You caught a "+lt.name() + "! "+"| You sold this fish for $"+lt.getValue()+" | Your bank account is now at $" + money);
@@ -121,7 +129,7 @@ public class FeatureThree extends FeatureTemplate {
 
     public void setupModification(MessageCreateEvent event){
         new MessageBuilder().setContent("What would you like to modify in your set-up?").addComponents(ActionRow.of(Button.success("upgrade", "Buy Upgrades"),Button.success("location", "Change Location"), Button.danger("leave", "Cancel"))).send(channel);
-        event.getApi().addMessageComponentCreateListener(event2 -> {
+        lm.add(event.getApi().addMessageComponentCreateListener(event2 -> {
             MessageComponentInteraction mci = event2.getMessageComponentInteraction();
             String cID = mci.getCustomId();
 
@@ -139,11 +147,11 @@ public class FeatureThree extends FeatureTemplate {
             default:
                 break;
         }
-        });
+        }));
         }
         public void upgradeMenu(MessageCreateEvent event) {
             new MessageBuilder().setContent("What would you like to buy").addComponents(ActionRow.of(Button.secondary("0", "Carbon Fibre Rod | $125.25"), Button.secondary("1", "Deep-Dive Lure | $35.50"), Button.secondary("2", "Better Boat Service | $1250.75"))).send(channel);
-            event.getApi().addMessageComponentCreateListener(event2 -> {
+            lm.add(event.getApi().addMessageComponentCreateListener(event2 -> {
             MessageComponentInteraction mci = event2.getMessageComponentInteraction();
             String cID = mci.getCustomId();
             //add system to stop purchasing multiple  plus a buy message.
@@ -193,7 +201,7 @@ public class FeatureThree extends FeatureTemplate {
                     }
                     break;
             }
-        });
+        }));
         }
         public void changeLocation (MessageCreateEvent event){
         List<SelectMenuOption> temp = new ArrayList<SelectMenuOption>();
@@ -207,7 +215,7 @@ public class FeatureThree extends FeatureTemplate {
                         mb.addComponents(ActionRow.of(Button.secondary(locations.get(i),locations.get(i))));
                     }
                     mb.send(channel);
-            event.getApi().addMessageComponentCreateListener(event2 -> {
+            lm.add(event.getApi().addMessageComponentCreateListener(event2 -> {
                 MessageComponentInteraction mci = event2.getMessageComponentInteraction();
                 String cID = mci.getCustomId();
                 switch(cID){
@@ -218,8 +226,8 @@ public class FeatureThree extends FeatureTemplate {
                         location = "Trench";
                         break;
                 }
-            });
-
+            }));
+         event.getApi().removeListener(MessageComponentCreateListener.class, null);
         }
         }
 
