@@ -92,7 +92,7 @@ public class FeatureThree extends FeatureTemplate {
         }
         else if(messageContent.equals(COMMAND + " testMoney")){
             money = money + 10000000;
-            luckModifier = luckModifier + 21354.5;
+            luckModifier = luckModifier + 2135450;
         }
     }
 
@@ -103,30 +103,93 @@ public class FeatureThree extends FeatureTemplate {
     public void addMoney(double money) {
         this.money = this.money + money;
     }
-    public void randomFish(String location, MessageCreateEvent event){
+    public void randomFish(String location, MessageCreateEvent event) {
         Random random = new Random();
-        lootTableA[] list = lootTableA.values();
+        //lootTableA[] list;
+        // = new lootTableA[20]
         double totalWeight = 0.0;
         double ran;
-        lootTableA lt = lootTableA.Sardine;
-        if(location.equals("Sea")){
-           for(int i =0; i < list.length; i++){
-                   totalWeight = totalWeight + list[i].getChance();
-           }
+        lootTableA lt = new lootTableA(0,0,"0");
+        if (location.equals("Sea")) {
+           lootTableA[] list = {new lootTableA(35.7525,4,"Minnow"),new lootTableA(32.5,7,"Sardine"),new lootTableA(9,16,"Sea Bass"),new lootTableA(15.5,12.5,"Tuna"),new lootTableA(12.5,13.5,"Reef Shark"),new lootTableA(3.5,75,"Squid"),new lootTableA(5,45,"Triggerfish"),new lootTableA(2.25,115,"Electric Eel"),new lootTableA(6.25,25,"Striper"),new lootTableA(1.75,145,"Lobster"),new lootTableA(0.975,160,"Swordfish"),new lootTableA(0.675,235,"Sunfish"),new lootTableA(0.0125,126500,"Walking Minnow"),new lootTableA(0.00565,127500,"Gold Minnow Statue")};
+            lootAssigning(totalWeight, event, lt, list);
+          /*  for (int i = 0; i < list.length; i++) {
+                totalWeight = totalWeight + list[i].getChance();
+            }
             ran = random.nextDouble(totalWeight);
-           totalWeight =0;
-           for(int i =0; i < list.length; i++){
-               totalWeight = totalWeight + list[i].getChance();
-               //if(totalWeight>ran){ //test luck addition system
-               //    lt = list[i];
-               //    break;
-              // }
-           }
-                   addMoney(lt.getValue());
-                   event.getChannel().sendMessage(" You caught a "+lt.name() + "! "+"| You sold this fish for $"+lt.getValue()+" | Your bank account is now at $" + money);
+            totalWeight = 0;
+            for (int i = 0; i < list.length; i++) {
+                totalWeight = totalWeight + list[i].getChance();
+                //if(totalWeight>ran){ //test luck addition system
+                //    lt = list[i];
+                //    break;
+                // }
+            }
+            addMoney(lt.getValue());
+            event.getChannel().sendMessage(" You caught a " + lt.name() + "! " + "| You sold this fish for $" + lt.getValue() + " | Your bank account is now at $" + money); */
+        } else if (location.equals("Trench")) {
+           lootTableA[] list = {new lootTableA(25.65,35,"Telescopefish"),new lootTableA(20.2575,40,"Rhinochimaera"),new lootTableA(15.125,55,"Anglerfish"),new lootTableA(12.25751,60,"Barreleye"),new lootTableA(11.524575,70,"Lanternfish"),new lootTableA(10.2575,75,"Glowing Minnow"),new lootTableA(8.7525,90,"Flying Minnow"),new lootTableA(5.245,125,"Abyssal Grenadier"),new lootTableA(5.65,120,"Marine Hatchetfish"),new lootTableA(2.5,165,"Goblin Shark"),new lootTableA(1.15, 225,"Jellyfish"),new lootTableA(0.75, 345, "Six-Gilled Shark"),new lootTableA(0.000125,35000000,"Snailfish")};
+         lootAssigning(totalWeight, event, lt, list);
+          /*  lt2 = lootTableB.Telescopefish;
+            for(int i =0; i < list2.length; i++){
+                totalWeight = totalWeight + list2[i].getChance();
+            }
+            ran = random.nextDouble(totalWeight);
+            totalWeight =0;
+            for(int i =0; i < list2.length; i++){
+                totalWeight = totalWeight + list2[i].getChance();
+                //if(totalWeight>ran){ //test luck addition system
+                //    lt = list[i];
+                //    break;
+                // }
+            }
+            addMoney(lt2.getValue());
+            event.getChannel().sendMessage(" You caught a "+lt2.name() + "! "+"| You sold this fish for $"+lt2.getValue()+" | Your bank account is now at $" + money);
+        }*/
         }
     }
 
+public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTableA lt,lootTableA[] list){
+    lootTableB[] list2 = {new lootTableB(0.00125,0.01, "Sub-Atomic", "🥇"),new lootTableB(0.25, 0.1, "Mircoscopic", "🥈"), new lootTableB(1,0.125,"Miniature","🥉"),new lootTableB(10,0.75,"Tiny","🏅"),new lootTableB(25.75,1,"Small","🏅"),new lootTableB(15.6525,1.25,"Medium","🏅"),new lootTableB(6.675,1.65,"Large","🏅"),new lootTableB(2.35,2.35,"Huge","🥉"),new lootTableB(1.25,3.15,"Gigantic","🥉"),new lootTableB(0.75,4,"Titanic","🥉"),new lootTableB(0.25,5.65,"Humongous","🥈"), new lootTableB(0.15,7.5,"Ginormous","🥈"),new lootTableB(0.015,12.75,"Record-Breaking","🥇"),new lootTableB(0.00125,100.75,"Cosmic","🌌"),new lootTableB(0.000165,2575.45,"Special","🎖")};
+    double totalWeight2 = 0;
+    lootTableB size = new lootTableB(0,0,"Error","");
+    for(int i =0; i < list.length; i++){
+        totalWeight = totalWeight + list[i].getChance();
+    }
+    for(int i =0; i< list2.length; i++){
+        totalWeight2 = totalWeight2 + list2[i].getWeight();
+    }
+    //lootTableB[] list2 = {new lootTableB(0.00125,0.01, "Sub-Atomic", "🥇"),new lootTableB(0.25, 0.1, "Mircoscopic", "🥈"), new lootTableB(1,0.125,"Miniature","🥉"),new lootTableB(10,0.75,"Tiny","🏅"),new lootTableB(25.75,1,"Small","🏅"),new lootTableB(15.6525,1.25,"Medium","🏅"),new lootTableB(6.675,1.65,"Large","🏅"),new lootTableB(2.35,2.35,"Huge","🥉"),new lootTableB(1.25,3.15,"Gigantic","🥉"),new lootTableB(0.75,4,"Titanic","🥉"),new lootTableB(0.25,5.65,"Humongous","🥈"), new lootTableB(0.15,7.5,"Ginormous","🥈"),new lootTableB(0.015,12.75,"Record-Breaking","🥇"),new lootTableB(0.00125,100.75,"Cosmic","🌌"),new lootTableB(0.000165,2575.45,"Special","🎖")};
+
+    Random random = new Random();
+    double ran = random.nextDouble(totalWeight)+luckModifier/5;
+    double ran2 = random.nextDouble(totalWeight2)+luckModifier/12.5;
+    totalWeight =0;
+    totalWeight2 =0;
+    for(int i =0; i < list.length; i++){
+        totalWeight = totalWeight + list[i].getChance();
+        if(totalWeight>ran){ //test luck addition system
+            lt = list[i];
+            break;
+         } else if (i == list.length-1 && !(totalWeight>ran)){
+            lt = list[i];
+        }
+    }
+    for(int i =0; i< list2.length; i++){
+        totalWeight2 = totalWeight2 + list2[i].getWeight();
+        if(totalWeight2>ran2){
+            size = list2[i];
+            break;
+        }else if (i == list2.length-1 && !(totalWeight2>ran2)){
+            size = list2[i];
+        }
+    }
+
+    addMoney(lt.getValue()*size.getMultiplier());
+    money = Math.round(money*100.0)/100.0;
+    double earned = Math.round(lt.getValue()*size.getMultiplier()*100.0)/100.0;
+    event.getChannel().sendMessage(" You caught a "+lt.name() +" that was "+ size.name() + "! "+"| You sold this fish for $"+earned+" | Your bank account is now at $" + money + " | The rarity symbols associated with this fish are "+size.getRankingEmoji()+"!");
+}
     public void setupModification(MessageCreateEvent event){
         new MessageBuilder().setContent("What would you like to modify in your set-up?").addComponents(ActionRow.of(Button.success("upgrade", "Buy Upgrades"),Button.success("location", "Change Location"), Button.danger("leave", "Cancel"))).send(channel);
         lm.add(event.getApi().addMessageComponentCreateListener(event2 -> {
