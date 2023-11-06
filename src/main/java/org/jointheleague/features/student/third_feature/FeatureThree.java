@@ -31,8 +31,11 @@ public class FeatureThree extends FeatureTemplate {
     public double money = 0;
     public double luckModifier = 0.00;
     public String location = "Sea";
-    public boolean[] bought = new boolean[3]; //Number in boolean is the total number of upgrades at the current moment.
+    public boolean[] bought = new boolean[9]; //Number in boolean is the total number of upgrades at the current moment.
     public List<String> locations = new ArrayList<String>();
+    public int fishTimes = 1;
+    boolean lobsterPotOwned = true;
+    public int lobsters = 0;
 
     ArrayList<ListenerManager<MessageComponentCreateListener>> lm = new ArrayList<ListenerManager<MessageComponentCreateListener>>();
 
@@ -61,7 +64,7 @@ public class FeatureThree extends FeatureTemplate {
         }
         else if (messageContent.equalsIgnoreCase(COMMAND + " menu")){
            // event.getChannel().sendMessage("Message to test whether TextChannel broke again.");
-            new MessageBuilder().setContent("| Current Money: $" + money+" | Current Location: "+location+" | Luck Modifier: +" + luckModifier/5+" points |").addComponents(ActionRow.of(Button.success("fish", "Go Fishing"),Button.secondary("modify", "Modify Set-Up"),Button.secondary("save", "Save Game"))).send(channel);
+            new MessageBuilder().setContent("| Current Money: $" + money+" | Current Location: "+location+" | Luck Modifier: +" + luckModifier/5+" points |").addComponents(ActionRow.of(Button.success("fish", "Go Fishing"),Button.secondary("modify", "Modify Set-Up"),Button.secondary("save", "Save Game"), Button.danger("lobPot", "Lobster Pot"))).send(channel);
             for (ListenerManager<MessageComponentCreateListener> i: lm){
                 i.remove();
             }
@@ -72,18 +75,26 @@ public class FeatureThree extends FeatureTemplate {
                switch(cID){
                    case "fish":
                        event.getChannel().sendMessage("Going fishing...");
-                       randomFish(location, event);
-                       randomFish(location, event);
-                       randomFish(location, event);
-                       randomFish(location, event);
-                       randomFish(location, event);
-                       randomFish(location, event);
+                       for(int i=0; i < fishTimes; i++) {
+                           randomFish(location, event);
+                       }
+                       lobsterPotLuck(event);
                        break;
                    case "modify":
                        setupModification(event);
+                       lobsterPotLuck(event);
                        break;
                    case "save" :
                        event.getChannel().sendMessage("SAVING");
+                       break;
+                   case "lobPot" :
+                       if(lobsters>0) {
+                           money = money + 30 * lobsters;
+                           event.getChannel().sendMessage("You are attentive! There were " + lobsters + " lobsters in the pot. You sold these pot lobsters for $" + (30*lobsters) + "!");
+                           lobsters = 0;
+                       } else{
+                           event.getChannel().sendMessage("Bummer, no lobsters in the pot. Maybe you should check it more often.");
+                       }
                        break;
                }
 
@@ -91,8 +102,16 @@ public class FeatureThree extends FeatureTemplate {
             }));
         }
         else if(messageContent.equals(COMMAND + " testMoney")){
-            money = money + 10000000;
-            luckModifier = luckModifier + 2135450;
+            money = money + 10000;
+            luckModifier = luckModifier + 0;
+            event.getChannel().sendMessage("We slipped you a bit of cash to get testing started. To warn you, there are "+lobsters+" lobsters in your pot");
+            lobsterPotLuck(event);
+            lobsterPotLuck(event);
+            lobsterPotLuck(event);
+            lobsterPotLuck(event);
+            lobsterPotLuck(event);
+
+
         }
     }
 
@@ -150,7 +169,7 @@ public class FeatureThree extends FeatureTemplate {
     }
 
 public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTableA lt,lootTableA[] list){
-    lootTableB[] list2 = {new lootTableB(0.00125,0.01, "Sub-Atomic", "🥇"),new lootTableB(0.25, 0.1, "Mircoscopic", "🥈"), new lootTableB(1,0.125,"Miniature","🥉"),new lootTableB(10,0.75,"Tiny","🏅"),new lootTableB(25.75,1,"Small","🏅"),new lootTableB(15.6525,1.25,"Medium","🏅"),new lootTableB(6.675,1.65,"Large","🏅"),new lootTableB(2.35,2.35,"Huge","🥉"),new lootTableB(1.25,3.15,"Gigantic","🥉"),new lootTableB(0.75,4,"Titanic","🥉"),new lootTableB(0.25,5.65,"Humongous","🥈"), new lootTableB(0.15,7.5,"Ginormous","🥈"),new lootTableB(0.015,12.75,"Record-Breaking","🥇"),new lootTableB(0.00125,100.75,"Cosmic","🌌"),new lootTableB(0.000165,2575.45,"Special","🎖")};
+    lootTableB[] list2 = {new lootTableB(0.00125,0.01, "Sub-Atomic", "🥇"),new lootTableB(0.25, 0.1, "Mircoscopic", "🥈"), new lootTableB(1,0.125,"Miniature","🥉"),new lootTableB(1.25,0.5, "Baby", "🥉"),new lootTableB(10,0.75,"Tiny","🏅"),new lootTableB(25.75,1,"Small","🏅"),new lootTableB(15.6525,1.25,"Medium","🏅"),new lootTableB(6.675,1.65,"Large","🏅"),new lootTableB(2.35,2.35,"Huge","🥉"),new lootTableB(1.25,3.15,"Gigantic","🥉"),new lootTableB(0.75,4,"Titanic","🥉"),new lootTableB(0.25,5.65,"Humongous","🥈"), new lootTableB(0.15,7.5,"Ginormous","🥈"),new lootTableB(0.015,12.75,"Record-Breaking","🥇"),new lootTableB(0.00125,100.75,"Cosmic","🌌"),new lootTableB(0.000345, 275.50, "Multi-Dimensional",  "🌌"),new lootTableB(0.000215,750.25, "Shiny", "🎖"),new lootTableB(0.000165,2575.45,"Special","🎖")};
     double totalWeight2 = 0;
     lootTableB size = new lootTableB(0,0,"Error","");
     for(int i =0; i < list.length; i++){
@@ -213,17 +232,17 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
         }));
         }
         public void upgradeMenu(MessageCreateEvent event) {
-            new MessageBuilder().setContent("What would you like to buy").addComponents(ActionRow.of(Button.secondary("0", "Carbon Fibre Rod | $125.25"), Button.secondary("1", "Deep-Dive Lure | $35.50"), Button.secondary("2", "Better Boat Service | $1250.75"))).send(channel);
+            new MessageBuilder().setContent("What would you like to buy").addComponents(ActionRow.of(Button.secondary("3","Rabbit's Foot | $15.00"),Button.secondary("4","Shinier Bait | $30.00"),Button.secondary("1", "Deep-Dive Lure | $35.75")),ActionRow.of(Button.secondary("0", "Carbon Fibre Rod | $125.25"),Button.secondary("5","Durable Fishing Line | $250.25"),Button.secondary("6","Four-Leaf Clover Pot | $300.00")),ActionRow.of(Button.secondary("7","Larger Bait | $350.50"),Button.secondary("8","Multi-Hooked Lure | $650.75"), Button.secondary("2", "Better Boat Service | $1250.75")), ActionRow.of(Button.secondary("9", "Treasure Map | $27500.25"))).send(channel);
             lm.add(event.getApi().addMessageComponentCreateListener(event2 -> {
             MessageComponentInteraction mci = event2.getMessageComponentInteraction();
             String cID = mci.getCustomId();
-            //add system to stop purchasing multiple  plus a buy message.
+            //ask why the upgrades menu is now showing up with all upgrades.
             switch (cID) {
                 case "0":
                     if(money>=125.25 && !bought[0]) {
                         money = money - 125.25;
-                        luckModifier = luckModifier + 25;
-                        event.getChannel().sendMessage("Congrats, you now own a carbon fibre fishing rod! This upgrades increases your luck.");
+                        luckModifier = luckModifier + 3.75;
+                        event.getChannel().sendMessage("Congrats, you now own a carbon fibre fishing rod! This upgrade increases your luck by allowing you to haul up the better fish easier.");
                         bought[0] = true;
                     }
                     else if(money<125.25 && !bought[0]){
@@ -234,13 +253,13 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
                     }
                     break;
                 case "1":
-                    if(money>=35.50 && !bought[1]) {
-                        money = money - 35.50;
-                        luckModifier = luckModifier + 5.75;
-                        event.getChannel().sendMessage("Congrats, you now own a deep-dive lure! This upgrades slightly increases your luck.");
+                    if(money>=35.75 && !bought[1]) {
+                        money = money - 35.75;
+                        luckModifier = luckModifier + 2.5;
+                        event.getChannel().sendMessage("Congrats, you now own a deep-dive lure! This upgrade slightly increases your luck by going deeper into the water where the better fish reside.");
                         bought[1] = true;
                     }
-                    else if(money<35.50 && !bought[1]){
+                    else if(money<35.75 && !bought[1]){
                         event.getChannel().sendMessage("You cannot afford this item.");
                     }
                     else{
@@ -250,8 +269,8 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
                 case "2":
                     if(money>=1250.75 && !bought[2]) {
                         money = money - 1250.75;
-                        luckModifier = luckModifier + 12.5;
-                        event.getChannel().sendMessage("Congrats, you now have a better boat service!  This upgrades slightly increases your luck and allows you to travel to a new location, the trench.");
+                        luckModifier = luckModifier + 3;
+                        event.getChannel().sendMessage("Congrats, you now have a better boat service!  This upgrade slightly increases your luck and allows you to travel to a new location, the trench.");
                         bought[2] = true;
                         locations.add("Trench");
                         //new location available
@@ -263,6 +282,109 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
                         event.getChannel().sendMessage("You cannot buy an item you already have.");
                     }
                     break;
+                case "3":
+                    if(money>=15 && !bought[3]) {
+                        money = money - 15;
+                        luckModifier = luckModifier + 1.25;
+                        event.getChannel().sendMessage("Congrats, you now own a rabbits foot! This might increase your luck if you focus on the results.");
+                        bought[3] = true;
+                    }
+                    else if(money<15 && !bought[3]){
+                        event.getChannel().sendMessage("You cannot afford this item.");
+                    }
+                    else{
+                        event.getChannel().sendMessage("You cannot buy an item you already have.");
+                    }
+                    break;
+                case "4":
+                    if(money>=30 && !bought[4]) {
+                        money = money - 30;
+                        luckModifier = luckModifier + 1.75;
+                        event.getChannel().sendMessage("Congrats, you now own a bunch of shinier bait! This upgrade slightly increases your luck by attracting bigger and better fish.");
+                        bought[4] = true;
+                    }
+                    else if(money<30 && !bought[4]){
+                        event.getChannel().sendMessage("You cannot afford this item.");
+                    }
+                    else{
+                        event.getChannel().sendMessage("You cannot buy an item you already have.");
+                    }
+                    break;
+                case "5":
+                    if(money>=250.25 && !bought[5]) {
+                        money = money - 250.25;
+                        //luckModifier = luckModifier + 5.75;
+                        fishTimes++;
+                        event.getChannel().sendMessage("Congrats, you now own more durable fishing line! This upgrade allows you to catch an extra fish each time you fish.");
+                        bought[5] = true;
+                    }
+                    else if(money<250.25 && !bought[5]){
+                        event.getChannel().sendMessage("You cannot afford this item.");
+                    }
+                    else{
+                        event.getChannel().sendMessage("You cannot buy an item you already have.");
+                    }
+                    break;
+                case "6":
+                    if(money>=300 && !bought[6]) {
+                        money = money - 300;
+                        luckModifier = luckModifier + 5.75;
+                        event.getChannel().sendMessage("Congrats, you now own a four-leaf clover pot! This upgrade increases your luck because common video game tropes make great features.");
+                        bought[6] = true;
+                    }
+                    else if(money<300 && !bought[6]){
+                        event.getChannel().sendMessage("You cannot afford this item.");
+                    }
+                    else{
+                        event.getChannel().sendMessage("You cannot buy an item you already have.");
+                    }
+                    break;
+                case "7":
+                    if(money>=350.5 && !bought[7]) {
+                        money = money - 350.5;
+                        luckModifier = luckModifier + 6.75;
+                        event.getChannel().sendMessage("Congrats, you now own a bunch of larger bait! This upgrade increases your luck by making the bigger fish want to eat the bigger easy food.");
+                        bought[7] = true;
+                    }
+                    else if(money<350.5 && !bought[7]){
+                        event.getChannel().sendMessage("You cannot afford this item.");
+                    }
+                    else{
+                        event.getChannel().sendMessage("You cannot buy an item you already have.");
+                    }
+                    break;
+                case "8":
+                    if(money>=650.75 && !bought[8]) {
+                        money = money - 650.75;
+                        //luckModifier = luckModifier + 5.75;
+                        fishTimes = fishTimes + 2;
+                        event.getChannel().sendMessage("Congrats, you now own a multi-hook lure! This upgrade allows you to catch two more fish in one go.");
+                        bought[9] = true;
+                    }
+                    else if(money<650.75 && !bought[8]){
+                        event.getChannel().sendMessage("You cannot afford this item.");
+                    }
+                    else{
+                        event.getChannel().sendMessage("You cannot buy an item you already have.");
+                    }
+                    break;
+                case "9":
+                    //Fix messages not sending
+                    if(money>=27500.25 && !bought[9]) {
+                    money = money - 27500.25;
+                    //luckModifier = luckModifier + 5.75;
+                    //fishTimes = fishTimes + 2;
+                    locations.add("The Coveted Coves");
+                    event.getChannel().sendMessage("Congrats, you now own a treasure map! This upgrade allows you to travel to the next location, The Coveted Coves.");
+                    bought[9] = true;
+                }
+                    else if(money<27500.25 && !bought[8]){
+                    event.getChannel().sendMessage("You cannot afford this item.");
+                }
+                else{
+                    event.getChannel().sendMessage("You cannot buy an item you already have.");
+                }
+                break;
             }
         }));
         }
@@ -291,6 +413,27 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
                 }
             }));
          event.getApi().removeListener(MessageComponentCreateListener.class, null);
+        }
+        void lobsterPotLuck(MessageCreateEvent event){
+        if(lobsterPotOwned) {
+            //event.getChannel().sendMessage("TESTPOT");
+            int pot = 16;
+            Random ran = new Random();
+            double ranint = ran.nextDouble(pot);
+            if(ranint>=(pot - 2 - luckModifier/16)){
+                lobsters = lobsters + (ran.nextInt(3)+1);
+                //event.getChannel().sendMessage("Congrats, lobsters added. TESTMESSAGE");
+            }
+            else{
+                if(lobsters!=0) {
+                    int removed = ran.nextInt(lobsters);
+                    lobsters = lobsters - removed;
+                    //event.getChannel().sendMessage("Bummer, "+removed+" lobsters were removed from your pot. TESTMESSAGE");
+                } else{
+                    //event.getChannel().sendMessage("Bummer, nothing happened. TESTMESSAGE");
+                }
+            }
+        }
         }
         }
 
