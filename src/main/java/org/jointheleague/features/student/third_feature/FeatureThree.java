@@ -39,6 +39,7 @@ public class FeatureThree extends FeatureTemplate {
     boolean lobsterPotOwned = false;
     //public int lobsters = 0;
     public ArrayList<Integer> lobsters = new ArrayList<Integer>();
+    public String win = "";
 
     ArrayList<ListenerManager<MessageComponentCreateListener>> lm = new ArrayList<ListenerManager<MessageComponentCreateListener>>();
 
@@ -51,9 +52,10 @@ public class FeatureThree extends FeatureTemplate {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "A luck based fishing game with lots of fish, sizes of fish, qualities of fish, upgrades, and more. If new to !\u200Efish, please start with !\u200Efish tutorial. REMEMBER TO ADD A SAVING FEATURE TO ADD A TEXT KEY TO RESTORE PROGRESS"
+                "A luck based fishing game with lots of fish, sizes of fish, upgrades, and more. If new to !\u200Efish, please start with !\u200Efish tutorial."
         );
         locations.add(location);
+        //locations.add("Test"); //TODO REMOVE AFTER TESTING
 
 
     }
@@ -64,18 +66,18 @@ public class FeatureThree extends FeatureTemplate {
         String messageContent = event.getMessageContent();
         if (messageContent.equals(COMMAND) || messageContent.equalsIgnoreCase(COMMAND+" tutorial")) {
             //respond to message here
-            event.getChannel().sendMessage("Welcome to !\u200Efish. In this game you will fish, like the name implies. You will continue to fish and gain money. With this money you can upgrade you rod, luck, hook, bait, et cetera. With all of this you should get new better fish. This journey begins the command !\u200Efish menu \nFish Size Value Multiplication Chart: PLACEHOLDER \nRarity Value Multiplication Chart: PLACEHOLDER \n*BETA TUTORIAL*");
+            event.getChannel().sendMessage("Welcome to !\u200Efish. In this game you will fish, like the name implies. You will continue to fish and gain money. With this money you can upgrade you rod, luck, hook, bait, et cetera. With all of this you should get new better fish. This journey begins the command !\u200Efish menu. Your final goal is to retire, but that will cost you a pretty penny. You must fish up enough many across the different locations to win this game.");
         }
         else if (messageContent.equalsIgnoreCase(COMMAND + " menu")){
            // event.getChannel().sendMessage("Message to test whether TextChannel broke again.");
-            new MessageBuilder().setContent("| Current Money: $" + money+" | Current Location: "+location+" | Luck Modifier: +" + luckModifier/5+" points |").addComponents(ActionRow.of(Button.success("fish", "Go Fishing"),Button.secondary("modify", "Modify Set-Up"),Button.secondary("save", "Save Game"), Button.danger("lobPot", "Lobster Pot"))).send(channel);
+            new MessageBuilder().setContent("| Current Money: $" + money+" | Current Location: "+location+" | Luck Modifier: +" + luckModifier/5+" points | "+win).addComponents(ActionRow.of(Button.success("fish", "Go Fishing"),Button.secondary("modify", "Modify Set-Up"), Button.danger("lobPot", "Lobster Pot"))).send(channel);
             for (ListenerManager<MessageComponentCreateListener> i: lm){
                 i.remove();
             }
             lm.add(event.getApi().addMessageComponentCreateListener(event2 -> {
                MessageComponentInteraction mci = event2.getMessageComponentInteraction();
                String cID = mci.getCustomId();
-
+            mci.acknowledge();
                switch(cID){
                    case "fish":
                        event.getChannel().sendMessage("Going fishing...");
@@ -119,7 +121,7 @@ public class FeatureThree extends FeatureTemplate {
             }));
         }
         else if(messageContent.equals(COMMAND + " testMoney")){
-            money = money + 100000;
+            money = money + 10000000;
             luckModifier = luckModifier + 0;
             event.getChannel().sendMessage("We slipped you a bit of cash to get testing started. To warn you, there are "+lobsters+" lobsters in your pot");
 
@@ -183,6 +185,10 @@ public class FeatureThree extends FeatureTemplate {
             lootTableA[] list = {new lootTableA(30,135,"Rockfish"),new lootTableA(22.7525,150,"Golemfish"),new lootTableA(15.752505,245,"Golden Rockfish"),new lootTableA(10.25,275,"Fire-Belly Fish"),new lootTableA(7.5,325,"Lightfish"),new lootTableA(7.5,325,"Darkfish"),new lootTableA(5,300,"Luckfish"),new lootTableA(4.5,400,"Swimming Fossil"),new lootTableA(4.5,425,"Riftfish"),new lootTableA(2.5,535,"Rodfish"),new lootTableA(2,650,"Bronzefish"),new lootTableA(2.5,585,"Moonfish"),new lootTableA(0.5,1475.25,"Boatfish"),new lootTableA(1,875,"Snarefish"),new lootTableA(1.5,750,"Cyclopic Golemfish"),new lootTableA(0.01,12575.25,"Chest of Fish"),new lootTableA(0.0001,1257525.75,"Chest of Precious Fish"),new lootTableA(0.000000001,75254525754525.75,"Bootfish")};
             lootAssigning(totalWeight, event, lt, list);  //                                                                                                                                                                                                                                                   Fire-Belly Fish could attack the player.                                                                                                                                                   Luckfish gives the player a very slight luck increase.                                                                                                                             Rodfish increases the number of times you can fish by clicking the fish button by one.                                                                                                                                              Boatfish makes the player randomly change to a different location             Snarefish trap or delay the player
         }
+        else if (location.equals("Test")){
+            lootTableA[] list = {new lootTableA(15,10,"Luckfish"),new lootTableA(15,10,"Rodfish"),new lootTableA(15,10,"Boatfish"),new lootTableA(15,10,"Snarefish")};
+            lootAssigning(totalWeight, event, lt, list);
+        }
     }
 
 public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTableA lt,lootTableA[] list){
@@ -198,8 +204,8 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
     //lootTableB[] list2 = {new lootTableB(0.00125,0.01, "Sub-Atomic", "🥇"),new lootTableB(0.25, 0.1, "Mircoscopic", "🥈"), new lootTableB(1,0.125,"Miniature","🥉"),new lootTableB(10,0.75,"Tiny","🏅"),new lootTableB(25.75,1,"Small","🏅"),new lootTableB(15.6525,1.25,"Medium","🏅"),new lootTableB(6.675,1.65,"Large","🏅"),new lootTableB(2.35,2.35,"Huge","🥉"),new lootTableB(1.25,3.15,"Gigantic","🥉"),new lootTableB(0.75,4,"Titanic","🥉"),new lootTableB(0.25,5.65,"Humongous","🥈"), new lootTableB(0.15,7.5,"Ginormous","🥈"),new lootTableB(0.015,12.75,"Record-Breaking","🥇"),new lootTableB(0.00125,100.75,"Cosmic","🌌"),new lootTableB(0.000165,2575.45,"Special","🎖")};
 
     Random random = new Random();
-    double ran = random.nextDouble(totalWeight)+luckModifier/5;
-    double ran2 = random.nextDouble(totalWeight2)+luckModifier/12.5;
+    double ran = random.nextDouble(totalWeight)+luckModifier/10.75;
+    double ran2 = random.nextDouble(totalWeight2)+luckModifier/17.25;
     totalWeight =0;
     totalWeight2 =0;
     for(int i =0; i < list.length; i++){
@@ -229,13 +235,14 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
     //double earned = Math.round(lt.getValue()*size.getMultiplier()*100.0)/100.0;
     double earned = bd2.doubleValue();
     event.getChannel().sendMessage(" You caught a "+lt.name() +" that was "+ size.name() + "! "+"| You sold this fish for $"+earned+" | Your bank account is now at $" + money + " | The rarity symbols associated with this fish are "+size.getRankingEmoji()+"!");
-}
+    fishEffect(lt.name(), event);
+    }
     public void setupModification(MessageCreateEvent event){
         new MessageBuilder().setContent("What would you like to modify in your set-up?").addComponents(ActionRow.of(Button.success("upgrade", "Buy Upgrades"),Button.success("location", "Change Location"), Button.danger("leave", "Buy Another Lobster Pot | $"+(125*lobsters.size())))).send(channel);
         lm.add(event.getApi().addMessageComponentCreateListener(event2 -> {
             MessageComponentInteraction mci = event2.getMessageComponentInteraction();
             String cID = mci.getCustomId();
-
+            mci.acknowledge();
         switch(cID){
             case "upgrade":
                 upgradeMenu(event);
@@ -263,11 +270,11 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
         }));
         }
         public void upgradeMenu(MessageCreateEvent event) {
-            new MessageBuilder().setContent("What would you like to buy").addComponents(ActionRow.of(Button.secondary("3","Rabbit's Foot | $15.00"),Button.secondary("4","Shinier Bait | $30.00"),Button.secondary("1", "Deep-Dive Lure | $35.75"),Button.secondary("10", "Lobster Pot | $50.00")),ActionRow.of(Button.secondary("0", "Carbon Fibre Rod | $125.25"),Button.secondary("5","Durable Fishing Line | $250.25"),Button.secondary("6","Four-Leaf Clover Pot | $300.00")),ActionRow.of(Button.secondary("7","Larger Bait | $350.50"),Button.secondary("8","Multi-Hooked Lure | $650.75"), Button.secondary("2", "Better Boat Service | $1250.75")),ActionRow.of(Button.secondary("11", "Fish Detector | $1750.00"),Button.secondary("12", "Lobster Pass | 2575.25"),Button.secondary("13", "Second Boat | 12750.25")), ActionRow.of(Button.secondary("9", "Treasure Map | $27500.25"))).send(channel);
+            new MessageBuilder().setContent("What would you like to buy").addComponents(ActionRow.of(Button.secondary("3","Rabbit's Foot | $15.00"),Button.secondary("4","Shinier Bait | $30.00"),Button.secondary("1", "Deep-Dive Lure | $35.75"),Button.secondary("10", "Lobster Pot | $50.00")),ActionRow.of(Button.secondary("0", "Carbon Fibre Rod | $125.25"),Button.secondary("5","Durable Fishing Line | $250.25"),Button.secondary("6","Four-Leaf Clover Pot | $300.00")),ActionRow.of(Button.secondary("7","Larger Bait | $350.50"),Button.secondary("8","Multi-Hooked Lure | $650.75"), Button.secondary("2", "Better Boat Service | $1250.75")),ActionRow.of(Button.secondary("11", "Fish Detector | $1750.00"),Button.secondary("12", "Lobster Pass | $2575.25"),Button.secondary("13", "Second Boat | $12750.25")), ActionRow.of(Button.secondary("9", "Treasure Map | $27500.25"),Button.secondary("14","Retirement | $1500000.00"))).send(channel);
             lm.add(event.getApi().addMessageComponentCreateListener(event2 -> {
             MessageComponentInteraction mci = event2.getMessageComponentInteraction();
             String cID = mci.getCustomId();
-            //ask why the upgrades menu is now showing up with all upgrades.
+                mci.acknowledge();
             switch (cID) {
                 case "0":
                     if(money>=125.25 && !bought[0]) {
@@ -481,6 +488,21 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
                     }
                     break;
                 case "14":
+                    //1500000
+                    if(money>=1500000.00 && !bought[14]) {
+                        money = money - 650.75;
+                        //luckModifier = luckModifier + 5.75;
+                        //fishTimes = fishTimes + 2;
+                        win = "🏆 Winner! 🏆 |";
+                        event.getChannel().sendMessage("Congrats, you now are retired! You can still fish, but you finally feel accomplished and have won this game.");
+                        bought[14] = true;
+                    }
+                    else if(money<650.75 && !bought[14]){
+                        event.getChannel().sendMessage("You cannot afford this item.");
+                    }
+                    else{
+                        event.getChannel().sendMessage("You cannot buy an item you already have.");
+                    }
                     break;
             }
         }));
@@ -500,6 +522,7 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
             lm.add(event.getApi().addMessageComponentCreateListener(event2 -> {
                 MessageComponentInteraction mci = event2.getMessageComponentInteraction();
                 String cID = mci.getCustomId();
+                mci.acknowledge();
                 switch(cID){
                     case "Sea":
                         location = "Sea";
@@ -509,6 +532,9 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
                         break;
                     case "The Coveted Coves":
                         location = "The Coveted Coves";
+                        break;
+                    case "Test":
+                        location = "Test";
                         break;
                 }
             }));
@@ -536,6 +562,44 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
         }
         }
         }
+    public void fishEffect(String fishName, MessageCreateEvent event){
+        switch(fishName){
+            case "Luckfish":
+                event.getChannel().sendMessage("Congrats, the Luckfish you caught bestowed you with slightly more luck!");
+                luckModifier = luckModifier + 1.25;
+                break;
+            case "Boatfish":
+                Random ran = new Random();
+                int ranInt = ran.nextInt(locations.size());
+                if(ranInt==0){
+                    location = "Sea";
+                } else if(ranInt==1){
+                    location = "Trench";
+                } else{
+                    location = "Sea";
+                    event.getChannel().sendMessage("RanInt failed to pick a location this time. "+ranInt);
+                }
+                event.getChannel().sendMessage("Bummer, the Boatfish you caught brought you back to one of your other locations.");
+                break;
+            case "Rodfish.":
+                event.getChannel().sendMessage("Congrats, the Rodfish you caught brought you another fishing pole, allowing you to fish another time per button press!");
+                fishTimes = fishTimes + 1;
+                break;
+            case "Snarefish":
+            // try {
+                ran = new Random();
+                double random = ran.nextDouble(money-1)+1;
+                BigDecimal bd = new BigDecimal(random).setScale(2, RoundingMode.HALF_UP);
+                random = bd.doubleValue();
+               money = money-random;
+                 event.getChannel().sendMessage("The Snarefish has snagged your wallet, causing you to lose $"+random+".");
+            //     event.wait(20000);
+            // } catch(Exception e){
+            //     event.getChannel().sendMessage("This game is having trouble processing the effects of the Snarefish. Exception is "+e+ ".");
+            // }
+                break;
+        }
+    }
         }
 
 
