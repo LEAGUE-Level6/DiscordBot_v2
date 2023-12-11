@@ -41,6 +41,8 @@ public class FeatureThree extends FeatureTemplate {
     public ArrayList<Integer> lobsters = new ArrayList<Integer>();
     public String win = "";
 
+    public lootTableA[] testList = new lootTableA[60];
+
     ArrayList<ListenerManager<MessageComponentCreateListener>> lm = new ArrayList<ListenerManager<MessageComponentCreateListener>>();
 
 
@@ -55,7 +57,7 @@ public class FeatureThree extends FeatureTemplate {
                 "A luck based fishing game with lots of fish, sizes of fish, upgrades, and more. If new to !\u200Efish, please start with !\u200Efish tutorial."
         );
         locations.add(location);
-        //locations.add("Test"); //TODO REMOVE AFTER TESTING
+        //locations.add("Test");
 
 
     }
@@ -121,9 +123,9 @@ public class FeatureThree extends FeatureTemplate {
             }));
         }
         else if(messageContent.equals(COMMAND + " testMoney")){
-            money = money + 10000000;
-            luckModifier = luckModifier + 0;
-            event.getChannel().sendMessage("We slipped you a bit of cash to get testing started. To warn you, there are "+lobsters+" lobsters in your pot");
+            //money = money + 10000000;
+           // luckModifier = luckModifier + 0;
+          //  event.getChannel().sendMessage("We slipped you a bit of cash to get testing started. To warn you, there are "+lobsters+" lobsters in your pot");
 
 
 
@@ -146,7 +148,9 @@ public class FeatureThree extends FeatureTemplate {
         lootTableA lt = new lootTableA(0,0,"0");
         if (location.equals("Sea")) {
            lootTableA[] list = {new lootTableA(35.7525,4,"Minnow"),new lootTableA(32.5,7,"Sardine"),new lootTableA(9,16,"Sea Bass"),new lootTableA(15.5,12.5,"Tuna"),new lootTableA(12.5,13.5,"Reef Shark"),new lootTableA(3.5,75,"Squid"),new lootTableA(5,45,"Triggerfish"),new lootTableA(2.25,115,"Electric Eel"),new lootTableA(6.25,25,"Striper"),new lootTableA(1.75,145,"Lobster"),new lootTableA(0.975,160,"Swordfish"),new lootTableA(0.675,235,"Sunfish"),new lootTableA(0.0125,126500,"Walking Minnow"),new lootTableA(0.00565,127500,"Gold Minnow Statue")};
-            lootAssigning(totalWeight, event, lt, list);
+            testList = list;
+           lootAssigning(totalWeight, event, lt, list);
+
           /*  for (int i = 0; i < list.length; i++) {
                 totalWeight = totalWeight + list[i].getChance();
             }
@@ -163,7 +167,9 @@ public class FeatureThree extends FeatureTemplate {
             event.getChannel().sendMessage(" You caught a " + lt.name() + "! " + "| You sold this fish for $" + lt.getValue() + " | Your bank account is now at $" + money); */
         } else if (location.equals("Trench")) {
            lootTableA[] list = {new lootTableA(25.65,35,"Telescopefish"),new lootTableA(20.2575,40,"Rhinochimaera"),new lootTableA(15.125,55,"Anglerfish"),new lootTableA(12.25751,60,"Barreleye"),new lootTableA(11.524575,70,"Lanternfish"),new lootTableA(10.2575,75,"Glowing Minnow"),new lootTableA(8.7525,90,"Flying Minnow"),new lootTableA(5.245,125,"Abyssal Grenadier"),new lootTableA(5.65,120,"Marine Hatchetfish"),new lootTableA(2.5,165,"Goblin Shark"),new lootTableA(1.15, 225,"Jellyfish"),new lootTableA(0.75, 345, "Six-Gilled Shark"),new lootTableA(0.000125,35000000,"Snailfish")};
-         lootAssigning(totalWeight, event, lt, list);
+            testList = list;
+           lootAssigning(totalWeight, event, lt, list);
+
           /*  lt2 = lootTableB.Telescopefish;
             for(int i =0; i < list2.length; i++){
                 totalWeight = totalWeight + list2[i].getChance();
@@ -183,12 +189,17 @@ public class FeatureThree extends FeatureTemplate {
         }
         else if (location.equals("The Coveted Coves")){
             lootTableA[] list = {new lootTableA(30,135,"Rockfish"),new lootTableA(22.7525,150,"Golemfish"),new lootTableA(15.752505,245,"Golden Rockfish"),new lootTableA(10.25,275,"Fire-Belly Fish"),new lootTableA(7.5,325,"Lightfish"),new lootTableA(7.5,325,"Darkfish"),new lootTableA(5,300,"Luckfish"),new lootTableA(4.5,400,"Swimming Fossil"),new lootTableA(4.5,425,"Riftfish"),new lootTableA(2.5,535,"Rodfish"),new lootTableA(2,650,"Bronzefish"),new lootTableA(2.5,585,"Moonfish"),new lootTableA(0.5,1475.25,"Boatfish"),new lootTableA(1,875,"Snarefish"),new lootTableA(1.5,750,"Cyclopic Golemfish"),new lootTableA(0.01,12575.25,"Chest of Fish"),new lootTableA(0.0001,1257525.75,"Chest of Precious Fish"),new lootTableA(0.000000001,75254525754525.75,"Bootfish")};
-            lootAssigning(totalWeight, event, lt, list);  //                                                                                                                                                                                                                                                   Fire-Belly Fish could attack the player.                                                                                                                                                   Luckfish gives the player a very slight luck increase.                                                                                                                             Rodfish increases the number of times you can fish by clicking the fish button by one.                                                                                                                                              Boatfish makes the player randomly change to a different location             Snarefish trap or delay the player
+            testList = list;
+            lootAssigning(totalWeight, event, lt, list);  //
+            //                                                                                                                                                                                                                                                 Fire-Belly Fish could attack the player.                                                                                                                                                   Luckfish gives the player a very slight luck increase.                                                                                                                             Rodfish increases the number of times you can fish by clicking the fish button by one.                                                                                                                                              Boatfish makes the player randomly change to a different location             Snarefish trap or delay the player
         }
         else if (location.equals("Test")){
             lootTableA[] list = {new lootTableA(15,10,"Luckfish"),new lootTableA(15,10,"Rodfish"),new lootTableA(15,10,"Boatfish"),new lootTableA(15,10,"Snarefish")};
+            testList = list;
             lootAssigning(totalWeight, event, lt, list);
+
         }
+
     }
 
 public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTableA lt,lootTableA[] list){
@@ -581,7 +592,7 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
                 }
                 event.getChannel().sendMessage("Bummer, the Boatfish you caught brought you back to one of your other locations.");
                 break;
-            case "Rodfish.":
+            case "Rodfish":
                 event.getChannel().sendMessage("Congrats, the Rodfish you caught brought you another fishing pole, allowing you to fish another time per button press!");
                 fishTimes = fishTimes + 1;
                 break;
