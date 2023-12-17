@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.javacord:javacord:3.1.1'
+    implementation 'org.javacord:javacord:3.8.0'
     implementation 'net.aksingh:owm-japis:2.5.3.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     implementation 'javax.json:javax.json-api:1.1'
@@ -21,6 +21,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
 
 group = 'org.jointheleague'
