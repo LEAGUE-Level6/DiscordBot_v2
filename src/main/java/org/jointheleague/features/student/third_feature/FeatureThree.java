@@ -557,7 +557,7 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
             //event.getChannel().sendMessage("TESTPOT");
             int pot = 16;
             Random ran = new Random();
-            double ranint = ran.nextDouble(pot);
+            double ranint = ran.nextDouble()*pot;
             if (ranint >= (pot - 2 - luckModifier / 16)) {
                 lobsters.set(i, lobsters.get(i) + (ran.nextInt(2 + locations.size()) + 1));
                 //event.getChannel().sendMessage("Congrats, lobsters added. TESTMESSAGE");
