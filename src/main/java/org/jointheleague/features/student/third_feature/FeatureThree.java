@@ -215,8 +215,8 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
     //lootTableB[] list2 = {new lootTableB(0.00125,0.01, "Sub-Atomic", "🥇"),new lootTableB(0.25, 0.1, "Mircoscopic", "🥈"), new lootTableB(1,0.125,"Miniature","🥉"),new lootTableB(10,0.75,"Tiny","🏅"),new lootTableB(25.75,1,"Small","🏅"),new lootTableB(15.6525,1.25,"Medium","🏅"),new lootTableB(6.675,1.65,"Large","🏅"),new lootTableB(2.35,2.35,"Huge","🥉"),new lootTableB(1.25,3.15,"Gigantic","🥉"),new lootTableB(0.75,4,"Titanic","🥉"),new lootTableB(0.25,5.65,"Humongous","🥈"), new lootTableB(0.15,7.5,"Ginormous","🥈"),new lootTableB(0.015,12.75,"Record-Breaking","🥇"),new lootTableB(0.00125,100.75,"Cosmic","🌌"),new lootTableB(0.000165,2575.45,"Special","🎖")};
 
     Random random = new Random();
-    double ran = random.nextDouble(totalWeight)+luckModifier/10.75;
-    double ran2 = random.nextDouble(totalWeight2)+luckModifier/17.25;
+    double ran = random.nextDouble()*totalWeight+luckModifier/10.75;
+    double ran2 = random.nextDouble()*totalWeight2+luckModifier/17.25;
     totalWeight =0;
     totalWeight2 =0;
     for(int i =0; i < list.length; i++){
@@ -501,14 +501,14 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
                 case "14":
                     //1500000
                     if(money>=1500000.00 && !bought[14]) {
-                        money = money - 650.75;
+                        money = money - 1500000.00;
                         //luckModifier = luckModifier + 5.75;
                         //fishTimes = fishTimes + 2;
                         win = "🏆 Winner! 🏆 |";
                         event.getChannel().sendMessage("Congrats, you now are retired! You can still fish, but you finally feel accomplished and have won this game.");
                         bought[14] = true;
                     }
-                    else if(money<650.75 && !bought[14]){
+                    else if(money<1500000.00 && !bought[14]){
                         event.getChannel().sendMessage("You cannot afford this item.");
                     }
                     else{
@@ -599,7 +599,7 @@ public void lootAssigning(double totalWeight, MessageCreateEvent event,lootTable
             case "Snarefish":
             // try {
                 ran = new Random();
-                double random = ran.nextDouble(money-1)+1;
+                double random = ran.nextDouble()*(money-1)+1;
                 BigDecimal bd = new BigDecimal(random).setScale(2, RoundingMode.HALF_UP);
                 random = bd.doubleValue();
                money = money-random;
