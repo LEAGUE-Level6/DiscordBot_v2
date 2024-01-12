@@ -3,10 +3,8 @@ package org.jointheleague.discord_bot;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.first_features.RandomPhrase;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.second_features.SentenceMaker;
-import org.jointheleague.features.examples.third_features.AfricanAnimalFactApi;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
@@ -52,9 +50,9 @@ public class DiscordBot {
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
 		//MINE
-		addFeature(new RandomPhrase(channelName));
+		//addFeature(new RandomPhrase(channelName));
 		addFeature(new SentenceMaker(channelName));
-		addFeature(new AfricanAnimalFactApi(channelName));
+		//addFeature(new AfricanAnimalFactApi(channelName));
 	}
 
 	private void addFeature(Feature feature){
