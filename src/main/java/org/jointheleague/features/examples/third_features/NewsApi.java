@@ -62,7 +62,7 @@ public class NewsApi extends Feature {
 
         //Get a story from News API
         ApiExampleWrapper apiExampleWrapper = getNewsStoryByTopic(topic);
-
+        System.out.println(apiExampleWrapper.toString());
         //Get the first article
         Article article = apiExampleWrapper.getArticles().get(0);
 
