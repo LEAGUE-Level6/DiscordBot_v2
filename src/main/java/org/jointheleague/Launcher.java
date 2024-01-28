@@ -4,7 +4,7 @@ import org.jointheleague.discord_bot.DiscordBot;
 
 public class Launcher {
     public static void main(String[] args) {
-
+    	System.out.println("Starting...");
         //Initialize variables
         String channelName = System.getenv("CHANNEL_NAME");
         String discordToken = System.getenv("DISCORD_TOKEN");
