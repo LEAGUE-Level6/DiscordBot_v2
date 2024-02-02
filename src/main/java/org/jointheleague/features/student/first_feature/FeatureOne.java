@@ -8,7 +8,7 @@ import org.jointheleague.features.templates.FeatureTemplate;
 import java.util.Random;
 
 public class FeatureOne extends FeatureTemplate {
-    public final String COMMAND = "!joke";
+    public final String COMMAND = "!artistRecc";
 
     public FeatureOne(String channelName) {
         super(channelName);
@@ -16,7 +16,7 @@ public class FeatureOne extends FeatureTemplate {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "This command prints cheesy jokes."
+                "This command gives you a new music artist to listen to."
         );
     }
 //IGNORE
@@ -29,17 +29,17 @@ public class FeatureOne extends FeatureTemplate {
             int ranInt = ran.nextInt(5);
 
             switch(ranInt){
-                case 0:event.getChannel().sendMessage("What’s the best thing about Switzerland? \n \n I don’t know, but the flag is a big plus.");
-                break;
-                case 1:event.getChannel().sendMessage("I invented a new word! \n \n Plagiarism!");
-                break;
-                case 2:event.getChannel().sendMessage("Hear about the new restaurant called Karma? \n \n There’s no menu: You get what you deserve.");
+                case 0:event.getChannel().sendMessage("Your new artist is: Miles Davis - Jazz");
                     break;
-                case 3:event.getChannel().sendMessage("Did you hear about the claustrophobic astronaut? \n \n He just needed a little space.");
+                case 1:event.getChannel().sendMessage("Your new artist is: The Beatles - Rock Pop");
                     break;
-                case 4:event.getChannel().sendMessage("Why don’t scientists trust atoms? \n \n Because they make up everything.");
+                case 2:event.getChannel().sendMessage("Your new artist is: Stevie Wonder - Funk, Soul");
                     break;
-                default:event.getChannel().sendMessage("What’s the different between a cat and a comma? \n \n A cat has claws at the end of paws; A comma is a pause at the end of a clause. ");
+                case 3:event.getChannel().sendMessage("Your new artist is: Marvin Gaye - R&B, Soul");
+                    break;
+                case 4:event.getChannel().sendMessage("Your new artist is: Nujabes - Hip Hop");
+                    break;
+                default:event.getChannel().sendMessage("Your new artist is: Nirvana - Alternative Rock");
                     break;
             }
 

@@ -11,6 +11,7 @@ import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.first_feature.FeatureOne;
+import org.jointheleague.features.student.second_feature.FeatureTwo;
 
 public class DiscordBot {
 
@@ -46,6 +47,7 @@ public class DiscordBot {
 
 		//add features
 		addFeature(new FeatureOne(channelName));
+		addFeature(new FeatureTwo(channelName));
 		addFeature(new CurrentTime(channelName));
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
