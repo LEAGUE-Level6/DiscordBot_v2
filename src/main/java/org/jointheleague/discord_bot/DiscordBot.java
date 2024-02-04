@@ -30,10 +30,11 @@ public class DiscordBot {
 
 	public void connect(boolean printInvite) {
 
-		System.out.println("hello"+ token);
+		//System.out.println("hello"+ token);
 		api = new DiscordApiBuilder().setToken(token).addIntents(Intent.MESSAGE_CONTENT).login().join();
+		//api = new DiscordApiBuilder().setToken(token).setAllIntents().login().join();
 
-		System.out.println("hello");
+		//System.out.println("hello");
 		//Print the URL to invite the bot
 		if (printInvite) {
 			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
