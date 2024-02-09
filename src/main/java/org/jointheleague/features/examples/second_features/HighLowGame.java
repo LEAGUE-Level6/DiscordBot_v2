@@ -41,7 +41,8 @@ public class HighLowGame extends Feature {
             //parse the guess from the message
             String guessMessage = messageContent.replaceAll(" ", "").replace(COMMAND, "");
 
-            //change the guess to an int
+            //change the gu
+            // ess to an int
             int guess = 0;
             try{
                 guess = Integer.parseInt(guessMessage);

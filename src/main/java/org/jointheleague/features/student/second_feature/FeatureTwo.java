@@ -4,18 +4,22 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class FeatureTwo extends Feature {
 
-    public final String COMMAND = "!story";
-    int storyPart = 0;
-    int gameStart = 1;
+    public final String COMMAND = "!quiz";
+    int gameStart = 0;
+    int countInt = 0;
+    ArrayList<Question> questions = new ArrayList<>();
     public FeatureTwo(String channelName) {
         super(channelName);
 
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "This command allows you to interact with a short interactive story."
+                "This command allows you to answer an assortment of quiz questions."
         );
     }
 
@@ -24,18 +28,23 @@ public class FeatureTwo extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.equals(COMMAND)) {
             //respond to message here
-            event.getChannel().sendMessage("Welcome! This is an interactive story. You will be presented with two options and must choose by writing '!story CHOICE' \n Will you AWAKEN or SLEEPIN");
+            event.getChannel().sendMessage("Welcome! This is a fast facts quiz function. Type !quizStart to begin ");
             gameStart = 1;
         }
-        else if(messageContent.contains(COMMAND) && !messageContent.contains("interactive story")){
-            storyPart++;
+        else if(messageContent.startsWith(COMMAND) || messageContent.contains("CORRECT!") || messageContent.contains("SKIPPED!")){
             if(gameStart == 0) {
-                event.getChannel().sendMessage("You need to start the game first by using '!story'");
-            }
-            if(storyPart==1) {
-                event.getChannel().sendMessage("Stuff happens based on choice (For next class)");
+                event.getChannel().sendMessage("You need to start the game first by using '!quiz'");
+                return;
+            //Create question variable to hold the current question being held.
+                // Do all internalising of checking if answer is correct or any othher things like that
+                //Randomise questions selected and other stuff
             }
         }
     }
+    public void createQuestions() {
+        questions.add(new Question("``` What is 2 + 2. Answer like '!quizQ1:5' ```","4"));
+        questions.add(new Question("``` What is the capital of California Answer like '!quizQ2:San Diego' ```", "Sacramento"));
+        questions.add(new Question("``` Who is our current president '!quizQ3:Obama' ```","Biden"));
 
+    }
 }
