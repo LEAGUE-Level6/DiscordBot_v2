@@ -8,4 +8,26 @@ public class Question {
         this.answer = answer;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setContent(String cont) {
+        content = cont;
+    }
+
+    public void setAnswer(String ans) {
+        answer = ans;
+    }
+
+    public Boolean checkAnswer(String ans) {
+        if(answer.equalsIgnoreCase(ans)) {
+            return true;
+        }
+        return false;
+    }
 }
