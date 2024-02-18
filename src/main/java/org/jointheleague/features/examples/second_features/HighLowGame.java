@@ -8,13 +8,13 @@ import java.util.Random;
 
 public class HighLowGame extends Feature {
 
-    public final String COMMAND = "!highLow";
+    public final String COMMAND = "!blackjack";
     private final Random random = new Random();
     int numberToGuess;
 
     public HighLowGame(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "High low game.  The computer picks a number when you start the game, and then tells you if your current guess is too low or too high");
+        helpEmbed = new HelpEmbed(COMMAND, "Get as close to 21 as you can with your cards. 'Hit' means to ask for another card, stand means you are finished. Between us, whoever is closer to 21 wins!");
     }
 
     @Override
@@ -23,7 +23,7 @@ public class HighLowGame extends Feature {
 
         //start the game with the command
         if (messageContent.equals(COMMAND)) {
-            numberToGuess = random.nextInt(100) + 1;
+            numberToGuess = random.nextInt(10) + 2;
             event.getChannel().sendMessage("I have picked a number between 1 and 100. Guess by using e.g. !highLow 5");
         }
         //check a guess

@@ -8,7 +8,7 @@ import org.jointheleague.features.templates.FeatureTemplate;
 import java.util.Random;
 
 public class FeatureOne extends FeatureTemplate {
-    public final String COMMAND = "!joke";
+	public final String COMMAND = "!introduce";
 
     public FeatureOne(String channelName) {
         super(channelName);
@@ -16,33 +16,17 @@ public class FeatureOne extends FeatureTemplate {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "This command prints cheesy jokes."
+                "I will tell you a little bit about who I am and what I can do!"
         );
     }
-//IGNORE
+
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
-            Random ran = new Random();
-            int ranInt = ran.nextInt(5);
-
-            switch(ranInt){
-                case 0:event.getChannel().sendMessage("What’s the best thing about Switzerland? \n \n I don’t know, but the flag is a big plus.");
-                break;
-                case 1:event.getChannel().sendMessage("I invented a new word! \n \n Plagiarism!");
-                break;
-                case 2:event.getChannel().sendMessage("Hear about the new restaurant called Karma? \n \n There’s no menu: You get what you deserve.");
-                    break;
-                case 3:event.getChannel().sendMessage("Did you hear about the claustrophobic astronaut? \n \n He just needed a little space.");
-                    break;
-                case 4:event.getChannel().sendMessage("Why don’t scientists trust atoms? \n \n Because they make up everything.");
-                    break;
-                default:event.getChannel().sendMessage("What’s the different between a cat and a comma? \n \n A cat has claws at the end of paws; A comma is a pause at the end of a clause. ");
-                    break;
-            }
-
+            event.getChannel().sendMessage("I am NicholasBot, created by the one and only, Nicholas Falstad. I have all sorts of features such as... (fill in later)");
         }
     }
-}
+    }
+
