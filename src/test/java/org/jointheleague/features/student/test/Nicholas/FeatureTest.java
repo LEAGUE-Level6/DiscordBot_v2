@@ -26,7 +26,7 @@ import org.mockito.MockitoAnnotations;
 class FeatureTest {
 	 private final String testChannelName = "test";
 	    private final FeatureOne featureOne = new FeatureOne(testChannelName);
-
+ 
 	    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	    private final PrintStream originalOut = System.out;
 
