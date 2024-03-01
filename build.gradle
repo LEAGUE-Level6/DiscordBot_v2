@@ -21,6 +21,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
+    compile 'com.google.api-client:google-api-client:1.23.0'
+    compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+    compile 'com.google.apis:google-api-services-youtube:v3-rev222-1.25.0'
 }
 
 group = 'org.jointheleague'
