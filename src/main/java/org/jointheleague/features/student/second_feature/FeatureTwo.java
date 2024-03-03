@@ -19,19 +19,57 @@ public class FeatureTwo extends FeatureTemplate{
 	    @Override
 	    public void handle(MessageCreateEvent event){
 	        String messageContent = event.getMessageContent();
-
+	        int yourValue = 0;
+	        int botValue = 0;
 	        //start the game with the command
 	        if (messageContent.equals(COMMAND)) { 
 	        	String botCard = cardPicker();
 	        	String yourCard = cardPicker();
+	        	botValue+=findValue(botCard);
+	        	yourValue+=findValue(yourCard);
 	            event.getChannel().sendMessage("My Card: " + botCard + "\n Your Card: " + yourCard + "\n !Hit or !Stand ?");
 	        }
-	        
+	        boolean end = false;
+	        while(!end)
 	        if(messageContent.equals("!Hit")) {
-	        	
+	        	String yourCard2 = cardPicker();
+	        	yourValue+=findValue(yourCard2);
+	        	event.getChannel().sendMessage("Your Next Card: " + yourCard2);
+	        	event.getChannel().sendMessage("Your Total Card Value " + yourValue);
+	        	event.getChannel().sendMessage("!Hit or !Stand ?");
 	        } else if(messageContent.equals("!Stand")) {
-	        	
-	        }
+	        	end = true;
+	        	if(yourValue > 21) {
+	        	event.getChannel().sendMessage("Bust! You lose.");
+	        	}
+	        	else {
+	        		if(botValue > yourValue) {
+	        			event.getChannel().sendMessage("Bot's Total Card Value: " + botValue);
+	        			event.getChannel().sendMessage("Bot wins!");
+	        		} else {
+	        			boolean end2 = false;
+	        			while(!end2) {
+	        			String botCard2 = cardPicker();
+	        			botValue+=findValue(botCard2);
+	        			if(botValue == 20 || botValue == 21) {
+	        				if(botValue == yourValue) {
+	        					event.getChannel().sendMessage("Tie!");
+	        				} else if(botValue > yourValue) {
+	        					event.getChannel().sendMessage("Bot wins!");
+	        				} else if(botValue < yourValue) {
+	        					event.getChannel().sendMessage("You win!");
+	        				}
+	        			end2 = true;
+	        			} else if(botValue > yourValue) {
+	        				event.getChannel().sendMessage("Bot wins!");
+	        				end2 = true;
+	        			} else if(botValue > 21) {
+	        				event.getChannel().sendMessage("Bot busted! You win!");
+	        			}
+	        			}
+	        		}
+	        	}
+	        	}
 	        
 	       
 	    }
@@ -65,5 +103,30 @@ public class FeatureTwo extends FeatureTemplate{
             	cardName+=" of Clubs";
             }
             return cardName;
+	    }
+	    public int findValue(String card) {
+	    	if(card.substring(0, 1).equals("2")) {
+	    		return 2;
+	    	} else if(card.substring(0, 1).equals("3")) {
+	    		return 3;
+	    	} else if(card.substring(0, 1).equals("4")) {
+	    		return 4;
+	    	} else if(card.substring(0, 1).equals("5")) {
+	    		return 5;
+	    	} else if(card.substring(0, 1).equals("6")) {
+	    		return 6;
+	    	} else if(card.substring(0, 1).equals("7")) {
+	    		return 7;
+	    	} else if(card.substring(0, 1).equals("8")) {
+	    		return 8;
+	    	} else if(card.substring(0, 1).equals("9")) {
+	    		return 9;
+	    	} else if(card.substring(0, 1).equals("10")) {
+	    		return 10;
+	    	} else if(card.substring(0, 3).equals("Ace")) {
+	    		return 11;
+	    	} else {
+	    		return 10;
+	    	}
 	    }
 }

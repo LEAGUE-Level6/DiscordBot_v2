@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
 public class FeatureOneTest {
-    private final String testChannelName = "test";
+    private final String testChannelName = "FeatureOne";
     private final FeatureOne featureOne = new FeatureOne(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
