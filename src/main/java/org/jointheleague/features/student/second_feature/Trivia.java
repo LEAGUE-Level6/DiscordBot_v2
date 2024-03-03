@@ -1,4 +1,4 @@
-package org.jointheleague.features.student.first_feature;
+package org.jointheleague.features.student.second_feature;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
@@ -14,13 +14,14 @@ public class Trivia extends Feature {
     int questionNumber;
     String answer;
     Random ran = new Random();
+    int score = 0;
     public Trivia(String channelName) {
         super(channelName);
 
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "Trivia questions for the user to answer. Start the game with !trivia and enter a guess using !trivia guess. E.g. !trivia b"
+                "Trivia questions for the user to answer. Start the game with !trivia ask and enter a guess using !trivia 'your guess'. E.g. !trivia b. To end the game, use !trivia end. To view your score, use !trivia score."
         );
     }
 
@@ -28,9 +29,9 @@ public class Trivia extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
 
-        System.out.println(messageContent);
+        //System.out.println(messageContent);
 
-        if (messageContent.equals(COMMAND)) {
+        if (messageContent.equals(COMMAND + " ask")) {
             questionRight = false;
             questionNumber = ran.nextInt(6);
 
@@ -44,7 +45,7 @@ public class Trivia extends Feature {
                     answer = "d";
                     break;
                 case 2:
-                    event.getChannel().sendMessage("Trivia: What does www stand for in a website addresss bar?\na) World Wide Web\nb) Web World Wide\n Wild Wild West\n Wet Windows Web");
+                    event.getChannel().sendMessage("Trivia: What does www stand for in a website addresss bar?\na) World Wide Web\nb) Web World Wide\nc) Wild Wild West\nd) Wet Windows Web");
                     answer = "a";
                     break;
                 case 3:
@@ -62,7 +63,7 @@ public class Trivia extends Feature {
             }
 
         }
-        //check a guess
+        //check a command
         else if (messageContent.contains(COMMAND)
                 && !messageContent.contains("Trivia:"))
         {
@@ -72,9 +73,20 @@ public class Trivia extends Feature {
 
                     event.getChannel().sendMessage("Trivia: "+answer + " is correct!");
                     questionRight = true;
-                } else {
+                    score++;
+                    event.getChannel().sendMessage("Trivia: " + "Your score is now: " + score);
+                } else if(guessMessage.equalsIgnoreCase("score")){
+                    event.getChannel().sendMessage("Trivia: "+ "Your score is: "+ score);
+                }
+                else if(guessMessage.equalsIgnoreCase("end")){
+                    event.getChannel().sendMessage("Trivia: " + "Thanks for playing! Your final score is: " + score);
+                    score=0;
+                }
+                else if(!guessMessage.equalsIgnoreCase("")){
                     questionRight = false;
                     event.getChannel().sendMessage("Trivia: " + "Wrong, try again!");
+                    score--;
+                    event.getChannel().sendMessage("Trivia: " + "Your score is now: " + score);
 
                 }
         }
