@@ -48,6 +48,7 @@ public class DiscordBot {
 		//add features
 		addFeature(new FeatureOne(channelName));
 		addFeature(new FeatureTwo(channelName));
+		addFeature(new FeatureThree(channelName));
 		addFeature(new CurrentTime(channelName));
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));

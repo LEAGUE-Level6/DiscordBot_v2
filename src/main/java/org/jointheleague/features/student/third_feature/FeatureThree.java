@@ -13,7 +13,7 @@ public class FeatureThree extends Feature {
     public final String COMMAND = "!youtubeSearch";
 
     private WebClient webClient;
-    private static final String baseUrl = "https://www.googleapis.com/youtube/v3";
+    private static final String baseUrl = "https://www.googleapis.com/youtube/v3/search";
     private final String apiKey = "AIzaSyCceYxjiqx8n-XOGodWeypAAib1Y4uJGsU";
 
     public FeatureThree(String channelName) {
@@ -38,32 +38,32 @@ public class FeatureThree extends Feature {
                 event.getChannel().sendMessage("Please put a topic after the command (e.g. " + COMMAND + " cats)");
             }
             else{
-                String story = findStory(messageContent);
-                event.getChannel().sendMessage(story);
+                String video = findVideo(messageContent);
+                event.getChannel().sendMessage(video);
             }
         }
     }
 
-    public ApiExampleWrapper getNewsStoryByTopic(String topic) {
-        Mono<ApiExampleWrapper> apiExampleWrapperMono = webClient.get()
+    public ApiExample getVideoByTopic(String topic) {
+        Mono<ApiExample> apiExampleWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("q", topic)
                         .queryParam("sortBy", "popularity")
                         .queryParam("apiKey", apiKey)
                         .build())
                 .retrieve()
-                .bodyToMono(ApiExampleWrapper.class);
+                .bodyToMono(ApiExample.class);
 
         return apiExampleWrapperMono.block();
     }
 
-    public String findStory(String topic){
+    public String findVideo(String topic){
 
         //Get a story from News API
-        ApiExampleWrapper apiExampleWrapper = getNewsStoryByTopic(topic);
+        ApiExample apiExampleWrapper = getVideoByTopic(topic)
 
         //Get the first article
-        Article article = apiExampleWrapper.getArticles().get(0);
+
 
         //Get the title of the article
         String articleTitle = article.getTitle();
