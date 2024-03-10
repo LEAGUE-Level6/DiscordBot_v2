@@ -1,27 +1,31 @@
 package org.jointheleague.features.examples.first_features;
 
-import java.util.Locale;
-import java.util.Random;
-
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
-public class RandomNumber extends Feature {
+import java.util.Locale;
 
-    public final String COMMAND = "q!random";
+public class WebSearch extends Feature {
 
-    public RandomNumber(String channelName) {
+    public final String COMMAND = "q!websearch";
+
+    public WebSearch(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Allows you to get a random number between 0 and 1000)");
+
+        //Create a help embed to describe feature when !help command is sent
+        helpEmbed = new HelpEmbed(
+                COMMAND,
+                "Guides you to web results for the entered query"
+        );
     }
 
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent().toLowerCase(Locale.ROOT);
         if (messageContent.startsWith(COMMAND)) {
-            Random r = new Random();
-            event.getChannel().sendMessage("Your random number is " + r.nextInt(1001));
+            //respond to message here
+            event.getChannel().sendMessage("Google it yourself: https://google.com");
         }
     }
 

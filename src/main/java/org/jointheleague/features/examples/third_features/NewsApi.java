@@ -8,10 +8,12 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.Locale;
+
 //Documentation for the API can be found here: https://newsapi.org/docs/get-started
 public class NewsApi extends Feature {
 
-    public final String COMMAND = "!newsApi";
+    public final String COMMAND = "q!newsapi";
 
     private WebClient webClient;
     private static final String baseUrl = "http://newsapi.org/v2/everything";
@@ -30,7 +32,7 @@ public class NewsApi extends Feature {
 
     @Override
     public void handle(MessageCreateEvent event) {
-        String messageContent = event.getMessageContent();
+        String messageContent = event.getMessageContent().toLowerCase(Locale.ROOT);
         if (messageContent.startsWith(COMMAND)) {
             messageContent = messageContent
                     .replace(COMMAND, "")

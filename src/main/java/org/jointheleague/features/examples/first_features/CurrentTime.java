@@ -10,7 +10,7 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 
 public class CurrentTime extends Feature {
 
-	public final String COMMAND = "!time";
+	public final String COMMAND = "q!time";
 
 	public CurrentTime(String channelName) {
 		super(channelName);
@@ -19,7 +19,7 @@ public class CurrentTime extends Feature {
 
 	@Override
 	public void handle(MessageCreateEvent event) {
-		String messageContent = event.getMessageContent();
+		String messageContent = event.getMessageContent().toLowerCase();
 		if (messageContent.startsWith(COMMAND)) {
 			Date date = new Date(System.currentTimeMillis());
 			SimpleDateFormat formatter = new SimpleDateFormat("'The time is 'HH:mm:ss z' on 'MM-dd-yyyy'.'");
