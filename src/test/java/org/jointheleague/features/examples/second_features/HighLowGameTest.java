@@ -169,7 +169,7 @@ public class HighLowGameTest {
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        highLowGame.handle(messageCreateEvent);
+         highLowGame.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage("Correct!  The number I picked was " + guess);

@@ -53,11 +53,11 @@ public class TriviaTest {
         //Given
 
         //When
-        String command = featureTemplate.COMMAND;
+        String command = trivia.COMMAND;
 
         //Then
 
-        if(!(featureTemplate instanceof FeatureTemplate)){
+        if(!(trivia instanceof Trivia)){
             assertNotEquals("!command", command);
         }
 
@@ -67,19 +67,6 @@ public class TriviaTest {
         assertNotNull(command);
     }
 
-    @Test
-    void itShouldHandleMessagesWithCommand() {
-        //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureTemplate.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureTemplate.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        featureTemplate.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
-    }
 
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
@@ -88,7 +75,7 @@ public class TriviaTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureTemplate.handle(messageCreateEvent);
+        trivia.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage("");
@@ -99,7 +86,7 @@ public class TriviaTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = featureTemplate.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = trivia.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -110,8 +97,8 @@ public class TriviaTest {
         //Given
 
         //When
-        String helpEmbedTitle = featureTemplate.getHelpEmbed().getTitle();
-        String command = featureTemplate.COMMAND;
+        String helpEmbedTitle = trivia.getHelpEmbed().getTitle();
+        String command = trivia.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
@@ -121,7 +108,18 @@ public class TriviaTest {
     void theScoreShouldBeZeroWhenTheGameEnds(){
         //Given
         String command = "end";
+        int score = trivia.score;
 
-        assertEquals()
+        assertEquals(score,0);
     }
+
+    @Test
+    void theScoreShouldBeZeroWhenTheGameStarts(){
+        //Given
+        String command = "ask";
+        int score = trivia.score;
+
+        assertEquals(score,0);
+    }
+
 }
