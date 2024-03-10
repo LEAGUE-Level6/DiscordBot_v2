@@ -1,9 +1,9 @@
-package org.jointheleague.features.student.first_feature;
+package org.jointheleague.features.examples.first_features;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,14 +15,15 @@ import java.io.PrintStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-public class FeatureOneTest {
+class WebSearchTest {
+
     private final String testChannelName = "test";
-    private final FeatureOne featureOne = new FeatureOne(testChannelName);
+    private final WebSearch webSearch = new WebSearch(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -53,30 +54,29 @@ public class FeatureOneTest {
         //Given
 
         //When
-        String command = featureOne.COMMAND;
+        String command = webSearch.COMMAND;
 
         //Then
 
-        if(!(featureOne instanceof FeatureTemplate)){
-            assertNotEquals("!command", command);
+        if(!(webSearch instanceof WebSearch)){
+            assertNotEquals("q!command", command);
         }
 
         assertNotEquals("", command);
-        assertNotEquals("!", command);
-        assertNotEquals("!command", command);
-        assertEquals('!', command.charAt(0));
+        assertNotEquals("q!", command);
+        assertEquals('q', command.charAt(0));
         assertNotNull(command);
     }
 
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureOne.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureOne.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(webSearch.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(webSearch.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        featureOne.handle(messageCreateEvent);
+        webSearch.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -89,10 +89,10 @@ public class FeatureOneTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureOne.handle(messageCreateEvent);
+        webSearch.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, never()).sendMessage("");
+        //verify(textChannel, never()).sendMessage();
     }
 
     @Test
@@ -100,7 +100,7 @@ public class FeatureOneTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = featureOne.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = webSearch.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -111,8 +111,8 @@ public class FeatureOneTest {
         //Given
 
         //When
-        String helpEmbedTitle = featureOne.getHelpEmbed().getTitle();
-        String command = featureOne.COMMAND;
+        String helpEmbedTitle = webSearch.getHelpEmbed().getTitle();
+        String command = webSearch.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

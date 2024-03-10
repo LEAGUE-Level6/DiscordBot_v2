@@ -4,11 +4,12 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
+import java.util.Locale;
 import java.util.Random;
 
 public class HighLowGame extends Feature {
 
-    public final String COMMAND = "!highLow";
+    public final String COMMAND = "q!hl";
     private final Random random = new Random();
     int numberToGuess;
 
@@ -19,7 +20,7 @@ public class HighLowGame extends Feature {
 
     @Override
     public void handle(MessageCreateEvent event){
-        String messageContent = event.getMessageContent();
+        String messageContent = event.getMessageContent().toLowerCase(Locale.ROOT);
 
         //start the game with the command
         if (messageContent.equals(COMMAND)) {
