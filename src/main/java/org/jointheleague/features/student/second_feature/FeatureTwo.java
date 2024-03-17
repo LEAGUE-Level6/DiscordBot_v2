@@ -10,7 +10,8 @@ public class FeatureTwo extends FeatureTemplate{
 	 public final String COMMAND = "!blackjack";
 	    private final Random random = new Random();
 	    int numberToGuess;
-
+	    int yourValue = 0;
+        int botValue = 0;
 	    public FeatureTwo(String channelName) {
 	        super(channelName);
 	        helpEmbed = new HelpEmbed(COMMAND, "Get as close to 21 as you can with your cards. 'Hit' means to ask for another card, stand means you are finished. Between us, whoever is closer to 21 wins!");
@@ -19,8 +20,7 @@ public class FeatureTwo extends FeatureTemplate{
 	    @Override
 	    public void handle(MessageCreateEvent event){
 	        String messageContent = event.getMessageContent();
-	        int yourValue = 0;
-	        int botValue = 0;
+	       
 	        //start the game with the command
 	        if (messageContent.equals(COMMAND)) { 
 	        	String botCard = cardPicker();
@@ -29,15 +29,18 @@ public class FeatureTwo extends FeatureTemplate{
 	        	yourValue+=findValue(yourCard);
 	            event.getChannel().sendMessage("My Card: " + botCard + "\n Your Card: " + yourCard + "\n !Hit or !Stand ?");
 	        }
+	        else if(messageContent.equalsIgnoreCase("!Hit")) {
+	        	event.getChannel().sendMessage("Please start the game before using this command.");
+	        }
 	        boolean end = false;
-	        while(!end)
-	        if(messageContent.equals("!Hit")) {
+	        while(!end) {
+	        if(messageContent.equalsIgnoreCase("!Hit")) {
 	        	String yourCard2 = cardPicker();
 	        	yourValue+=findValue(yourCard2);
 	        	event.getChannel().sendMessage("Your Next Card: " + yourCard2);
 	        	event.getChannel().sendMessage("Your Total Card Value " + yourValue);
 	        	event.getChannel().sendMessage("!Hit or !Stand ?");
-	        } else if(messageContent.equals("!Stand")) {
+	        } else if(messageContent.equalsIgnoreCase("!Stand")) {
 	        	end = true;
 	        	if(yourValue > 21) {
 	        	event.getChannel().sendMessage("Bust! You lose.");
@@ -45,7 +48,7 @@ public class FeatureTwo extends FeatureTemplate{
 	        	else {
 	        		if(botValue > yourValue) {
 	        			event.getChannel().sendMessage("Bot's Total Card Value: " + botValue);
-	        			event.getChannel().sendMessage("Bot wins!");
+	        			event.getChannel().sendMessage("Bot wins! Score: " + botValue);
 	        		} else {
 	        			boolean end2 = false;
 	        			while(!end2) {
@@ -53,23 +56,24 @@ public class FeatureTwo extends FeatureTemplate{
 	        			botValue+=findValue(botCard2);
 	        			if(botValue == 20 || botValue == 21) {
 	        				if(botValue == yourValue) {
-	        					event.getChannel().sendMessage("Tie!");
+	        					event.getChannel().sendMessage("Tie! You both scored " + yourValue);
 	        				} else if(botValue > yourValue) {
-	        					event.getChannel().sendMessage("Bot wins!");
+	        					event.getChannel().sendMessage("Bot wins! Score: " + botValue);
 	        				} else if(botValue < yourValue) {
-	        					event.getChannel().sendMessage("You win!");
+	        					event.getChannel().sendMessage("You win! Score: " + botValue);
 	        				}
 	        			end2 = true;
 	        			} else if(botValue > yourValue) {
-	        				event.getChannel().sendMessage("Bot wins!");
+	        				event.getChannel().sendMessage("Bot wins! Score: " + botValue);
 	        				end2 = true;
 	        			} else if(botValue > 21) {
-	        				event.getChannel().sendMessage("Bot busted! You win!");
+	        				event.getChannel().sendMessage("Bot busted! You win! Score: " + botValue);
 	        			}
 	        			}
 	        		}
 	        	}
 	        	}
+	    }
 	        
 	       
 	    }

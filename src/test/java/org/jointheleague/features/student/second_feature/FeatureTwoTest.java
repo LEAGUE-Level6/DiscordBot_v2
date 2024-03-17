@@ -119,7 +119,7 @@ public class FeatureTwoTest {
     @Test
     void itShouldNotAcceptGuessIfGameIsNotStarted() {
         //Given
-        String command = "!highLow 5";
+        String command = "!Hit";
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
@@ -127,16 +127,35 @@ public class FeatureTwoTest {
         featureTwo.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage("Please start the game first using just the command");
+        verify(textChannel, times(1)).sendMessage("Please start the game before using this command.");
+
+    }
+
+    
+
+    @Test
+    void itShouldTellTheUserIfTheyLose() {
+        //Given
+        String command = "!Hit";
+        featureTwo.yourValue = 20;
+        featureTwo.botValue = 21;
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+
+        //When
+        featureTwo.handle(messageCreateEvent);
+
+        //Then
+        verify(textChannel, times(1)).sendMessage("You lose! Score: " + featureTwo.botValue);
 
     }
 
     @Test
-    void itShouldTellTheUserIfTheirGuessIsTooLow() {
+    void itShouldTellTheUserIfTheyWin() {
         //Given
-        int guess = 1;
-        String command = "!highLow " + guess;
-        featureTwo.numberToGuess = 100;
+        String command = "!Hit";
+        featureTwo.yourValue = 21;
+        featureTwo.botValue = 20;
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
@@ -144,41 +163,7 @@ public class FeatureTwoTest {
         featureTwo.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(guess + " is too low.  Guess again!");
-
-    }
-
-    @Test
-    void itShouldTellTheUserIfTheirGuessIsTooHigh() {
-        //Given
-        int guess = 100;
-        String command = "!highLow " + guess;
-        featureTwo.numberToGuess = 1;
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        featureTwo.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage(guess + " is too high.  Guess again!");
-
-    }
-
-    @Test
-    void itShouldTellTheUserIfTheirGuessIsCorrect() {
-        //Given
-        int guess = 100;
-        String command = "!highLow " + guess;
-        featureTwo.numberToGuess = 100;
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-
-        //When
-        featureTwo.handle(messageCreateEvent);
-
-        //Then
-        verify(textChannel, times(1)).sendMessage("Correct!  The number I picked was " + guess);
+        verify(textChannel, times(1)).sendMessage("You win! Score: " + featureTwo.yourValue);
     }
 
    
