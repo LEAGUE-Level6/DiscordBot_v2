@@ -8,25 +8,23 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import javax.swing.*;
+import java.util.Random;
+
 public class FeatureThree extends Feature {
 
-    public final String COMMAND = "!youtubeSearch";
-
-    private WebClient webClient;
-    private static final String baseUrl = "https://www.googleapis.com/youtube/v3/search";
-    private final String apiKey = "AIzaSyCceYxjiqx8n-XOGodWeypAAib1Y4uJGsU";
+    public final String COMMAND = "!numFact";
 
     public FeatureThree(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Using an API to search for youtube videos based on a topic (e.g. !youtubeSearch cats)");
 
-        //build the WebClient
-        this.webClient = WebClient
-                .builder()
-                .baseUrl(baseUrl)
-                .build();
+        //Create a help embed to describe feature when !help command is sent
+        helpEmbed = new HelpEmbed(
+                COMMAND,
+                "This command gives you a random fact about a number. Formatted like (!numFact 1)"
+        );
     }
-
+    //IGNORE
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
@@ -35,58 +33,14 @@ public class FeatureThree extends Feature {
                     .replace(COMMAND, "")
                     .replace(" " , "");
             if (messageContent.equals("")) {
-                event.getChannel().sendMessage("Please put a topic after the command (e.g. " + COMMAND + " cats)");
+                event.getChannel().sendMessage("Please put a number after the command (e.g. " + COMMAND + " 12)");
             }
-            else{
-                String video = findVideo(messageContent);
-                event.getChannel().sendMessage(video);
+            else {
+                ApiExample numApi = new ApiExample();
+                String numFact = numApi.findNumFact(messageContent);
+                event.getChannel().sendMessage(numFact + "Test");
             }
         }
     }
-
-    public ApiExample getVideoByTopic(String topic) {
-        Mono<ApiExample> apiExampleWrapperMono = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .queryParam("q", topic)
-                        .queryParam("sortBy", "popularity")
-                        .queryParam("apiKey", apiKey)
-                        .build())
-                .retrieve()
-                .bodyToMono(ApiExample.class);
-
-        return apiExampleWrapperMono.block();
-    }
-
-    public String findVideo(String topic){
-
-        //Get a story from News API
-        ApiExample apiExampleWrapper = getVideoByTopic(topic)
-
-        //Get the first article
-
-
-        //Get the title of the article
-        String articleTitle = article.getTitle();
-
-        //Get the content of the article
-        String articleContent = article.getContent();
-
-        //Get the URL of the article
-        String articleUrl = article.getUrl();
-
-        //Create the message
-        String message =
-                articleTitle + " -\n"
-                        + articleContent
-                        + "\nFull article: " + articleUrl;
-
-        //Send the message
-        return message;
-    }
-
-    public void setWebClient(WebClient webClient) {
-        this.webClient = webClient;
-    }
-
 }
 
