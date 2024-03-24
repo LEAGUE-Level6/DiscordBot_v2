@@ -1,29 +1,56 @@
 package org.jointheleague.features.student.third_feature;
-import java.io.IOException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-import com.sun.tools.doclets.internal.toolkit.Content;
-import org.apache.http.client.fluent.*;
-import org.omg.CORBA.Request;
 
 public class Holidays {
 
+    private static final String baseUrl = "https://holidays.abstractapi.com/v1/";
+    private final String apiKey = "736d5028a46c42ada682689ef387e002";
+    private WebClient webClient;
 
-
-        public static void main(String[] args) {
-            Holidays();
-        }
-
-        private static void Holidays() {
-
-            try {
-    //https://app.abstractapi.com/api/holidays/tester
-                Content content = Request.Get("https://holidays.abstractapi.com/v1/?api_key=736d5028a46c42ada682689ef387e002&country=US&year=2020&month=12&day=25")
-
-                        .execute().returnContent();
-
-                System.out.println(content);
-            }
-            catch (IOException error) { System.out.println(error); }
-        }
+    public Holidays(){
+        this.webClient = WebClient
+                .builder()
+                .baseUrl(baseUrl)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
     }
+    public void testRequest() {
+
+        /*
+        Just like in the Cheetah Search API, we use the uri() method to add the token as a query parameter
+        The resulting uri would look like:
+        http://newsapi.org/v2/everything?q=pizza&sortBy=popularity&apiKey=59ac01326c584ac0a069a29798794bec
+         */
+        Mono<String> stringMono = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("api_key", apiKey)
+                        .queryParam("country", "US")
+                        .queryParam("year","2021")
+                        .queryParam("month", "01")
+                        .queryParam("day","01")
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+
+        String response = stringMono.block();
+
+        System.out.println(response);
+    }
+    public static void main(String[] args) {
+
+    Holidays holidays = new Holidays();
+    holidays.testRequest();
+
+
+    }
+
 }
+
+
+
+
+
