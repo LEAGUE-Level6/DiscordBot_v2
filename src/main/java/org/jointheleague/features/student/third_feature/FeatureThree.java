@@ -10,14 +10,14 @@ import reactor.core.publisher.Mono;
 
 public class FeatureThree extends Feature {
 
-    public final String COMMAND = "!catFactApi";
+    public final String COMMAND = "!bored";
 
     private WebClient webClient;
-    private static final String baseUrl = "https://meowfacts.herokuapp.com/";
+    private static final String baseUrl = "https://www.boredapi.com/api/activity";
 
     public FeatureThree(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Example of using an API to get information from another service.  This returns a cat fact");
+        helpEmbed = new HelpEmbed(COMMAND, "This will return an activity you can do when you're bored.");
 
         //build the WebClient
         this.webClient = WebClient
@@ -30,20 +30,21 @@ public class FeatureThree extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
-            String catFact = getFact();
+            String catFact = getActivity();
             event.getChannel().sendMessage(catFact);
         }
     }
-    public String getFact() {
+    public String getActivity() {
 
         //Make the request, accepting the response as a plain old java object you created
-      
+    	Mono<CatWrapper> catWrapperMono = webClient.get().retrieve().bodyToMono(CatWrapper.class);
 
         //collect the response into a plain old java object
-
+    	CatWrapper catWrapper = catWrapperMono.block();
         //get the cat fact from the response
-
+    	String message = catWrapper.getData().get(0);
         //send the message
+    	return message;
     }
 
     public void setWebClient(WebClient webClient) {

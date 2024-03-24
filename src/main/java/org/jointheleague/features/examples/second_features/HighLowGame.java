@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class HighLowGame extends Feature {
 
-    public final String COMMAND = "!blackjack";
+    public final String COMMAND = "!HighLowGame";
     private final Random random = new Random();
     int numberToGuess;
 
