@@ -12,6 +12,7 @@ import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.first_feature.FeatureOne;
 import org.jointheleague.features.student.first_feature.Hello;
 import org.jointheleague.features.student.second_feature.Trivia;
+import org.jointheleague.features.student.third_feature.Holidays;
 
 public class DiscordBot {
 
@@ -53,6 +54,7 @@ public class DiscordBot {
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new Trivia(channelName));
 		addFeature(new Hello(channelName));
+		addFeature(new Holidays(channelName));
 	}
 
 	private void addFeature(Feature feature){
