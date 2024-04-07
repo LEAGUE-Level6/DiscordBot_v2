@@ -25,7 +25,7 @@ public class FeatureOne extends FeatureTemplate {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
-            event.getChannel().sendMessage("I am NicholasBot, created by the one and only, Nicholas Falstad. I have all sorts of features such as... (fill in later)");
+            event.getChannel().sendMessage("I am NicholasBot, created by the one and only, Nicholas Falstad. I have features such as a blackjack game, and I can suggest an activity for you when you're bored.");
         }
     }
     }

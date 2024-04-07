@@ -26,7 +26,7 @@ dependencies {
 group = 'org.jointheleague'
 version = '2.0'
 description = 'discordbot'
-sourceCompatibility = '1.8'
+sourceCompatibility = '1.11'
 
 
 test {
