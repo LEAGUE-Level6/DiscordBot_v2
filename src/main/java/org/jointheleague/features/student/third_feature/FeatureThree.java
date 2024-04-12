@@ -36,9 +36,11 @@ public class FeatureThree extends Feature {
                 event.getChannel().sendMessage("Please put a number after the command (e.g. " + COMMAND + " 12)");
             }
             else {
+                event.getChannel().sendMessage("Test");
                 ApiExample numApi = new ApiExample();
                 String numFact = numApi.findNumFact(messageContent);
-                event.getChannel().sendMessage(numFact + "Test");
+                event.getChannel().sendMessage("Test?");
+                event.getChannel().sendMessage(numFact);
             }
         }
     }

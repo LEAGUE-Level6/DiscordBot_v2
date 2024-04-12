@@ -32,7 +32,7 @@ public class FeatureTwo extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.equals(COMMAND)) {
             //respond to message here
-            event.getChannel().sendMessage("Welcome! This is a fast facts quiz function. Question 1 will begin shortly...");
+            event.getChannel().sendMessage("Welcome! This is a fast facts quiz function. Question 1 will begin shortly... (Stop the quiz using !STOP)");
             gameStart = 1;
             getRandQuestion();
             event.getChannel().sendMessage("Question " + qCount + ": " + currentQ.getContent());
@@ -40,6 +40,11 @@ public class FeatureTwo extends Feature {
         }
         else if(!messageContent.contains(COMMAND) && !messageContent.contains("Question") && !messageContent.contains("correct")){
             if(gameStart == 0) {
+                return;
+            }
+            if(messageContent.contains("!STOP")) {
+                gameStart = 0;
+                event.getChannel().sendMessage("Thanks for playing!");
                 return;
             }
             if(currentQ.checkAnswer(messageContent)) {

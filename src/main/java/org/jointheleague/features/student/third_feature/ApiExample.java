@@ -1,6 +1,6 @@
 package org.jointheleague.features.student.third_feature;
 
-import org.jointheleague.features.student.third_feature.data_transfer_objects.ApiExampleWrapper;
+import org.jointheleague.features.student.third_feature.data_transfer_objects.NumFact;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -15,20 +15,22 @@ public ApiExample() {
             .baseUrl(baseUrl)
             .build();
 }
-public ApiExampleWrapper getNumFact(String number) {
-    Mono<ApiExampleWrapper> numMono = webClient.get()
+public NumFact getNumFact(String number) {
+    System.out.println("Test!!");
+    Mono<NumFact> numMono = webClient.get()
             .uri(uriBuilder -> uriBuilder
-                    .path("/" + number)
+                    .path("/" + number + "?json")
                     .build())
             .retrieve()
-            .bodyToMono(ApiExampleWrapper.class);
-    System.out.println(numMono.block().getText().get(0));
+            .bodyToMono(NumFact.class);
+    System.out.println("Test :(");
     return numMono.block();
 }
 public String findNumFact(String numberPick) {
-    ApiExampleWrapper numWrap = getNumFact(numberPick);
-    String numFact = numWrap.getText().get(0);
-    System.out.println(numFact);
+    System.out.println(numberPick);
+    NumFact numWrap = getNumFact(numberPick);
+    String numFact = numWrap.getText();
+    System.out.println(numFact + "TEST");
     return numFact;
 }
 
