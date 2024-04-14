@@ -7,6 +7,7 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriBuilder;
 import reactor.core.publisher.Mono;
 
 
@@ -29,11 +30,13 @@ public class Holidays extends Feature {
 
         this.webClient = WebClient
                 .builder()
+                .baseUrl(baseUrl)
                 .build();
     }
 
 
     public String getHoliday() {
+        System.out.println("1");
         Mono<HolidaysWrapper> holidaysWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("api_key", apiKey)
@@ -41,13 +44,16 @@ public class Holidays extends Feature {
                         .queryParam("year", "2021")
                         .queryParam("month", "01")
                         .queryParam("day", "01")
+                        //.query("https://holidays.abstractapi.com/v1/api_key=736d5028a46c42ada682689ef387e002&country=US&year=2021&month=1&day=1")
                         .build())
                 .retrieve()
                 .bodyToMono(HolidaysWrapper.class);
+        System.out.println("2");
+
         HolidaysWrapper holidaysWrapper =  holidaysWrapperMono.block();
-
+        System.out.println("3");
         String message = holidaysWrapper.getName();
-
+        System.out.println("4");
         return message;
     }
 
