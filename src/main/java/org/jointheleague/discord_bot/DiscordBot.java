@@ -32,7 +32,7 @@ public class DiscordBot {
 
 	public void connect(boolean printInvite) {
 
-		api = new DiscordApiBuilder().setToken(token).addIntents(Intent.MESSAGE_CONTENT).login().join();
+		api = new DiscordApiBuilder().setToken(token).login().join();
 
 		//Print the URL to invite the bot
 		if (printInvite) {
