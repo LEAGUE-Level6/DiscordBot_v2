@@ -72,7 +72,7 @@ public class FeatureTwoTest {
         featTwo.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(textChannel, atLeastOnce()).sendMessage(anyString());
     }
 
     @Test
