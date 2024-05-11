@@ -12,10 +12,7 @@ public class FeatureTemplate extends Feature {
         super(channelName);
 
         //Create a help embed to describe feature when !help command is sent
-        helpEmbed = new HelpEmbed(
-                COMMAND,
-                "Give a brief description of your feature here, including how the user interacts with it"
-        );
+        helpEmbed = new HelpEmbed(COMMAND, "");
     }
 
     @Override
@@ -23,7 +20,7 @@ public class FeatureTemplate extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
-            event.getChannel().sendMessage("Sending a message to the channel");
+            event.getChannel().sendMessage("");
         }
     }
 
