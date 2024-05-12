@@ -22,7 +22,7 @@ import static org.mockito.Mockito.never;
 
 public class FeatureOneTest {
     private final String testChannelName = "test";
-    private final FeatureOne featureOne = new FeatureOne(testChannelName);
+    private final wuQuote featureOne = new wuQuote(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
