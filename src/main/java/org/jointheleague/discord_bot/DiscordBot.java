@@ -2,7 +2,6 @@ package org.jointheleague.discord_bot;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.entity.intent.Intent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
@@ -31,7 +30,6 @@ public class DiscordBot {
 	}
 
 	public void connect(boolean printInvite) {
-
 		api = new DiscordApiBuilder().setToken(token).login().join();
 
 		//Print the URL to invite the bot
@@ -47,11 +45,13 @@ public class DiscordBot {
 		api.addMessageCreateListener(helpListener);
 
 		//add features
-		addFeature(new FeatureOne(channelName));
+		addFeature(new RandomNumber(channelName));
 		addFeature(new CurrentTime(channelName));
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		//MINE
+		addFeature(new FeatureOne(channelName));
 		addFeature(new FeatureTwo(channelName));
 		addFeature(new FeatureThree(channelName));
 	}
