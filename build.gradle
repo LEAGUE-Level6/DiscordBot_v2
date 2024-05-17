@@ -33,6 +33,11 @@ test {
     useJUnitPlatform()
 }
 
+run {
+
+	environment 'CHANNEL_NAME', 'general'
+}
+
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }

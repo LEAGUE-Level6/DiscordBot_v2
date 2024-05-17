@@ -32,6 +32,7 @@ public class DiscordBot {
 
 		api = new DiscordApiBuilder().setToken(token).addIntents(Intent.MESSAGE_CONTENT).login().join();
 
+
 		//Print the URL to invite the bot
 		if (printInvite) {
 			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
@@ -50,6 +51,7 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		addFeature(new RandomNumber(channelName));
 	}
 
 	private void addFeature(Feature feature){
