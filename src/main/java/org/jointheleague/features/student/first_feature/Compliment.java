@@ -23,13 +23,13 @@ public class Compliment extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
-            String[] list = {"Your smile always brightens my day.", "You are amazing!", "I love that shirt. It really bring out the color of your eyes.",
-                    "Time spent with you is always worth it.", "You are unique, just like everyone else.", "Have you been working out? I can tell." ,
+            String[] list = {"Your smile always brightens my day.", "Tu m'étonnes. Comme c'est magnifique!", "I love that shirt. It really bring out the color of your eyes.",
+                    "Time spent with you is always worth it.", "Have you been working out? I can tell." ,
                     "I bet you solve crossword puzzles in ink.", "Is that a new perfume? It smells great.", "You are rocking those glasses!",
-               "I bet you can make even the crankiest babies smile.","You're so good at lying!", "Are you peanut butter, because you're making me jelly.",
-            "I love that skirt on you! Can I buy it off of you for, say $20?", "You're great at making friends, but even better at making enemies.",
-            "You're so hot, I need a fan to cool me down.", "You're too kind. Maybe tone it down a bit", "I bet you have straight A's in school.",
-            "You're beautiful, but not everyone will agree.", "Your husband is a very lucky man." };
+               "I bet you can make even the crankiest seniors smile.","Are you peanut butter, because you're making me jelly.",
+            "I love that skirt on you! Can I buy it off of you for, say $20?", "You're so hot, I need a fan to cool me down.", "You're too kind. Maybe tone it down a bit",
+                    "I bet you have straight A's in school.", "Your husband is a very lucky man.",
+                    "I bet you got a 5 on the AP Chemistry exam.", "On my list of Top 10 Favorite People, you're definitely on there." };
             int rand = (int)(Math.random()*list.length)+0;
                 event.getChannel().sendMessage(list[rand]);
         }
