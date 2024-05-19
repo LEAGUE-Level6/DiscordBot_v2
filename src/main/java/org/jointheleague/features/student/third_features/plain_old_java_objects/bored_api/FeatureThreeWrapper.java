@@ -15,5 +15,17 @@ public class FeatureThreeWrapper {
 	public void setData(List<String> data) {
 		this.data = data;
 	}
-	
+
+	@SerializedName("activity")
+	@Expose
+	private String activity;
+
+	public String getActivity() {
+		return activity;
+	}
+
+	public void setActivity(String activity) {
+		this.activity = activity;
+	}
+
 }

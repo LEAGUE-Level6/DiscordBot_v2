@@ -2,8 +2,8 @@ package org.jointheleague.features.student.third_feature;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.student.third_features.plain_old_java_objects.bored_api.FeatureThreeWrapper;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.core.publisher.Mono;
@@ -30,20 +30,21 @@ public class FeatureThree extends Feature {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
-            String catFact = getActivity();
-            event.getChannel().sendMessage(catFact);
+            String activity = getActivity();
+            event.getChannel().sendMessage(activity);
         }
     }
     public String getActivity() {
 
         //Make the request, accepting the response as a plain old java object you created
-    	Mono<CatWrapper> catWrapperMono = webClient.get().retrieve().bodyToMono(CatWrapper.class);
+    	Mono<FeatureThreeWrapper> wrapperMono = webClient.get().retrieve().bodyToMono(FeatureThreeWrapper.class);
 
         //collect the response into a plain old java object
-    	CatWrapper catWrapper = catWrapperMono.block();
+    	FeatureThreeWrapper wrapper = wrapperMono.block();
         //get the cat fact from the response
-    	String message = catWrapper.getData().get(0);
+    	String message = wrapper.getActivity();
         //send the message
+        System.out.println(message);
     	return message;
     }
 
