@@ -1,29 +1,27 @@
 package org.jointheleague.api_wrapper;
 
-import java.util.concurrent.CompletableFuture;
-
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.event.message.MessageCreateEvent;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class ReceivedMessage {
 
-    private MessageCreateEvent event;
+    private MessageReceivedEvent event;
 
-    public ReceivedMessage(MessageCreateEvent event) {
+    public ReceivedMessage(MessageReceivedEvent event) {
         this.event = event;
     }
 
     public String getMessageContent() {
-        return this.event.getMessageContent();
+        return this.event.getMessage().getContentStripped();
     }
 
     public void sendResponse(String message) {
-        this.event.getChannel().sendMessage(message);
+        this.event.getChannel().sendMessage(message).submit().join();
     }
 
-    public CompletableFuture<Message> sendResponse(EmbedBuilder embed) {
-        return this.event.getChannel().sendMessage(embed);
+    public Message sendResponse(MessageEmbed embed) {
+        return this.event.getChannel().sendMessageEmbeds(embed).submit().join();
     }
 
 }
