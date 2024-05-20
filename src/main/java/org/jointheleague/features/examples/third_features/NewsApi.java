@@ -1,6 +1,6 @@
 package org.jointheleague.features.examples.third_features;
 
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
@@ -29,18 +29,18 @@ public class NewsApi extends Feature {
     }
 
     @Override
-    public void handle(MessageCreateEvent event) {
+    public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             messageContent = messageContent
                     .replace(COMMAND, "")
                     .replace(" " , "");
             if (messageContent.equals("")) {
-                event.getChannel().sendMessage("Please put a topic after the command (e.g. " + COMMAND + " cats)");
+                event.sendResponse("Please put a topic after the command (e.g. " + COMMAND + " cats)");
             }
             else{
                 String story = findStory(messageContent);
-                event.getChannel().sendMessage(story);
+                event.sendResponse(story);
             }
         }
     }

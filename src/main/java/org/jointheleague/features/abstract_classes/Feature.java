@@ -4,6 +4,8 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 import net.aksingh.owmjapis.api.APIException;
+
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
 public abstract class Feature implements MessageCreateListener {
@@ -21,7 +23,7 @@ public abstract class Feature implements MessageCreateListener {
         event.getServerTextChannel().ifPresent(e -> {
             if (e.getName().equals(channelName)) {
                 try {
-                    handle(event);
+                    handle(new ReceivedMessage(event));
                 } catch (APIException e1) {
                     e1.printStackTrace();
                 }
@@ -33,6 +35,6 @@ public abstract class Feature implements MessageCreateListener {
         return this.helpEmbed;
     }
 
-    public abstract void handle(MessageCreateEvent event) throws APIException;
+    public abstract void handle(ReceivedMessage event) throws APIException;
 
 }

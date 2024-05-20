@@ -1,7 +1,6 @@
 package org.jointheleague.features.examples.second_features;
 
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,10 +23,7 @@ public class HighLowGameTest {
     private final PrintStream originalOut = System.out;
 
     @Mock
-    private MessageCreateEvent messageCreateEvent;
-
-    @Mock
-    private TextChannel textChannel;
+    private ReceivedMessage messageCreateEvent;
 
     @BeforeEach
     void setUp() {
@@ -63,13 +59,12 @@ public class HighLowGameTest {
         //Given
         HelpEmbed helpEmbed = new HelpEmbed(highLowGame.COMMAND, "test");
         when(messageCreateEvent.getMessageContent()).thenReturn(highLowGame.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
         highLowGame.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(messageCreateEvent, times(1)).sendResponse(anyString());
     }
 
     @Test
@@ -82,7 +77,7 @@ public class HighLowGameTest {
         highLowGame.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, never()).sendMessage("");
+        verify(messageCreateEvent, never()).sendResponse("");
     }
 
     @Test
@@ -115,13 +110,12 @@ public class HighLowGameTest {
         //Given
         String command = "!highLow 5";
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
         highLowGame.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage("Please start the game first using just the command");
+        verify(messageCreateEvent, times(1)).sendResponse("Please start the game first using just the command");
 
     }
 
@@ -132,13 +126,12 @@ public class HighLowGameTest {
         String command = "!highLow " + guess;
         highLowGame.numberToGuess = 100;
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
         highLowGame.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(guess + " is too low.  Guess again!");
+        verify(messageCreateEvent, times(1)).sendResponse(guess + " is too low.  Guess again!");
 
     }
 
@@ -149,13 +142,12 @@ public class HighLowGameTest {
         String command = "!highLow " + guess;
         highLowGame.numberToGuess = 1;
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
         highLowGame.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(guess + " is too high.  Guess again!");
+        verify(messageCreateEvent, times(1)).sendResponse(guess + " is too high.  Guess again!");
 
     }
 
@@ -166,13 +158,12 @@ public class HighLowGameTest {
         String command = "!highLow " + guess;
         highLowGame.numberToGuess = 100;
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
         highLowGame.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage("Correct!  The number I picked was " + guess);
+        verify(messageCreateEvent, times(1)).sendResponse("Correct!  The number I picked was " + guess);
     }
 
     @Test
@@ -182,12 +173,11 @@ public class HighLowGameTest {
         String command = "!highLow " + guess;
         highLowGame.numberToGuess = 100;
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
         highLowGame.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage("Please format your guess like this: " + highLowGame.COMMAND + " 5");
+        verify(messageCreateEvent, times(1)).sendResponse("Please format your guess like this: " + highLowGame.COMMAND + " 5");
     }
 }
