@@ -1,8 +1,11 @@
 package org.jointheleague.discord_bot;
 
-import org.javacord.api.DiscordApi;
-import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.entity.intent.Intent;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
@@ -18,7 +21,7 @@ public class DiscordBot {
 
 	private String channelName;
 
-	DiscordApi api;
+	JDA api;
 
 	HelpListener helpListener;
 
@@ -28,21 +31,29 @@ public class DiscordBot {
 		helpListener = new HelpListener(channelName);
 	}
 
-	public void connect(boolean printInvite) {
+	public void connect(boolean printInvite) throws InterruptedException {
 
-		api = new DiscordApiBuilder().setToken(token).addIntents(Intent.MESSAGE_CONTENT).login().join();
+		api = JDABuilder.createDefault(token)
+				.enableIntents(GatewayIntent.MESSAGE_CONTENT) // enables explicit access to message.getContentDisplay()
+				.build();
+		api.awaitReady();
 
 		//Print the URL to invite the bot
 		if (printInvite) {
-			System.out.println("To authorize your bot, send your teacher this link: " + api.createBotInvite()
+			System.out.println("To authorize your bot, send your teacher this link: " + api.getInviteUrl()
 					+"\n\tThis message can be disabled in org.jointheleague.Launcher.java");
 		}
 
 		//Send bot connected message in channel
-		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has connected"));
+		MessageCreateData botConnected = new MessageCreateBuilder()
+				.addContent(api.getSelfUser().getName() + " has connected")
+				.build();
+		api.getTextChannelsByName(channelName, true).forEach(e -> {
+			e.sendMessage(botConnected).submit().join();
+		});
 
 		//add help listener to bot
-		api.addMessageCreateListener(helpListener);
+		api.addEventListener(helpListener);
 
 		//add features
 		addFeature(new FeatureOne(channelName));
@@ -53,7 +64,7 @@ public class DiscordBot {
 	}
 
 	private void addFeature(Feature feature){
-		api.addMessageCreateListener(feature);
+		api.addEventListener(feature);
 		helpListener.addHelpEmbed(feature.getHelpEmbed());
 	}
 }
