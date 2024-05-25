@@ -21,8 +21,9 @@ public class Schedule extends Feature {
 		super(channelName);
 
 		// Create a help embed to describe feature when !help command is sent
-		helpEmbed = new HelpEmbed(add,
-				"Adds an event. Start with the event name and time ex. (Valorant Grind 9:30pdt)");
+		helpEmbed = new HelpEmbed("Schedule Bot",
+				"!addEvent: Adds an event. Start with the event name, time, and date ex. (Valorant Grind 9:30pm pdt (tmr/fri/6/21)) \n"
+						+ "!removeEvent: Removes an event. type the number or name of the event");
 	}
 
 	@Override
@@ -35,32 +36,46 @@ public class Schedule extends Feature {
 				String[] values = eventString.split(" ");
 				String time = "";
 				String name = "";
-				if (values[values.length - 1].contains("0") || values[values.length - 1].contains("1")
-						|| values[values.length - 1].contains("2") || values[values.length - 1].contains("3")
-						|| values[values.length - 1].contains("4") || values[values.length - 1].contains("5")
-						|| values[values.length - 1].contains("6") || values[values.length - 1].contains("7")
-						|| values[values.length - 1].contains("8") || values[values.length - 1].contains("9")
-						|| values[values.length - 1].contains("10")) {
-					
-					time = values[values.length - 1];
-					for(int i = 0; i < values.length-1; i++) {
-						name += values[i] + " ";
+				String date = "";
+
+				boolean isThereTime = false;
+				ArrayList<Integer> indexOfTimes = new ArrayList<Integer>();
+				for (int i = 0; i < 11; i++) {
+					if (eventString.contains(i + ":")) {
+						indexOfTimes.add(eventString.indexOf(i + ":"));
+						isThereTime = true;
 					}
 				}
-				else {
-					time = values[values.length-2] + values[values.length - 1];
-					for(int i = 0; i < values.length-2; i++) {
-						name += values[i] + " ";
+				if (isThereTime == false) {
+					discord.getChannel().sendMessage("No time included!");
+				}
+				int indexOfTime = Integer.MAX_VALUE;
+				for (int i = 0; i < indexOfTimes.size(); i++) {
+					if (indexOfTimes.get(i) < indexOfTime) {
+						indexOfTime = indexOfTimes.get(i);
 					}
 				}
-				 Event event = new Event(name, time);
+
+				
+
+				name = eventString.substring(0, indexOfTime - 2);
+				time = eventString.substring(indexOfTime - 1, eventString.length()).trim();
+				time = time.replace(" ", "");
+				Event event = new Event(name, time, date);
 				eventList.add(event);
 			} else {
 				discord.getChannel().sendMessage("Invalid Format");
 			}
 
-			discord.getChannel().sendMessage("The string recived was Name = |" + eventList.get(eventList.size()-1).getName() + "| Time = |" + eventList.get(eventList.size()-1).getTime() +"|");
+			discord.getChannel()
+					.sendMessage("The string recived was Name = |" + eventList.get(eventList.size() - 1).getName()
+							+ "| Time = |" + eventList.get(eventList.size() - 1).getTime() + "|");
+
 			// event.getChannel().sendMessage("Sending a message to the channel");
+		}
+		// this will remove an event from the list
+		if (messageContent.startsWith(remove)) {
+
 		}
 	}
 
