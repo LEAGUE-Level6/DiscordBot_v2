@@ -22,6 +22,7 @@ public class FeatureTwo extends FeatureTemplate {
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
         //divide into methods
+
         //start the game with the command
         if (messageContent.equals(COMMAND)) {
             String botCard = cardPicker();
