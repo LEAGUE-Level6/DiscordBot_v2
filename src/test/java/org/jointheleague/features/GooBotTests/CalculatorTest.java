@@ -1,10 +1,12 @@
-package org.jointheleague.features.student.first_feature;
+package org.jointheleague.features.GooBotTests;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.features.GooBotFeatures.Calculator;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.GooBotFeatures.Greeting;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.student.first_feature.FeatureOne;
+import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class GreetingTest {
-    private final String testChannelName = "Greeting";
-    private final Greeting greeting = new Greeting(testChannelName);
+public class CalculatorTest {
+    private final String testChannelName = "Calculator";
+    private final FeatureOne featureTwo = new FeatureOne(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -53,12 +55,9 @@ public class GreetingTest {
         //Given
 
         //When
-        String command = greeting.COMMAND;
+        String command = featureTwo.COMMAND;
 
         //Then
-        if (!(greeting instanceof Feature)) {
-            assertNotEquals("!command", command);
-        }
 
         assertNotEquals("", command);
         assertNotEquals("!", command);
@@ -70,12 +69,12 @@ public class GreetingTest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(greeting.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(greeting.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(featureTwo.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(featureTwo.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        greeting.handle(messageCreateEvent);
+        featureTwo.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -88,7 +87,7 @@ public class GreetingTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        greeting.handle(messageCreateEvent);
+        featureTwo.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage("");
@@ -99,7 +98,7 @@ public class GreetingTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = greeting.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = featureTwo.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -110,11 +109,19 @@ public class GreetingTest {
         //Given
 
         //When
-        String helpEmbedTitle = greeting.getHelpEmbed().getTitle();
-        String command = greeting.COMMAND;
+        String helpEmbedTitle = featureTwo.getHelpEmbed().getTitle();
+        String command = featureTwo.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
+    }
+
+    @Test
+    void itShouldPickACase() {
+        int x = 5;
+        int y = 2;
+        int expected = 7;
+
     }
 
 }

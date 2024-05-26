@@ -3,7 +3,7 @@ package org.jointheleague.discord_bot;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.intent.Intent;
-import org.jointheleague.features.GooBotFeatures.Counter;
+import org.jointheleague.features.GooBotFeatures.Calculator;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.GooBotFeatures.Greeting;
 import org.jointheleague.features.examples.second_features.HighLowGame;
@@ -46,7 +46,7 @@ public class DiscordBot {
 		api.addMessageCreateListener(helpListener);
 
 		//add features
-		addFeature(new Counter(channelName));
+		addFeature(new Calculator(channelName));
 		addFeature(new Greeting(channelName));
 		addFeature(new FeatureOne(channelName));
 		addFeature(new CurrentTime(channelName));
