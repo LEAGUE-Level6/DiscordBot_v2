@@ -20,6 +20,7 @@ public class RandomNumber extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             Random r = new Random();
+            System.out.println("test");
             event.getChannel().sendMessage("Your random number is " + r.nextInt(1001));
         }
     }
