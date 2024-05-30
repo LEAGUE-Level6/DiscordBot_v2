@@ -2,14 +2,15 @@ package org.jointheleague.features.whale;
 
 public class Event {
 	private String name;
-	private String time;
+	private Time time;
 	private String zone;
 	private String date;
 	private String[] people;
 	
-	Event(String name, String time) {
+	Event(String name, Time time, String date) {
 		this.name = name;
 		this.time = time;
+		this.date = date;
 	}
 	
 	public String getName() {
@@ -18,10 +19,10 @@ public class Event {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getTime() {
+	public Time getTime() {
 		return time;
 	}
-	public void setTime(String time) {
+	public void setTime(Time time) {
 		this.time = time;
 	}
 	public String getZone() {

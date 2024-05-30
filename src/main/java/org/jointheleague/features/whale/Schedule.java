@@ -1,6 +1,7 @@
 package org.jointheleague.features.whale;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
@@ -35,9 +36,12 @@ public class Schedule extends Feature {
 			if (eventString.contains(" ")) {
 				String[] values = eventString.split(" ");
 				String time = "";
+				Time realTime;
 				String name = "";
 				String date = "";
+				String realDate = "";
 
+				//get tbe time/date from the rest of the string
 				boolean isThereTime = false;
 				ArrayList<Integer> indexOfTimes = new ArrayList<Integer>();
 				for (int i = 0; i < 11; i++) {
@@ -55,13 +59,22 @@ public class Schedule extends Feature {
 						indexOfTime = indexOfTimes.get(i);
 					}
 				}
-
-				
-
 				name = eventString.substring(0, indexOfTime - 2);
 				time = eventString.substring(indexOfTime - 1, eventString.length()).trim();
-				time = time.replace(" ", "");
-				Event event = new Event(name, time, date);
+				realTime = new Time(Integer.parseInt(time.charAt(0)+""), Integer.parseInt(time.charAt(3)+"")+Integer.parseInt(time.charAt(4) +""));
+				//get the date from the time
+				
+				String[] dateTime = time.split(" ");
+				date = dateTime[dateTime.length-1];
+				if (date.contains("tmr")) {
+				
+				
+					Date d = new Date();
+					realDate = (d.getDate()+1)+"/"+d.getMonth()+"/"+d.getYear();
+				}
+				
+//				time = time.replace(" ", "");
+				Event event = new Event(name, realTime, realDate);
 				eventList.add(event);
 			} else {
 				discord.getChannel().sendMessage("Invalid Format");
@@ -69,7 +82,8 @@ public class Schedule extends Feature {
 
 			discord.getChannel()
 					.sendMessage("The string recived was Name = |" + eventList.get(eventList.size() - 1).getName()
-							+ "| Time = |" + eventList.get(eventList.size() - 1).getTime() + "|");
+							+ "| Time = |" + eventList.get(eventList.size() - 1).getTime() + "|" + " |Date = |"+eventList.get(eventList.size()-1).getDate()+"|");
+		
 
 			// event.getChannel().sendMessage("Sending a message to the channel");
 		}
