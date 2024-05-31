@@ -52,6 +52,7 @@ public class FeatureTwo extends Feature {
                 event.getChannel().sendMessage("CORRECT!!! Question " + qCount + " will begin shortly...");
                 if(questions.size()==0) {
                     event.getChannel().sendMessage("Sorry but we're actually out of new questions for you! Good job getting so many correct!");
+                    gameStart = 0;
                 }
                 currentQ=setBlank;
                 getRandQuestion();

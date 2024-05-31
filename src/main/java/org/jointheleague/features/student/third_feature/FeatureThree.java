@@ -9,13 +9,15 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.swing.*;
+import java.util.Locale;
 import java.util.Random;
 
 public class FeatureThree extends Feature {
 
     public final String COMMAND = "!numFact";
-    public final String COMMAND2 = "!numFactGuess100";
     int gameStart = 1;
+    String currentNum;
+    int funNum;
 
     public FeatureThree(String channelName) {
         super(channelName);
@@ -23,14 +25,13 @@ public class FeatureThree extends Feature {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-            "This command gives you a random fact about a number. Formatted like (!numFact 1) or use (!numFactGuess100) to guess a number from the trivia fact!"
-        );
+            "This command gives you a random fact about a number. Formatted like (!numFact 1)");
     }
     //IGNORE
     @Override
     public void handle(MessageCreateEvent event) {
         String messageContent = event.getMessageContent();
-        if (messageContent.startsWith(COMMAND) && !messageContent.startsWith(COMMAND2)) {
+        if (messageContent.startsWith(COMMAND)) {
             messageContent = messageContent
                     .replace(COMMAND, "")
                     .replace(" " , "");
@@ -42,33 +43,7 @@ public class FeatureThree extends Feature {
                 String numFact = numApi.findNumFact(messageContent);
                 event.getChannel().sendMessage(numFact);
             }
-        } /*else if(messageContent.startsWith(COMMAND2) && gameStart==1) {
-            Random rand = new Random();
-            int funNum = rand.nextInt(101);
-            ApiExample numApi = new ApiExample();
-            String numFact = numApi.findNumFact("" + funNum);
-            numFact = numFact.replace(funNum + " is ", "");
-            event.getChannel().sendMessage(numFact);
-            String currentNum = "" + funNum;
-
-            if(messageContent.contains("!STOP")) {
-                gameStart = 0;
-                event.getChannel().sendMessage("Thanks for playing!");
-                return;
-            }
-            if(currentNum.equals(messageContent)) {
-                qCount++;
-                event.getChannel().sendMessage("CORRECT!!! Question " + qCount + " will begin shortly...");
-                if(questions.size()==0) {
-                    event.getChannel().sendMessage("Sorry but we're actually out of new questions for you! Good job getting so many correct!");
-                }
-                currentQ=setBlank;
-                getRandQuestion();
-                event.getChannel().sendMessage("Question " + qCount + ": " + currentQ.getContent());
-            } else {
-                event.getChannel().sendMessage("Incorrect! Try again");
-            }
-        }*/
+        }
     }
 
 }

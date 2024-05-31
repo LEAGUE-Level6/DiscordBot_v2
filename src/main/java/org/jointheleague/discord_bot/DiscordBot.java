@@ -13,6 +13,7 @@ import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.first_feature.FeatureOne;
 import org.jointheleague.features.student.second_feature.FeatureTwo;
 import org.jointheleague.features.student.third_feature.FeatureThree;
+import org.jointheleague.features.student.third_feature.numFactGuess100;
 
 public class DiscordBot {
 
@@ -50,6 +51,7 @@ public class DiscordBot {
 		addFeature(new FeatureOne(channelName));
 		addFeature(new FeatureTwo(channelName));
 		addFeature(new FeatureThree(channelName));
+		addFeature(new numFactGuess100(channelName));
 		addFeature(new CurrentTime(channelName));
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
