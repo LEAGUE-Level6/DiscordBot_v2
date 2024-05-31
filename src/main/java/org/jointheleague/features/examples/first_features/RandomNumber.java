@@ -17,7 +17,6 @@ public class RandomNumber extends Feature {
 
     @Override
     public void handle(MessageCreateEvent event) {
-    	System.out.println("*****************************random");
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             Random r = new Random();

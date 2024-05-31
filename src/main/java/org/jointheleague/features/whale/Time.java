@@ -1,28 +1,29 @@
 package org.jointheleague.features.whale;
 
 public class Time {
-	int hour;
-	int min;
+	String hour;
+	String min;
 	Boolean isPm;
 	
-	Time(int hour, int min) {
+	Time(String hour, String min) {
 		this.hour = hour;
 		this.min = min;
+		isPm = true;
 	}
 
-	public int getHour() {
+	public String getHour() {
 		return hour;
 	}
 
-	public void setHour(int hour) {
+	public void setHour(String hour) {
 		this.hour = hour;
 	}
 
-	public int getMin() {
+	public String getMin() {
 		return min;
 	}
 
-	public void setMin(int min) {
+	public void setMin(String min) {
 		this.min = min;
 	}
 
@@ -32,6 +33,14 @@ public class Time {
 
 	public void setIsPm(Boolean isPm) {
 		this.isPm = isPm;
+	}
+	public String getTimeAsString() {
+		if (isPm) {
+			return hour+":"+min+"pm";
+		}
+		else {
+			return hour+":"+min+"am";
+		}
 	}
 	
 }

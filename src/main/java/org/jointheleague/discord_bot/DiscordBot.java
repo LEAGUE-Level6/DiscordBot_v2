@@ -47,12 +47,12 @@ public class DiscordBot {
 		api.addMessageCreateListener(helpListener);
 
 		//add features
-		addFeature(new FeatureOne(channelName));
-		addFeature(new CurrentTime(channelName));
-		addFeature(new HighLowGame(channelName));
-		addFeature(new NewsApi(channelName));
-		addFeature(new CatFactsApi(channelName));
-		addFeature(new RandomNumber(channelName));
+//		addFeature(new FeatureOne(channelName));
+//		addFeature(new CurrentTime(channelName));
+//		addFeature(new HighLowGame(channelName));
+//		addFeature(new NewsApi(channelName));
+//		addFeature(new CatFactsApi(channelName));
+//		addFeature(new RandomNumber(channelName));
 		addFeature(new Schedule(channelName));
 	}
 
