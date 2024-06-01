@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import javax.swing.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
@@ -20,7 +21,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class CalculatorTest {
-    private final String testChannelName = "Calculator";
+    private final String testChannelName = "calculator";
     private final Calculator calculator = new Calculator(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -127,8 +128,8 @@ public class CalculatorTest {
     @Test
     void itShouldMultiply() {
         //Test Multiply
-        when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,x,7");
-        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, multiply);
+        when(messageCreateEvent.getMessageContent()).thenReturn("!Calculator 5,x,7");
+        calculator.calculate(messageCreateEvent, num1, num2, multiply);
 
         double expected = 35;
         double actual = calculator.answer;
@@ -138,8 +139,8 @@ public class CalculatorTest {
     @Test
     void itShouldAdd() {
         //Test Add
-        when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,+,7");
-        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, add);
+        when(messageCreateEvent.getMessageContent()).thenReturn("!Calculator 5,+,7");
+        calculator.calculate(messageCreateEvent, num1, num2, add);
 
         double expected = 12;
         double actual = calculator.answer;
@@ -149,8 +150,8 @@ public class CalculatorTest {
     @Test
     void itShouldSubtract() {
         //Test Subtract
-        when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,-,7");
-        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, subtract);
+        when(messageCreateEvent.getMessageContent()).thenReturn("!Calculator 5,-,7");
+        calculator.calculate(messageCreateEvent, num1, num2, subtract);
 
         double expected = -2;
         double actual = calculator.answer;
@@ -160,19 +161,19 @@ public class CalculatorTest {
     @Test
     void itShouldDivide() {
         //Test Divide
-        when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,/,7");
-        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, divide);
+        when(messageCreateEvent.getMessageContent()).thenReturn("!Calculator 5,/,7");
+        calculator.calculate(messageCreateEvent, num1, num2, divide);
 
-        double expected = 0.714;
+        double expected = 0.7142857143;
         double actual = calculator.answer;
-        assertEquals(expected, actual, 1);
+        assertEquals(expected, actual, 0.1);
     }
 
     @Test
     void itShouldExponentiate() {
         //Test Exponentiation
-        when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,^,7");
-        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, exponent);
+        when(messageCreateEvent.getMessageContent()).thenReturn("!Calculator 5,^,7");
+        calculator.calculate(messageCreateEvent, num1, num2, exponent);
 
         double expected = 78125.0;
         double actual = calculator.answer;
@@ -184,12 +185,12 @@ public class CalculatorTest {
     void itShouldUseModulo() {
         //Test Modulo Ability
         when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,%,7");
-        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, modulo);
-
+        calculator.calculate(messageCreateEvent, num1, num2, modulo);
         double expected = 5;
         double actual = calculator.answer;
         assertEquals(expected, actual, 0);
 
     }
+
 
 }

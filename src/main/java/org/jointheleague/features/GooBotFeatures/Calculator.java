@@ -27,16 +27,16 @@ public class Calculator extends Feature {
         String op;
         int num2;
         //respond to message here
-        if (messageContent.startsWith(COMMAND)) {
+        if (messageContent.startsWith(COMMAND) ) {
             int index1 = messageContent.indexOf(",");
             int index2 = messageContent.indexOf(",", 15);
-            String sub1 = messageContent.substring(12, index1);
-            String subOp2 = messageContent.substring(index1 + 1, index2);
-            String sub2 = messageContent.substring(index2 + 1);
-            num1 = Integer.parseInt(sub1);
-            num2 = Integer.parseInt(sub2);
-            answer = calculate(event, num1, num2, subOp2);
-            event.getChannel().sendMessage("I got the answer! It is... " + answer);
+                String sub1 = messageContent.substring(12, index1);
+                String subOp2 = messageContent.substring(index1 + 1, index2);
+                String sub2 = messageContent.substring(index2 + 1);
+                num1 = Integer.parseInt(sub1);
+                num2 = Integer.parseInt(sub2);
+                answer = calculate(event, num1, num2, subOp2);
+                event.getChannel().sendMessage("I got the answer! It is... " + answer);
         }
     }
 
@@ -68,10 +68,6 @@ public class Calculator extends Feature {
                 answer = num1 % num2;
                 break;
 
-            default:
-                event.getChannel().sendMessage("Sorry, I couldn't understand your request." +
-                        "Please try again.");
-                break;
         }
         return answer;
     }
