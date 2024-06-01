@@ -3,10 +3,7 @@ package org.jointheleague.features.GooBotTests;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.GooBotFeatures.Calculator;
-import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.jointheleague.features.student.first_feature.FeatureOne;
-import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 public class CalculatorTest {
     private final String testChannelName = "Calculator";
-    private final FeatureOne featureTwo = new FeatureOne(testChannelName);
+    private final Calculator calculator = new Calculator(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -34,6 +31,17 @@ public class CalculatorTest {
 
     @Mock
     private TextChannel textChannel;
+
+    double num1 = 5;
+
+    double num2 = 7;
+
+    String multiply = "x";
+    String divide = "/";
+    String subtract = "-";
+    String add = "+";
+    String modulo = "%";
+    String exponent = "^";
 
     @BeforeEach
     void setUp() {
@@ -55,7 +63,7 @@ public class CalculatorTest {
         //Given
 
         //When
-        String command = featureTwo.COMMAND;
+        String command = calculator.COMMAND;
 
         //Then
 
@@ -69,12 +77,12 @@ public class CalculatorTest {
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureTwo.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureTwo.COMMAND);
+        HelpEmbed helpEmbed = new HelpEmbed(calculator.COMMAND, "test");
+        when(messageCreateEvent.getMessageContent()).thenReturn(calculator.COMMAND);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
-        featureTwo.handle(messageCreateEvent);
+        calculator.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, times(1)).sendMessage(anyString());
@@ -87,7 +95,7 @@ public class CalculatorTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureTwo.handle(messageCreateEvent);
+        calculator.handle(messageCreateEvent);
 
         //Then
         verify(textChannel, never()).sendMessage("");
@@ -98,7 +106,7 @@ public class CalculatorTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = featureTwo.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = calculator.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -109,18 +117,78 @@ public class CalculatorTest {
         //Given
 
         //When
-        String helpEmbedTitle = featureTwo.getHelpEmbed().getTitle();
-        String command = featureTwo.COMMAND;
+        String helpEmbedTitle = calculator.getHelpEmbed().getTitle();
+        String command = calculator.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);
     }
 
     @Test
-    void itShouldPickACase() {
-        int x = 5;
-        int y = 2;
-        int expected = 7;
+    void itShouldMultiply() {
+        //Test Multiply
+        when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,x,7");
+        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, multiply);
+
+        double expected = 35;
+        double actual = calculator.answer;
+        assertEquals(expected, actual, 0);
+    }
+
+    @Test
+    void itShouldAdd() {
+        //Test Add
+        when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,+,7");
+        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, add);
+
+        double expected = 12;
+        double actual = calculator.answer;
+        assertEquals(expected, actual, 0);
+    }
+
+    @Test
+    void itShouldSubtract() {
+        //Test Subtract
+        when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,-,7");
+        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, subtract);
+
+        double expected = -2;
+        double actual = calculator.answer;
+        assertEquals(expected, actual, 0);
+    }
+
+    @Test
+    void itShouldDivide() {
+        //Test Divide
+        when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,/,7");
+        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, divide);
+
+        double expected = 0.714;
+        double actual = calculator.answer;
+        assertEquals(expected, actual, 1);
+    }
+
+    @Test
+    void itShouldExponentiate() {
+        //Test Exponentiation
+        when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,^,7");
+        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, exponent);
+
+        double expected = 78125.0;
+        double actual = calculator.answer;
+        assertEquals(expected, actual, 0);
+
+    }
+
+    @Test
+    void itShouldUseModulo() {
+        //Test Modulo Ability
+        when(messageCreateEvent.getMessageContent()).thenReturn("!calculator 5,%,7");
+        verify(mock(Calculator.class), times(1)).calculate(messageCreateEvent, num1, num2, modulo);
+
+        double expected = 5;
+        double actual = calculator.answer;
+        assertEquals(expected, actual, 0);
 
     }
 

@@ -9,6 +9,7 @@ import java.lang.Math;
 public class Calculator extends Feature {
 
     public final String COMMAND = "!calculator";
+    public static double answer;
 
     public Calculator(String channelName) {
         super(channelName);
@@ -34,43 +35,45 @@ public class Calculator extends Feature {
             String sub2 = messageContent.substring(index2 + 1);
             num1 = Integer.parseInt(sub1);
             num2 = Integer.parseInt(sub2);
-            switch (subOp2) {
-                case "+":
-                    int sum = num1 + num2;
-                    event.getChannel().sendMessage("Your sum is: " + sum);
-                    break;
-
-                case "-":
-                    int difference = num1 - num2;
-                    event.getChannel().sendMessage("Your difference is: " + difference);
-                    break;
-
-                case "/":
-                    int quotient = num1 / num2;
-                    event.getChannel().sendMessage("Your quotient is: " + quotient);
-                    break;
-
-                case "x":
-                    int product = num1 * num2;
-                    event.getChannel().sendMessage("Your product is: " + product);
-                    break;
-
-                case "^":
-                    double result = Math.pow(num1, num2);
-                    event.getChannel().sendMessage("Your result is: " + result);
-                    break;
-
-                case "%":
-                    int remainder = num1 % num2;
-                    event.getChannel().sendMessage("Your remainder is: " + remainder);
-                    break;
-
-                default:
-                    event.getChannel().sendMessage("Sorry, I couldn't understand your request." +
-                            "Please try again.");
-                    break;
-            }
+            answer = calculate(event, num1, num2, subOp2);
+            event.getChannel().sendMessage("I got the answer! It is... " + answer);
         }
+    }
+
+
+    public static double calculate(MessageCreateEvent event, double num1, double num2, String subOp2) {
+        answer = 0;
+        switch (subOp2) {
+            case "+":
+                answer = num1 + num2;
+                break;
+
+            case "-":
+                answer = num1 - num2;
+                break;
+
+            case "/":
+                answer = (double) num1 / num2;
+                break;
+
+            case "x":
+                answer = num1 * num2;
+                break;
+
+            case "^":
+                answer = Math.pow(num1, num2);
+                break;
+
+            case "%":
+                answer = num1 % num2;
+                break;
+
+            default:
+                event.getChannel().sendMessage("Sorry, I couldn't understand your request." +
+                        "Please try again.");
+                break;
+        }
+        return answer;
     }
 }
 
