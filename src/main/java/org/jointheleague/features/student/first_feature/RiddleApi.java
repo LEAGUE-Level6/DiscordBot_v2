@@ -1,6 +1,6 @@
 package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.student.first_feature.RiddleWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.templates.FeatureTemplate;
@@ -25,12 +25,12 @@ public class RiddleApi extends FeatureTemplate {
                 .build();
     }
 
-    @Override
-    public void handle(MessageCreateEvent event) {
+@Override
+    public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             String riddle = getRiddle();
-            event.getChannel().sendMessage(riddle);
+            event.sendResponse(riddle);
         }
     }
 

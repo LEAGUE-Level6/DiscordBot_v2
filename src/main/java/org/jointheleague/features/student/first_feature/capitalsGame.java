@@ -1,7 +1,7 @@
 package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.entity.message.MessageAuthor;
-import org.javacord.api.event.message.MessageCreateEvent;
+import net.dv8tion.jda.api.entities.User;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.templates.FeatureTemplate;
 
@@ -24,8 +24,8 @@ public class capitalsGame extends FeatureTemplate {
     }
 
     @Override
-    public void handle(MessageCreateEvent event){
-        MessageAuthor messageAuthor = event.getMessageAuthor();
+    public void handle(ReceivedMessage event) {
+        User messageAuthor = event.getAuthor();
         String messageContent = event.getMessageContent();
 
 
@@ -63,7 +63,7 @@ public class capitalsGame extends FeatureTemplate {
                 }
             }
 
-            event.getChannel().sendMessage("What is the capital of "+country+"? (Answer with the command followed by 'A', 'B', 'C', or 'D')"+
+            event.sendResponse("What is the capital of "+country+"? (Answer with the command followed by 'A', 'B', 'C', or 'D')"+
                     "\nA: "+answers[0]+
                     "\nB: "+answers[1]+
                     "\nC: "+answers[2]+
@@ -78,7 +78,7 @@ public class capitalsGame extends FeatureTemplate {
             //check if the game has been started
             if(capital.isEmpty()){
                 //tell them to start the game first
-                event.getChannel().sendMessage("Please start the game first using just the command");
+                event.sendResponse("Please start the game first using just the command");
                 return;
             }
 
@@ -89,44 +89,44 @@ public class capitalsGame extends FeatureTemplate {
             if(guess.equals("A")) {
                 if(answers[0].equals(capital))
                 {
-                    event.getChannel().sendMessage("Yes! The capital of "+country+ " is "+capital+ "! Well done!");
+                    event.sendResponse("Yes! The capital of "+country+ " is "+capital+ "! Well done!");
                     play = false;
                 }else{
-                    event.getChannel().sendMessage("Nope! The capital of "+country+ " is something else! Try again!");
+                    event.sendResponse("Nope! The capital of "+country+ " is something else! Try again!");
                 }
             }
             else if(guess.equals("B")){
                 if(answers[1].equals(capital))
                 {
-                    event.getChannel().sendMessage("Yes! The capital of "+country+ " is "+capital+ "! Well done!");
+                    event.sendResponse("Yes! The capital of "+country+ " is "+capital+ "! Well done!");
                     play = false;
                 }else{
-                    event.getChannel().sendMessage("Nope! The capital of "+country+ " is something else! Try again!");
+                    event.sendResponse("Nope! The capital of "+country+ " is something else! Try again!");
                 }
             }
             else if(guess.equals("C")){
                 if(answers[2].equals(capital))
                 {
-                    event.getChannel().sendMessage("Yes! The capital of "+country+ " is "+capital+ "! Well done!");
+                    event.sendResponse("Yes! The capital of "+country+ " is "+capital+ "! Well done!");
                     play = false;
                 }else{
-                    event.getChannel().sendMessage("Nope! The capital of "+country+ " is something else! Try again!");
+                    event.sendResponse("Nope! The capital of "+country+ " is something else! Try again!");
                 }
             }
             else if(guess.equals("D")){
                 if(answers[3].equals(capital))
                 {
-                    event.getChannel().sendMessage("Yes! The capital of "+country+ " is "+capital+ "! Well done!");
+                    event.sendResponse("Yes! The capital of "+country+ " is "+capital+ "! Well done!");
                     play = false;
                 }else{
-                    event.getChannel().sendMessage("Nope! The capital of "+country+ " is something else! Try again!");
+                    event.sendResponse("Nope! The capital of "+country+ " is something else! Try again!");
                 }
             }
             else
             {
-                event.getChannel().sendMessage("Please enter a valid command. ");
+                event.sendResponse("Please enter a valid command. ");
             }
-            event.getChannel().sendMessage(guess + " ");
+            event.sendResponse(guess + " ");
 
         }
     }

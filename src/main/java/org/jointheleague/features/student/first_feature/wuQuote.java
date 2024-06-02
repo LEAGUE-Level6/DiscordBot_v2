@@ -1,6 +1,6 @@
 package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.templates.FeatureTemplate;
 
@@ -20,7 +20,7 @@ public class wuQuote extends FeatureTemplate {
     }
 //IGNORE
     @Override
-    public void handle(MessageCreateEvent event) {
+    public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
@@ -34,7 +34,7 @@ public class wuQuote extends FeatureTemplate {
                     "'You are all my prized pupils, but none of us can do this alone.'"
             };
                 Random r = new Random();
-                event.getChannel().sendMessage(list[r.nextInt(list.length-1)]);
+                event.sendResponse(list[r.nextInt(list.length-1)]);
 
             }
 
