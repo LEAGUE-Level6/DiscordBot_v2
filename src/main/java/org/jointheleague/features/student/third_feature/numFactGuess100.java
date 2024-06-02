@@ -2,8 +2,6 @@ package org.jointheleague.features.student.third_feature;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
