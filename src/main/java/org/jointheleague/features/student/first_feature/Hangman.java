@@ -70,6 +70,7 @@ public class Hangman extends Feature {
                         }
                     }else{
                         event.getChannel().sendMessage("Incorrect! Game over! The word was "+mystery+ "!");
+                        play = false;
                     }
                 }
             } else {
