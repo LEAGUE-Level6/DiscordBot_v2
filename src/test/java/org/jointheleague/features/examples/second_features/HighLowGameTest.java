@@ -160,7 +160,7 @@ public class HighLowGameTest {
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        highLowGame.handle(messageCreateEvent);
+         highLowGame.handle(messageCreateEvent);
 
         //Then
         verify(messageCreateEvent, times(1)).sendResponse("Correct!  The number I picked was " + guess);
