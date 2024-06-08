@@ -4,6 +4,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.intent.Intent;
 import org.jointheleague.features.GooBotFeatures.Calculator;
+import org.jointheleague.features.GooBotFeatures.RandomWordGenerator;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.GooBotFeatures.Greeting;
 import org.jointheleague.features.examples.second_features.HighLowGame;
@@ -53,6 +54,7 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		addFeature(new RandomWordGenerator(channelName));
 	}
 
 	private void addFeature(Feature feature){
