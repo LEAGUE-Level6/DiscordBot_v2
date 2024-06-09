@@ -30,53 +30,58 @@ public class FeatureTwo extends FeatureTemplate {
             botValue += findValue(botCard);
             yourValue += findValue(yourCard);
             System.out.println("starting game");
-            event.getChannel().sendMessage("My Card: " + botCard + "\n Your Card: " + yourCard + "\n !Blackjack hit or !Blackjack stand ?");
+            event.getChannel().sendMessage("My Card: " + botCard + "\n Your Card: " + yourCard + "\n Stand or hit?");
         } else if (messageContent.contains(COMMAND) && messageContent.contains("hit")) {
            if(botValue == 0) {
                event.getChannel().sendMessage("Please start the game before using this command.");
            } else {
                System.out.println("hitting");
-               String yourCard2 = cardPicker();
-               yourValue += findValue(yourCard2);
-               event.getChannel().sendMessage("Your Next Card: " + yourCard2);
-               event.getChannel().sendMessage("Your Total Card Value: " + yourValue);
-               if(yourValue > 21) {
-                   event.getChannel().sendMessage("Bot wins! You busted!");
-                   botValue = 0;
-                   yourValue = 0;
-               } else {
-                   event.getChannel().sendMessage("!blackjack hit or !blackjack stand ?");
-               }
+               hit(event);
            }
            } else if(messageContent.contains(COMMAND) && messageContent.contains("stand")) {
             if (botValue == 0) {
                 event.getChannel().sendMessage("Please start the game before using this command.");
             } else {
-                /*
-                while (botValue < 17) {
-                    String botCard2 = cardPicker();
-                    botValue += findValue(botCard2);
-                }
-                */
-
-                if (yourValue > 21) {
-                    event.getChannel().sendMessage("Bot wins! You busted!");
-                } else if (botValue > 21) {
-                    event.getChannel().sendMessage("You win! Bot busted!");
-                }
-                if (botValue == yourValue) {
-                    event.getChannel().sendMessage("Tie! You both scored " + yourValue);
-                } else if (botValue > yourValue) {
-                    event.getChannel().sendMessage("Bot wins! Score: " + botValue);
-                } else if (botValue < yourValue) {
-                    event.getChannel().sendMessage("You win! Score: " + botValue);
-                }
-                botValue = 0;
-                yourValue = 0;
+                stand(event);
             }
         }
     }
+    public void hit(MessageCreateEvent event) {
+        String yourCard2 = cardPicker();
+        yourValue += findValue(yourCard2);
+        event.getChannel().sendMessage("Your Next Card: " + yourCard2);
+        event.getChannel().sendMessage("Your Total Card Value: " + yourValue);
+        if(yourValue > 21) {
+            event.getChannel().sendMessage("Bot wins! You busted!");
+            botValue = 0;
+            yourValue = 0;
+        } else {
+            event.getChannel().sendMessage("Hit or stand?");
+        }
+    }
+    public void stand(MessageCreateEvent event) {
 
+        while (botValue < 17) {
+            String botCard2 = cardPicker();
+            botValue += findValue(botCard2);
+        }
+
+
+        if (yourValue > 21) {
+            event.getChannel().sendMessage("Bot wins! You busted!");
+        } else if (botValue > 21) {
+            event.getChannel().sendMessage("You win! Bot busted!");
+        }
+        if (botValue == yourValue) {
+            event.getChannel().sendMessage("Tie! You both scored " + yourValue);
+        } else if (botValue > yourValue) {
+            event.getChannel().sendMessage("Bot wins! Score: " + botValue);
+        } else if (botValue < yourValue) {
+            event.getChannel().sendMessage("You win! Score: " + botValue);
+        }
+        botValue = 0;
+        yourValue = 0;
+    }
     public String cardPicker() {
         String cardName = "";
         numberToGuess = random.nextInt(10) + 2;
