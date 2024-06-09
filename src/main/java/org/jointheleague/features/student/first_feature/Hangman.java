@@ -8,11 +8,11 @@ public class Hangman extends Feature {
 
     public final String COMMAND = "!hangman";
     public final String COMM2 = "!guess";
-    private String mystery;
-    private String guessed;
-    private String blank;
-    private boolean play = false;
-    private int lives;
+    public String mystery;
+    public String guessed;
+    public String blank;
+    public boolean play = false;
+    public int lives;
 
     public Hangman(String channelName) {
         super(channelName);
@@ -31,7 +31,7 @@ public class Hangman extends Feature {
             //respond to message here
             play = true;
             guessed = "";
-            String[] words = {"memento", "federal", "executive", "abysmal", "oxygen", "elucidate", "burrito", "candid", "diplomat", "gratuitous", "feral", "holiday", "inclusive", "junta", "kimono", "negligible", "preclude"};
+            String[] words = {"memento", "federal", "executive", "abysmal", "oxygen", "elucidate", "burrito", "candid", "diplomat", "gratuitous", "feral", "holiday", "inclusive", "junta", "kimono", "negligible", "preclude", "laudable"};
             int rand = (int) (Math.random() * words.length) + 0;
              mystery = words[rand];
              lives = 7;
@@ -46,7 +46,7 @@ public class Hangman extends Feature {
             String guess = messageContent.replaceAll(" ", "").replace(COMM2, "");
             if (guess.length() == 1 && guess.compareTo("`") > 0 && guess.compareTo("{") < 0) {
                 if (mystery.contains(guess)&& !guessed.contains(guess)) {
-                    for (int j = 0; j<mystery.length(); j++) {
+                    for (int j = 0; j<mystery.length()-1; j++) {
                       if(mystery.substring(j,j+1).equals(guess)) {
                           String before = blank.substring(0, j);
                           String after = blank.substring(j + 1);
@@ -65,8 +65,9 @@ public class Hangman extends Feature {
                             lives--;
                         }else {
                             guessed+=guess;
-                            event.getChannel().sendMessage("Incorrect! You have " + lives + " guesses left!");
                             lives--;
+                            event.getChannel().sendMessage("Incorrect! You have " + lives + " guesses left!");
+
                         }
                     }else{
                         event.getChannel().sendMessage("Incorrect! Game over! The word was "+mystery+ "!");

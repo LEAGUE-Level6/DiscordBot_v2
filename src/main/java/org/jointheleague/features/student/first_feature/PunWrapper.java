@@ -3,19 +3,25 @@ package org.jointheleague.features.student.first_feature;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 public class PunWrapper {
 
-    @SerializedName("data")
+    @SerializedName("pun")
     @Expose
-    private List<String> data = null;
+    private String pun;
 
-    public List<String> getData() {
-        return data;
+    public String getPun()
+    {
+        return pun;
     }
 
-    public void setData(List<String> data) {
-        this.data = data;
+    public void setPun(String pun)
+    {
+        this.pun = pun;
     }
+
+    public String toString()
+    {
+        return this.pun;
+    }
+
 }
