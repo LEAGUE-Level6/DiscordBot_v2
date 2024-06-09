@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.features.examples.first_features.RandomPhrase;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
@@ -61,6 +62,10 @@ public class DiscordBot {
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new CatFactsApi(channelName));
+		//MINE
+		addFeature(new RandomPhrase(channelName));
+		//addFeature(new SentenceMaker(channelName));
+		//addFeature(new AfricanAnimalFactApi(channelName));
 	}
 
 	private void addFeature(Feature feature){
