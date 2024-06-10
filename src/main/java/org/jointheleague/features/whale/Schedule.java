@@ -8,7 +8,7 @@ import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
 public class Schedule extends Feature {
-
+	TimezoneAbbreviations timeZones = new TimezoneAbbreviations();
 	public final String add = "!addEvent";
 	public final String remove = "!removeEvent";
 	public final String people = "!addPeople";
@@ -71,8 +71,18 @@ public class Schedule extends Feature {
 
 					name = eventString.substring(0, indexOfTime - 3);
 					time = eventString.substring(indexOfTime - 2, eventString.length()).trim();
+
 					realTime = new Time(time.charAt(0) + "" + time.charAt(1) + "",
 							time.charAt(3) + "" + time.charAt(4) + "");
+
+					for (int i = 0; i < timeZones.timezoneList.size(); i++) {
+						if (time.toLowerCase().contains(" " + timeZones.timezoneList.get(i)[0].toLowerCase() + " ")) {
+							System.out.println("Found timezone");
+							realTime.setTimeZone(timeZones.timezoneList.get(i));
+							System.out.println("realTime timezone " + realTime.getTimeZone()[0]);
+							break;
+						}
+					}
 				} else if (isANumber(eventString.charAt(indexOfTime - 1) + "")) {
 
 					System.out.println("found at indexoftime -1");
@@ -80,6 +90,14 @@ public class Schedule extends Feature {
 					time = eventString.substring(indexOfTime - 1, eventString.length()).trim();
 					realTime = new Time(time.charAt(0) + "", time.charAt(2) + "" + time.charAt(3) + "");
 
+					for (int i = 0; i < timeZones.timezoneList.size(); i++) {
+						if (time.toLowerCase().contains(" " + timeZones.timezoneList.get(i)[0].toLowerCase() + " ")) {
+							System.out.println("Found timezone");
+							realTime.setTimeZone(timeZones.timezoneList.get(i));
+							System.out.println("realTime timezone " + realTime.getTimeZone()[0]);
+							break;
+						}
+					}
 				} else {
 					System.out.println("invalid time format");
 					discord.getChannel().sendMessage("Invalid Format");
@@ -88,8 +106,8 @@ public class Schedule extends Feature {
 				System.out.println("time after prossesing is " + realTime.getHour() + " " + realTime.getMin());
 
 				System.out.println("name and realtime values set");
-				// get the date from the time var
-				// tmr will be the next day
+				// get the date from the time var -Done
+				// tmr will be the next day - Done
 				// nothing will be same day or tmr depending on if the time is in the past
 				// all days of the week(mon) will be the next day that is that day of the week
 				// a maunual date (5/21) set that date in the same year
@@ -104,92 +122,126 @@ public class Schedule extends Feature {
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate() + 1) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
 					System.out.println("realDate set");
-				} else if (date.contains("mon") || date.contains("Mon") || date.contains("monday") || date.contains("Monday")) {
+				} else if (date.contains("mon") || date.contains("Mon") || date.contains("monday")
+						|| date.contains("Monday")) {
 					System.out.println("\'mon\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
 					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
-
+					if (d.getDay() == 1) {
+						d.setDate(d.getDate() + 1);
+						System.out.println("Same day detected and day added");
+					}
 					while (d.getDay() != 1) {
 						d.setDate(d.getDate() + 1);
 						System.out.println("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
-				} else if (date.contains("tue") || date.contains("Tue") || date.contains("tues") || date.contains("Tues") || date.contains("tuesday") || date.contains("Tuesday")) {
+				} else if (date.contains("tue") || date.contains("Tue") || date.contains("tues")
+						|| date.contains("Tues") || date.contains("tuesday") || date.contains("Tuesday")) {
 					System.out.println("\'tue\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
 					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 
+					if (d.getDay() == 2) {
+						d.setDate(d.getDate() + 1);
+						System.out.println("Same day detected and day added");
+					}
 					while (d.getDay() != 2) {
 						d.setDate(d.getDate() + 1);
 						System.out.println("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
-				} else if (date.contains("wed") || date.contains("Wed") || date.contains("wednesday") || date.contains("Wednesday")) {
+				} else if (date.contains("wed") || date.contains("Wed") || date.contains("wednesday")
+						|| date.contains("Wednesday")) {
 					System.out.println("\'tue\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
 					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 
+					if (d.getDay() == 3) {
+						d.setDate(d.getDate() + 1);
+						System.out.println("Same day detected and day added");
+					}
 					while (d.getDay() != 3) {
 						d.setDate(d.getDate() + 1);
 						System.out.println("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
-				} else if (date.contains("thurs") || date.contains("Thurs") || date.contains("thu") || date.contains("Thu") || date.contains("thur") || date.contains("Thur") || date.contains("thursday") || date.contains("Thursday")) {
+				} else if (date.contains("thurs") || date.contains("Thurs") || date.contains("thu")
+						|| date.contains("Thu") || date.contains("thur") || date.contains("Thur")
+						|| date.contains("thursday") || date.contains("Thursday")) {
 					System.out.println("\'thurs\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
 					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 
+					if (d.getDay() == 4) {
+						d.setDate(d.getDate() + 1);
+						System.out.println("Same day detected and day added");
+					}
 					while (d.getDay() != 4) {
 						d.setDate(d.getDate() + 1);
 						System.out.println("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
-				} else if (date.contains("fri") || date.contains("Fri") || date.contains("friday") || date.contains("Friday")) {
+				} else if (date.contains("fri") || date.contains("Fri") || date.contains("friday")
+						|| date.contains("Friday")) {
 					System.out.println("\'fri\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
 					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 
+					if (d.getDay() == 5) {
+						d.setDate(d.getDate() + 1);
+						System.out.println("Same day detected and day added");
+					}
 					while (d.getDay() != 5) {
 						d.setDate(d.getDate() + 1);
 						System.out.println("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
-				} else if (date.contains("sat") || date.contains("Sat") || date.contains("saturday") || date.contains("Saturday")) {
+				} else if (date.contains("sat") || date.contains("Sat") || date.contains("saturday")
+						|| date.contains("Saturday")) {
 					System.out.println("\'sat\' was found");
 					Date d = new Date();
 					int currentDate = d.getDate();
 					d.setMonth(d.getMonth());
 					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
-
-					while (d.getDay() != 6 && d.getDate() != currentDate) {
+					if (d.getDay() == 6) {
+						d.setDate(d.getDate() + 1);
+						System.out.println("Same day detected and day added");
+					}
+					while (d.getDay() != 6) {
 						d.setDate(d.getDate() + 1);
 						System.out.println("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
-				} else if (date.contains("sun") || date.contains("Sun") || date.contains("sunday") || date.contains("Sunday")) {
+				} else if (date.contains("sun") || date.contains("Sun") || date.contains("sunday")
+						|| date.contains("Sunday")) {
 					System.out.println("\'sun\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
 					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 
+					if (d.getDay() == 0) {
+						d.setDate(d.getDate() + 1);
+						System.out.println("Same day detected and day added");
+					}
 					while (d.getDay() != 0) {
 						d.setDate(d.getDate() + 1);
 						System.out.println("day added " + d.getDate());
@@ -200,24 +252,33 @@ public class Schedule extends Feature {
 
 //				time = time.replace(" ", "");
 				Event event = new Event(name, realTime, realDate);
-				System.out.println("Date = " + realDate);
-				System.out.println("event constructed");
 				eventList.add(event);
+				System.out.println("Date = " + realDate);
+				System.out.println("Timezone " + eventList.get(eventList.size() - 1).getTime().getTimeZone()[0]);
+				System.out.println("event constructed");
+
 			} else {
 				discord.getChannel().sendMessage("Invalid Format");
 			}
 
 			discord.getChannel()
 					.sendMessage("The string recived was Name = |" + eventList.get(eventList.size() - 1).getName()
-							+ "| Time = |" + eventList.get(eventList.size() - 1).getTime().getTimeAsString() + "|"
-							+ " |Date = |" + eventList.get(eventList.size() - 1).getDate() + "|");
+							+ "| Time = |" + eventList.get(eventList.size() - 1).getTime().getTimeAsString()
+							+ "| Zone = |" + eventList.get(eventList.size() - 1).getTime().getTimeZone()[0] + " "
+							+ eventList.get(eventList.size() - 1).getTime().getTimeZone()[1] + "|" + " |Date = |"
+							+ eventList.get(eventList.size() - 1).getDate() + "|");
 
 			System.out.println("Message sent to channel");
 			// event.getChannel().sendMessage("Sending a message to the channel");
 		}
 		// this will remove an event from the list
 		if (messageContent.startsWith(remove)) {
-
+			String listOfEvents = "Enter the number next to the event or the event name to remove it \n\n";
+			for (int i = 0; i < eventList.size(); i++) {
+				listOfEvents += i + ": " + eventList.get(i).getName() + " "
+						+ eventList.get(i).getTime().getTimeAsString() + " " + eventList.get(i).getDate() + "\n";
+			}
+			discord.getChannel().sendMessage(listOfEvents);
 		}
 	}
 

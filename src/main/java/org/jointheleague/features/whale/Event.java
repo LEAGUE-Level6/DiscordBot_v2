@@ -3,7 +3,6 @@ package org.jointheleague.features.whale;
 public class Event {
 	private String name;
 	private Time time;
-	private String zone;
 	private String date;
 	private String[] people;
 	
@@ -24,12 +23,6 @@ public class Event {
 	}
 	public void setTime(Time time) {
 		this.time = time;
-	}
-	public String getZone() {
-		return zone;
-	}
-	public void setZone(String zone) {
-		this.zone = zone;
 	}
 	public String getDate() {
 		return date;
