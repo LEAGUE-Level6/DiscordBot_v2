@@ -1,10 +1,10 @@
 package org.jointheleague.features.whale;
 
 public class Time {
-	String hour;
-	String min;
-	Boolean isPm;
-	String[] timeZone;
+	private String hour;
+	private String min;
+	private Boolean isPm;
+	private String[] timeZone;
 	
 	public String[] getTimeZone() {
 		return timeZone;

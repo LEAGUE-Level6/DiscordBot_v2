@@ -11,11 +11,13 @@ public class Schedule extends Feature {
 	TimezoneAbbreviations timeZones = new TimezoneAbbreviations();
 	public final String add = "!addEvent";
 	public final String remove = "!removeEvent";
+	public final String list = "!listEvents";
 	public final String people = "!addPeople";
 	public final String schedule = "!schedule";
 	public final String start = "!startEvent";
 	public final String end = "!endEvent";
 	public final String settings = "!settings";
+	boolean areWeRemoving;
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
 	public Schedule(String channelName) {
@@ -102,6 +104,11 @@ public class Schedule extends Feature {
 					System.out.println("invalid time format");
 					discord.getChannel().sendMessage("Invalid Format");
 					realTime = null;
+				}
+				if (time.toLowerCase().contains("am")) {
+					realTime.setIsPm(false);
+				} else if (time.toLowerCase().contains("pm")) {
+					realTime.setIsPm(true);
 				}
 				System.out.println("time after prossesing is " + realTime.getHour() + " " + realTime.getMin());
 
@@ -250,7 +257,6 @@ public class Schedule extends Feature {
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
 				}
 
-//				time = time.replace(" ", "");
 				Event event = new Event(name, realTime, realDate);
 				eventList.add(event);
 				System.out.println("Date = " + realDate);
@@ -272,12 +278,44 @@ public class Schedule extends Feature {
 			// event.getChannel().sendMessage("Sending a message to the channel");
 		}
 		// this will remove an event from the list
+
 		if (messageContent.startsWith(remove)) {
-			String listOfEvents = "Enter the number next to the event or the event name to remove it \n\n";
+			areWeRemoving = true;
+			String listOfEvents = "Enter the number next to the event to remove it sperate numbers with commas to remove multiple\n\n";
 			for (int i = 0; i < eventList.size(); i++) {
-				listOfEvents += i + ": " + eventList.get(i).getName() + " "
+				listOfEvents += (i + 1) + ": " + eventList.get(i).getName() + " "
 						+ eventList.get(i).getTime().getTimeAsString() + " " + eventList.get(i).getDate() + "\n";
 			}
+
+			discord.getChannel().sendMessage(listOfEvents);
+
+		} else if (areWeRemoving) {
+			int index = -1;
+			if (isANumber(discord.getMessageContent())) {
+				System.out.println("No commas");
+				index = Integer.parseInt(discord.getMessageContent());
+				eventList.remove(index - 1);
+				discord.getChannel().sendMessage("Event Removed");
+				areWeRemoving = false;
+			} else if (discord.getMessageContent().contains(",")) {
+				System.out.println("Has commas");
+				String[] indexes = discord.getMessageContent().split(",");
+				for (int i = 0; i < indexes.length; i++) {
+					System.out.println("Removing " + (Integer.parseInt(indexes[i].trim())-1));
+					eventList.remove(Integer.parseInt(indexes[i].trim())-1);
+				}
+			}
+
+		}
+		System.out.println(areWeRemoving);
+
+		if (messageContent.startsWith(list)) {
+			String listOfEvents = "";
+			for (int i = 0; i < eventList.size(); i++) {
+				listOfEvents += eventList.get(i).getName() + " " + eventList.get(i).getTime().getTimeAsString() + " "
+						+ eventList.get(i).getDate() + "\n";
+			}
+
 			discord.getChannel().sendMessage(listOfEvents);
 		}
 	}
