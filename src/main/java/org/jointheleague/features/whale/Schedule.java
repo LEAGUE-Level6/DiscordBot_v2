@@ -28,8 +28,9 @@ public class Schedule extends Feature {
 				"!addEvent: Adds an event. Start with the event name, time, and date ex. (!addEvent Valorant Grind 9:30pm pdt (tmr/fri/6/21)) \n\n"
 						+ "!removeEvent: Removes an event\n\n"
 						+ "!people: edit the people participating in an event \n\n" + "!schedule: lists all events \n\n"
-						+ "!startEvent: starts a chosen event early\n\n" + "!endEvent: ends the current event \n\n"
-						+ "!settings: configure the bot\n");
+						+ "!startEvent: starts the nearest event early\n\n" + "!endEvent: ends the current event \n\n"
+						+ "!settings: configure the bot\n\n\n"
+						+ "		if you format something wrong it will probably work anyway ... hopefully ... you have like a 50/50");
 
 	}
 
@@ -37,7 +38,7 @@ public class Schedule extends Feature {
 	public void handle(MessageCreateEvent discord) {
 		String messageContent = discord.getMessageContent();
 		// thsi will add the strings to the eventList
-		if (messageContent.toLowerCase().startsWith(add)) {
+		if (messageContent.toLowerCase().startsWith(add) || messageContent.toLowerCase().startsWith("!addevnt")) {
 			System.out.println("!addEvent called");
 			String eventString = messageContent.substring(add.length()).trim();
 			if (eventString.contains(" ")) {
@@ -52,7 +53,7 @@ public class Schedule extends Feature {
 				// get tbe time/date from the rest of the string
 				boolean isThereTime = false;
 				ArrayList<Integer> indexOfTimes = new ArrayList<Integer>();
-				for (int i = 0; i < 11; i++) {
+				for (int i = 0; i < 10; i++) {
 					if (eventString.contains(i + ":")) {
 						indexOfTimes.add(eventString.indexOf(i + ":") + 1);
 						System.out.println("A \':\' was found at index" + (eventString.indexOf(i + ":") + 1));
@@ -246,6 +247,7 @@ public class Schedule extends Feature {
 					if (d.getDay() == 0) {
 						d.setDate(d.getDate() + 1);
 						System.out.println("Same day detected and day added");
+						
 					}
 					while (d.getDay() != 0) {
 						d.setDate(d.getDate() + 1);
@@ -253,6 +255,24 @@ public class Schedule extends Feature {
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
+				} else if (date.toLowerCase().contains("/") || date.toLowerCase().contains("-")) {
+					String[] fullDate;
+					Date d = new Date();
+					if (date.toLowerCase().contains("/")) {
+						fullDate = date.split("/");
+					} else if (date.toLowerCase().contains("-")) {
+						fullDate = date.split("-");
+					} else {
+						discord.getChannel().sendMessage("Add a \"/\" or \"-\" between numbers in the date");
+						fullDate = null;
+					}
+					if (fullDate.length == 2) {
+						realDate = (fullDate[0] + "/" + fullDate[1] + "/" + (d.getYear() + "").substring(1, (d.getYear() + "").length()));
+					} else if (fullDate.length == 3) {
+						realDate = (fullDate[0] + "/" + fullDate[1] + "/" + fullDate[2]);
+					} else {
+						discord.getChannel().sendMessage("Invalid Date");
+					}
 				}
 
 				Event event = new Event(name, realTime, realDate);
@@ -332,24 +352,28 @@ public class Schedule extends Feature {
 
 			discord.getChannel().sendMessage(listOfEvents);
 		}
-		
-		if (messageContent.toLowerCase().startsWith(start)) {
-			String listOfEvents = "Enter the number next to the event to remove it sperate numbers with commas to remove multiple\n\n";
-			for (int i = 0; i < eventList.size(); i++) {
-				listOfEvents += (i + 1) + ": " + eventList.get(i).getName() + " "
-						+ eventList.get(i).getTime().getTimeAsString() + " " + eventList.get(i).getDate() + "\n";
-			}
 
-			discord.getChannel().sendMessage(listOfEvents);
-			int index = -1;
-			if (isANumber(discord.getMessageContent())) {
-				System.out.println("No commas");
-				index = Integer.parseInt(discord.getMessageContent());
-				eventList.remove(index - 1);
-				discord.getChannel().sendMessage("Event Removed");
+		if (messageContent.toLowerCase().startsWith(start)) {
+			int[] closestDay = { Integer.MAX_VALUE, -1 };
+			for (int i = 0; i < eventList.size(); i++) {
+				String[] tempDate = eventList.get(i).getDate().split("/");
+				int dateAsInt = Integer.parseInt(tempDate[2] + tempDate[0] + tempDate[1] + eventList.get(i).getTime().getHour() + eventList.get(i).getTime().getMin());
+				if (dateAsInt < closestDay[0]) {
+					closestDay[0] = dateAsInt;
+					closestDay[1] = i;
+				}
+			}
+			System.out.println("Closest date is " + eventList.get(closestDay[1]).getDate());
+		}
+		if (messageContent.toLowerCase().startsWith("!test")) {
+			Date d = new Date();
+			for (int i = 0 ; i<20; i++) {
+				System.out.println((d.getMonth()+1) + "/" + d.getDate() + "/" + (d.getYear() + "").substring(1, (d.getYear() + "").length()) + "--" + d.getHours()+ ":" + d.getMinutes());
+				d.setHours(d.getHours()-1);
 			}
 			
 		}
+
 	}
 
 	public static boolean isANumber(String str) {
