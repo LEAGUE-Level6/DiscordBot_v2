@@ -1,32 +1,42 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+// README at: https://github.com/devcontainers/templates/tree/main/src/java
 {
-	"name": "Existing Dockerfile",
-	"build": {
-		// Sets the run context to one level up instead of the .devcontainer folder.
-		"context": "..",
-		// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
-		"dockerfile": "../Dockerfile"
-	}
+	"name": "Java",
+	"image": "ghcr.io/league-infrastructure/jtljava:latest",
 
-	// Copies the local discord token and channel name environment vairables to the container.
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "none",
+			"installMaven": "false",
+			"installGradle": "false"
+		},
+		"ghcr.io/devcontainers/features/desktop-lite:1": {
+			"password" : "code4life"
+		}
+	},
+
 	"containerEnv": {
-		"DISCORD_TOKEN": "${localEnv:DISCORD_TOKEN}",
-		"CHANNEL_NAME": "${localEnv:CHANNEL_NAME}"
-	}
+		//"DISCORD_TOKEN": "${localEnv:DISCORD_TOKEN}",
+		//"CHANNEL_NAME": "${localEnv:CHANNEL_NAME}"
+		"CHANNEL_NAME": "testing-1"
+	},
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-
-	// Uncomment the next line to run commands after the container is created.
-	// "postCreateCommand": "cat /etc/os-release",
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "java -version",
+	"postCreateCommand": "echo \"Input bot token:\" && read token && export DISCORD_TOKEN=$token && /workspaces/DiscordBot_v2_DevContainer/gradlew run",
 
 	// Configure tool-specific properties.
-	// "customizations": {},
+	"customizations": {
+		 "vscode": {
+      		"extensions": [
+      			"streetsidesoftware.code-spell-checker",
+      			"vscjava.vscode-java-pack",
+      			"Tobiah.language-pde"
 
-	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "devcontainer"
+      		]
+    	}
+	}
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
 }
