@@ -23,7 +23,7 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "java -version",
-	"postCreateCommand": "echo \"Input bot token:\" && read token && export DISCORD_TOKEN=$token && /workspaces/DiscordBot_v2_DevContainer/gradlew run",
+	//"postCreateCommand": "echo \"Input bot token:\" && read token && export DISCORD_TOKEN=$token && /workspaces/DiscordBot_v2_DevContainer/gradlew run",
 
 	// Configure tool-specific properties.
 	"customizations": {
