@@ -16,14 +16,13 @@
 	},
 
 	"containerEnv": {
-		//"DISCORD_TOKEN": "${localEnv:DISCORD_TOKEN}",
-		//"CHANNEL_NAME": "${localEnv:CHANNEL_NAME}"
+		"DISCORD_TOKEN": "changeme", // Make sure to override this with a GitHub Secret!!
 		"CHANNEL_NAME": "testing-1"
 	},
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "java -version",
-	//"postCreateCommand": "echo \"Input bot token:\" && read token && export DISCORD_TOKEN=$token && /workspaces/DiscordBot_v2_DevContainer/gradlew run",
+	"postCreateCommand": "/workspaces/DiscordBot_v2_DevContainer/gradlew run",
 
 	// Configure tool-specific properties.
 	"customizations": {
