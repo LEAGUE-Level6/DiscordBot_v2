@@ -3,6 +3,9 @@ package org.jointheleague.features.whale;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
@@ -353,18 +356,44 @@ public class Schedule extends Feature {
 			discord.getChannel().sendMessage(listOfEvents);
 		}
 
-		if (messageContent.toLowerCase().startsWith(start)) {
-			int[] closestDay = { Integer.MAX_VALUE, -1 };
-			for (int i = 0; i < eventList.size(); i++) {
-				String[] tempDate = eventList.get(i).getDate().split("/");
-				int dateAsInt = Integer.parseInt(tempDate[2] + tempDate[0] + tempDate[1] + eventList.get(i).getTime().getHour() + eventList.get(i).getTime().getMin());
-				if (dateAsInt < closestDay[0]) {
-					closestDay[0] = dateAsInt;
-					closestDay[1] = i;
-				}
-			}
-			System.out.println("Closest date is " + eventList.get(closestDay[1]).getDate());
-		}
+//		if (messageContent.toLowerCase().startsWith(start)) {
+//			int[] closestDay = { Integer.MAX_VALUE, -1 };
+//			for (int i = 0; i < eventList.size(); i++) {
+//				String[] tempDate = eventList.get(i).getDate().split("/");
+//				int dateAsInt = Integer.parseInt(tempDate[2] + tempDate[0] + tempDate[1] + eventList.get(i).getTime().getHour() + eventList.get(i).getTime().getMin());
+//				if (dateAsInt < closestDay[0]) {
+//					closestDay[0] = dateAsInt;
+//					closestDay[1] = i;
+//				}
+//			}
+//			System.out.println("Closest date is " + eventList.get(closestDay[1]).getDate());
+//		}
+        if (messageContent.toLowerCase().startsWith(start)) {
+            List<Event> closestEvents = new ArrayList<>();
+            int[] closestDay = { Integer.MAX_VALUE, -1 };
+            for (int i = 0; i < eventList.size(); i++) {
+                String[] tempDate = eventList.get(i).getDate().split("/");
+                int dateAsInt = Integer.parseInt(tempDate[2] + tempDate[0] + tempDate[1] + eventList.get(i).getTime().getHour() + eventList.get(i).getTime().getMin());
+                if (dateAsInt < closestDay[0]) {
+                    closestDay[0] = dateAsInt;
+                    closestDay[1] = i;
+                    closestEvents.clear(); // Clear previous closest events
+                    closestEvents.add(eventList.get(i));
+                } else if (dateAsInt == closestDay[0]) {
+                    // If event falls on the same closest day, add it to the list
+                    closestEvents.add(eventList.get(i));
+                }
+            }
+            System.out.println("Closest date is " + eventList.get(closestDay[1]).getDate());
+            // If there are multiple events on the closest day, print them
+            if (closestEvents.size() > 1) {
+                System.out.println("Events on the closest day:");
+                for (Event event : closestEvents) {
+                    System.out.println(event.getDate()); // or print event details as needed
+                }
+            }
+        }
+
 		if (messageContent.toLowerCase().startsWith("!test")) {
 			Date d = new Date();
 			for (int i = 0 ; i<20; i++) {
