@@ -39,12 +39,11 @@ public class Hangman extends Feature {
             for (int i = 0; i < mystery.length(); i++) {
                 blank += "-";
             }
-            event.getChannel().sendMessage(blank);
             event.getChannel().sendMessage("Guess a lowercase letter using e.g. !guess e.");
         }
         else if (messageContent.startsWith(COMM2)&& play) {
             String guess = messageContent.replaceAll(" ", "").replace(COMM2, "");
-            if (guess.length() == 1 && guess.compareTo("`") > 0 && guess.compareTo("{") < 0) {
+            if (guess.length() == 1 && guess.compareTo("a") >= 0 && guess.compareTo("z") <= 0) {
                 if (mystery.contains(guess)&& !guessed.contains(guess)) {
                     for (int j = 0; j<mystery.length()-1; j++) {
                       if(mystery.substring(j,j+1).equals(guess)) {

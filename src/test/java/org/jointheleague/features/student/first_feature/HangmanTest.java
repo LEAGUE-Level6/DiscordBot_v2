@@ -125,7 +125,7 @@ public class HangmanTest {
         hangman.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(0)).sendMessage("");
+        verify(textChannel, times(0)).sendMessage(anyString());
 
     }
 
@@ -176,8 +176,8 @@ public class HangmanTest {
     @Test
     void itShouldSendErrorMessageIfGuessIsNotALetter() {
         //Given
-        String guess = "1";
-        String command = "!hangman " + guess;
+        String guess = "@";
+        String command = "!guess " + guess;
         hangman.mystery = "enamor";
         when(messageCreateEvent.getMessageContent()).thenReturn(command);
         when(messageCreateEvent.getChannel()).thenReturn((textChannel));
@@ -191,5 +191,6 @@ public class HangmanTest {
 
         //Then
         verify(textChannel, times(1)).sendMessage("Please format your guess correctly.");
+        assertEquals("______", hangman.blank);
     }
 }
