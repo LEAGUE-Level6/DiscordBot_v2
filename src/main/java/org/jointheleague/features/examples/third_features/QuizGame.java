@@ -1,6 +1,6 @@
 package org.jointheleague.features.examples.third_features;
 
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
@@ -43,7 +43,7 @@ public class QuizGame extends Feature {
         );
     }
 
-    private void startGame(MessageCreateEvent event) {
+    private void startGame(ReceivedMessage event) {
         progress = 1;
         score = 0;
         questions = new ArrayList<String>();
@@ -58,12 +58,12 @@ public class QuizGame extends Feature {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        event.getChannel().sendMessage("A game has been started");
-        event.getChannel().sendMessage(getQuestion(event));
+        event.sendResponse("A game has been started");
+        event.sendResponse(getQuestion(event));
     }
 
-    private void endGame(MessageCreateEvent event) {
-        event.getChannel().sendMessage("You answered " + score + " out of " + numqtn + " questions correctly.");
+    private void endGame(ReceivedMessage event) {
+        event.sendResponse("You answered " + score + " out of " + numqtn + " questions correctly.");
         try {
             br.close();
         } catch (IOException e) {
@@ -73,7 +73,7 @@ public class QuizGame extends Feature {
         r = -1;
     }
 
-    private String getQuestion(MessageCreateEvent event) {
+    private String getQuestion(ReceivedMessage event) {
         int r = random.nextInt(questions.size());
         question = questions.get(r);
         questions.remove(r);
@@ -83,7 +83,7 @@ public class QuizGame extends Feature {
     }
 
     @Override
-    public void handle(MessageCreateEvent event) {
+    public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent().toLowerCase(Locale.ROOT);
         //event.getChannel().sendMessage("Question command received");  just spammed the channel
         if (messageContent.startsWith(COMMAND)) {
@@ -93,12 +93,12 @@ public class QuizGame extends Feature {
                 messageContent = messageContent.substring(messageContent.indexOf(' ') + 1);
                 if (messageContent.equals(answer.toLowerCase(Locale.ROOT))) {
                     score++;
-                    event.getChannel().sendMessage("Correct!");
+                    event.sendResponse("Correct!");
                 } else {
-                    event.getChannel().sendMessage("Incorrect! The correct answer was: " + answer);
+                    event.sendResponse("Incorrect! The correct answer was: " + answer);
                 }
                 progress++;
-                event.getChannel().sendMessage(getQuestion(event));
+                event.sendResponse(getQuestion(event));
             }
         }
         if (progress > numqtn) {

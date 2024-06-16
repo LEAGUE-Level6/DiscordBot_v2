@@ -1,6 +1,6 @@
 package org.jointheleague.features.examples.third_features;
 
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
@@ -8,12 +8,10 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Locale;
-
 //Documentation for the API can be found here: https://newsapi.org/docs/get-started
 public class NewsApi extends Feature {
 
-    public final String COMMAND = "q!newsapi";
+    public final String COMMAND = "!newsApi";
 
     private WebClient webClient;
     private static final String baseUrl = "http://newsapi.org/v2/everything";
@@ -31,18 +29,18 @@ public class NewsApi extends Feature {
     }
 
     @Override
-    public void handle(MessageCreateEvent event) {
-        String messageContent = event.getMessageContent().toLowerCase(Locale.ROOT);
+    public void handle(ReceivedMessage event) {
+        String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             messageContent = messageContent
                     .replace(COMMAND, "")
                     .replace(" " , "");
             if (messageContent.equals("")) {
-                event.getChannel().sendMessage("Please put a topic after the command (e.g. " + COMMAND + " cats)");
+                event.sendResponse("Please put a topic after the command (e.g. " + COMMAND + " cats)");
             }
             else{
                 String story = findStory(messageContent);
-                event.getChannel().sendMessage(story);
+                event.sendResponse(story);
             }
         }
     }

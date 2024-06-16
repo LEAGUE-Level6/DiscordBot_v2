@@ -1,18 +1,16 @@
 package org.jointheleague.features.examples.third_features;
 
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Locale;
-
 //A swagger page for this very simple API can be found here: https://app.swaggerhub.com/apis-docs/whiterabbit8/meowfacts/1.0.0
 public class CatFactsApi extends Feature {
 
-    public final String COMMAND = "q!catfactapi";
+    public final String COMMAND = "!catFactApi";
 
     private WebClient webClient;
     private static final String baseUrl = "https://meowfacts.herokuapp.com/";
@@ -29,11 +27,11 @@ public class CatFactsApi extends Feature {
     }
 
     @Override
-    public void handle(MessageCreateEvent event) {
-        String messageContent = event.getMessageContent().toLowerCase(Locale.ROOT);
+    public void handle(ReceivedMessage event) {
+        String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             String catFact = getCatFact();
-            event.getChannel().sendMessage(catFact);
+            event.sendResponse(catFact);
         }
     }
 

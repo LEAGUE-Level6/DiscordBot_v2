@@ -1,15 +1,14 @@
 package org.jointheleague.features.examples.first_features;
 
-import java.util.Locale;
 import java.util.Random;
 
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
 public class RandomNumber extends Feature {
 
-    public final String COMMAND = "q!random";
+    public final String COMMAND = "!random";
 
     public RandomNumber(String channelName) {
         super(channelName);
@@ -17,11 +16,11 @@ public class RandomNumber extends Feature {
     }
 
     @Override
-    public void handle(MessageCreateEvent event) {
-        String messageContent = event.getMessageContent().toLowerCase(Locale.ROOT);
+    public void handle(ReceivedMessage event) {
+        String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             Random r = new Random();
-            event.getChannel().sendMessage("Your random number is " + r.nextInt(1001));
+            event.sendResponse("Your random number is " + r.nextInt(1001));
         }
     }
 

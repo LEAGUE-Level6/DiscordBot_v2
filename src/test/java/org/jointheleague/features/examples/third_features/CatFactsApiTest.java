@@ -1,7 +1,6 @@
 package org.jointheleague.features.examples.third_features;
 
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
@@ -36,10 +35,7 @@ public class CatFactsApiTest {
     private final PrintStream originalOut = System.out;
 
     @Mock
-    private MessageCreateEvent messageCreateEvent;
-
-    @Mock
-    private TextChannel textChannel;
+    private ReceivedMessage messageCreateEvent;
 
     @Mock
     WebClient webClientMock;
@@ -121,7 +117,6 @@ public class CatFactsApiTest {
         catWrapper.setData(data);
 
         when(messageCreateEvent.getMessageContent()).thenReturn(catFactsApi.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
 
         when(webClientMock.get())
                 .thenReturn(requestHeadersUriSpecMock);
@@ -137,7 +132,7 @@ public class CatFactsApiTest {
 
         //then
         verify(webClientMock, times(1)).get();
-        verify(textChannel, times(1)).sendMessage(catFact);
+        verify(messageCreateEvent, times(1)).sendResponse(catFact);
     }
 
     @Test
@@ -150,7 +145,7 @@ public class CatFactsApiTest {
         catFactsApi.handle(messageCreateEvent);
 
         //Then
-        //verify(textChannel, never()).sendMessage();
+        verify(messageCreateEvent, never()).sendResponse("");
     }
 
 }

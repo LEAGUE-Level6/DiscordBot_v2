@@ -1,7 +1,6 @@
 package org.jointheleague.features.examples.third_features;
 
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
@@ -36,10 +35,7 @@ public class NewsApiTest {
     private final PrintStream originalOut = System.out;
 
     @Mock
-    private MessageCreateEvent messageCreateEvent;
-
-    @Mock
-    private TextChannel textChannel;
+    private ReceivedMessage messageCreateEvent;
 
     @Mock
     WebClient webClientMock;
@@ -115,14 +111,13 @@ public class NewsApiTest {
     void givenMessageWithCommandAndNoTopic_whenHandle_thenSendErrorMessage() {
         //given
         when(messageCreateEvent.getMessageContent()).thenReturn(newsApi.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
 
         //when
         newsApi.handle(messageCreateEvent);
 
         //then
         verify(webClientMock, never()).get();
-        verify(textChannel, times(1)).sendMessage("Please put a topic after the command (e.g. " + newsApi.COMMAND + " cats)");
+        verify(messageCreateEvent, times(1)).sendResponse("Please put a topic after the command (e.g. " + newsApi.COMMAND + " cats)");
     }
 
     @Test
@@ -143,7 +138,6 @@ public class NewsApiTest {
         expectedApiExampleWrapper.setArticles(expectedArticles);
 
         when(messageCreateEvent.getMessageContent()).thenReturn(newsApi.COMMAND + topic);
-        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
 
         when(webClientMock.get())
                 .thenReturn(requestHeadersUriSpecMock);
@@ -165,7 +159,7 @@ public class NewsApiTest {
 
         //then
         verify(webClientMock, times(1)).get();
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(messageCreateEvent, times(1)).sendResponse(anyString());
     }
 
     @Test
@@ -178,7 +172,7 @@ public class NewsApiTest {
         newsApi.handle(messageCreateEvent);
 
         //Then
-        //verify(textChannel, never()).sendMessage();
+        verify(messageCreateEvent, never()).sendResponse("");
     }
 
 }

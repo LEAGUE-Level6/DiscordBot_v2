@@ -1,7 +1,6 @@
 package org.jointheleague.features.examples.first_features;
 
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -24,10 +23,7 @@ public class RandomNumberTest {
     private final PrintStream originalOut = System.out;
 
     @Mock
-    private MessageCreateEvent messageCreateEvent;
-
-    @Mock
-    private TextChannel textChannel;
+    private ReceivedMessage messageCreateEvent;
 
     @BeforeEach
     void setUp() {
@@ -62,13 +58,12 @@ public class RandomNumberTest {
         //Given
         HelpEmbed helpEmbed = new HelpEmbed(randomNumber.COMMAND, "test");
         when(messageCreateEvent.getMessageContent()).thenReturn(randomNumber.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
         randomNumber.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(messageCreateEvent, times(1)).sendResponse(anyString());
     }
 
     @Test
@@ -81,7 +76,7 @@ public class RandomNumberTest {
         randomNumber.handle(messageCreateEvent);
 
         //Then
-        //verify(textChannel, never()).sendMessage();
+        verify(messageCreateEvent, never()).sendResponse("");
     }
 
     @Test

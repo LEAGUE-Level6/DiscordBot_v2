@@ -1,9 +1,8 @@
-package org.jointheleague.features.examples.first_features;
+package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.event.message.MessageCreateEvent;
-import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,24 +14,20 @@ import java.io.PrintStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-class WebSearchTest {
-
+public class FeatureOneTest {
     private final String testChannelName = "test";
-    private final WebSearch webSearch = new WebSearch(testChannelName);
+    private final FeatureOne featureOne = new FeatureOne(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
 
     @Mock
-    private MessageCreateEvent messageCreateEvent;
-
-    @Mock
-    private TextChannel textChannel;
+    private ReceivedMessage receivedMessage;
 
     @BeforeEach
     void setUp() {
@@ -54,45 +49,45 @@ class WebSearchTest {
         //Given
 
         //When
-        String command = webSearch.COMMAND;
+        String command = featureOne.COMMAND;
 
         //Then
 
-        if(!(webSearch instanceof WebSearch)){
-            assertNotEquals("q!command", command);
+        if(!(featureOne instanceof FeatureTemplate)){
+            assertNotEquals("!command", command);
         }
 
         assertNotEquals("", command);
-        assertNotEquals("q!", command);
-        assertEquals('q', command.charAt(0));
+        assertNotEquals("!", command);
+        assertNotEquals("!command", command);
+        assertEquals('!', command.charAt(0));
         assertNotNull(command);
     }
 
     @Test
     void itShouldHandleMessagesWithCommand() {
         //Given
-        HelpEmbed helpEmbed = new HelpEmbed(webSearch.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(webSearch.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        HelpEmbed helpEmbed = new HelpEmbed(featureOne.COMMAND, "test");
+        when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND);
 
         //When
-        webSearch.handle(messageCreateEvent);
+        featureOne.handle(receivedMessage);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(receivedMessage, times(1)).sendResponse(anyString());
     }
 
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
         //Given
         String command = "";
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(receivedMessage.getMessageContent()).thenReturn(command);
 
         //When
-        webSearch.handle(messageCreateEvent);
+        featureOne.handle(receivedMessage);
 
         //Then
-        //verify(textChannel, never()).sendMessage();
+        verify(receivedMessage, never()).sendResponse("");
     }
 
     @Test
@@ -100,7 +95,7 @@ class WebSearchTest {
         //Given
 
         //When
-        HelpEmbed actualHelpEmbed = webSearch.getHelpEmbed();
+        HelpEmbed actualHelpEmbed = featureOne.getHelpEmbed();
 
         //Then
         assertNotNull(actualHelpEmbed);
@@ -111,8 +106,8 @@ class WebSearchTest {
         //Given
 
         //When
-        String helpEmbedTitle = webSearch.getHelpEmbed().getTitle();
-        String command = webSearch.COMMAND;
+        String helpEmbedTitle = featureOne.getHelpEmbed().getTitle();
+        String command = featureOne.COMMAND;
 
         //Then
         assertEquals(command, helpEmbedTitle);

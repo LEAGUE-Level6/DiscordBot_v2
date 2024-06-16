@@ -1,14 +1,12 @@
 package org.jointheleague.features.templates;
 
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
-import java.util.Locale;
-
 public class FeatureTemplate extends Feature {
 
-    public final String COMMAND = "q!command";
+    public final String COMMAND = "!command";
 
     public FeatureTemplate(String channelName) {
         super(channelName);
@@ -21,11 +19,11 @@ public class FeatureTemplate extends Feature {
     }
 
     @Override
-    public void handle(MessageCreateEvent event) {
-        String messageContent = event.getMessageContent().toLowerCase(Locale.ROOT);
+    public void handle(ReceivedMessage event) {
+        String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
-            event.getChannel().sendMessage("Sending a message to the channel");
+            event.sendResponse("Sending a message to the channel");
         }
     }
 
