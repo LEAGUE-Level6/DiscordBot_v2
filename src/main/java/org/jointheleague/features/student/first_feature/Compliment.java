@@ -1,6 +1,6 @@
 package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
@@ -18,8 +18,8 @@ public class Compliment extends Feature {
         );
     }
 
-    @Override
-    public void handle(MessageCreateEvent event) {
+
+    public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
@@ -31,7 +31,7 @@ public class Compliment extends Feature {
                     "I bet you have straight A's in school.", "Your husband is a very lucky man.",
                     "I bet you got a 5 on the AP Chemistry exam.", "On my list of Top 10 Favorite People, you're definitely on there." };
             int rand = (int)(Math.random()*list.length)+0;
-                event.getChannel().sendMessage(list[rand]);
+                event.sendResponse(list[rand]);
         }
     }
 

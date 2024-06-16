@@ -1,7 +1,6 @@
 package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
@@ -32,10 +31,7 @@ public class PunApiTest {
     private final PrintStream originalOut = System.out;
 
     @Mock
-    private MessageCreateEvent messageCreateEvent;
-
-    @Mock
-    private TextChannel textChannel;
+    private ReceivedMessage receivedMessage;
 
     @Mock
     WebClient webClientMock;
@@ -116,8 +112,7 @@ public class PunApiTest {
         PunWrapper punWrapper = new PunWrapper();
         punWrapper.setPun(data.get(0));
 
-        when(messageCreateEvent.getMessageContent()).thenReturn(punApi.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+        when(receivedMessage.getMessageContent()).thenReturn(punApi.COMMAND);
 
         when(webClientMock.get())
                 .thenReturn(requestHeadersUriSpecMock);
@@ -129,24 +124,24 @@ public class PunApiTest {
                 .thenReturn(punWrapper);
 
         //when
-        punApi.handle(messageCreateEvent);
+        punApi.handle(receivedMessage);
 
         //then
         verify(webClientMock, times(1)).get();
-        verify(textChannel, times(1)).sendMessage(pun);
+        verify(receivedMessage, times(1)).sendResponse(pun);
     }
 
     @Test
     void givenMessageWithoutCommand_whenHandle_thenDoNothing() {
         //Given
         String command = "";
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(receivedMessage.getMessageContent()).thenReturn(command);
 
         //When
-        punApi.handle(messageCreateEvent);
+        punApi.handle(receivedMessage);
 
         //Then
-        verify(textChannel, never()).sendMessage("");
+        verify(receivedMessage, never()).sendResponse("");
     }
 
 }

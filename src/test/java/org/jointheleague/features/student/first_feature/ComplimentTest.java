@@ -1,7 +1,8 @@
 package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.event.message.MessageCreateEvent;
+
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.templates.FeatureTemplate;
@@ -28,10 +29,8 @@ public class ComplimentTest {
     private final PrintStream originalOut = System.out;
 
     @Mock
-    private MessageCreateEvent messageCreateEvent;
+    private ReceivedMessage receivedMessage;
 
-    @Mock
-    private TextChannel textChannel;
 
     @BeforeEach
     void setUp() {
@@ -72,27 +71,26 @@ public class ComplimentTest {
     void itShouldHandleMessagesWithCommand() {
         //Given
         HelpEmbed helpEmbed = new HelpEmbed(compliment.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(compliment.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        when(receivedMessage.getMessageContent()).thenReturn(compliment.COMMAND);
 
         //When
-        compliment.handle(messageCreateEvent);
+        compliment.handle(receivedMessage);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(receivedMessage, times(1)).sendResponse(anyString());
     }
 
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
         //Given
         String command = "";
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(receivedMessage.getMessageContent()).thenReturn(command);
 
         //When
-        compliment.handle(messageCreateEvent);
+        compliment.handle(receivedMessage);
 
         //Then
-        verify(textChannel, never()).sendMessage("");
+        verify(receivedMessage, never()).sendResponse("");
     }
 
     @Test

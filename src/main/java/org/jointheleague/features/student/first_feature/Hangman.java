@@ -1,6 +1,6 @@
 package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
@@ -25,7 +25,7 @@ public class Hangman extends Feature {
     }
 
     @Override
-    public void handle(MessageCreateEvent event) {
+    public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
         if (messageContent.equals(COMMAND)&& play==false) {
             //respond to message here
@@ -39,7 +39,7 @@ public class Hangman extends Feature {
             for (int i = 0; i < mystery.length(); i++) {
                 blank += "-";
             }
-            event.getChannel().sendMessage("Guess a lowercase letter using e.g. !guess e.");
+            event.sendResponse("Guess a lowercase letter using e.g. !guess e.");
         }
         else if (messageContent.startsWith(COMM2)&& play) {
             String guess = messageContent.replaceAll(" ", "").replace(COMM2, "");
@@ -53,33 +53,33 @@ public class Hangman extends Feature {
                       }
                     }
                     guessed+=guess;
-                    event.getChannel().sendMessage("Correct! " + blank);
+                    event.sendResponse("Correct! " + blank);
                 } else if(guessed.contains(guess)) {
-                    event.getChannel().sendMessage("You have already guessed this letter");
+                    event.sendResponse("You have already guessed this letter");
                 }else{
                     if(lives>0) {
                         if(lives==1) {
                             guessed+=guess;
-                            event.getChannel().sendMessage("Incorrect! You have 1 guess left!");
+                            event.sendResponse("Incorrect! You have 1 guess left!");
                             lives--;
                         }else {
                             guessed+=guess;
                             lives--;
-                            event.getChannel().sendMessage("Incorrect! You have " + lives + " guesses left!");
+                            event.sendResponse("Incorrect! You have " + lives + " guesses left!");
 
                         }
                     }else{
-                        event.getChannel().sendMessage("Incorrect! Game over! The word was "+mystery+ "!");
+                        event.sendResponse("Incorrect! Game over! The word was "+mystery+ "!");
                         play = false;
                     }
                 }
             } else {
-                event.getChannel().sendMessage("Please format your guess correctly.");
+                event.sendResponse("Please format your guess correctly.");
             }
 
             if (mystery.equals(blank)) {
                 play = false;
-                event.getChannel().sendMessage("Congratulations! You are a winner!!!!!");
+                event.sendResponse("Congratulations! You are a winner!!!!!");
             }
         }
 

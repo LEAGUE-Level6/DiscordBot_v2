@@ -1,7 +1,6 @@
 package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
@@ -27,10 +26,7 @@ public class HangmanTest {
     private final PrintStream originalOut = System.out;
 
     @Mock
-    private MessageCreateEvent messageCreateEvent;
-
-    @Mock
-    private TextChannel textChannel;
+    private ReceivedMessage receivedMessage;
 
     @BeforeEach
     void setUp() {
@@ -65,27 +61,26 @@ public class HangmanTest {
     void itShouldHandleMessagesWithCommand() {
         //Given
         HelpEmbed helpEmbed = new HelpEmbed(hangman.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(hangman.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        when(receivedMessage.getMessageContent()).thenReturn(hangman.COMMAND);
 
         //When
-        hangman.handle(messageCreateEvent);
+        hangman.handle(receivedMessage);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(receivedMessage, times(1)).sendResponse(anyString());
     }
 
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
         //Given
         String command = "";
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+        when(receivedMessage.getMessageContent()).thenReturn(command);
 
         //When
-        hangman.handle(messageCreateEvent);
+        hangman.handle(receivedMessage);
 
         //Then
-        verify(textChannel, never()).sendMessage("");
+        verify(receivedMessage, never()).sendResponse("");
     }
 
     @Test
@@ -117,15 +112,14 @@ public class HangmanTest {
     void itShouldNotAcceptGuessIfGameIsNotStarted() {
         //Given
         String command = "!guess e";
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        when(receivedMessage.getMessageContent()).thenReturn(command);
 
         //When
         hangman.play= false;
-        hangman.handle(messageCreateEvent);
+        hangman.handle(receivedMessage);
 
         //Then
-        verify(textChannel, times(0)).sendMessage(anyString());
+        verify(receivedMessage, never()).sendResponse("");
 
     }
 
@@ -135,18 +129,17 @@ public class HangmanTest {
         String guess = "z";
         String command = "!guess " + guess;
         hangman.mystery = "enamor";
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        when(receivedMessage.getMessageContent()).thenReturn(command);
 
         //When
         hangman.play = true;
         hangman.lives = 7;
         hangman.blank = "______";
         hangman.guessed = "";
-        hangman.handle(messageCreateEvent);
+        hangman.handle(receivedMessage);
 
         //Then
-        verify(textChannel, times(1)).sendMessage("Incorrect! You have 6 guesses left!");
+        verify(receivedMessage, times(1)).sendResponse("Incorrect! You have 6 guesses left!");
         assertEquals(6, hangman.lives);
     }
 
@@ -157,18 +150,17 @@ public class HangmanTest {
         String guess = "e";
         String command = "!guess " + guess;
         hangman.mystery = "enamor";
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        when(receivedMessage.getMessageContent()).thenReturn(command);
 
         //When
         hangman.guessed = "";
         hangman.blank = "______";
         hangman.play = true;
         hangman.lives = 7;
-        hangman.handle(messageCreateEvent);
+        hangman.handle(receivedMessage);
 
         //Then
-        verify(textChannel, times(1)).sendMessage("Correct! e_____");
+        verify(receivedMessage, times(1)).sendResponse("Correct! e_____");
         assertEquals(7, hangman.lives);
         assertEquals("e_____", hangman.blank);
     }
@@ -179,18 +171,39 @@ public class HangmanTest {
         String guess = "@";
         String command = "!guess " + guess;
         hangman.mystery = "enamor";
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+        when(receivedMessage.getMessageContent()).thenReturn(command);
 
         //When
         hangman.guessed = "";
         hangman.blank = "______";
         hangman.play = true;
         hangman.lives=7;
-        hangman.handle(messageCreateEvent);
+        hangman.handle(receivedMessage);
 
         //Then
-        verify(textChannel, times(1)).sendMessage("Please format your guess correctly.");
+        verify(receivedMessage, times(1)).sendResponse("Please format your guess correctly.");
         assertEquals("______", hangman.blank);
+    }
+
+    @Test
+    void itShouldFillInAllLetters(){
+        //Given
+        String guess = "a";
+        String command = "!guess "+guess;
+        hangman.mystery = "abstract";
+        when(receivedMessage.getMessageContent()).thenReturn(command);
+
+        //When
+        hangman.guessed = "";
+        hangman.blank = "_______";
+        hangman.play = true;
+        hangman.lives = 7;
+        hangman.handle(receivedMessage);
+
+        //Then
+        verify(receivedMessage, times(1)).sendResponse("Correct! a____a__");
+        assertEquals("a____a__", hangman.blank);
+        assertEquals("a", hangman.guessed);
+
     }
 }

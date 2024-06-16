@@ -1,6 +1,6 @@
 package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.student.first_feature.PunWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.templates.FeatureTemplate;
@@ -26,11 +26,11 @@ public class PunApi extends FeatureTemplate {
     }
 
     @Override
-    public void handle(MessageCreateEvent event) {
+    public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             String pun = getPun();
-            event.getChannel().sendMessage(pun);
+            event.sendResponse(pun);
         }
     }
 
