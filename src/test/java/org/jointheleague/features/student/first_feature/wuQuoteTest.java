@@ -1,7 +1,7 @@
 package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.event.message.MessageCreateEvent;
+import org.jointheleague.api_wrapper.ReceivedMessage;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
@@ -28,10 +28,7 @@ public class wuQuoteTest {
     private final PrintStream originalOut = System.out;
 
     @Mock
-    private MessageCreateEvent messageCreateEvent;
-
-    @Mock
-    private TextChannel textChannel;
+    private ReceivedMessage messageCreateEvent;
 
     @BeforeEach
     void setUp() {
@@ -73,13 +70,12 @@ public class wuQuoteTest {
         //Given
         HelpEmbed helpEmbed = new HelpEmbed(featureOne.COMMAND, "test");
         when(messageCreateEvent.getMessageContent()).thenReturn(featureOne.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
 
         //When
         featureOne.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
+        verify(messageCreateEvent, times(1)).sendResponse(anyString());
     }
 
     @Test
@@ -92,7 +88,7 @@ public class wuQuoteTest {
         featureOne.handle(messageCreateEvent);
 
         //Then
-        verify(textChannel, never()).sendMessage("");
+        verify(messageCreateEvent, never()).sendResponse("");
     }
 
     @Test
