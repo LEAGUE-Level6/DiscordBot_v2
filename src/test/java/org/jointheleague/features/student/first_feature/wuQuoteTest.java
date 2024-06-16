@@ -1,6 +1,7 @@
 package org.jointheleague.features.student.first_feature;
 
 import org.jointheleague.api_wrapper.ReceivedMessage;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
@@ -19,7 +20,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-public class FeatureOneTest {
+public class wuQuoteTest {
     private final String testChannelName = "test";
     private final wuQuote featureOne = new wuQuote(testChannelName);
 
@@ -27,7 +28,7 @@ public class FeatureOneTest {
     private final PrintStream originalOut = System.out;
 
     @Mock
-    private ReceivedMessage receivedMessage;
+    private ReceivedMessage messageCreateEvent;
 
     @BeforeEach
     void setUp() {
@@ -68,26 +69,26 @@ public class FeatureOneTest {
     void itShouldHandleMessagesWithCommand() {
         //Given
         HelpEmbed helpEmbed = new HelpEmbed(featureOne.COMMAND, "test");
-        when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND);
+        when(messageCreateEvent.getMessageContent()).thenReturn(featureOne.COMMAND);
 
         //When
-        featureOne.handle(receivedMessage);
+        featureOne.handle(messageCreateEvent);
 
         //Then
-        verify(receivedMessage, times(1)).sendResponse(anyString());
+        verify(messageCreateEvent, times(1)).sendResponse(anyString());
     }
 
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
         //Given
         String command = "";
-        when(receivedMessage.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureOne.handle(receivedMessage);
+        featureOne.handle(messageCreateEvent);
 
         //Then
-        verify(receivedMessage, never()).sendResponse("");
+        verify(messageCreateEvent, never()).sendResponse("");
     }
 
     @Test

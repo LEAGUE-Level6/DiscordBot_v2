@@ -19,15 +19,14 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-public class FeatureOneTest {
+public class RiddleApiTest {
     private final String testChannelName = "test";
     private final wuQuote featureOne = new wuQuote(testChannelName);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
-
-    @Mock
-    private ReceivedMessage receivedMessage;
+@Mock
+    private ReceivedMessage messageCreateEvent;
 
     @BeforeEach
     void setUp() {
@@ -68,26 +67,25 @@ public class FeatureOneTest {
     void itShouldHandleMessagesWithCommand() {
         //Given
         HelpEmbed helpEmbed = new HelpEmbed(featureOne.COMMAND, "test");
-        when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND);
+        when(messageCreateEvent.getMessageContent()).thenReturn(featureOne.COMMAND);
 
         //When
-        featureOne.handle(receivedMessage);
+        featureOne.handle(messageCreateEvent);
 
         //Then
-        verify(receivedMessage, times(1)).sendResponse(anyString());
+        verify(messageCreateEvent, times(1)).sendResponse(anyString());
     }
 
     @Test
     void itShouldNotHandleMessagesWithoutCommand() {
         //Given
         String command = "";
-        when(receivedMessage.getMessageContent()).thenReturn(command);
+        when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
         //When
-        featureOne.handle(receivedMessage);
+        featureOne.handle(messageCreateEvent);
 
-        //Then
-        verify(receivedMessage, never()).sendResponse("");
+        verify(messageCreateEvent, never()).sendResponse("");
     }
 
     @Test
@@ -114,3 +112,4 @@ public class FeatureOneTest {
     }
 
 }
+

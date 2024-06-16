@@ -11,9 +11,10 @@ import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.examples.first_features.CurrentTime;
-import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
-import org.jointheleague.features.student.first_feature.FeatureOne;
+import org.jointheleague.features.student.first_feature.RiddleApi;
+import org.jointheleague.features.student.first_feature.capitalsGame;
+import org.jointheleague.features.student.first_feature.wuQuote;
 
 public class DiscordBot {
 
@@ -56,7 +57,9 @@ public class DiscordBot {
 		api.addEventListener(helpListener);
 
 		//add features
-		addFeature(new FeatureOne(channelName));
+		addFeature(new wuQuote(channelName));
+        addFeature(new capitalsGame(channelName));
+		addFeature(new RiddleApi(channelName));
 		addFeature(new CurrentTime(channelName));
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
