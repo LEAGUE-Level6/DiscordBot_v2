@@ -21,8 +21,7 @@
 	},
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "java -version",
-	"postCreateCommand": "/workspaces/DiscordBot_v2_DevContainer/gradlew run",
+	// "postCreateCommand": "/workspaces/DiscordBot_v2_DevContainer/gradlew run",
 
 	// Configure tool-specific properties.
 	"customizations": {
