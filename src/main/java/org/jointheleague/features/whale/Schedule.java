@@ -1,5 +1,11 @@
 package org.jointheleague.features.whale;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -7,24 +13,35 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.emoji.Emoji;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.json.simple.JSONObject;
+
+import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 
 public class Schedule extends Feature {
-	TimezoneAbbreviations timeZones = new TimezoneAbbreviations();
+	Timezones timeZones = new Timezones();
+	DiscordApi api;
+	ApiGetter get;
+	Boolean AMRmode = false;
 	public final String add = "!addevent";
 	public final String remove = "!removeevent";
-	public final String people = "!addpeople";
+	public final String people = "!people";
 	public final String schedule = "!schedule";
 	public final String start = "!startevent";
 	public final String end = "!endevent";
 	public final String settings = "!settings";
+	public final String poll = "!pollEvent";
 	boolean areWeRemoving;
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
-	public Schedule(String channelName) {
+	public Schedule(String channelName, ApiGetter get) {
 		super(channelName);
+		this.get = get;
 
 		// Create a help embed to describe feature when !help command is sent
 		helpEmbed = new HelpEmbed("Schedule Bot",
@@ -32,6 +49,7 @@ public class Schedule extends Feature {
 						+ "!removeEvent: Removes an event\n\n"
 						+ "!people: edit the people participating in an event \n\n" + "!schedule: lists all events \n\n"
 						+ "!startEvent: starts the nearest event early\n\n" + "!endEvent: ends the current event \n\n"
+						+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n\n"
 						+ "!settings: configure the bot\n\n\n"
 						+ "		if you format something wrong it will probably work anyway ... hopefully ... you have like a 50/50");
 
@@ -39,8 +57,13 @@ public class Schedule extends Feature {
 
 	@Override
 	public void handle(MessageCreateEvent discord) {
+		api = get.getApi();
 		String messageContent = discord.getMessageContent();
 		// thsi will add the strings to the eventList
+		//ADD
+		//ADD
+		//ADD
+		//ADD
 		if (messageContent.toLowerCase().startsWith(add) || messageContent.toLowerCase().startsWith("!addevnt")) {
 			System.out.println("!addEvent called");
 			String eventString = messageContent.substring(add.length()).trim();
@@ -65,6 +88,7 @@ public class Schedule extends Feature {
 				}
 				if (isThereTime == false) {
 					discord.getChannel().sendMessage("No time included!");
+					discord.addReactionsToMessage("❌");
 					System.out.println("No time found");
 				} else {
 					System.out.println("A time was found ");
@@ -85,11 +109,11 @@ public class Schedule extends Feature {
 					realTime = new Time(time.charAt(0) + "" + time.charAt(1) + "",
 							time.charAt(3) + "" + time.charAt(4) + "");
 
-					for (int i = 0; i < timeZones.timezoneList.size(); i++) {
-						if (time.toLowerCase().contains(" " + timeZones.timezoneList.get(i)[0].toLowerCase() + " ")) {
+					for (int i = 0; i < timeZones.usTimezoneMap.size(); i++) {
+						if (time.toUpperCase().contains(" " + timeZones.usTimezoneMap.keySet().toArray()[i])) {
 							System.out.println("Found timezone");
-							realTime.setTimeZone(timeZones.timezoneList.get(i));
-							System.out.println("realTime timezone " + realTime.getTimeZone()[0]);
+							realTime.setTimeZone((String) timeZones.usTimezoneMap.keySet().toArray()[i]);
+							System.out.println("realTime timezone " + realTime.getTimeZone());
 							break;
 						}
 					}
@@ -99,18 +123,19 @@ public class Schedule extends Feature {
 					name = eventString.substring(0, indexOfTime - 2);
 					time = eventString.substring(indexOfTime - 1, eventString.length()).trim();
 					realTime = new Time(time.charAt(0) + "", time.charAt(2) + "" + time.charAt(3) + "");
-
-					for (int i = 0; i < timeZones.timezoneList.size(); i++) {
-						if (time.toLowerCase().contains(" " + timeZones.timezoneList.get(i)[0].toLowerCase() + " ")) {
+					for (int i = 0; i < timeZones.usTimezoneMap.size(); i++) {
+						if (time.toUpperCase().contains(" " + timeZones.usTimezoneMap.keySet().toArray()[i])) {
 							System.out.println("Found timezone");
-							realTime.setTimeZone(timeZones.timezoneList.get(i));
-							System.out.println("realTime timezone " + realTime.getTimeZone()[0]);
+							realTime.setTimeZone((String) timeZones.usTimezoneMap.keySet().toArray()[i]);
+							System.out.println("realTime timezone " + realTime.getTimeZone());
 							break;
 						}
 					}
+
 				} else {
 					System.out.println("invalid time format");
 					discord.getChannel().sendMessage("Invalid Format");
+					discord.addReactionsToMessage("❌");
 					realTime = null;
 				}
 				if (time.toLowerCase().contains("am")) {
@@ -250,7 +275,7 @@ public class Schedule extends Feature {
 					if (d.getDay() == 0) {
 						d.setDate(d.getDate() + 1);
 						System.out.println("Same day detected and day added");
-						
+
 					}
 					while (d.getDay() != 0) {
 						d.setDate(d.getDate() + 1);
@@ -267,39 +292,50 @@ public class Schedule extends Feature {
 						fullDate = date.split("-");
 					} else {
 						discord.getChannel().sendMessage("Add a \"/\" or \"-\" between numbers in the date");
+						discord.addReactionsToMessage("❌");
 						fullDate = null;
 					}
 					if (fullDate.length == 2) {
-						realDate = (fullDate[0] + "/" + fullDate[1] + "/" + (d.getYear() + "").substring(1, (d.getYear() + "").length()));
+						realDate = (fullDate[0] + "/" + fullDate[1] + "/"
+								+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
 					} else if (fullDate.length == 3) {
 						realDate = (fullDate[0] + "/" + fullDate[1] + "/" + fullDate[2]);
 					} else {
 						discord.getChannel().sendMessage("Invalid Date");
+						discord.addReactionsToMessage("❌");
 					}
+				} else {
+					Date d = new Date();
+					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
+							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
 				}
 
 				Event event = new Event(name, realTime, realDate);
 				eventList.add(event);
 				System.out.println("Date = " + realDate);
-				System.out.println("Timezone " + eventList.get(eventList.size() - 1).getTime().getTimeZone()[0]);
+				System.out.println("Timezone " + eventList.get(eventList.size() - 1).getTime().getTimeZone());
 				System.out.println("event constructed");
+				discord.addReactionsToMessage("✅");
 
 			} else {
 				discord.getChannel().sendMessage("Invalid Format");
+				discord.addReactionsToMessage("❌");
 			}
 
 			discord.getChannel()
 					.sendMessage("The string recived was Name = |" + eventList.get(eventList.size() - 1).getName()
 							+ "| Time = |" + eventList.get(eventList.size() - 1).getTime().getTimeAsString()
-							+ "| Zone = |" + eventList.get(eventList.size() - 1).getTime().getTimeZone()[0] + " "
-							+ eventList.get(eventList.size() - 1).getTime().getTimeZone()[1] + "|" + " |Date = |"
-							+ eventList.get(eventList.size() - 1).getDate() + "|");
+							+ "| Zone = |" + eventList.get(eventList.size() - 1).getTime().getTimeZone() + "|"
+							+ " |Date = |" + eventList.get(eventList.size() - 1).getDate() + "|");
 
 			System.out.println("Message sent to channel");
 			// event.getChannel().sendMessage("Sending a message to the channel");
 		}
 		// this will remove an event from the list
-
+		//REMOVE
+		//REMOVE
+		//REMOVE
+		//REMOVE
 		if (messageContent.toLowerCase().startsWith(remove) || messageContent.toLowerCase().startsWith("!removeevnt")) {
 			areWeRemoving = true;
 			String listOfEvents = "Enter the number next to the event to remove it sperate numbers with commas to remove multiple\n\n";
@@ -345,7 +381,10 @@ public class Schedule extends Feature {
 		}
 
 		System.out.println(areWeRemoving);
-
+		 //SCHEDULE
+		// SCHEDULE
+		// SCHEDULE
+		// SCHEDULE
 		if (messageContent.toLowerCase().startsWith(schedule)) {
 			String listOfEvents = "";
 			for (int i = 0; i < eventList.size(); i++) {
@@ -356,54 +395,83 @@ public class Schedule extends Feature {
 			discord.getChannel().sendMessage(listOfEvents);
 		}
 
-//		if (messageContent.toLowerCase().startsWith(start)) {
-//			int[] closestDay = { Integer.MAX_VALUE, -1 };
-//			for (int i = 0; i < eventList.size(); i++) {
-//				String[] tempDate = eventList.get(i).getDate().split("/");
-//				int dateAsInt = Integer.parseInt(tempDate[2] + tempDate[0] + tempDate[1] + eventList.get(i).getTime().getHour() + eventList.get(i).getTime().getMin());
-//				if (dateAsInt < closestDay[0]) {
-//					closestDay[0] = dateAsInt;
-//					closestDay[1] = i;
-//				}
-//			}
-//			System.out.println("Closest date is " + eventList.get(closestDay[1]).getDate());
-//		}
-        if (messageContent.toLowerCase().startsWith(start)) {
-            List<Event> closestEvents = new ArrayList<>();
-            int[] closestDay = { Integer.MAX_VALUE, -1 };
-            for (int i = 0; i < eventList.size(); i++) {
-                String[] tempDate = eventList.get(i).getDate().split("/");
-                int dateAsInt = Integer.parseInt(tempDate[2] + tempDate[0] + tempDate[1] + eventList.get(i).getTime().getHour() + eventList.get(i).getTime().getMin());
-                if (dateAsInt < closestDay[0]) {
-                    closestDay[0] = dateAsInt;
-                    closestDay[1] = i;
-                    closestEvents.clear(); // Clear previous closest events
-                    closestEvents.add(eventList.get(i));
-                } else if (dateAsInt == closestDay[0]) {
-                    // If event falls on the same closest day, add it to the list
-                    closestEvents.add(eventList.get(i));
-                }
-            }
-            System.out.println("Closest date is " + eventList.get(closestDay[1]).getDate());
-            // If there are multiple events on the closest day, print them
-            if (closestEvents.size() > 1) {
-                System.out.println("Events on the closest day:");
-                for (Event event : closestEvents) {
-                    System.out.println(event.getDate()); // or print event details as needed
-                }
-            }
-        }
+//		START EVENT
+//		START EVENT
+//		START EVENT
+//		START EVENT
+		if (messageContent.toLowerCase().startsWith(start)) {
+			List<Event> closestEvents = new ArrayList<>();
+			int[] closestDay = { Integer.MAX_VALUE, -1 };
+			for (int i = 0; i < eventList.size(); i++) {
+				String[] tempDate = eventList.get(i).getDate().split("/");
+				int dateAsInt = Integer.parseInt(tempDate[2] + tempDate[0] + tempDate[1]
+						+ (eventList.get(i).getTime().getHour()
+								+ timeZones.usTimezoneMap.get(eventList.get(i).getTime().getTimeZone()))
+						+ eventList.get(i).getTime().getMin());
+				if (dateAsInt < closestDay[0]) {
+					closestDay[0] = dateAsInt;
+					closestDay[1] = i;
+					closestEvents.clear(); // Clear previous closest events
+					closestEvents.add(eventList.get(i));
+				} else if (dateAsInt == closestDay[0]) {
+					// If event falls on the same closest day, add it to the list
+					closestEvents.add(eventList.get(i));
+				}
+			}
+			System.out.println("Closest date is " + eventList.get(closestDay[1]).getDate() + " "
+					+ eventList.get(closestDay[1]).getName());
+			// If there are multiple events on the closest day, print them
+			if (closestEvents.size() > 1) {
+				System.out.println("Events on the closest day:");
+				for (Event event : closestEvents) {
+					System.out.println(event.getDate()); // or print event details as needed
+				}
+			}
+		}
+		//PEOPLE
+		//PEOPLE
+		//PEOPLE
+		//PEOPLE
+		if (messageContent.toLowerCase().startsWith(people)) {
+			System.out.println("!people called");
+			long serverId = 1240487344063385702L; 
+			api.getServerById(serverId).ifPresent(server -> {
+				System.out.println(server.getMemberCount());
+				for (int i = 0; i < server.getMemberCount(); i++) {
+					System.out.println(server.getMembers().toArray()[i]);
+				}
+			});
+		}
+
+		if (messageContent.toLowerCase().startsWith("!amrmode")) {
+			AMRmode = true;
+			discord.getChannel().sendMessage("AMR mode has be activated(you can disable it with !settings)");
+			System.out.println("AMR mode on");
+		}
+//		SETTINGS
+//		SETTINGS
+//		SETTINGS
+//		SETTINGS
+		if (messageContent.toLowerCase().startsWith(settings)) {
+			AMRmode = true;
+			discord.getChannel().sendMessage("AMR mode has be activated(you can disable it with !settings)");
+			System.out.println("AMR mode on");
+		}
 
 		if (messageContent.toLowerCase().startsWith("!test")) {
-			Date d = new Date();
-			for (int i = 0 ; i<20; i++) {
-				System.out.println((d.getMonth()+1) + "/" + d.getDate() + "/" + (d.getYear() + "").substring(1, (d.getYear() + "").length()) + "--" + d.getHours()+ ":" + d.getMinutes());
-				d.setHours(d.getHours()-1);
-			}
-			
+			EventConverter convert = new EventConverter();;
+			System.out.println(timeZones.usTimezoneMap.keySet().toArray()[0]);
+//			Date d = new Date();
+//			for (int i = 0 ; i<20; i++) {
+//				System.out.println((d.getMonth()+1) + "/" + d.getDate() + "/" + (d.getYear() + "").substring(1, (d.getYear() + "").length()) + "--" + d.getHours()+ ":" + d.getMinutes());
+//				d.setHours(d.getHours()-1);
+//			}
+
 		}
 
 	}
+
+	
 
 	public static boolean isANumber(String str) {
 		try {
@@ -412,6 +480,10 @@ public class Schedule extends Feature {
 		} catch (NumberFormatException e) {
 			return false;
 		}
+	}
+
+	public void sendDm(String userId, String message, MessageCreateEvent discord) {
+		discord.getApi().getUserById(userId).thenAccept(user -> user.sendMessage(message));
 	}
 
 }

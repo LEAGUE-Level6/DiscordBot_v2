@@ -34,7 +34,6 @@ test {
 }
 
 run {
-
 	environment 'CHANNEL_NAME', 'general'
 }
 

@@ -11,7 +11,7 @@ public class Event {
 		this.time = time;
 		this.date = date;
 	}
-	
+
 	public String getName() {
 		return name;
 	}

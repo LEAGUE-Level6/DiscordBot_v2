@@ -4,13 +4,13 @@ public class Time {
 	private String hour;
 	private String min;
 	private Boolean isPm;
-	private String[] timeZone;
+	private String timeZone;
 	
-	public String[] getTimeZone() {
+	public String getTimeZone() {
 		return timeZone;
 	}
 
-	public void setTimeZone(String[] timeZone) {
+	public void setTimeZone(String timeZone) {
 		this.timeZone = timeZone;
 	}
 

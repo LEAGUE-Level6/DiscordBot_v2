@@ -11,6 +11,7 @@ import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.first_feature.FeatureOne;
+import org.jointheleague.features.whale.ApiGetter;
 import org.jointheleague.features.whale.Schedule;
 
 public class DiscordBot {
@@ -31,7 +32,8 @@ public class DiscordBot {
 
 	public void connect(boolean printInvite) {
 
-		api = new DiscordApiBuilder().setToken(token).addIntents(Intent.MESSAGE_CONTENT).login().join();
+		api = new DiscordApiBuilder().setToken(token).setAllIntents().login().join();
+		//api = new DiscordApiBuilder().setToken(token).addAllIntents(Intent.MESSAGE_CONTENT).login().join();
 
 
 		//Print the URL to invite the bot
@@ -53,7 +55,7 @@ public class DiscordBot {
 //		addFeature(new NewsApi(channelName));
 //		addFeature(new CatFactsApi(channelName));
 //		addFeature(new RandomNumber(channelName));
-		addFeature(new Schedule(channelName));
+		addFeature(new Schedule(channelName, new ApiGetter(api)));
 	}
 
 	private void addFeature(Feature feature){
