@@ -14,11 +14,11 @@
 
 	"containerEnv": {
 		"DISCORD_TOKEN": "changeme", // Make sure to add a GitHub Secret so this gets overriden!!
-		"CHANNEL_NAME": "testing-1"
+		"CHANNEL_NAME": "testing" // Change this to the name of the channel you want your bot to use
 	},
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "/workspaces/DiscordBot_v2_DevContainer/gradlew run",
+	// Automatically download/cache dependencies and such so the first run is a bit faster
+	"postCreateCommand": "/workspaces/DiscordBot_v2_DevContainer/gradlew build",
 
 	// Configure tool-specific properties.
 	"customizations": {
