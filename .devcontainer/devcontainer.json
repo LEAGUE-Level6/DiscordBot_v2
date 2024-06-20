@@ -9,14 +9,11 @@
 			"version": "none",
 			"installMaven": "false",
 			"installGradle": "false"
-		},
-		"ghcr.io/devcontainers/features/desktop-lite:1": {
-			"password" : "code4life"
 		}
 	},
 
 	"containerEnv": {
-		"DISCORD_TOKEN": "changeme", // Make sure to override this with a GitHub Secret!!
+		"DISCORD_TOKEN": "changeme", // Make sure to add a GitHub Secret so this gets overriden!!
 		"CHANNEL_NAME": "testing-1"
 	},
 
@@ -27,10 +24,7 @@
 	"customizations": {
 		 "vscode": {
       		"extensions": [
-      			"streetsidesoftware.code-spell-checker",
-      			"vscjava.vscode-java-pack",
-      			"Tobiah.language-pde"
-
+				"vscjava.vscode-java-pack"
       		]
     	}
 	}
