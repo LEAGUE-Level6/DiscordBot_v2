@@ -17,18 +17,10 @@ public class Timezones {
     private void initializeTimezoneMap() {
         usTimezoneMap = new HashMap<>();
         // US Timezones relative to Pacific Time (PT)
-        usTimezoneMap.put("PST", 0);
         usTimezoneMap.put("PT", 0);
-        usTimezoneMap.put("PDT", 0); 
-        usTimezoneMap.put("MST", +1);
         usTimezoneMap.put("MT", +1);
-        usTimezoneMap.put("MDT", +1);
-        usTimezoneMap.put("CST", +2); 
         usTimezoneMap.put("CT", +2);
-        usTimezoneMap.put("CDT", +2); 
-        usTimezoneMap.put("EST", +3);
         usTimezoneMap.put("ET", +3);
-        usTimezoneMap.put("EDT", +3); 
     }
 
     public void addTimezone(String abbreviation, int differenceFromPT) {

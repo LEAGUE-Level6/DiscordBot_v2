@@ -13,9 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.emoji.Emoji;
+import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
@@ -26,11 +28,13 @@ import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 
 public class Schedule extends Feature {
 	Timezones timeZones = new Timezones();
+	ArrayList<Person> users = new ArrayList<Person>();
 	DiscordApi api;
 	ApiGetter get;
 	Boolean AMRmode = false;
 	public final String add = "!addevent";
 	public final String remove = "!removeevent";
+	public final String[] edit = {"!editevent", "!edit"};
 	public final String people = "!people";
 	public final String schedule = "!schedule";
 	public final String start = "!startevent";
@@ -38,6 +42,7 @@ public class Schedule extends Feature {
 	public final String settings = "!settings";
 	public final String poll = "!pollevent";
 	public final String[] available = {"!ican" , "imavailable"};
+	public final String tags = "!tags";
 	boolean areWeRemoving;
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
@@ -47,7 +52,7 @@ public class Schedule extends Feature {
 
 		// Create a help embed to describe feature when !help command is sent
 		helpEmbed = new HelpEmbed("Schedule Bot",
-				"!addEvent: Adds an event. Start with the event name, time, and date ex. (!addEvent Valorant Grind 9:30pm pdt (tmr/fri/6/21)) \n\n"
+				"!addEvent: Adds an event. Start with the event name, time, date, tag(optional but recomended(!tags)) ex. (!addEvent Valorant Grind 9:30pm pdt fri #val \n\n"
 						+ "!removeEvent: Removes an event\n\n"
 						+ "!people: edit the people participating in an event \n\n"
 						+ "!schedule: lists all events \n\n"
@@ -55,6 +60,7 @@ public class Schedule extends Feature {
 						+ "!endEvent: ends the current event \n\n"
 						+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n"
 						+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
+						+ "!tags: allows you to choose what event(s) you can make it to \n\n"
 						+ "!settings: configure the bot\n\n");
 
 	}
@@ -437,15 +443,40 @@ public class Schedule extends Feature {
 		//PEOPLE
 		//PEOPLE
 		if (messageContent.toLowerCase().startsWith(people)) {
+			discord.getChannel().sendMessage("");
 			System.out.println("!people called");
-			long serverId = 1240487344063385702L; 
+			long serverId = discord.getMessage().getServer().get().getId();; 
 			api.getServerById(serverId).ifPresent(server -> {
 				System.out.println(server.getMemberCount());
 				for (int i = 0; i < server.getMemberCount(); i++) {
 					System.out.println(server.getMembers().toArray()[i]);
-					server.getRolesByName(messageContent);
+					String userInfo = server.getMembers().toArray()[i].toString();
+					String userId = userInfo.substring(userInfo.indexOf("id")+4, userInfo.indexOf(','));
+					Person p = new Person(api.getUserById(userId));
+					users.add(p);
 				}
 			});
+			String listOfPeople = "Enter the number next to the user \n";
+			Server server = api.getServerById(serverId).get();
+			System.out.println("user list size " + users.size());
+				try {
+					for (int i = 0 ; i < users.size(); i++) {
+							
+							listOfPeople += ((i+1) + " " + users.get(i).getUser().get().getNickname(server).get() + " " + users.get(i).getUser().get().getName() + "\n");
+						
+					System.out.println("List of people updated");
+					}
+					
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				
+			}
+			System.out.println(listOfPeople);
+			discord.getChannel().sendMessage(listOfPeople);
 		}
 
 		if (messageContent.toLowerCase().startsWith("!amrmode")) {
