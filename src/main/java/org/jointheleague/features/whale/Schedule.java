@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.emoji.Emoji;
@@ -35,7 +36,8 @@ public class Schedule extends Feature {
 	public final String start = "!startevent";
 	public final String end = "!endevent";
 	public final String settings = "!settings";
-	public final String poll = "!pollEvent";
+	public final String poll = "!pollevent";
+	public final String[] available = {"!ican" , "imavailable"};
 	boolean areWeRemoving;
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
@@ -47,11 +49,13 @@ public class Schedule extends Feature {
 		helpEmbed = new HelpEmbed("Schedule Bot",
 				"!addEvent: Adds an event. Start with the event name, time, and date ex. (!addEvent Valorant Grind 9:30pm pdt (tmr/fri/6/21)) \n\n"
 						+ "!removeEvent: Removes an event\n\n"
-						+ "!people: edit the people participating in an event \n\n" + "!schedule: lists all events \n\n"
-						+ "!startEvent: starts the nearest event early\n\n" + "!endEvent: ends the current event \n\n"
-						+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n\n"
-						+ "!settings: configure the bot\n\n\n"
-						+ "		if you format something wrong it will probably work anyway ... hopefully ... you have like a 50/50");
+						+ "!people: edit the people participating in an event \n\n"
+						+ "!schedule: lists all events \n\n"
+						+ "!startEvent: starts the nearest event early\n\n" 
+						+ "!endEvent: ends the current event \n\n"
+						+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n"
+						+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
+						+ "!settings: configure the bot\n\n");
 
 	}
 
@@ -439,6 +443,7 @@ public class Schedule extends Feature {
 				System.out.println(server.getMemberCount());
 				for (int i = 0; i < server.getMemberCount(); i++) {
 					System.out.println(server.getMembers().toArray()[i]);
+					server.getRolesByName(messageContent);
 				}
 			});
 		}
