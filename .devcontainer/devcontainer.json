@@ -17,9 +17,6 @@
 		"CHANNEL_NAME": "testing" // Change this to the name of the channel you want your bot to use
 	},
 
-	// Automatically download/cache dependencies and such so the first run is a bit faster
-	"postCreateCommand": "/workspaces/DiscordBot_v2_DevContainer/gradlew build",
-
 	// Configure tool-specific properties.
 	"customizations": {
 		 "vscode": {
