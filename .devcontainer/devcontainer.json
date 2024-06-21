@@ -21,8 +21,13 @@
 	"customizations": {
 		 "vscode": {
       		"extensions": [
-				"vscjava.vscode-java-pack"
-      		]
+				"vscjava.vscode-java-pack",
+
+				// Disable processing and spell checker, which are
+				// inherited from ghcr.io/league-infrastructure/jtljava:latest
+				"-Tobiah.language-pde",
+				"-streetsidesoftware.code-spell-checker"
+			]
     	}
 	}
 
