@@ -30,7 +30,7 @@ a few minutes of loading, will become a Visual Studio Code browser editor.
 
     ![codespace_editor_welcome.png](screenshots/codespace_editor_welcome.png)
 
-4) The browser-based editor is basically idential to the normal Visual Stuio Code 
+4) The browser-based editor is basically identical to the normal Visual Studio Code 
 app, but for those who are not familiar with it, the tabs on the left cover most of 
 the basic functions you might be used to from Eclipse and IntelliJ.
 
