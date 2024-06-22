@@ -15,7 +15,8 @@
 ## Using Codespaces
 
 This repository has been set up to work with GitHub codespaces!
-Codespaces allow you to \<DO STUFF\>
+Codespaces allow you to develop with a GirHub repository directly in your browser
+without having to set up a local environment.
 
 Here are the basic steps needed to open this repository in a codespace:
 
