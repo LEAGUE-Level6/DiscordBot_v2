@@ -21,20 +21,17 @@ Here are the basic steps needed to open this repository in a codespace:
 
 1) Click on the green "Code" button like you usually would to get the url for cloning 
 locally, but select the "Codespaces" tab at the top instead.
-<br />
 
     ![codespaces_tab.png](screenshots/codespaces_tab.png)
 
 2) Click the green "create codespace" button.  This will open another tab which, after 
 a few minutes of loading, will become a Visual Studio Code browser editor.
-<br />
 
     ![codespace_editor_welcome.png](screenshots/codespace_editor_welcome.png)
 
 4) The browser-based editor is basically idential to the normal Visual Stuio Code 
 app, but for those who are not familiar with it, the tabs on the left cover most of 
 the basic functions you might be used to from Eclipse and IntelliJ.
-<br />
 
    ![menubar_marked.png](screenshots/menubar_marked.png)
 
