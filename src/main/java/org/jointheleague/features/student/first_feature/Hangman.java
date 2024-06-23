@@ -39,13 +39,14 @@ public class Hangman extends Feature {
             for (int i = 0; i < mystery.length(); i++) {
                 blank += "-";
             }
-            event.sendResponse("Guess a lowercase letter using e.g. !guess e.");
+
+            event.sendResponse(blank+" Guess a lowercase letter using e.g. !guess e.");
         }
         else if (messageContent.startsWith(COMM2)&& play) {
             String guess = messageContent.replaceAll(" ", "").replace(COMM2, "");
             if (guess.length() == 1 && guess.compareTo("a") >= 0 && guess.compareTo("z") <= 0) {
                 if (mystery.contains(guess)&& !guessed.contains(guess)) {
-                    for (int j = 0; j<mystery.length()-1; j++) {
+                    for (int j = 0; j<mystery.length(); j++) {
                       if(mystery.substring(j,j+1).equals(guess)) {
                           String before = blank.substring(0, j);
                           String after = blank.substring(j + 1);
@@ -64,9 +65,8 @@ public class Hangman extends Feature {
                             lives--;
                         }else {
                             guessed+=guess;
-                            lives--;
                             event.sendResponse("Incorrect! You have " + lives + " guesses left!");
-
+                            lives--;
                         }
                     }else{
                         event.sendResponse("Incorrect! Game over! The word was "+mystery+ "!");

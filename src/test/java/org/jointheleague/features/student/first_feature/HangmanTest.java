@@ -195,7 +195,7 @@ public class HangmanTest {
 
         //When
         hangman.guessed = "";
-        hangman.blank = "_______";
+        hangman.blank = "________";
         hangman.play = true;
         hangman.lives = 7;
         hangman.handle(receivedMessage);
