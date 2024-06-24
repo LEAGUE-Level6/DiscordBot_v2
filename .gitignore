@@ -11,3 +11,5 @@ src/main/java/org.jointheleague.Launcher.java
 run.sh
 appspec.yml
 .gradle/
+bin/
+.vscode/settings.json

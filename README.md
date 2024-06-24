@@ -1,7 +1,7 @@
 <h1 style="text-align:center">Discord Bot v2</h1>
 
-> Java application that connects to a Discord channel, and responds to commands sent there.
->  Bot features are developed by students at The League of Amazing Programmers, as part of the Level 6 curriculum.
+> Java application that connects to a Discord channel and responds to commands sent there.
+>  The bot features are developed by students at The League of Amazing Programmers, as part of the Level 6 curriculum.
 
 <br />![Master Branch Build](https://github.com/league-level6/DiscordBot_v2/actions/workflows/MasterBranchBuild.yml/badge.svg)
 <br />
@@ -10,20 +10,21 @@
 
 ## Documentation
 
-- Information on getting started can be found at [level6.jointheleague.org](https://level6.jointheleague.org)
+- Information on getting started and deploying to AWS can be found at [level6.jointheleague.org](https://level6.jointheleague.org)
 
 ## Using Codespaces
 
 This repository has been set up to work with GitHub codespaces!
-Codespaces allow you to develop with a GirHub repository directly in your 
-browser without having to set up a local environment.
+Codespaces allows you to develop with a GitHub repository directly in your 
+browser without having to set up a local environment, and you can connect your
+bot to Discord without deploying it to AWS. 
 
 Here are the basic steps needed to open this repository in a codespace:
 
 <sub>(These instructions are current as of 2024-06-23)</sub>
 
 1) Before you open your codespace, in order to run your Discord bot, you need 
-to provide a token. If you weredeveloping locally this would usually be done 
+to provide a token. If you were developing locally this would usually be done 
 with an environment variable. The most secure way to do this with a GitHub 
 codespace is to use a GitHub secret.
 
@@ -60,10 +61,6 @@ Eclipse and IntelliJ.
 
    ![menubar_marked.png](screenshots/menubar_marked.png)
 
-## Production Environment 
-
-The master branch of this project is automatically deployed to EC2 when a new version is published.
-The bot can be interacted with in the "discordbot" channel of the League's level 6 discord server.
 
 ## Authors
 
