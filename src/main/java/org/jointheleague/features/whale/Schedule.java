@@ -14,21 +14,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.emoji.Emoji;
+import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.json.simple.JSONObject;
+import org.springframework.util.StringUtils;
 
 import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 
 public class Schedule extends Feature {
 	Timezones timeZones = new Timezones();
 	ArrayList<Person> users = new ArrayList<Person>();
+	List<Role> roles = new ArrayList<Role>();
 	DiscordApi api;
 	ApiGetter get;
 	Boolean AMRmode = false;
@@ -54,13 +57,13 @@ public class Schedule extends Feature {
 		helpEmbed = new HelpEmbed("Schedule Bot",
 				"!addEvent: Adds an event. Start with the event name, time, date, tag(optional but recomended(!tags)) ex. (!addEvent Valorant Grind 9:30pm pdt fri #val \n\n"
 						+ "!removeEvent: Removes an event\n\n"
-						+ "!people: edit the people participating in an event \n\n"
+						+ "!people: edit the people participating in an event (do #<role name> to only display users with that role)\n\n"
 						+ "!schedule: lists all events \n\n"
 						+ "!startEvent: starts the nearest event early\n\n" 
 						+ "!endEvent: ends the current event \n\n"
 						+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n"
 						+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
-						+ "!tags: allows you to choose what event(s) you can make it to \n\n"
+						+ "!tags: allows you to add tags to people for group them in events \n\n"
 						+ "!settings: configure the bot\n\n");
 
 	}
@@ -443,9 +446,16 @@ public class Schedule extends Feature {
 		//PEOPLE
 		//PEOPLE
 		if (messageContent.toLowerCase().startsWith(people)) {
+			String role = null;
+			
+			if (messageContent.length() > people.length()+1) {
+				role = messageContent.split("")[1].trim();
+			}
 			discord.getChannel().sendMessage("");
 			System.out.println("!people called");
 			long serverId = discord.getMessage().getServer().get().getId();; 
+			String listOfPeople = "Enter the number next to the user \n";
+			if (users.size() <= 0) {
 			api.getServerById(serverId).ifPresent(server -> {
 				System.out.println(server.getMemberCount());
 				for (int i = 0; i < server.getMemberCount(); i++) {
@@ -453,28 +463,55 @@ public class Schedule extends Feature {
 					String userInfo = server.getMembers().toArray()[i].toString();
 					String userId = userInfo.substring(userInfo.indexOf("id")+4, userInfo.indexOf(','));
 					Person p = new Person(api.getUserById(userId));
+					try {
+						p.setNickname(api.getUserById(userId).get().getNickname(server) + "");
+						p.setUsername(api.getUserById(userId).get().getName() + "");
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					users.add(p);
 				}
+				
 			});
-			String listOfPeople = "Enter the number next to the user \n";
+			}
 			Server server = api.getServerById(serverId).get();
+			
 			System.out.println("user list size " + users.size());
+			for (int i = 0; i<users.size(); i++) {
 				try {
-					for (int i = 0 ; i < users.size(); i++) {
-							
-							listOfPeople += ((i+1) + " " + users.get(i).getUser().get().getNickname(server).get() + " " + users.get(i).getUser().get().getName() + "\n");
-						
-					System.out.println("List of people updated");
-					}
-					
+					roles = server.getRoles();
+					users.get(i).setNickname(api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server) + "");
+					users.get(i).setUsername(api.getUserById(users.get(i).getUser().get().getId()).get().getName()+ "");
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (Exception e) {
+				} catch (ExecutionException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+				listOfPeople += ((i+1) + ": " + users.get(i).getNickname() + " (" + users.get(i).getUsername() + ")\n");
 				
 			}
+			LevenshteinDistance distance = new LevenshteinDistance();
+			int closest = -1;
+			int indexOfClosest = -1;
+			for (int i = 0 ; i < roles.size(); i++) {
+				int howFar = distance.calculate(role, roles.get(i).getName());
+				if (howFar < closest) {
+					closest = howFar;
+					indexOfClosest = i;
+				}
+			}
+			
+			discord.getChannel().sendMessage("Roles: " + roles.get(0).getUsers().toArray()[0]);
+			discord.getChannel().sendMessage("Roles: " + roles.get(0).getUsers().toArray()[1]);
+			discord.getChannel().sendMessage("Roles: " + roles.get(0).getUsers().toArray()[2]);
+
+		System.out.println("List of people updated");
 			System.out.println(listOfPeople);
 			discord.getChannel().sendMessage(listOfPeople);
 		}
@@ -521,5 +558,7 @@ public class Schedule extends Feature {
 	public void sendDm(String userId, String message, MessageCreateEvent discord) {
 		discord.getApi().getUserById(userId).thenAccept(user -> user.sendMessage(message));
 	}
+	
+
 
 }
