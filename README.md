@@ -19,6 +19,7 @@ Codespaces allow you to develop with a GirHub repository directly in your
 browser without having to set up a local environment.
 
 Here are the basic steps needed to open this repository in a codespace:
+
 <sub>(These instructions are current as of 2024-06-23)</sub>
 
 1) Before you open your codespace, in order to run your Discord bot, you need 
