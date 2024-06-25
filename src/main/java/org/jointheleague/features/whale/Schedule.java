@@ -1,11 +1,13 @@
 package org.jointheleague.features.whale;
 
 import java.io.BufferedReader;
+import java.util.*;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,8 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.permission.Role;
@@ -37,16 +39,17 @@ public class Schedule extends Feature {
 	Boolean AMRmode = false;
 	public final String add = "!addevent";
 	public final String remove = "!removeevent";
-	public final String[] edit = {"!editevent", "!edit"};
+	public final String[] edit = { "!editevent", "!edit" };
 	public final String people = "!people";
 	public final String schedule = "!schedule";
 	public final String start = "!startevent";
 	public final String end = "!endevent";
 	public final String settings = "!settings";
 	public final String poll = "!pollevent";
-	public final String[] available = {"!ican" , "imavailable"};
+	public final String[] available = { "!ican", "imavailable" };
 	public final String tags = "!tags";
 	boolean areWeRemoving;
+	boolean areWePeopleing; 
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
 	public Schedule(String channelName, ApiGetter get) {
@@ -58,8 +61,7 @@ public class Schedule extends Feature {
 				"!addEvent: Adds an event. Start with the event name, time, date, tag(optional but recomended(!tags)) ex. (!addEvent Valorant Grind 9:30pm pdt fri #val \n\n"
 						+ "!removeEvent: Removes an event\n\n"
 						+ "!people: edit the people participating in an event (do #<role name> to only display users with that role)\n\n"
-						+ "!schedule: lists all events \n\n"
-						+ "!startEvent: starts the nearest event early\n\n" 
+						+ "!schedule: lists all events \n\n" + "!startEvent: starts the nearest event early\n\n"
 						+ "!endEvent: ends the current event \n\n"
 						+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n"
 						+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
@@ -73,10 +75,10 @@ public class Schedule extends Feature {
 		api = get.getApi();
 		String messageContent = discord.getMessageContent();
 		// thsi will add the strings to the eventList
-		//ADD
-		//ADD
-		//ADD
-		//ADD
+		// ADD
+		// ADD
+		// ADD
+		// ADD
 		if (messageContent.toLowerCase().startsWith(add) || messageContent.toLowerCase().startsWith("!addevnt")) {
 			System.out.println("!addEvent called");
 			String eventString = messageContent.substring(add.length()).trim();
@@ -345,10 +347,10 @@ public class Schedule extends Feature {
 			// event.getChannel().sendMessage("Sending a message to the channel");
 		}
 		// this will remove an event from the list
-		//REMOVE
-		//REMOVE
-		//REMOVE
-		//REMOVE
+		// REMOVE
+		// REMOVE
+		// REMOVE
+		// REMOVE
 		if (messageContent.toLowerCase().startsWith(remove) || messageContent.toLowerCase().startsWith("!removeevnt")) {
 			areWeRemoving = true;
 			String listOfEvents = "Enter the number next to the event to remove it sperate numbers with commas to remove multiple\n\n";
@@ -394,7 +396,7 @@ public class Schedule extends Feature {
 		}
 
 		System.out.println(areWeRemoving);
-		 //SCHEDULE
+		// SCHEDULE
 		// SCHEDULE
 		// SCHEDULE
 		// SCHEDULE
@@ -441,51 +443,80 @@ public class Schedule extends Feature {
 				}
 			}
 		}
-		//PEOPLE
-		//PEOPLE
-		//PEOPLE
-		//PEOPLE
+		// PEOPLE
+		// PEOPLE
+		// PEOPLE
+		// PEOPLE
 		if (messageContent.toLowerCase().startsWith(people)) {
-			String role = null;
-			
-			if (messageContent.length() > people.length()+1) {
-				role = messageContent.split("")[1].trim();
+			String role = messageContent.substring(7, messageContent.length()).trim();
+			if (messageContent.contains(" ")) {
+
+			} else {
+				role = null;
 			}
+			System.out.println("role string created");
 			discord.getChannel().sendMessage("");
 			System.out.println("!people called");
-			long serverId = discord.getMessage().getServer().get().getId();; 
+			long serverId = discord.getMessage().getServer().get().getId();
 			String listOfPeople = "Enter the number next to the user \n";
 			if (users.size() <= 0) {
-			api.getServerById(serverId).ifPresent(server -> {
-				System.out.println(server.getMemberCount());
-				for (int i = 0; i < server.getMemberCount(); i++) {
-					System.out.println(server.getMembers().toArray()[i]);
-					String userInfo = server.getMembers().toArray()[i].toString();
-					String userId = userInfo.substring(userInfo.indexOf("id")+4, userInfo.indexOf(','));
-					Person p = new Person(api.getUserById(userId));
-					try {
-						p.setNickname(api.getUserById(userId).get().getNickname(server) + "");
-						p.setUsername(api.getUserById(userId).get().getName() + "");
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ExecutionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+				api.getServerById(serverId).ifPresent(server -> {
+					System.out.println(server.getMemberCount());
+					for (int i = 0; i < server.getMemberCount(); i++) {
+						System.out.println(server.getMembers().toArray()[i]);
+						String userInfo = server.getMembers().toArray()[i].toString();
+						String userId = userInfo.substring(userInfo.indexOf("id") + 4, userInfo.indexOf(','));
+						Person p = new Person(api.getUserById(userId));
+						try {
+							p.setNickname(api.getUserById(userId).get().getNickname(server) + "");
+							p.setUsername(api.getUserById(userId).get().getName() + "");
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						users.add(p);
 					}
-					users.add(p);
-				}
-				
-			});
+
+				});
+				System.out.println("users in list");
 			}
 			Server server = api.getServerById(serverId).get();
-			
 			System.out.println("user list size " + users.size());
-			for (int i = 0; i<users.size(); i++) {
+			int indexOfClosest = -1;
+			if (role != null) {
+				LevenshteinDistance distance = new LevenshteinDistance();
+				int closest = Integer.MAX_VALUE;
+				roles = server.getRoles();
+				for (int i = 0; i < roles.size(); i++) {
+					System.out.println("checking distance");
+					int howFar = distance.calculate(role, roles.get(i).getName());
+					if (howFar < closest) {
+						System.out.println("new distance found");
+						closest = howFar;
+						indexOfClosest = i;
+					}
+				}
+
+				System.out.println("Org Role: " + role);
+				System.out.println("indexofClosest: " + indexOfClosest);
+				System.out.println("Closest Role name: " + roles.get(indexOfClosest).getName());
+				System.out.println("Found distance");
+			}
+			for (int i = 0; i < users.size(); i++) {
 				try {
 					roles = server.getRoles();
-					users.get(i).setNickname(api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server) + "");
-					users.get(i).setUsername(api.getUserById(users.get(i).getUser().get().getId()).get().getName()+ "");
+					users.get(i).setUser(api.getUserById(users.get(i).getUser().get().getId()));
+					if (users.get(i).getUser().get().getRoles(server).contains(roles.get(indexOfClosest))) {
+						users.get(i).setNickname(
+								api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server) + "");
+						users.get(i).setUsername(
+								api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
+					} else {
+						continue;
+					}
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -493,30 +524,57 @@ public class Schedule extends Feature {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				listOfPeople += ((i+1) + ": " + users.get(i).getNickname() + " (" + users.get(i).getUsername() + ")\n");
-				
+				listOfPeople += ((i + 1) + ": " + users.get(i).getNickname() + " (" + users.get(i).getUsername()
+						+ ")\n");
+
 			}
-			LevenshteinDistance distance = new LevenshteinDistance();
-			int closest = -1;
-			int indexOfClosest = -1;
-			for (int i = 0 ; i < roles.size(); i++) {
-				int howFar = distance.calculate(role, roles.get(i).getName());
-				if (howFar < closest) {
-					closest = howFar;
-					indexOfClosest = i;
-				}
-			}
-			
+
+			System.out.println("list of people string is made");
+
 			discord.getChannel().sendMessage("Roles: " + roles.get(0).getUsers().toArray()[0]);
 			discord.getChannel().sendMessage("Roles: " + roles.get(0).getUsers().toArray()[1]);
 			discord.getChannel().sendMessage("Roles: " + roles.get(0).getUsers().toArray()[2]);
 
-		System.out.println("List of people updated");
+			System.out.println("List of people updated");
 			System.out.println(listOfPeople);
 			discord.getChannel().sendMessage(listOfPeople);
+		} else if (areWePeopleing) {
+			int index = -1;
+			if (isANumber(discord.getMessageContent())) {
+				System.out.println("No commas");
+				index = Integer.parseInt(discord.getMessageContent());
+				eventList.remove(index - 1);
+				discord.getChannel().sendMessage("Event Removed");
+				areWePeopleing = false;
+			} else if (discord.getMessageContent().contains(",")) {
+				System.out.println("Has commas");
+				String[] indexesString = discord.getMessageContent().split(",");
+				System.out.println("split");
+				Integer[] indexes = new Integer[indexesString.length];
+				System.out.println("int array made");
+				int smallest = Integer.MAX_VALUE;
+				for (int i = 0; i < indexesString.length; i++) {
+					System.out.println("parseInt for " + indexesString[i]);
+					indexes[i] = Integer.parseInt(indexesString[i]);
+				}
+				Event[] events = new Event[indexes.length];
+				System.out.println("Event List created");
+				for (int i = 0; i < events.length; i++) {
+					events[i] = eventList.get(indexes[i] - 1);
+					System.out.println("Setting" + (indexes[i] - 1));
+				}
+				for (int i = 0; i < events.length; i++) {
+					eventList.remove(events[i]);
+					System.out.println("removing " + events[i].getName());
+				}
+				areWePeopleing = false;
+			}
+
 		}
 
-		if (messageContent.toLowerCase().startsWith("!amrmode")) {
+		if (messageContent.toLowerCase().startsWith("!amrmode"))
+
+		{
 			AMRmode = true;
 			discord.getChannel().sendMessage("AMR mode has be activated(you can disable it with !settings)");
 			System.out.println("AMR mode on");
@@ -532,7 +590,8 @@ public class Schedule extends Feature {
 		}
 
 		if (messageContent.toLowerCase().startsWith("!test")) {
-			EventConverter convert = new EventConverter();;
+			EventConverter convert = new EventConverter();
+			;
 			System.out.println(timeZones.usTimezoneMap.keySet().toArray()[0]);
 //			Date d = new Date();
 //			for (int i = 0 ; i<20; i++) {
@@ -543,8 +602,6 @@ public class Schedule extends Feature {
 		}
 
 	}
-
-	
 
 	public static boolean isANumber(String str) {
 		try {
@@ -558,7 +615,5 @@ public class Schedule extends Feature {
 	public void sendDm(String userId, String message, MessageCreateEvent discord) {
 		discord.getApi().getUserById(userId).thenAccept(user -> user.sendMessage(message));
 	}
-	
-
 
 }
