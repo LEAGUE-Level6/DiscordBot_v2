@@ -11,14 +11,14 @@ public class Person {
 	private CompletableFuture<User> user;
 	private String nickname = "";
 	private String username = "";
-	private String[] tags;
+	private ArrayList<String> tags;
 	private String timezone;
 
 
 	public Person(CompletableFuture<User> userById) {
 		// TODO Auto-generated constructor stub
 		user = userById;
-
+		tags = new ArrayList<String>();
 	}
 
 
@@ -52,11 +52,11 @@ public class Person {
 		this.user = user;
 	}
 
-	public String[] getTags() {
+	public ArrayList<String> getTags() {
 		return tags;
 	}
 
-	public void setTags(String[] tags) {
+	public void setTags(ArrayList<String> tags) {
 		this.tags = tags;
 	}
 

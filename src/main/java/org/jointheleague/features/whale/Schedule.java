@@ -33,6 +33,7 @@ import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 public class Schedule extends Feature {
 	Timezones timeZones = new Timezones();
 	ArrayList<Person> users = new ArrayList<Person>();
+	ArrayList<Person> printedUsers = new ArrayList<Person>();
 	List<Role> roles = new ArrayList<Role>();
 	DiscordApi api;
 	ApiGetter get;
@@ -49,7 +50,7 @@ public class Schedule extends Feature {
 	public final String[] available = { "!ican", "imavailable" };
 	public final String tags = "!tags";
 	boolean areWeRemoving;
-	boolean areWePeopleing; 
+	boolean areWePeopleing;
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
 	public Schedule(String channelName, ApiGetter get) {
@@ -447,6 +448,7 @@ public class Schedule extends Feature {
 		// PEOPLE
 		// PEOPLE
 		// PEOPLE
+
 		if (messageContent.toLowerCase().startsWith(people)) {
 			String role = messageContent.substring(7, messageContent.length()).trim();
 			if (messageContent.contains(" ")) {
@@ -458,7 +460,7 @@ public class Schedule extends Feature {
 			discord.getChannel().sendMessage("");
 			System.out.println("!people called");
 			long serverId = discord.getMessage().getServer().get().getId();
-			String listOfPeople = "Enter the number next to the user \n";
+			String listOfPeople = "Enter the number next to the user, then what you want to modify (ex. 1 tags, 3 timezone)\n";
 			if (users.size() <= 0) {
 				api.getServerById(serverId).ifPresent(server -> {
 					System.out.println(server.getMemberCount());
@@ -505,6 +507,7 @@ public class Schedule extends Feature {
 				System.out.println("Closest Role name: " + roles.get(indexOfClosest).getName());
 				System.out.println("Found distance");
 			}
+
 			for (int i = 0; i < users.size(); i++) {
 				try {
 					roles = server.getRoles();
@@ -514,6 +517,8 @@ public class Schedule extends Feature {
 								api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server) + "");
 						users.get(i).setUsername(
 								api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
+						printedUsers.add(users.get(i));
+						System.out.println("updated users with specific roles");
 					} else {
 						continue;
 					}
@@ -531,50 +536,66 @@ public class Schedule extends Feature {
 
 			System.out.println("list of people string is made");
 
-			discord.getChannel().sendMessage("Roles: " + roles.get(0).getUsers().toArray()[0]);
-			discord.getChannel().sendMessage("Roles: " + roles.get(0).getUsers().toArray()[1]);
-			discord.getChannel().sendMessage("Roles: " + roles.get(0).getUsers().toArray()[2]);
-
 			System.out.println("List of people updated");
 			System.out.println(listOfPeople);
 			discord.getChannel().sendMessage(listOfPeople);
+			areWePeopleing = true;
 		} else if (areWePeopleing) {
-			int index = -1;
-			if (isANumber(discord.getMessageContent())) {
-				System.out.println("No commas");
-				index = Integer.parseInt(discord.getMessageContent());
-				eventList.remove(index - 1);
-				discord.getChannel().sendMessage("Event Removed");
-				areWePeopleing = false;
-			} else if (discord.getMessageContent().contains(",")) {
-				System.out.println("Has commas");
-				String[] indexesString = discord.getMessageContent().split(",");
-				System.out.println("split");
-				Integer[] indexes = new Integer[indexesString.length];
-				System.out.println("int array made");
-				int smallest = Integer.MAX_VALUE;
-				for (int i = 0; i < indexesString.length; i++) {
-					System.out.println("parseInt for " + indexesString[i]);
-					indexes[i] = Integer.parseInt(indexesString[i]);
-				}
-				Event[] events = new Event[indexes.length];
-				System.out.println("Event List created");
-				for (int i = 0; i < events.length; i++) {
-					events[i] = eventList.get(indexes[i] - 1);
-					System.out.println("Setting" + (indexes[i] - 1));
-				}
-				for (int i = 0; i < events.length; i++) {
-					eventList.remove(events[i]);
-					System.out.println("removing " + events[i].getName());
-				}
+			if (messageContent.contains("end")) {
 				areWePeopleing = false;
 			}
+			int index = -1;
+			String[] msg = discord.getMessageContent().split(" ");
+			if (isANumber(msg[0].trim())) {
+				System.out.println("No commas");
+				index = Integer.parseInt(msg[0].trim());
+				System.out.println("parse");
+				if (discord.getMessageContent().toLowerCase().contains("tags")) {
+					String userStatus = printedUsers.get(index - 1).getNickname() + "("
+							+ printedUsers.get(index - 1).getUsername() + ")\n";
+					System.out.println("user status made");
+					userStatus += "Current Tags: ";
+					if (printedUsers.get(index - 1).getTags().size() == 0) {
+						userStatus += "none";
+					} else {
+						for (int i = 0; i < printedUsers.get(index - 1).getTags().size(); i++) {
+							userStatus += printedUsers.get(index - 1).getTags().get(i) + ", ";
+							userStatus = userStatus.substring(0, userStatus.length() - 2);
+						}
+						System.out.println("for loop ran");
+					}
 
+					discord.getChannel().sendMessage(userStatus);
+					System.out.println("message sent ");
+				} else {
+
+				}
+				System.out.println(printedUsers.size());
+				// printedUsers.get(index - 1).setTags(tags);
+				System.out.println("set tags");
+
+				printedUsers = new ArrayList<Person>();
+			}
+			// update list
+			for (int i = 0; i < printedUsers.size(); i++) {
+				for (int o = 0; o < users.size(); o++) {
+					try {
+						if (printedUsers.get(i).getUser().get().getId() == users.get(o).getUser().get().getId()) {
+							users.remove(o);
+							users.add(printedUsers.get(i));
+						}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 
-		if (messageContent.toLowerCase().startsWith("!amrmode"))
-
-		{
+		if (messageContent.toLowerCase().startsWith("!amrmode")) {
 			AMRmode = true;
 			discord.getChannel().sendMessage("AMR mode has be activated(you can disable it with !settings)");
 			System.out.println("AMR mode on");
@@ -584,9 +605,17 @@ public class Schedule extends Feature {
 //		SETTINGS
 //		SETTINGS
 		if (messageContent.toLowerCase().startsWith(settings)) {
-			AMRmode = true;
-			discord.getChannel().sendMessage("AMR mode has be activated(you can disable it with !settings)");
-			System.out.println("AMR mode on");
+			discord.getChannel().sendMessage("Welcome to Settings here is the list of settings \n"
+					+ "addTimeZone: Enter a timezone abbreviation then the time diiffrence from PT (ex. IST +12:30)\n"
+					+ "disableAMR\n" + "addTimeZone\n" + "addTimeZone\n" + "addTimeZone\n" + "addTimeZone\n" + "");
+		} else if (messageContent.toLowerCase().startsWith("addtimezone")) {
+			System.out.println("add time zone called");
+				String[] time = messageContent.split(" ");
+				if (time[2].contains("+")) {
+					time[2] = time[2].substring(1);
+				}
+				timeZones.addTimezone(time[1], Integer.parseInt(time[2]));
+				System.out.println("timezone added");
 		}
 
 		if (messageContent.toLowerCase().startsWith("!test")) {

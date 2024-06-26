@@ -1,10 +1,12 @@
 package org.jointheleague.features.whale;
 
+import org.javacord.api.entity.user.User;
+
 public class Event {
 	private String name;
 	private Time time;
 	private String date;
-	private String[] people;
+	private User[] people;
 	
 	Event(String name, Time time, String date) {
 		this.name = name;
@@ -30,10 +32,10 @@ public class Event {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	public String[] getPeople() {
+	public User[] getPeople() {
 		return people;
 	}
-	public void setPeople(String[] people) {
+	public void setPeople(User[] people) {
 		this.people = people;
 	}
 	
