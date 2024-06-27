@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Timezones {
-     Map<String, Integer> usTimezoneMap;
+     Map<String, Double> usTimezoneMap;
 
     public Timezones() {
         initializeTimezoneMap();
@@ -17,13 +17,13 @@ public class Timezones {
     private void initializeTimezoneMap() {
         usTimezoneMap = new HashMap<>();
         // US Timezones relative to Pacific Time (PT)
-        usTimezoneMap.put("PT", 0);
-        usTimezoneMap.put("MT", +1);
-        usTimezoneMap.put("CT", +2);
-        usTimezoneMap.put("ET", +3);
+        usTimezoneMap.put("PT", 0.0);
+        usTimezoneMap.put("MT", +1.0);
+        usTimezoneMap.put("CT", +2.0);
+        usTimezoneMap.put("ET", +3.0);
     }
 
-    public void addTimezone(String abbreviation, int differenceFromPT) {
+    public void addTimezone(String abbreviation, Double differenceFromPT) {
         usTimezoneMap.put(abbreviation.toUpperCase(), differenceFromPT);
     }
 

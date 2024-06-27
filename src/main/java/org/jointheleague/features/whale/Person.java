@@ -55,9 +55,16 @@ public class Person {
 	public ArrayList<String> getTags() {
 		return tags;
 	}
-
-	public void setTags(ArrayList<String> tags) {
-		this.tags = tags;
+	public void removeTags(String tag) {
+		this.tags.remove(tag);
+	}
+	public void removeTags(int index) {
+		this.tags.remove(index);
+	}
+	public void addTags(String[] tags) {
+		for (int i = 0; i < tags.length; i++) {
+			this.tags.add(tags[i]);
+		}
 	}
 
 	public String getTimezone() {

@@ -51,6 +51,7 @@ public class Schedule extends Feature {
 	public final String tags = "!tags";
 	boolean areWeRemoving;
 	boolean areWePeopleing;
+	boolean areTagsBeingSet;
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
 	public Schedule(String channelName, ApiGetter get) {
@@ -140,7 +141,7 @@ public class Schedule extends Feature {
 					time = eventString.substring(indexOfTime - 1, eventString.length()).trim();
 					realTime = new Time(time.charAt(0) + "", time.charAt(2) + "" + time.charAt(3) + "");
 					for (int i = 0; i < timeZones.usTimezoneMap.size(); i++) {
-						if (time.toUpperCase().contains(" " + timeZones.usTimezoneMap.keySet().toArray()[i])) {
+						if (time.toUpperCase().contains("" + timeZones.usTimezoneMap.keySet().toArray()[i])) {
 							System.out.println("Found timezone");
 							realTime.setTimeZone((String) timeZones.usTimezoneMap.keySet().toArray()[i]);
 							System.out.println("realTime timezone " + realTime.getTimeZone());
@@ -444,7 +445,7 @@ public class Schedule extends Feature {
 				}
 			}
 		}
-		// PEOPLE
+		//PEOPLE
 		// PEOPLE
 		// PEOPLE
 		// PEOPLE
@@ -541,8 +542,16 @@ public class Schedule extends Feature {
 			discord.getChannel().sendMessage(listOfPeople);
 			areWePeopleing = true;
 		} else if (areWePeopleing) {
-			if (messageContent.contains("end")) {
+			if (messageContent.equalsIgnoreCase("end")) {
 				areWePeopleing = false;
+			}
+			if (areTagsBeingSet) {
+				if(messageContent.contains(",")) {
+					
+				} else {
+					String[] tags = {messageContent.trim()};
+					users.get(users.size()-1).addTags(tags);
+				}
 			}
 			int index = -1;
 			String[] msg = discord.getMessageContent().split(" ");
@@ -564,8 +573,10 @@ public class Schedule extends Feature {
 						}
 						System.out.println("for loop ran");
 					}
+					discord.getChannel().sendMessage("enter a list of tags to add or just one (ex. gamer, all)");
 
 					discord.getChannel().sendMessage(userStatus);
+					areTagsBeingSet = true;
 					System.out.println("message sent ");
 				} else {
 
@@ -611,23 +622,28 @@ public class Schedule extends Feature {
 		} else if (messageContent.toLowerCase().startsWith("addtimezone")) {
 			System.out.println("add time zone called");
 				String[] time = messageContent.split(" ");
+				System.out.println("split");
 				if (time[2].contains("+")) {
-					time[2] = time[2].substring(1);
+					time[2] = time[2].substring(1).trim();
+					System.out.println("+ removed and trimed");
 				}
-				timeZones.addTimezone(time[1], Integer.parseInt(time[2]));
+				if (time[2].contains(":30")) {
+					time[2] = time[2].replace(":30", ".5");
+				}
+				if (time[2].contains(":45")) {
+					time[2] = time[2].replace(":45", ".75");
+				}
+				System.out.println("time at 1 " + time[1] + ", time at 2 " + time[2]);
+				timeZones.addTimezone(time[1], Double.parseDouble(time[2]));
 				System.out.println("timezone added");
 		}
 
 		if (messageContent.toLowerCase().startsWith("!test")) {
-			EventConverter convert = new EventConverter();
-			;
-			System.out.println(timeZones.usTimezoneMap.keySet().toArray()[0]);
-//			Date d = new Date();
-//			for (int i = 0 ; i<20; i++) {
-//				System.out.println((d.getMonth()+1) + "/" + d.getDate() + "/" + (d.getYear() + "").substring(1, (d.getYear() + "").length()) + "--" + d.getHours()+ ":" + d.getMinutes());
-//				d.setHours(d.getHours()-1);
-//			}
-
+			
+		}
+		if (messageContent.toLowerCase().startsWith("!stop")) {
+			discord.getChannel().sendMessage("bye");
+			System.exit(0);
 		}
 
 	}
