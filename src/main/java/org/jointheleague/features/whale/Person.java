@@ -62,8 +62,9 @@ public class Person {
 		this.tags.remove(index);
 	}
 	public void addTags(String[] tags) {
+		
 		for (int i = 0; i < tags.length; i++) {
-			this.tags.add(tags[i]);
+			this.tags.add(tags[i].trim());
 		}
 	}
 
