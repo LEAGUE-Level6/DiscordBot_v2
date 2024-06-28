@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Timezones {
      Map<String, Double> usTimezoneMap;
@@ -25,6 +26,14 @@ public class Timezones {
 
     public void addTimezone(String abbreviation, Double differenceFromPT) {
         usTimezoneMap.put(abbreviation.toUpperCase(), differenceFromPT);
+    }
+    public String[] getTimezones() {
+    	Object[] zones = usTimezoneMap.keySet().toArray();
+    	String[] zonesStrArr = new String[zones.length];
+        for (int i = 0; i < usTimezoneMap.size(); i++) {
+        	zonesStrArr[i] = zones[i]+"";
+        }
+        return zonesStrArr;
     }
 
     public void displayCurrentTime(String timezoneId) {

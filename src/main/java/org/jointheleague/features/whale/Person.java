@@ -19,6 +19,7 @@ public class Person {
 		// TODO Auto-generated constructor stub
 		user = userById;
 		tags = new ArrayList<String>();
+		timezone = "none";
 	}
 
 

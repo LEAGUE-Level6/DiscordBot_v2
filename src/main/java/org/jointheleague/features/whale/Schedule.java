@@ -34,6 +34,7 @@ public class Schedule extends Feature {
 	Timezones timeZones = new Timezones();
 	ArrayList<Person> users = new ArrayList<Person>();
 	ArrayList<Person> printedUsers = new ArrayList<Person>();
+	ArrayList<Person> printedUsers2 = new ArrayList<Person>();
 	List<Role> roles = new ArrayList<Role>();
 	DiscordApi api;
 	ApiGetter get;
@@ -51,9 +52,13 @@ public class Schedule extends Feature {
 	public final String userTimeZone = "!timezones";
 	boolean areWeRemoving;
 	boolean areWePeopleing;
+	boolean areWeTimezoneing;
 	boolean areTagsBeingSet;
-	boolean next;
+	boolean areZonesBeingSet;
+	boolean nextTags;
+	boolean nextZones;
 	int mostRecentUserIndex;
+	int mostRecentUserIndex2;
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
 	public Schedule(String channelName, ApiGetter get) {
@@ -62,14 +67,15 @@ public class Schedule extends Feature {
 
 		// Create a help embed to describe feature when !help command is sent
 		helpEmbed = new HelpEmbed("Schedule Bot",
-				"!addEvent: Adds an event. Start with the event name, time, date, tag(optional but recomended(!tags)) ex. (!addEvent Valorant Grind 9:30pm pdt fri #val \n\n"
+				"!addEvent: Adds an event. Start with the event name, time, date, tag(optional but recomended(!tags)) \n\n"
 						+ "!removeEvent: Removes an event\n\n"
 						+ "!tags: edit the tags of users in an event (add a role name to only show users with that role)\n\n"
-						+ "!timezones: edit users timezones so the bot knows what time for them the events will start \n\n"
+						+ "!timezones: edit users timezones so the bot knows what time for them the events will start (add a role name to only show users with that role)\n\n"
 						+ "!schedule: lists all events \n\n" + "!startEvent: starts the nearest event early\n\n"
 						+ "!endEvent: ends the current event \n\n"
 						+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n"
 						+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
+						+ "!examples: shows examples for every command \n\n"
 						+ "!settings: configure the bot\n\n");
 
 	}
@@ -78,6 +84,21 @@ public class Schedule extends Feature {
 	public void handle(MessageCreateEvent discord) {
 		api = get.getApi();
 		String messageContent = discord.getMessageContent();
+		if (messageContent.toLowerCase().startsWith("!examples") || messageContent.toLowerCase().startsWith("!example")) {
+			String examples = "Examples: \n"
+							+"a -> will mean a new messgae and (ex/ex) will mean 2 possible commands to send"
+							+"!addEvent Valorant Grind 9:30pm pdt fri #val \n"
+							+ "!removeEvent -> (1/3, 5)\n"
+							+ "!tags spectator -> 1 tags -> spectator\n"
+							+ "!timezones -> 2 timezones -> GMT\n"
+							+ "!schedule \n"
+							+ "!endEvent \n"
+							+ "!pollEvent -> 2\n"
+							+ "!iCan/!imAvailable -> (1,2/3)\n"
+							+ "!examples \n"
+							+ "!settings -> addTimeZone IST +12:30";
+			discord.getChannel().sendMessage(examples);
+		}
 		// thsi will add the strings to the eventList
 		// ADD
 		// ADD
@@ -89,6 +110,7 @@ public class Schedule extends Feature {
 			if (eventString.contains(" ")) {
 				System.out.println("message contains a space");
 				String[] values = eventString.split(" ");
+				ArrayList<User> usersForEvent = new ArrayList<User>();
 				String time = "";
 				Time realTime;
 				String name = "";
@@ -161,6 +183,25 @@ public class Schedule extends Feature {
 					realTime.setIsPm(false);
 				} else if (time.toLowerCase().contains("pm")) {
 					realTime.setIsPm(true);
+				}
+				if (time.toLowerCase().contains("&")) {
+					String tag = time.substring(time.indexOf('&'), time.length()-1);
+					tag = tag.trim();
+					for (int i = 0; i< users.size(); i++) {
+						for (int o = 0; o < users.get(i).getTags().size(); o++) {
+							if (tag.equalsIgnoreCase(users.get(i).getTags().get(o))) {
+								try {
+									usersForEvent.add(users.get(i).getUser().get());
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (ExecutionException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						}
+					}
 				}
 				System.out.println("time after prossesing is " + realTime.getHour() + " " + realTime.getMin());
 
@@ -452,11 +493,11 @@ public class Schedule extends Feature {
 		// PEOPLE
 		// PEOPLE
 		String listOfPeople = "err";
-		if (messageContent.toLowerCase().startsWith(editTags) || next) {
-			next = false;
+		if (messageContent.toLowerCase().startsWith(editTags) || nextTags) {
+			nextTags = false;
 			areTagsBeingSet = false;
 			String role = messageContent.substring(7, messageContent.length()).trim();
-			if (messageContent.contains(" ") && !next) {
+			if (messageContent.contains(" ") && !nextTags) {
 
 			} else {
 				role = null;
@@ -465,7 +506,7 @@ public class Schedule extends Feature {
 			discord.getChannel().sendMessage("");
 			System.out.println("!people called");
 			long serverId = discord.getMessage().getServer().get().getId();
-			listOfPeople = "Enter the number next to the user, then what you want to modify (ex. 1 tags) say \"end people\" to stop editing people\n";
+			listOfPeople = "Enter the number next to the user, then what you want to modify (ex. 1 tags) say \"end tags\" to stop editing tags\n";
 			if (users.size() <= 0) {
 				api.getServerById(serverId).ifPresent(server -> {
 					System.out.println(server.getMemberCount());
@@ -516,24 +557,26 @@ public class Schedule extends Feature {
 			for (int i = 0; i < users.size(); i++) {
 				try {
 					if (role != null) {
-					roles = server.getRoles();
-					users.get(i).setUser(api.getUserById(users.get(i).getUser().get().getId()));
-					if (users.get(i).getUser().get().getRoles(server).contains(roles.get(indexOfClosest))) {
-						users.get(i).setNickname(
-								api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server) + "");
-						users.get(i).setUsername(
-								api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
-						printedUsers.add(users.get(i));
-						System.out.println("updated users with specific roles");
-					} else {
+						roles = server.getRoles();
 						users.get(i).setUser(api.getUserById(users.get(i).getUser().get().getId()));
-						users.get(i).setNickname(
-								api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server) + "");
-						users.get(i).setUsername(
-								api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
-						printedUsers.add(users.get(i));
-						System.out.println("updated all users");
-					}
+						if (users.get(i).getUser().get().getRoles(server).contains(roles.get(indexOfClosest))) {
+							users.get(i).setNickname(
+									api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server)
+											+ "");
+							users.get(i).setUsername(
+									api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
+							printedUsers.add(users.get(i));
+							System.out.println("updated users with specific roles");
+						} else {
+							users.get(i).setUser(api.getUserById(users.get(i).getUser().get().getId()));
+							users.get(i).setNickname(
+									api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server)
+											+ "");
+							users.get(i).setUsername(
+									api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
+							printedUsers.add(users.get(i));
+							System.out.println("updated all users");
+						}
 					} else {
 						continue;
 					}
@@ -556,11 +599,11 @@ public class Schedule extends Feature {
 			discord.getChannel().sendMessage(listOfPeople);
 			areWePeopleing = true;
 		} else if (areWePeopleing && !discord.getMessage().getAuthor().isBotUser()) {
-			if (messageContent.equalsIgnoreCase("end people")) {
-				discord.getChannel().sendMessage("Stopped Modifying People");
+			if (messageContent.equalsIgnoreCase("end tags")) {
+				discord.getChannel().sendMessage("Stopped Modifying Tags");
 				areWePeopleing = false;
 				areTagsBeingSet = false;
-				next = false;
+				nextTags = false;
 			}
 			if (areTagsBeingSet && !discord.getMessage().getAuthor().isBotUser()) {
 				if (messageContent.contains(",")) {
@@ -577,12 +620,12 @@ public class Schedule extends Feature {
 						areTagsBeingSet = false;
 						discord.getChannel().sendMessage(
 								whatTagsAreSet + " set to " + users.get(mostRecentUserIndex).getNickname());
-						next = true;
+						nextTags = true;
 					}
 				} else if (messageContent.toLowerCase().contains("no tag")) {
 					discord.getChannel().sendMessage("No tags set");
 					areTagsBeingSet = false;
-					next = true;
+					nextTags = true;
 				} else {
 					if (mostRecentUserIndex == -1) {
 						discord.getChannel().sendMessage("Somthing Went Wrong");
@@ -593,7 +636,7 @@ public class Schedule extends Feature {
 						areTagsBeingSet = false;
 						discord.getChannel().sendMessage(
 								"Tag " + tags[0] + " set to " + users.get(mostRecentUserIndex).getNickname());
-						next = true;
+						nextTags = true;
 					}
 				}
 			} else {
@@ -653,18 +696,213 @@ public class Schedule extends Feature {
 				}
 			}
 		}
-		//TIMEZONE
-		//TIMEZONE
-		//TIMEZONE
-		//TIMEZONE
-		//TIMEZONE
-		
-		if (messageContent.toLowerCase().startsWith(userTimeZone)) {
-			
+		// TIMEZONE
+		// TIMEZONE
+		// TIMEZONE
+		// TIMEZONE
+		// TIMEZONE
+
+		if (messageContent.toLowerCase().startsWith(userTimeZone) || messageContent.toLowerCase().startsWith("!timezone") || nextZones) {
+			String listOfPeople2 = "err";
+			nextZones = false;
+			areZonesBeingSet = false;
+			String role = messageContent.substring(7, messageContent.length()).trim();
+			if (messageContent.contains(" ") && !nextZones) {
+
+			} else {
+				role = "everyone";
+			}
+			System.out.println("role string created");
+			discord.getChannel().sendMessage("");
+			System.out.println("!people called");
+			long serverId = discord.getMessage().getServer().get().getId();
+			listOfPeople = "Enter the number next to the user, then what you want to modify (ex. 1 timezone) say \"end timezone\" to stop editing timezones\n";
+			if (users.size() <= 0) {
+				api.getServerById(serverId).ifPresent(server -> {
+					System.out.println(server.getMemberCount());
+					for (int i = 0; i < server.getMemberCount(); i++) {
+						System.out.println(server.getMembers().toArray()[i]);
+						String userInfo = server.getMembers().toArray()[i].toString();
+						String userId = userInfo.substring(userInfo.indexOf("id") + 4, userInfo.indexOf(','));
+						Person p = new Person(api.getUserById(userId));
+						try {
+							p.setNickname(api.getUserById(userId).get().getNickname(server) + "");
+							p.setUsername(api.getUserById(userId).get().getName() + "");
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						users.add(p);
+					}
+
+				});
+				System.out.println("users in list");
+			}
+			Server server = api.getServerById(serverId).get();
+			System.out.println("user list size " + users.size());
+			int indexOfClosest = -1;
+			if (role != null) {
+				LevenshteinDistance distance = new LevenshteinDistance();
+				int closest = Integer.MAX_VALUE;
+				roles = server.getRoles();
+				for (int i = 0; i < roles.size(); i++) {
+					System.out.println("checking distance");
+					int howFar = distance.calculate(role, roles.get(i).getName());
+					if (howFar < closest) {
+						System.out.println("new distance found");
+						closest = howFar;
+						indexOfClosest = i;
+					}
+				}
+
+				System.out.println("Org Role: " + role);
+				System.out.println("indexofClosest: " + indexOfClosest);
+				System.out.println("Closest Role name: " + roles.get(indexOfClosest).getName());
+				System.out.println("Found distance");
+			}
+
+			for (int i = 0; i < users.size(); i++) {
+				try {
+					if (role != null) {
+						roles = server.getRoles();
+						users.get(i).setUser(api.getUserById(users.get(i).getUser().get().getId()));
+						if (users.get(i).getUser().get().getRoles(server).contains(roles.get(indexOfClosest))) {
+							users.get(i).setNickname(
+									api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server)
+											+ "");
+							users.get(i).setUsername(
+									api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
+							printedUsers2.add(users.get(i));
+							System.out.println("updated users with specific roles");
+						} else {
+							users.get(i).setUser(api.getUserById(users.get(i).getUser().get().getId()));
+							users.get(i).setNickname(
+									api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server)
+											+ "");
+							users.get(i).setUsername(
+									api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
+							printedUsers2.add(users.get(i));
+							System.out.println("updated all users");
+						}
+					} else {
+						continue;
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				listOfPeople += ((i + 1) + ": " + users.get(i).getNickname() + " (" + users.get(i).getUsername()
+						+ ")\n");
+
+			}
+
+			System.out.println("list of people string is made");
+
+			System.out.println("List of people updated");
+			System.out.println(listOfPeople);
+			discord.getChannel().sendMessage(listOfPeople);
+			areWeTimezoneing = true;
+		} else if (areWeTimezoneing && !discord.getMessage().getAuthor().isBotUser()) {
+			if (messageContent.equalsIgnoreCase("end timezone")) {
+				discord.getChannel().sendMessage("Stopped Modifying Timezones");
+				areWeTimezoneing = false;
+				areZonesBeingSet = false;
+				nextZones = false;
+			}
+			if (areZonesBeingSet && !discord.getMessage().getAuthor().isBotUser()) {
+				if (messageContent.toLowerCase().contains("no zone")) {
+					discord.getChannel().sendMessage("No timezones set");
+					areZonesBeingSet = false;
+					nextZones = true;
+				} else {
+					if (mostRecentUserIndex2 == -1) {
+						discord.getChannel().sendMessage("Somthing Went Wrong");
+					} else {
+						String timezone = messageContent.trim();
+						timezone = timezone.toUpperCase();
+						for (int i = 0; i < timeZones.getTimezones().length; i++) {
+							if (timeZones.getTimezones()[i].equals(timezone)) {
+								users.get(mostRecentUserIndex2).setTimezone(timezone);
+								break;
+							}
+						}
+						if (!users.get(mostRecentUserIndex2).getTimezone().equals(timezone)) {
+							discord.getChannel().sendMessage("Timezone not added or is invalid");
+						}
+						
+						System.out.println("Zone of user: " + users.get(mostRecentUserIndex2).getTimezone());
+						areZonesBeingSet = false;
+						discord.getChannel().sendMessage(
+								"Timezone " + timezone + " set to " + users.get(mostRecentUserIndex).getNickname());
+						nextZones = true;
+					}
+				}
+			} else {
+				int index = -1;
+				String[] msg = discord.getMessageContent().split(" ");
+				if (isANumber(msg[0].trim())) {
+					System.out.println("No commas");
+					index = Integer.parseInt(msg[0].trim());
+					System.out.println("parse");
+
+					if (discord.getMessageContent().toLowerCase().contains("timezone") || discord.getMessageContent().toLowerCase().contains("timezones")) {
+						String userStatus = printedUsers2.get(index - 1).getNickname() + "("
+								+ printedUsers2.get(index - 1).getUsername() + ")\n";
+						System.out.println("user status made");
+						userStatus += "Current Timezone: ";
+						if (printedUsers2.get(index - 1).getTimezone().equals("none")) {
+							userStatus += "none";
+						} else {
+							userStatus += printedUsers2.get(index - 1).getTimezone();
+						}
+						String allTimeZones = "List of all added timezones ";
+						for (int i = 0; i < timeZones.getTimezones().length; i++) {
+							allTimeZones += timeZones.getTimezones()[i] + ", ";
+							
+						}
+						allTimeZones = allTimeZones.substring(0, allTimeZones.lastIndexOf(','));
+						discord.getChannel().sendMessage(
+								"enter an abbreviation for a timezone (the timezone must be added using !settings if it is not PT, MT, CT, ET) say \"no zone\" to not add a timezone\n"
+										+ userStatus + "\n" + allTimeZones);
+
+						areZonesBeingSet = true;
+						mostRecentUserIndex2 = index - 1;
+						System.out.println("message sent ");
+					} else {
+
+					}
+					System.out.println(printedUsers2.size());
+					// printedUsers.get(index - 1).setTags(tags);
+					System.out.println("set zones");
+
+					printedUsers2 = new ArrayList<Person>();
+				}
+
+				// update list
+				for (int i = 0; i < printedUsers2.size(); i++) {
+					for (int o = 0; o < users.size(); o++) {
+						try {
+							if (printedUsers2.get(i).getUser().get().getId() == users.get(o).getUser().get().getId()) {
+								users.remove(o);
+								users.add(printedUsers2.get(i));
+							}
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+			}
 		}
-		
-		
-		
 
 		if (messageContent.toLowerCase().startsWith("!amrmode")) {
 			AMRmode = true;
