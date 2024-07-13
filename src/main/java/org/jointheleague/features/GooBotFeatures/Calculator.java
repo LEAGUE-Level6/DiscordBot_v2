@@ -17,7 +17,7 @@ public class Calculator extends Feature {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(COMMAND, "Give GooBot a number, an operation symbol, and" +
                 "another number, and GooBot will perform the operation for you! This includes: +, x, /, " +
-                "-, ^, %. Please have no spaces in the operation provided. Have fun! Eg: !Calculator 55,+,12");
+                "-, ^, %. Please have spaces in the operation provided. Have fun! Eg: !Calculator 55 + 12");
     }
 
     @Override
@@ -27,23 +27,28 @@ public class Calculator extends Feature {
         String op;
         int num2;
         //respond to message here
-        if (messageContent.startsWith(COMMAND) ) {
+        if (messageContent.startsWith(COMMAND)) {
             int index1 = messageContent.indexOf(",");
-            int index2 = messageContent.indexOf(",", 15);
-                String sub1 = messageContent.substring(12, index1);
-                String subOp2 = messageContent.substring(index1 + 1, index2);
-                String sub2 = messageContent.substring(index2 + 1);
-                num1 = Integer.parseInt(sub1);
-                num2 = Integer.parseInt(sub2);
-                answer = calculate(event, num1, num2, subOp2);
+            int index2 = messageContent.indexOf(",", index1 + 1);
+            String[] seperatedParts = messageContent.split(" ");
+            if (seperatedParts.length > 3) {
+                num1 = Integer.parseInt(seperatedParts[1]);
+                num2 = Integer.parseInt(seperatedParts[3]);
+                op = seperatedParts[2];
+                answer = calculate(event, num1, num2, op);
                 event.getChannel().sendMessage("I got the answer! It is... " + answer);
+            } else {
+                event.getChannel().sendMessage("Sorry, we've ran into an error. To be specific, the operation" +
+                        " entered in seemed to not have properly processed, meaning you may have forgotten the correct amount" +
+                        " of spaces or entered something else incorrect for the required format. Check in with the example" +
+                        " at the !help section to make sure you entered your operation in correctly!");
+            }
         }
     }
 
-
-    public static double calculate(MessageCreateEvent event, double num1, double num2, String subOp2) {
+    public static double calculate(MessageCreateEvent event, double num1, double num2, String Op2) {
         answer = 0;
-        switch (subOp2) {
+        switch (Op2) {
             case "+":
                 answer = num1 + num2;
                 break;

@@ -9,6 +9,7 @@ public class RandomWordWrapper {
 
     @SerializedName("data")
     @Expose
+
     private List<String> data = null;
 
     public List<String> getData() {

@@ -1,5 +1,7 @@
 package org.jointheleague.features.GooBotFeatures;
 
+import org.jointheleague.features.GooBotFeatures.RandomWordWrapper;
+
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper;
@@ -14,7 +16,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
-//A swagger page for this very simple API can be found here: https://app.swaggerhub.com/apis-docs/whiterabbit8/meowfacts/1.0.0
 public class RandomWordGenerator extends Feature {
 
 
@@ -49,7 +50,7 @@ public class RandomWordGenerator extends Feature {
     }
 
     public String getCoolWord() {
-        String word = "default";
+        String word = "error";
         try {
             URLConnection con = url.openConnection();
             InputStream is = con.getInputStream();
@@ -59,6 +60,7 @@ public class RandomWordGenerator extends Feature {
             word = s.next();
             is.close();
             s.close();
+            word = word.substring(1, word.length()-1);
         } catch (IOException e) {
             System.out.print("Here is the error: + " + e.getStackTrace());
         }
