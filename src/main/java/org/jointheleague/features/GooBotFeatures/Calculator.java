@@ -17,7 +17,7 @@ public class Calculator extends Feature {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(COMMAND, "Give GooBot a number, an operation symbol, and" +
                 "another number, and GooBot will perform the operation for you! This includes: +, x, /, " +
-                "-, ^, %. Please have spaces in the operation provided. Have fun! Eg: !Calculator 55 + 12");
+                "-, ^, %. Please have normal spacing in the operation provided. Have fun! Eg: !Calculator 55 + 12");
     }
 
     @Override
