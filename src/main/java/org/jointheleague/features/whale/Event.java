@@ -1,17 +1,20 @@
 package org.jointheleague.features.whale;
 
+import java.util.ArrayList;
+
 import org.javacord.api.entity.user.User;
 
 public class Event {
 	private String name;
 	private Time time;
 	private String date;
-	private User[] people;
+	private ArrayList<User> people;
 	
 	Event(String name, Time time, String date) {
 		this.name = name;
 		this.time = time;
 		this.date = date;
+		people = new ArrayList<User>();
 	}
 
 	public String getName() {
@@ -32,11 +35,11 @@ public class Event {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	public User[] getPeople() {
+	public ArrayList<User> getPeople() {
 		return people;
 	}
-	public void setPeople(User[] people) {
-		this.people = people;
+	public void addPeople(User people) {
+		this.people.add(people);
 	}
 	
 }

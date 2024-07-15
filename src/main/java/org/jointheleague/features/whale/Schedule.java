@@ -29,6 +29,8 @@ import org.json.simple.JSONObject;
 import org.springframework.util.StringUtils;
 
 import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
+//To fix
+//when doing tags when roles are changed it doesnt update whn doing !tags new role it has the old list 
 
 public class Schedule extends Feature {
 	Timezones timeZones = new Timezones();
@@ -50,7 +52,18 @@ public class Schedule extends Feature {
 	public final String poll = "!pollevent";
 	public final String[] available = { "!ican", "imavailable" };
 	public final String userTimeZone = "!timezones";
+	// removing
 	boolean areWeRemoving;
+
+	// edit events
+	boolean areWeEditing;
+	boolean isEventSelected;
+	boolean setName;
+	boolean setTime;
+	boolean setDate;
+	boolean setPeople;
+
+	// tags
 	boolean areWePeopleing;
 	boolean areWeTimezoneing;
 	boolean areTagsBeingSet;
@@ -69,34 +82,30 @@ public class Schedule extends Feature {
 		helpEmbed = new HelpEmbed("Schedule Bot",
 				"!addEvent: Adds an event. Start with the event name, time, date, tag(optional but recomended(!tags)) \n\n"
 						+ "!removeEvent: Removes an event\n\n"
+						+ "!editEvent: change the name, time, date, or people attending an event\n\n"
 						+ "!tags: edit the tags of users in an event (add a role name to only show users with that role)\n\n"
 						+ "!timezones: edit users timezones so the bot knows what time for them the events will start (add a role name to only show users with that role)\n\n"
 						+ "!schedule: lists all events \n\n" + "!startEvent: starts the nearest event early\n\n"
 						+ "!endEvent: ends the current event \n\n"
 						+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n"
 						+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
-						+ "!examples: shows examples for every command \n\n"
-						+ "!settings: configure the bot\n\n");
+						+ "!examples: shows examples for every command \n\n" + "!settings: configure the bot\n\n");
 
 	}
 
 	@Override
 	public void handle(MessageCreateEvent discord) {
+		String detectedTag = "null";
 		api = get.getApi();
 		String messageContent = discord.getMessageContent();
-		if (messageContent.toLowerCase().startsWith("!examples") || messageContent.toLowerCase().startsWith("!example")) {
+		if (messageContent.toLowerCase().startsWith("!examples")
+				|| messageContent.toLowerCase().startsWith("!example")) {
 			String examples = "Examples: \n"
-							+"a -> will mean a new messgae and (ex/ex) will mean 2 possible commands to send"
-							+"!addEvent Valorant Grind 9:30pm pdt fri #val \n"
-							+ "!removeEvent -> (1/3, 5)\n"
-							+ "!tags spectator -> 1 tags -> spectator\n"
-							+ "!timezones -> 2 timezones -> GMT\n"
-							+ "!schedule \n"
-							+ "!endEvent \n"
-							+ "!pollEvent -> 2\n"
-							+ "!iCan/!imAvailable -> (1,2/3)\n"
-							+ "!examples \n"
-							+ "!settings -> addTimeZone IST +12:30";
+					+ "a /'->/' will mean a new messgae and (/'command/'/'command 2/') will mean 2 possible commands to send"
+					+ "!addEvent Valorant Grind 9:30pm pdt fri &val \n" + "!removeEvent -> (1/3, 5)\n"
+					+ "!tags spectator -> 1 tags -> spectator\n" + "!timezones -> 2 timezones -> GMT\n" + "!schedule \n"
+					+ "!endEvent \n" + "!pollEvent -> 2\n" + "!iCan/!imAvailable -> (1,2/3)\n" + "!examples \n"
+					+ "!settings -> addTimeZone IST +12:30";
 			discord.getChannel().sendMessage(examples);
 		}
 		// thsi will add the strings to the eventList
@@ -184,10 +193,11 @@ public class Schedule extends Feature {
 				} else if (time.toLowerCase().contains("pm")) {
 					realTime.setIsPm(true);
 				}
+
 				if (time.toLowerCase().contains("&")) {
-					String tag = time.substring(time.indexOf('&'), time.length()-1);
+					String tag = time.substring(time.indexOf('&') + 1, time.length());
 					tag = tag.trim();
-					for (int i = 0; i< users.size(); i++) {
+					for (int i = 0; i < users.size(); i++) {
 						for (int o = 0; o < users.get(i).getTags().size(); o++) {
 							if (tag.equalsIgnoreCase(users.get(i).getTags().get(o))) {
 								try {
@@ -202,6 +212,7 @@ public class Schedule extends Feature {
 							}
 						}
 					}
+					detectedTag = tag;
 				}
 				System.out.println("time after prossesing is " + realTime.getHour() + " " + realTime.getMin());
 
@@ -386,7 +397,8 @@ public class Schedule extends Feature {
 					.sendMessage("The Event recived was Name = |" + eventList.get(eventList.size() - 1).getName()
 							+ "| Time = |" + eventList.get(eventList.size() - 1).getTime().getTimeAsString()
 							+ "| Zone = |" + eventList.get(eventList.size() - 1).getTime().getTimeZone() + "|"
-							+ " |Date = |" + eventList.get(eventList.size() - 1).getDate() + "|");
+							+ " |Date = |" + eventList.get(eventList.size() - 1).getDate() + "|" + " |Tag = |"
+							+ detectedTag + "|");
 
 			System.out.println("Message sent to channel");
 			// event.getChannel().sendMessage("Sending a message to the channel");
@@ -440,6 +452,57 @@ public class Schedule extends Feature {
 
 		}
 
+		// EDIT EVENT
+		if (messageContent.toLowerCase().startsWith(edit[0]) || messageContent.toLowerCase().startsWith(edit[1])) {
+			areWeEditing = true;
+			String listOfEvents = "Enter the number next to the event to edit it\n\n";
+			for (int i = 0; i < eventList.size(); i++) {
+				listOfEvents += (i + 1) + ": " + eventList.get(i).getName() + " "
+						+ eventList.get(i).getTime().getTimeAsString() + " " + eventList.get(i).getDate() + "\n";
+			}
+			discord.getChannel().sendMessage(listOfEvents);
+		} else if (areWeEditing) {
+			int index = -1;
+			if (isANumber(discord.getMessageContent())) {
+				System.out.println("No commas");
+				index = Integer.parseInt(discord.getMessageContent());
+				discord.getChannel()
+						.sendMessage("Event: " + eventList.get(index - 1).getName() + " "
+								+ eventList.get(index - 1).getTime().getTimeAsString() + " "
+								+ eventList.get(index - 1).getDate() + "selected");
+				discord.getChannel().sendMessage("Enter \n 1: name \n 2: time \n 3: date \n 4: people");
+				if (isEventSelected && isANumber(discord.getMessageContent())) {
+					int option = Integer.parseInt(discord.getMessageContent());
+					if (option == 1) {
+						discord.getChannel().sendMessage("Enter the new name for the event");
+						setName = true;
+						areWeEditing = false;
+					} else if (option == 2) {
+						discord.getChannel().sendMessage("Enter the new time for the event (ex. 10:30am PT)");
+						setTime = true;
+						areWeEditing = false;
+					} else if (option == 3) {
+						discord.getChannel().sendMessage("Enter the new date for the event (ex. 10/12/24)");
+						setDate = true;
+						areWeEditing = false;
+					} else if (option == 4) {
+						Event event = eventList.get(index - 1);
+						discord.getChannel().sendMessage(
+								"Enter the number next to the person to add or remove them. Use commas to add and remove multiple people");
+						String peopleInEvent = "";
+						for (int i = 0; i < event.getPeople().size(); i++) {
+							peopleInEvent += (i + 1) + ": " + event.getPeople().get(i) + "\n";
+						}
+						discord.getChannel().sendMessage(peopleInEvent);
+						setPeople = true;
+						areWeEditing = false;
+					}
+
+				}
+			}
+
+		}
+
 		System.out.println(areWeRemoving);
 		// SCHEDULE
 		// SCHEDULE
@@ -488,25 +551,25 @@ public class Schedule extends Feature {
 				}
 			}
 		}
-		// PEOPLE
-		// PEOPLE
-		// PEOPLE
-		// PEOPLE
+		// TAG
 		String listOfPeople = "err";
 		if (messageContent.toLowerCase().startsWith(editTags) || nextTags) {
 			nextTags = false;
 			areTagsBeingSet = false;
-			String role = messageContent.substring(7, messageContent.length()).trim();
+			String role = null;
+			if (messageContent.contains(" ")) {
+				role = messageContent.substring(6, messageContent.length()).trim();
+			}
 			if (messageContent.contains(" ") && !nextTags) {
 
 			} else {
 				role = null;
 			}
 			System.out.println("role string created");
-			discord.getChannel().sendMessage("");
-			System.out.println("!people called");
+			System.out.println("!tags called");
 			long serverId = discord.getMessage().getServer().get().getId();
-			listOfPeople = "Enter the number next to the user, then what you want to modify (ex. 1 tags) say \"end tags\" to stop editing tags\n";
+			listOfPeople = "Tags are used to categorize people for easy event management \n add an \'&\' then the tag at the end of the message when creating an event \n Everyone with that tag will be added to that event and pinged when it starts \n\n"
+					+ "Enter the number next to the user, then what you want to modify (ex. 1 tags) say \"end tags\" to stop editing tags\n";
 			if (users.size() <= 0) {
 				api.getServerById(serverId).ifPresent(server -> {
 					System.out.println(server.getMemberCount());
@@ -555,6 +618,9 @@ public class Schedule extends Feature {
 			}
 
 			for (int i = 0; i < users.size(); i++) {
+//				if (role == null) {
+//					role = "everyone";
+//				}
 				try {
 					if (role != null) {
 						roles = server.getRoles();
@@ -567,15 +633,8 @@ public class Schedule extends Feature {
 									api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
 							printedUsers.add(users.get(i));
 							System.out.println("updated users with specific roles");
-						} else {
-							users.get(i).setUser(api.getUserById(users.get(i).getUser().get().getId()));
-							users.get(i).setNickname(
-									api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server)
-											+ "");
-							users.get(i).setUsername(
-									api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
-							printedUsers.add(users.get(i));
-							System.out.println("updated all users");
+							listOfPeople += ((i + 1) + ": " + users.get(i).getNickname() + " ("
+									+ users.get(i).getUsername() + ")\n");
 						}
 					} else {
 						continue;
@@ -587,8 +646,6 @@ public class Schedule extends Feature {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				listOfPeople += ((i + 1) + ": " + users.get(i).getNickname() + " (" + users.get(i).getUsername()
-						+ ")\n");
 
 			}
 
@@ -608,7 +665,7 @@ public class Schedule extends Feature {
 			if (areTagsBeingSet && !discord.getMessage().getAuthor().isBotUser()) {
 				if (messageContent.contains(",")) {
 					if (mostRecentUserIndex == -1) {
-						discord.getChannel().sendMessage("Somthing Went Wrong");
+						discord.getChannel().sendMessage("Something Went Wrong");
 					} else {
 						String[] tags = messageContent.trim().split(", ");
 						users.get(mostRecentUserIndex).addTags(tags);
@@ -641,10 +698,11 @@ public class Schedule extends Feature {
 				}
 			} else {
 				int index = -1;
-				String[] msg = discord.getMessageContent().split(" ");
-				if (isANumber(msg[0].trim())) {
+				// String[] msg = discord.getMessageContent().split(" ");
+				String msg = discord.getMessageContent().trim();
+				if (isANumber(msg.trim())) {
 					System.out.println("No commas");
-					index = Integer.parseInt(msg[0].trim());
+					index = Integer.parseInt(msg.trim());
 					System.out.println("parse");
 					if (discord.getMessageContent().toLowerCase().contains("tags")) {
 						String userStatus = printedUsers.get(index - 1).getNickname() + "("
@@ -702,7 +760,8 @@ public class Schedule extends Feature {
 		// TIMEZONE
 		// TIMEZONE
 
-		if (messageContent.toLowerCase().startsWith(userTimeZone) || messageContent.toLowerCase().startsWith("!timezone") || nextZones) {
+		if (messageContent.toLowerCase().startsWith(userTimeZone)
+				|| messageContent.toLowerCase().startsWith("!timezone") || nextZones) {
 			String listOfPeople2 = "err";
 			nextZones = false;
 			areZonesBeingSet = false;
@@ -835,7 +894,7 @@ public class Schedule extends Feature {
 						if (!users.get(mostRecentUserIndex2).getTimezone().equals(timezone)) {
 							discord.getChannel().sendMessage("Timezone not added or is invalid");
 						}
-						
+
 						System.out.println("Zone of user: " + users.get(mostRecentUserIndex2).getTimezone());
 						areZonesBeingSet = false;
 						discord.getChannel().sendMessage(
@@ -851,7 +910,8 @@ public class Schedule extends Feature {
 					index = Integer.parseInt(msg[0].trim());
 					System.out.println("parse");
 
-					if (discord.getMessageContent().toLowerCase().contains("timezone") || discord.getMessageContent().toLowerCase().contains("timezones")) {
+					if (discord.getMessageContent().toLowerCase().contains("timezone")
+							|| discord.getMessageContent().toLowerCase().contains("timezones")) {
 						String userStatus = printedUsers2.get(index - 1).getNickname() + "("
 								+ printedUsers2.get(index - 1).getUsername() + ")\n";
 						System.out.println("user status made");
@@ -864,7 +924,7 @@ public class Schedule extends Feature {
 						String allTimeZones = "List of all added timezones ";
 						for (int i = 0; i < timeZones.getTimezones().length; i++) {
 							allTimeZones += timeZones.getTimezones()[i] + ", ";
-							
+
 						}
 						allTimeZones = allTimeZones.substring(0, allTimeZones.lastIndexOf(','));
 						discord.getChannel().sendMessage(
