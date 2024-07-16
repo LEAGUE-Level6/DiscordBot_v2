@@ -62,15 +62,17 @@ public class Schedule extends Feature {
 	boolean setTime;
 	boolean setDate;
 	boolean setPeople;
+	int indexOfEvent;
 
 	// tags
+	String lastRoleUsed;
 	boolean areWePeopleing;
 	boolean areWeTimezoneing;
 	boolean areTagsBeingSet;
 	boolean areZonesBeingSet;
 	boolean nextTags;
 	boolean nextZones;
-	int mostRecentUserIndex;
+	String mostRecentUserName;
 	int mostRecentUserIndex2;
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
@@ -382,7 +384,11 @@ public class Schedule extends Feature {
 				}
 
 				Event event = new Event(name, realTime, realDate);
+				for (int i = 0; i < usersForEvent.size(); i++) {
+					event.addPeople(usersForEvent.get(i));
+				}
 				eventList.add(event);
+
 				System.out.println("Date = " + realDate);
 				System.out.println("Timezone " + eventList.get(eventList.size() - 1).getTime().getTimeZone());
 				System.out.println("event constructed");
@@ -399,7 +405,6 @@ public class Schedule extends Feature {
 							+ "| Zone = |" + eventList.get(eventList.size() - 1).getTime().getTimeZone() + "|"
 							+ " |Date = |" + eventList.get(eventList.size() - 1).getDate() + "|" + " |Tag = |"
 							+ detectedTag + "|");
-
 			System.out.println("Message sent to channel");
 			// event.getChannel().sendMessage("Sending a message to the channel");
 		}
@@ -453,7 +458,8 @@ public class Schedule extends Feature {
 		}
 
 		// EDIT EVENT
-		if (messageContent.toLowerCase().startsWith(edit[0]) || messageContent.toLowerCase().startsWith(edit[1])) {
+		if (messageContent.toLowerCase().startsWith(edit[0])
+				|| messageContent.toLowerCase().startsWith(edit[1]) && !discord.getMessage().getAuthor().isBotUser()) {
 			areWeEditing = true;
 			String listOfEvents = "Enter the number next to the event to edit it\n\n";
 			for (int i = 0; i < eventList.size(); i++) {
@@ -461,46 +467,81 @@ public class Schedule extends Feature {
 						+ eventList.get(i).getTime().getTimeAsString() + " " + eventList.get(i).getDate() + "\n";
 			}
 			discord.getChannel().sendMessage(listOfEvents);
-		} else if (areWeEditing) {
+		} else if (areWeEditing && !discord.getMessage().getAuthor().isBotUser()) {
 			int index = -1;
 			if (isANumber(discord.getMessageContent())) {
-				System.out.println("No commas");
 				index = Integer.parseInt(discord.getMessageContent());
 				discord.getChannel()
 						.sendMessage("Event: " + eventList.get(index - 1).getName() + " "
 								+ eventList.get(index - 1).getTime().getTimeAsString() + " "
-								+ eventList.get(index - 1).getDate() + "selected");
+								+ eventList.get(index - 1).getDate() + " selected");
+				indexOfEvent = index - 1;
 				discord.getChannel().sendMessage("Enter \n 1: name \n 2: time \n 3: date \n 4: people");
-				if (isEventSelected && isANumber(discord.getMessageContent())) {
-					int option = Integer.parseInt(discord.getMessageContent());
-					if (option == 1) {
-						discord.getChannel().sendMessage("Enter the new name for the event");
-						setName = true;
-						areWeEditing = false;
-					} else if (option == 2) {
-						discord.getChannel().sendMessage("Enter the new time for the event (ex. 10:30am PT)");
-						setTime = true;
-						areWeEditing = false;
-					} else if (option == 3) {
-						discord.getChannel().sendMessage("Enter the new date for the event (ex. 10/12/24)");
-						setDate = true;
-						areWeEditing = false;
-					} else if (option == 4) {
-						Event event = eventList.get(index - 1);
-						discord.getChannel().sendMessage(
-								"Enter the number next to the person to add or remove them. Use commas to add and remove multiple people");
-						String peopleInEvent = "";
-						for (int i = 0; i < event.getPeople().size(); i++) {
-							peopleInEvent += (i + 1) + ": " + event.getPeople().get(i) + "\n";
-						}
-						discord.getChannel().sendMessage(peopleInEvent);
-						setPeople = true;
-						areWeEditing = false;
-					}
-
-				}
+				isEventSelected = true;
+				areWeEditing = false;
 			}
+		} else if (isEventSelected && isANumber(discord.getMessageContent())
+				&& !discord.getMessage().getAuthor().isBotUser()) {
+			int option = Integer.parseInt(discord.getMessageContent());
+			if (option == 1) {
+				discord.getChannel().sendMessage("Enter the new name for the event");
+				setName = true;
+				areWeEditing = false;
+			} else if (option == 2) {
+				discord.getChannel()
+						.sendMessage("Enter the new time for the event (ex. 10:30am PT) format exactly like this");
+				setTime = true;
+				areWeEditing = false;
+			} else if (option == 3) {
+				discord.getChannel()
+						.sendMessage("Enter the new date for the event (ex. 10/12/24) format exactly like this");
+				setDate = true;
+				areWeEditing = false;
+			} else if (option == 4) {
+				Event event = eventList.get(indexOfEvent);
+				discord.getChannel().sendMessage(
+						"Enter the number next to the user then add or remove (ex. 3 add). Use commas to add and remove multiple people (ex. 1 add, 4 remove)");
+				String peopleInEvent = "";
+				for (int i = 0; i < event.getPeople().size(); i++) {
+					peopleInEvent += (i + 1) + ": " + event.getPeople().get(i) + "\n";
+				}
+				discord.getChannel().sendMessage(peopleInEvent);
+				setPeople = true;
+				areWeEditing = false;
+			}
+			isEventSelected = false;
+		}
 
+		else if (setName && !discord.getMessage().getAuthor().isBotUser()) {
+			eventList.get(indexOfEvent).setName(messageContent.trim());
+			discord.getChannel().sendMessage("Name changed to " + eventList.get(indexOfEvent).getName());
+			setName = false;
+		} else if (setTime && !discord.getMessage().getAuthor().isBotUser()) {
+
+			String[] time = messageContent.split(":");
+			String hour = time[0];
+			String[] time2 = time[1].split("");
+			String min = time2[0] + time2[1];
+			Time t = new Time(hour, min);
+			if (time2[3].equalsIgnoreCase("a")) {
+				t.setIsPm(false);
+			} else if (time2[3].equalsIgnoreCase("p")) {
+				t.setIsPm(true);
+			}
+			String timezone = time[1].split(" ")[1].trim();
+			t.setTimeZone(timezone);
+			eventList.get(indexOfEvent).setTime(t);
+			discord.getChannel()
+					.sendMessage("Time changed to " + eventList.get(indexOfEvent).getTime().getTimeAsString() + " "
+							+ eventList.get(indexOfEvent).getTime().getTimeZone());
+			setTime = false;
+		} else if (setDate && !discord.getMessage().getAuthor().isBotUser()) {
+			eventList.get(indexOfEvent).setDate(messageContent.trim());
+			discord.getChannel().sendMessage("Date changed to " + eventList.get(indexOfEvent).getDate());
+			setDate = false;
+		} else if (setPeople && !discord.getMessage().getAuthor().isBotUser()) {
+			
+			setPeople = false;
 		}
 
 		System.out.println(areWeRemoving);
@@ -557,19 +598,24 @@ public class Schedule extends Feature {
 			nextTags = false;
 			areTagsBeingSet = false;
 			String role = null;
+
 			if (messageContent.contains(" ")) {
 				role = messageContent.substring(6, messageContent.length()).trim();
+
 			}
 			if (messageContent.contains(" ") && !nextTags) {
 
 			} else {
-				role = null;
+				role = "everyone";
+			}
+			if (discord.getMessage().getAuthor().isBotUser()) {
+				role = lastRoleUsed;
 			}
 			System.out.println("role string created");
 			System.out.println("!tags called");
 			long serverId = discord.getMessage().getServer().get().getId();
 			listOfPeople = "Tags are used to categorize people for easy event management \n add an \'&\' then the tag at the end of the message when creating an event \n Everyone with that tag will be added to that event and pinged when it starts \n\n"
-					+ "Enter the number next to the user, then what you want to modify (ex. 1 tags) say \"end tags\" to stop editing tags\n";
+					+ "Enter the number next to the user, say \"end tags\" to stop editing tags\n";
 			if (users.size() <= 0) {
 				api.getServerById(serverId).ifPresent(server -> {
 					System.out.println(server.getMemberCount());
@@ -614,13 +660,11 @@ public class Schedule extends Feature {
 				System.out.println("Org Role: " + role);
 				System.out.println("indexofClosest: " + indexOfClosest);
 				System.out.println("Closest Role name: " + roles.get(indexOfClosest).getName());
+				lastRoleUsed = roles.get(indexOfClosest).getName();
 				System.out.println("Found distance");
 			}
-
+			int numberForList = 0;
 			for (int i = 0; i < users.size(); i++) {
-//				if (role == null) {
-//					role = "everyone";
-//				}
 				try {
 					if (role != null) {
 						roles = server.getRoles();
@@ -633,8 +677,9 @@ public class Schedule extends Feature {
 									api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
 							printedUsers.add(users.get(i));
 							System.out.println("updated users with specific roles");
-							listOfPeople += ((i + 1) + ": " + users.get(i).getNickname() + " ("
+							listOfPeople += ((numberForList + 1) + ": " + users.get(i).getNickname() + " ("
 									+ users.get(i).getUsername() + ")\n");
+							numberForList++;
 						}
 					} else {
 						continue;
@@ -663,71 +708,72 @@ public class Schedule extends Feature {
 				nextTags = false;
 			}
 			if (areTagsBeingSet && !discord.getMessage().getAuthor().isBotUser()) {
-				if (messageContent.contains(",")) {
-					if (mostRecentUserIndex == -1) {
-						discord.getChannel().sendMessage("Something Went Wrong");
-					} else {
-						String[] tags = messageContent.trim().split(", ");
-						users.get(mostRecentUserIndex).addTags(tags);
-						String whatTagsAreSet = "Tags ";
-						for (int i = 0; i < tags.length; i++) {
-							whatTagsAreSet += tags[i] + ", ";
-						}
-						whatTagsAreSet = whatTagsAreSet.substring(0, whatTagsAreSet.lastIndexOf(','));
-						areTagsBeingSet = false;
-						discord.getChannel().sendMessage(
-								whatTagsAreSet + " set to " + users.get(mostRecentUserIndex).getNickname());
-						nextTags = true;
+				int index = 0;
+				for (int i = 0; i < users.size(); i++) {
+					if (mostRecentUserName.equals(users.get(i).getUsername())) {
+						index = i;
+						break;
 					}
+				}
+				if (messageContent.contains(",")) {
+
+					System.out.println("Most recent user index is " + index);
+					System.out.println("Person at " + users.get(index));
+					String[] tags = messageContent.trim().split(", ");
+					users.get(index).addTags(tags);
+					String whatTagsAreSet = "Tags ";
+					for (int i = 0; i < tags.length; i++) {
+						whatTagsAreSet += tags[i] + ", ";
+					}
+					whatTagsAreSet = whatTagsAreSet.substring(0, whatTagsAreSet.lastIndexOf(','));
+					areTagsBeingSet = false;
+					discord.getChannel().sendMessage(whatTagsAreSet + " set to " + users.get(index).getNickname());
+					nextTags = true;
+
 				} else if (messageContent.toLowerCase().contains("no tag")) {
 					discord.getChannel().sendMessage("No tags set");
 					areTagsBeingSet = false;
 					nextTags = true;
 				} else {
-					if (mostRecentUserIndex == -1) {
-						discord.getChannel().sendMessage("Somthing Went Wrong");
-					} else {
-						String[] tags = { messageContent.trim() };
-						users.get(mostRecentUserIndex).addTags(tags);
-						System.out.println("Tags of user: " + users.get(mostRecentUserIndex).getTags().get(0));
-						areTagsBeingSet = false;
-						discord.getChannel().sendMessage(
-								"Tag " + tags[0] + " set to " + users.get(mostRecentUserIndex).getNickname());
-						nextTags = true;
-					}
+					System.out.println("Most recent user index is " + index);
+					System.out.println("Person at " + users.get(index));
+					String[] tags = { messageContent.trim() };
+					users.get(index).addTags(tags);
+					System.out.println("Tags of user: " + users.get(index).getTags().get(0));
+					areTagsBeingSet = false;
+					discord.getChannel().sendMessage("Tag " + tags[0] + " set to " + users.get(index).getNickname());
+					nextTags = true;
 				}
 			} else {
 				int index = -1;
-				// String[] msg = discord.getMessageContent().split(" ");
-				String msg = discord.getMessageContent().trim();
-				if (isANumber(msg.trim())) {
+				String[] msg = discord.getMessageContent().split(" ");
+				if (isANumber(msg[0].trim())) {
 					System.out.println("No commas");
-					index = Integer.parseInt(msg.trim());
+					index = Integer.parseInt(msg[0].trim());
 					System.out.println("parse");
-					if (discord.getMessageContent().toLowerCase().contains("tags")) {
-						String userStatus = printedUsers.get(index - 1).getNickname() + "("
-								+ printedUsers.get(index - 1).getUsername() + ")\n";
-						System.out.println("user status made");
-						userStatus += "Current Tags: ";
-						if (printedUsers.get(index - 1).getTags().size() == 0) {
-							userStatus += "none";
-						} else {
-							for (int i = 0; i < printedUsers.get(index - 1).getTags().size(); i++) {
-								userStatus += printedUsers.get(index - 1).getTags().get(i) + ", ";
-								userStatus = userStatus.substring(0, userStatus.length() - 2);
-							}
-							System.out.println("for loop ran");
-						}
-						discord.getChannel().sendMessage(
-								"enter a list of tags to add or just one (ex. gamer, all) say \"no tag\" to not add a tag\n"
-										+ userStatus);
-
-						areTagsBeingSet = true;
-						mostRecentUserIndex = index - 1;
-						System.out.println("message sent ");
+					// if (discord.getMessageContent().toLowerCase().contains("tags")) {
+					String userStatus = printedUsers.get(index - 1).getNickname() + "("
+							+ printedUsers.get(index - 1).getUsername() + ")\n";
+					System.out.println("user status made");
+					userStatus += "Current Tags: ";
+					if (printedUsers.get(index - 1).getTags().size() == 0) {
+						userStatus += "none";
 					} else {
-
+						for (int i = 0; i < printedUsers.get(index - 1).getTags().size(); i++) {
+							userStatus += printedUsers.get(index - 1).getTags().get(i) + ", ";
+							userStatus = userStatus.substring(0, userStatus.length() - 2);
+						}
+						System.out.println("for loop ran");
 					}
+					discord.getChannel().sendMessage(
+							"enter a list of tags to add or just one (ex. gamer, all) say \"no tag\" to not add a tag\n"
+									+ userStatus);
+
+					areTagsBeingSet = true;
+					mostRecentUserName = printedUsers.get(index - 1).getUsername();
+					System.out.println("message sent ");
+
+					// }
 					System.out.println(printedUsers.size());
 					// printedUsers.get(index - 1).setTags(tags);
 					System.out.println("set tags");
@@ -898,7 +944,7 @@ public class Schedule extends Feature {
 						System.out.println("Zone of user: " + users.get(mostRecentUserIndex2).getTimezone());
 						areZonesBeingSet = false;
 						discord.getChannel().sendMessage(
-								"Timezone " + timezone + " set to " + users.get(mostRecentUserIndex).getNickname());
+								"Timezone " + timezone + " set to " + users.get(mostRecentUserIndex2).getNickname());
 						nextZones = true;
 					}
 				}

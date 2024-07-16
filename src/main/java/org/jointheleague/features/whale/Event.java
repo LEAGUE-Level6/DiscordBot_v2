@@ -41,5 +41,11 @@ public class Event {
 	public void addPeople(User people) {
 		this.people.add(people);
 	}
+	public void removePeople(User people) {
+		this.people.remove(people);
+	}
+	public void removePeople(int index) {
+		this.people.remove(index);
+	}
 	
 }
