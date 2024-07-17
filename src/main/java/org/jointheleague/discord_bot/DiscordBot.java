@@ -44,6 +44,7 @@ public class DiscordBot {
 
 		//Send bot connected message in channel
 		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has connected, \nDo !help for all commands"));
+		
 
 		//add help listener to bot
 		api.addMessageCreateListener(helpListener);
@@ -61,5 +62,6 @@ public class DiscordBot {
 	private void addFeature(Feature feature){
 		api.addMessageCreateListener(feature);
 		helpListener.addHelpEmbed(feature.getHelpEmbed());
+		
 	}
 }

@@ -8,18 +8,19 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.user.User;
 
 public class Person {
-	private CompletableFuture<User> user;
-	private String nickname = "";
-	private String username = "";
+	private User user;
+	private String nickname = "err";
+	private String username = "err";
 	private ArrayList<String> tags;
 	private String timezone;
 
 
-	public Person(CompletableFuture<User> userById) {
+	public Person(User userById) {
 		// TODO Auto-generated constructor stub
 		user = userById;
 		tags = new ArrayList<String>();
 		timezone = "none";
+		username = user.getName();
 	}
 
 
@@ -45,11 +46,11 @@ public class Person {
 		;
 	}
 
-	public CompletableFuture<User> getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(CompletableFuture<User> user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 

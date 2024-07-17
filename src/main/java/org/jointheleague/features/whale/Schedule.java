@@ -29,9 +29,11 @@ import org.json.simple.JSONObject;
 import org.springframework.util.StringUtils;
 
 import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
-//To fix
-//when doing tags when roles are changed it doesnt update whn doing !tags new role it has the old list 
 
+//To fix
+//adding a tag to an event making the date setting not work
+//TODO
+//allow a "all" command when setting tags
 public class Schedule extends Feature {
 	Timezones timeZones = new Timezones();
 	ArrayList<Person> users = new ArrayList<Person>();
@@ -92,14 +94,17 @@ public class Schedule extends Feature {
 						+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n"
 						+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
 						+ "!examples: shows examples for every command \n\n" + "!settings: configure the bot\n\n");
-
+		
 	}
-
 	@Override
 	public void handle(MessageCreateEvent discord) {
 		String detectedTag = "null";
 		api = get.getApi();
 		String messageContent = discord.getMessageContent();
+		if (messageContent.contains(api.getYourself().getName() + " has connected")) {
+			setup(discord);
+			System.out.println("setup ran");
+		}
 		if (messageContent.toLowerCase().startsWith("!examples")
 				|| messageContent.toLowerCase().startsWith("!example")) {
 			String examples = "Examples: \n"
@@ -202,18 +207,12 @@ public class Schedule extends Feature {
 					for (int i = 0; i < users.size(); i++) {
 						for (int o = 0; o < users.get(i).getTags().size(); o++) {
 							if (tag.equalsIgnoreCase(users.get(i).getTags().get(o))) {
-								try {
-									usersForEvent.add(users.get(i).getUser().get());
-								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (ExecutionException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+								usersForEvent.add(users.get(i).getUser());
+
 							}
 						}
 					}
+					time = time.substring(0, time.indexOf('&') - 1);
 					detectedTag = tag;
 				}
 				System.out.println("time after prossesing is " + realTime.getHour() + " " + realTime.getMin());
@@ -385,7 +384,8 @@ public class Schedule extends Feature {
 
 				Event event = new Event(name, realTime, realDate);
 				for (int i = 0; i < usersForEvent.size(); i++) {
-					event.addPeople(usersForEvent.get(i));
+					Person p = new Person(usersForEvent.get(i));
+					event.addPeople(p);
 				}
 				eventList.add(event);
 
@@ -488,8 +488,8 @@ public class Schedule extends Feature {
 				setName = true;
 				areWeEditing = false;
 			} else if (option == 2) {
-				discord.getChannel()
-						.sendMessage("Enter the new time for the event (ex. 10:30am PT) format exactly like this");
+				discord.getChannel().sendMessage(
+						"Enter the new time for the event (ex. 10:30am PT) or add an end time by saying end time (ex. end time 12:30pm PT) format exactly like the examples");
 				setTime = true;
 				areWeEditing = false;
 			} else if (option == 3) {
@@ -499,11 +499,26 @@ public class Schedule extends Feature {
 				areWeEditing = false;
 			} else if (option == 4) {
 				Event event = eventList.get(indexOfEvent);
+				long serverId = discord.getServer().get().getId();
+				Server server = api.getServerById(serverId).get();
 				discord.getChannel().sendMessage(
-						"Enter the number next to the user then add or remove (ex. 3 add). Use commas to add and remove multiple people (ex. 1 add, 4 remove)");
+						"Enter the number next to the user then remove (ex. 3 remove) to add say a username then add (ex. whale1929 add) make sure to use the username not the nickname. Use commas to add and remove multiple people (ex. 1 add, 4 remove)");
 				String peopleInEvent = "";
 				for (int i = 0; i < event.getPeople().size(); i++) {
-					peopleInEvent += (i + 1) + ": " + event.getPeople().get(i) + "\n";
+					String nickname = "err";
+					try {
+						nickname = api.getUserById(event.getPeople().get(i).getUser().getId()).get().getNickname(server)
+								+ "";
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					event.getPeople().get(i).setNickname(nickname);
+					peopleInEvent += (i + 1) + ": " + event.getPeople().get(i).getNickname() + "("
+							+ event.getPeople().get(i).getUsername() + ")\n";
 				}
 				discord.getChannel().sendMessage(peopleInEvent);
 				setPeople = true;
@@ -517,8 +532,13 @@ public class Schedule extends Feature {
 			discord.getChannel().sendMessage("Name changed to " + eventList.get(indexOfEvent).getName());
 			setName = false;
 		} else if (setTime && !discord.getMessage().getAuthor().isBotUser()) {
-
-			String[] time = messageContent.split(":");
+			boolean endEvent = false;
+			if (messageContent.toLowerCase().contains("end event")) {
+				messageContent = messageContent.toLowerCase();
+				messageContent.replace("end event", "");
+				endEvent = true;
+			}
+			String[] time = messageContent.trim().split(":");
 			String hour = time[0];
 			String[] time2 = time[1].split("");
 			String min = time2[0] + time2[1];
@@ -530,7 +550,11 @@ public class Schedule extends Feature {
 			}
 			String timezone = time[1].split(" ")[1].trim();
 			t.setTimeZone(timezone);
-			eventList.get(indexOfEvent).setTime(t);
+			if (endEvent == false) {
+				eventList.get(indexOfEvent).setTime(t);
+			} else if (endEvent == true) {
+				eventList.get(indexOfEvent).setEndTime(t);
+			}
 			discord.getChannel()
 					.sendMessage("Time changed to " + eventList.get(indexOfEvent).getTime().getTimeAsString() + " "
 							+ eventList.get(indexOfEvent).getTime().getTimeZone());
@@ -540,7 +564,33 @@ public class Schedule extends Feature {
 			discord.getChannel().sendMessage("Date changed to " + eventList.get(indexOfEvent).getDate());
 			setDate = false;
 		} else if (setPeople && !discord.getMessage().getAuthor().isBotUser()) {
-			
+			String[] msg = messageContent.trim().split(" ");
+			if (msg[1].contains("add")) {
+				System.out.println("adding");
+				int indexOfClosest = -1;
+				String name = msg[0];
+				LevenshteinDistance distance = new LevenshteinDistance();
+				System.out.println("LevenshteinDistance made");
+				int closest = Integer.MAX_VALUE;
+				System.out.println("User size " + users.size());
+				for (int i = 0; i < users.size(); i++) {
+					System.out.println("checking distance");
+					int howFar = distance.calculate(name, users.get(i).getUsername());
+					if (howFar < closest) {
+						System.out.println("new distance found");
+						closest = howFar;
+						indexOfClosest = i;
+					}
+				}
+				eventList.get(indexOfEvent).addPeople(users.get(indexOfClosest));
+				discord.getChannel().sendMessage(users.get(indexOfClosest).getNickname() + "("
+						+ users.get(indexOfClosest).getUsername() + ") was added to the event");
+			} else if (msg[1].contains("remove")) {
+
+			} else {
+				discord.getChannel().sendMessage("Message must contain a number/name then add/remove");
+				discord.addReactionsToMessage("❌");
+			}
 			setPeople = false;
 		}
 
@@ -623,7 +673,16 @@ public class Schedule extends Feature {
 						System.out.println(server.getMembers().toArray()[i]);
 						String userInfo = server.getMembers().toArray()[i].toString();
 						String userId = userInfo.substring(userInfo.indexOf("id") + 4, userInfo.indexOf(','));
-						Person p = new Person(api.getUserById(userId));
+						Person p = null;
+						try {
+							p = new Person(api.getUserById(userId).get());
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (ExecutionException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						try {
 							p.setNickname(api.getUserById(userId).get().getNickname(server) + "");
 							p.setUsername(api.getUserById(userId).get().getName() + "");
@@ -668,13 +727,12 @@ public class Schedule extends Feature {
 				try {
 					if (role != null) {
 						roles = server.getRoles();
-						users.get(i).setUser(api.getUserById(users.get(i).getUser().get().getId()));
-						if (users.get(i).getUser().get().getRoles(server).contains(roles.get(indexOfClosest))) {
+						users.get(i).setUser(api.getUserById(users.get(i).getUser().getId()).get());
+						if (users.get(i).getUser().getRoles(server).contains(roles.get(indexOfClosest))) {
 							users.get(i).setNickname(
-									api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server)
-											+ "");
-							users.get(i).setUsername(
-									api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
+									api.getUserById(users.get(i).getUser().getId()).get().getNickname(server) + "");
+							users.get(i)
+									.setUsername(api.getUserById(users.get(i).getUser().getId()).get().getName() + "");
 							printedUsers.add(users.get(i));
 							System.out.println("updated users with specific roles");
 							listOfPeople += ((numberForList + 1) + ": " + users.get(i).getNickname() + " ("
@@ -784,17 +842,9 @@ public class Schedule extends Feature {
 				// update list
 				for (int i = 0; i < printedUsers.size(); i++) {
 					for (int o = 0; o < users.size(); o++) {
-						try {
-							if (printedUsers.get(i).getUser().get().getId() == users.get(o).getUser().get().getId()) {
-								users.remove(o);
-								users.add(printedUsers.get(i));
-							}
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (ExecutionException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						if (printedUsers.get(i).getUser().getId() == users.get(o).getUser().getId()) {
+							users.remove(o);
+							users.add(printedUsers.get(i));
 						}
 					}
 				}
@@ -829,8 +879,9 @@ public class Schedule extends Feature {
 						System.out.println(server.getMembers().toArray()[i]);
 						String userInfo = server.getMembers().toArray()[i].toString();
 						String userId = userInfo.substring(userInfo.indexOf("id") + 4, userInfo.indexOf(','));
-						Person p = new Person(api.getUserById(userId));
+						Person p = null;
 						try {
+							p = new Person(api.getUserById(userId).get());
 							p.setNickname(api.getUserById(userId).get().getNickname(server) + "");
 							p.setUsername(api.getUserById(userId).get().getName() + "");
 						} catch (InterruptedException e) {
@@ -873,22 +924,20 @@ public class Schedule extends Feature {
 				try {
 					if (role != null) {
 						roles = server.getRoles();
-						users.get(i).setUser(api.getUserById(users.get(i).getUser().get().getId()));
-						if (users.get(i).getUser().get().getRoles(server).contains(roles.get(indexOfClosest))) {
+						users.get(i).setUser(api.getUserById(users.get(i).getUser().getId()).get());
+						if (users.get(i).getUser().getRoles(server).contains(roles.get(indexOfClosest))) {
 							users.get(i).setNickname(
-									api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server)
-											+ "");
-							users.get(i).setUsername(
-									api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
+									api.getUserById(users.get(i).getUser().getId()).get().getNickname(server) + "");
+							users.get(i)
+									.setUsername(api.getUserById(users.get(i).getUser().getId()).get().getName() + "");
 							printedUsers2.add(users.get(i));
 							System.out.println("updated users with specific roles");
 						} else {
-							users.get(i).setUser(api.getUserById(users.get(i).getUser().get().getId()));
+							users.get(i).setUser(api.getUserById(users.get(i).getUser().getId()).get());
 							users.get(i).setNickname(
-									api.getUserById(users.get(i).getUser().get().getId()).get().getNickname(server)
-											+ "");
-							users.get(i).setUsername(
-									api.getUserById(users.get(i).getUser().get().getId()).get().getName() + "");
+									api.getUserById(users.get(i).getUser().getId()).get().getNickname(server) + "");
+							users.get(i)
+									.setUsername(api.getUserById(users.get(i).getUser().getId()).get().getName() + "");
 							printedUsers2.add(users.get(i));
 							System.out.println("updated all users");
 						}
@@ -993,17 +1042,9 @@ public class Schedule extends Feature {
 				// update list
 				for (int i = 0; i < printedUsers2.size(); i++) {
 					for (int o = 0; o < users.size(); o++) {
-						try {
-							if (printedUsers2.get(i).getUser().get().getId() == users.get(o).getUser().get().getId()) {
-								users.remove(o);
-								users.add(printedUsers2.get(i));
-							}
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (ExecutionException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						if (printedUsers2.get(i).getUser().getId() == users.get(o).getUser().getId()) {
+							users.remove(o);
+							users.add(printedUsers2.get(i));
 						}
 					}
 				}
@@ -1063,6 +1104,35 @@ public class Schedule extends Feature {
 
 	public void sendDm(String userId, String message, MessageCreateEvent discord) {
 		discord.getApi().getUserById(userId).thenAccept(user -> user.sendMessage(message));
+	}
+	
+	public void setup(MessageCreateEvent discord) {
+		long serverId = discord.getMessage().getServer().get().getId();
+		if (users.size() <= 0) {
+			api.getServerById(serverId).ifPresent(server -> {
+				System.out.println(server.getMemberCount());
+				for (int i = 0; i < server.getMemberCount(); i++) {
+					System.out.println(server.getMembers().toArray()[i]);
+					String userInfo = server.getMembers().toArray()[i].toString();
+					String userId = userInfo.substring(userInfo.indexOf("id") + 4, userInfo.indexOf(','));
+					Person p = null;
+					try {
+						p = new Person(api.getUserById(userId).get());
+						p.setNickname(api.getUserById(userId).get().getNickname(server) + "");
+						p.setUsername(api.getUserById(userId).get().getName() + "");
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					users.add(p);
+				}
+
+			});
+			System.out.println("users in list");
+		}
 	}
 
 }
