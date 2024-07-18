@@ -42,4 +42,10 @@ public class Timezones {
         String formattedTime = currentTime.format(formatter);
         System.out.println("Current time in " + timezoneId + ": " + formattedTime);
     }
+    public String getCurrentTime() {
+        LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("PT"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String formattedTime = currentTime.format(formatter);
+        return formattedTime;
+    }
 }

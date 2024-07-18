@@ -66,7 +66,7 @@ public class Schedule extends Feature {
 	boolean setPeople;
 	int indexOfEvent;
 
-	// tags
+	// tags/zones
 	String lastRoleUsed;
 	boolean areWePeopleing;
 	boolean areWeTimezoneing;
@@ -75,7 +75,9 @@ public class Schedule extends Feature {
 	boolean nextTags;
 	boolean nextZones;
 	String mostRecentUserName;
+	String mostRecentUserName2;
 	int mostRecentUserIndex2;
+	String lastRoleUsed2;
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
 	public Schedule(String channelName, ApiGetter get) {
@@ -83,19 +85,21 @@ public class Schedule extends Feature {
 		this.get = get;
 
 		// Create a help embed to describe feature when !help command is sent
-		helpEmbed = new HelpEmbed("Schedule Bot",
-				"!addEvent: Adds an event. Start with the event name, time, date, tag(optional but recomended(!tags)) \n\n"
+		helpEmbed = new HelpEmbed("Schedule Bot",""
+						+"!addEvent: Adds an event. Start with the event name, time, date, tag(optional but recomended(!tags)) \n\n"
 						+ "!removeEvent: Removes an event\n\n"
 						+ "!editEvent: change the name, time, date, or people attending an event\n\n"
 						+ "!tags: edit the tags of users in an event (add a role name to only show users with that role)\n\n"
 						+ "!timezones: edit users timezones so the bot knows what time for them the events will start (add a role name to only show users with that role)\n\n"
-						+ "!schedule: lists all events \n\n" + "!startEvent: starts the nearest event early\n\n"
+						+ "!schedule: lists all events \n\n" 
+						+ "!startEvent: starts the nearest event early\n\n"
 						+ "!endEvent: ends the current event \n\n"
 						+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n"
 						+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
-						+ "!examples: shows examples for every command \n\n" + "!settings: configure the bot\n\n");
-		
+						+ "!examples: shows examples for every command \n\n" 
+						+ "!settings: configure the bot\n\n");
 	}
+
 	@Override
 	public void handle(MessageCreateEvent discord) {
 		String detectedTag = "null";
@@ -108,7 +112,7 @@ public class Schedule extends Feature {
 		if (messageContent.toLowerCase().startsWith("!examples")
 				|| messageContent.toLowerCase().startsWith("!example")) {
 			String examples = "Examples: \n"
-					+ "a /'->/' will mean a new messgae and (/'command/'/'command 2/') will mean 2 possible commands to send"
+					+ "a /'->/' will mean a new messgae and (/'command/'/'command 2/') will mean 2 possible commands to send \n"
 					+ "!addEvent Valorant Grind 9:30pm pdt fri &val \n" + "!removeEvent -> (1/3, 5)\n"
 					+ "!tags spectator -> 1 tags -> spectator\n" + "!timezones -> 2 timezones -> GMT\n" + "!schedule \n"
 					+ "!endEvent \n" + "!pollEvent -> 2\n" + "!iCan/!imAvailable -> (1,2/3)\n" + "!examples \n"
@@ -504,21 +508,25 @@ public class Schedule extends Feature {
 				discord.getChannel().sendMessage(
 						"Enter the number next to the user then remove (ex. 3 remove) to add say a username then add (ex. whale1929 add) make sure to use the username not the nickname. Use commas to add and remove multiple people (ex. 1 add, 4 remove)");
 				String peopleInEvent = "";
-				for (int i = 0; i < event.getPeople().size(); i++) {
-					String nickname = "err";
-					try {
-						nickname = api.getUserById(event.getPeople().get(i).getUser().getId()).get().getNickname(server)
-								+ "";
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ExecutionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+				if (event.getPeople().size() == 0) {
+					peopleInEvent += "\n There are no users in this event";
+				} else {
+					for (int i = 0; i < event.getPeople().size(); i++) {
+						String nickname = "err";
+						try {
+							nickname = api.getUserById(event.getPeople().get(i).getUser().getId()).get()
+									.getNickname(server) + "";
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						event.getPeople().get(i).setNickname(nickname);
+						peopleInEvent += (i + 1) + ": " + event.getPeople().get(i).getNickname() + "("
+								+ event.getPeople().get(i).getUsername() + ")\n";
 					}
-					event.getPeople().get(i).setNickname(nickname);
-					peopleInEvent += (i + 1) + ": " + event.getPeople().get(i).getNickname() + "("
-							+ event.getPeople().get(i).getUsername() + ")\n";
 				}
 				discord.getChannel().sendMessage(peopleInEvent);
 				setPeople = true;
@@ -564,32 +572,53 @@ public class Schedule extends Feature {
 			discord.getChannel().sendMessage("Date changed to " + eventList.get(indexOfEvent).getDate());
 			setDate = false;
 		} else if (setPeople && !discord.getMessage().getAuthor().isBotUser()) {
-			String[] msg = messageContent.trim().split(" ");
-			if (msg[1].contains("add")) {
-				System.out.println("adding");
-				int indexOfClosest = -1;
-				String name = msg[0];
-				LevenshteinDistance distance = new LevenshteinDistance();
-				System.out.println("LevenshteinDistance made");
-				int closest = Integer.MAX_VALUE;
-				System.out.println("User size " + users.size());
-				for (int i = 0; i < users.size(); i++) {
-					System.out.println("checking distance");
-					int howFar = distance.calculate(name, users.get(i).getUsername());
-					if (howFar < closest) {
-						System.out.println("new distance found");
-						closest = howFar;
-						indexOfClosest = i;
-					}
-				}
-				eventList.get(indexOfEvent).addPeople(users.get(indexOfClosest));
-				discord.getChannel().sendMessage(users.get(indexOfClosest).getNickname() + "("
-						+ users.get(indexOfClosest).getUsername() + ") was added to the event");
-			} else if (msg[1].contains("remove")) {
-
+			String[] split = null;
+			if (messageContent.contains(",")) {
+				split = messageContent.trim().split(",");
 			} else {
-				discord.getChannel().sendMessage("Message must contain a number/name then add/remove");
-				discord.addReactionsToMessage("❌");
+				split = new String[1];
+				split[0] = messageContent.trim();
+			}
+			for (int i = 0; i < split.length; i++) {
+				String[] msg = split[i].trim().split(" ");
+				if (msg[1].contains("add")) {
+					System.out.println("adding");
+					int indexOfClosest = -1;
+					String name = msg[0];
+					LevenshteinDistance distance = new LevenshteinDistance();
+					System.out.println("LevenshteinDistance made");
+					int closest = Integer.MAX_VALUE;
+					System.out.println("User size " + users.size());
+					for (int o = 0; o < users.size(); o++) {
+						System.out.println("checking distance");
+						int howFar = distance.calculate(name, users.get(o).getUsername());
+						if (howFar < closest) {
+							System.out.println("new distance found");
+							closest = howFar;
+							indexOfClosest = o;
+						}
+					}
+					if (eventList.get(indexOfEvent).getPeople().contains(users.get(indexOfClosest))) {
+						discord.getChannel().sendMessage(users.get(indexOfClosest).getNickname() + "("
+								+ users.get(indexOfClosest).getUsername() + ") is already in the event");
+					} else {
+						eventList.get(indexOfEvent).addPeople(users.get(indexOfClosest));
+						discord.getChannel().sendMessage(users.get(indexOfClosest).getNickname() + "("
+								+ users.get(indexOfClosest).getUsername() + ") was added to the event");
+					}
+				} else if (msg[1].contains("remove")) {
+					int index = Integer.parseInt(msg[0].trim()) - (1+i);
+
+					discord.getChannel()
+							.sendMessage(eventList.get(indexOfEvent).getPeople().get(index).getNickname() + "("
+									+ eventList.get(indexOfEvent).getPeople().get(index).getUsername()
+									+ ") was removed from the event");
+					eventList.get(indexOfEvent).removePeople(index);
+				} else {
+					discord.getChannel().sendMessage("Message must contain a number/name then add/remove");
+					discord.addReactionsToMessage("❌");
+				}
+
 			}
 			setPeople = false;
 		}
@@ -676,14 +705,6 @@ public class Schedule extends Feature {
 						Person p = null;
 						try {
 							p = new Person(api.getUserById(userId).get());
-						} catch (InterruptedException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (ExecutionException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						try {
 							p.setNickname(api.getUserById(userId).get().getNickname(server) + "");
 							p.setUsername(api.getUserById(userId).get().getName() + "");
 						} catch (InterruptedException e) {
@@ -855,23 +876,27 @@ public class Schedule extends Feature {
 		// TIMEZONE
 		// TIMEZONE
 		// TIMEZONE
-
+		String listOfPeople2 = "err";
 		if (messageContent.toLowerCase().startsWith(userTimeZone)
 				|| messageContent.toLowerCase().startsWith("!timezone") || nextZones) {
-			String listOfPeople2 = "err";
 			nextZones = false;
 			areZonesBeingSet = false;
-			String role = messageContent.substring(7, messageContent.length()).trim();
+			String role = null;
+			if (messageContent.contains(" ")) {
+	            role = messageContent.substring(6, messageContent.length()).trim();
+			}
 			if (messageContent.contains(" ") && !nextZones) {
 
 			} else {
 				role = "everyone";
 			}
+			if (discord.getMessage().getAuthor().isBotUser()) {
+				role = lastRoleUsed2;
+			}
 			System.out.println("role string created");
-			discord.getChannel().sendMessage("");
-			System.out.println("!people called");
+			System.out.println("!timezones called");
 			long serverId = discord.getMessage().getServer().get().getId();
-			listOfPeople = "Enter the number next to the user, then what you want to modify (ex. 1 timezone) say \"end timezone\" to stop editing timezones\n";
+			listOfPeople = "Enter the number next to the user to edit thier timezone say \"end timezone\" to stop editing timezones\n";
 			if (users.size() <= 0) {
 				api.getServerById(serverId).ifPresent(server -> {
 					System.out.println(server.getMemberCount());
@@ -880,7 +905,7 @@ public class Schedule extends Feature {
 						String userInfo = server.getMembers().toArray()[i].toString();
 						String userId = userInfo.substring(userInfo.indexOf("id") + 4, userInfo.indexOf(','));
 						Person p = null;
-						try {
+					try {
 							p = new Person(api.getUserById(userId).get());
 							p.setNickname(api.getUserById(userId).get().getNickname(server) + "");
 							p.setUsername(api.getUserById(userId).get().getName() + "");
@@ -917,9 +942,10 @@ public class Schedule extends Feature {
 				System.out.println("Org Role: " + role);
 				System.out.println("indexofClosest: " + indexOfClosest);
 				System.out.println("Closest Role name: " + roles.get(indexOfClosest).getName());
+				lastRoleUsed2 = roles.get(indexOfClosest).getName();
 				System.out.println("Found distance");
 			}
-
+            int numberForList = 0;
 			for (int i = 0; i < users.size(); i++) {
 				try {
 					if (role != null) {
@@ -932,14 +958,9 @@ public class Schedule extends Feature {
 									.setUsername(api.getUserById(users.get(i).getUser().getId()).get().getName() + "");
 							printedUsers2.add(users.get(i));
 							System.out.println("updated users with specific roles");
-						} else {
-							users.get(i).setUser(api.getUserById(users.get(i).getUser().getId()).get());
-							users.get(i).setNickname(
-									api.getUserById(users.get(i).getUser().getId()).get().getNickname(server) + "");
-							users.get(i)
-									.setUsername(api.getUserById(users.get(i).getUser().getId()).get().getName() + "");
-							printedUsers2.add(users.get(i));
-							System.out.println("updated all users");
+							listOfPeople += ((numberForList + 1) + ": " + users.get(i).getNickname() + " ("
+									+ users.get(i).getUsername() + ")\n");
+							numberForList++;
 						}
 					} else {
 						continue;
@@ -951,9 +972,7 @@ public class Schedule extends Feature {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				listOfPeople += ((i + 1) + ": " + users.get(i).getNickname() + " (" + users.get(i).getUsername()
-						+ ")\n");
-
+				
 			}
 
 			System.out.println("list of people string is made");
@@ -970,71 +989,57 @@ public class Schedule extends Feature {
 				nextZones = false;
 			}
 			if (areZonesBeingSet && !discord.getMessage().getAuthor().isBotUser()) {
-				if (messageContent.toLowerCase().contains("no zone")) {
-					discord.getChannel().sendMessage("No timezones set");
+				int index = 0;
+				for (int i = 0; i < users.size(); i++) {
+					if (mostRecentUserName2.equals(users.get(i).getUsername())) {
+						index = i;
+						break;
+					}
+				}
+				if (messageContent.toLowerCase().contains("no timezone")) {
+					discord.getChannel().sendMessage("No timezone set");
 					areZonesBeingSet = false;
 					nextZones = true;
 				} else {
-					if (mostRecentUserIndex2 == -1) {
-						discord.getChannel().sendMessage("Somthing Went Wrong");
-					} else {
-						String timezone = messageContent.trim();
-						timezone = timezone.toUpperCase();
-						for (int i = 0; i < timeZones.getTimezones().length; i++) {
-							if (timeZones.getTimezones()[i].equals(timezone)) {
-								users.get(mostRecentUserIndex2).setTimezone(timezone);
-								break;
-							}
+					System.out.println("Most recent user index is " + index);
+					System.out.println("Person at " + users.get(index));
+					String timezone = messageContent.trim();
+					timezone = timezone.toUpperCase();
+					for (int i = 0; i < timeZones.getTimezones().length; i++) {
+						if (timeZones.getTimezones()[i].equals(timezone)) {
+							users.get(index).setTimezone(timezone);
+							break;
 						}
-						if (!users.get(mostRecentUserIndex2).getTimezone().equals(timezone)) {
-							discord.getChannel().sendMessage("Timezone not added or is invalid");
-						}
-
-						System.out.println("Zone of user: " + users.get(mostRecentUserIndex2).getTimezone());
-						areZonesBeingSet = false;
-						discord.getChannel().sendMessage(
-								"Timezone " + timezone + " set to " + users.get(mostRecentUserIndex2).getNickname());
-						nextZones = true;
 					}
+					if (!users.get(index).getTimezone().equals(timezone)) {
+						discord.getChannel().sendMessage("Timezone not created in !settings or is invalid");
+					}
+					areZonesBeingSet = false;
+					discord.getChannel().sendMessage("Timezone " + users.get(index).getTimezone() + " set to " + users.get(index).getNickname());
+					nextZones = true;
 				}
-			} else {
+			} 
+			else {
 				int index = -1;
 				String[] msg = discord.getMessageContent().split(" ");
 				if (isANumber(msg[0].trim())) {
 					System.out.println("No commas");
 					index = Integer.parseInt(msg[0].trim());
 					System.out.println("parse");
+					String userStatus = printedUsers2.get(index - 1).getNickname() + "("
+							+ printedUsers2.get(index - 1).getUsername() + ")\n";
+					System.out.println("user status made");
+					userStatus += "Current Timezone: " + printedUsers2.get(index - 1).getTimezone();
+					
+					discord.getChannel().sendMessage(
+							"enter a timezone or say \"no timezone\" to not add a timezone\n"
+									+ userStatus);
 
-					if (discord.getMessageContent().toLowerCase().contains("timezone")
-							|| discord.getMessageContent().toLowerCase().contains("timezones")) {
-						String userStatus = printedUsers2.get(index - 1).getNickname() + "("
-								+ printedUsers2.get(index - 1).getUsername() + ")\n";
-						System.out.println("user status made");
-						userStatus += "Current Timezone: ";
-						if (printedUsers2.get(index - 1).getTimezone().equals("none")) {
-							userStatus += "none";
-						} else {
-							userStatus += printedUsers2.get(index - 1).getTimezone();
-						}
-						String allTimeZones = "List of all added timezones ";
-						for (int i = 0; i < timeZones.getTimezones().length; i++) {
-							allTimeZones += timeZones.getTimezones()[i] + ", ";
+					areZonesBeingSet = true;
+					mostRecentUserName2 = printedUsers2.get(index - 1).getUsername();
+					System.out.println("message sent ");
 
-						}
-						allTimeZones = allTimeZones.substring(0, allTimeZones.lastIndexOf(','));
-						discord.getChannel().sendMessage(
-								"enter an abbreviation for a timezone (the timezone must be added using !settings if it is not PT, MT, CT, ET) say \"no zone\" to not add a timezone\n"
-										+ userStatus + "\n" + allTimeZones);
-
-						areZonesBeingSet = true;
-						mostRecentUserIndex2 = index - 1;
-						System.out.println("message sent ");
-					} else {
-
-					}
-					System.out.println(printedUsers2.size());
-					// printedUsers.get(index - 1).setTags(tags);
-					System.out.println("set zones");
+					System.out.println(printedUsers.size());
 
 					printedUsers2 = new ArrayList<Person>();
 				}
@@ -1050,11 +1055,10 @@ public class Schedule extends Feature {
 				}
 			}
 		}
-
-		if (messageContent.toLowerCase().startsWith("!amrmode")) {
-			AMRmode = true;
-			discord.getChannel().sendMessage("AMR mode has be activated(you can disable it with !settings)");
-			System.out.println("AMR mode on");
+		//START EVENT
+		if (messageContent.toLowerCase().startsWith(start)) {
+			System.out.println("start event");
+			discord.getChannel().sendMessage(timeZones.getCurrentTime());
 		}
 //		SETTINGS
 //		SETTINGS
@@ -1105,7 +1109,7 @@ public class Schedule extends Feature {
 	public void sendDm(String userId, String message, MessageCreateEvent discord) {
 		discord.getApi().getUserById(userId).thenAccept(user -> user.sendMessage(message));
 	}
-	
+
 	public void setup(MessageCreateEvent discord) {
 		long serverId = discord.getMessage().getServer().get().getId();
 		if (users.size() <= 0) {
