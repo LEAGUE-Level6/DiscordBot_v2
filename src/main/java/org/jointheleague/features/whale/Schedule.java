@@ -27,6 +27,7 @@ import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.json.simple.JSONObject;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.DOMException;
 
 import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 
@@ -78,6 +79,14 @@ public class Schedule extends Feature {
 	String mostRecentUserName2;
 	int mostRecentUserIndex2;
 	String lastRoleUsed2;
+
+	// start events
+	boolean areWeSelectingStartEvent;
+	int closestDayAsInt;
+	List<Event> closestEvents = new ArrayList<>();
+	int dmIfOfflineReminderOffset;
+	
+	
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
 	public Schedule(String channelName, ApiGetter get) {
@@ -85,19 +94,17 @@ public class Schedule extends Feature {
 		this.get = get;
 
 		// Create a help embed to describe feature when !help command is sent
-		helpEmbed = new HelpEmbed("Schedule Bot",""
-						+"!addEvent: Adds an event. Start with the event name, time, date, tag(optional but recomended(!tags)) \n\n"
-						+ "!removeEvent: Removes an event\n\n"
-						+ "!editEvent: change the name, time, date, or people attending an event\n\n"
-						+ "!tags: edit the tags of users in an event (add a role name to only show users with that role)\n\n"
-						+ "!timezones: edit users timezones so the bot knows what time for them the events will start (add a role name to only show users with that role)\n\n"
-						+ "!schedule: lists all events \n\n" 
-						+ "!startEvent: starts the nearest event early\n\n"
-						+ "!endEvent: ends the current event \n\n"
-						+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n"
-						+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
-						+ "!examples: shows examples for every command \n\n" 
-						+ "!settings: configure the bot\n\n");
+		helpEmbed = new HelpEmbed("Schedule Bot", ""
+				+ "!addEvent: Adds an event. Start with the event name, time, date, tag(optional but recomended(!tags)) \n\n"
+				+ "!removeEvent: Removes an event\n\n"
+				+ "!editEvent: change the name, time, date, or people attending an event\n\n"
+				+ "!tags: edit the tags of users in an event (add a role name to only show users with that role)\n\n"
+				+ "!timezones: edit users timezones so the bot knows what time for them the events will start (add a role name to only show users with that role)\n\n"
+				+ "!schedule: lists all events \n\n" + "!startEvent: starts the nearest event early\n\n"
+				+ "!endEvent: ends the current event \n\n"
+				+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n"
+				+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
+				+ "!examples: shows examples for every command \n\n" + "!settings: configure the bot\n\n");
 	}
 
 	@Override
@@ -607,7 +614,7 @@ public class Schedule extends Feature {
 								+ users.get(indexOfClosest).getUsername() + ") was added to the event");
 					}
 				} else if (msg[1].contains("remove")) {
-					int index = Integer.parseInt(msg[0].trim()) - (1+i);
+					int index = Integer.parseInt(msg[0].trim()) - (1 + i);
 
 					discord.getChannel()
 							.sendMessage(eventList.get(indexOfEvent).getPeople().get(index).getNickname() + "("
@@ -643,33 +650,63 @@ public class Schedule extends Feature {
 //		START EVENT
 //		START EVENT
 		if (messageContent.toLowerCase().startsWith(start)) {
-			List<Event> closestEvents = new ArrayList<>();
-			int[] closestDay = { Integer.MAX_VALUE, -1 };
-			for (int i = 0; i < eventList.size(); i++) {
-				String[] tempDate = eventList.get(i).getDate().split("/");
-				int dateAsInt = Integer.parseInt(tempDate[2] + tempDate[0] + tempDate[1]
-						+ (eventList.get(i).getTime().getHour()
-								+ timeZones.usTimezoneMap.get(eventList.get(i).getTime().getTimeZone()))
-						+ eventList.get(i).getTime().getMin());
-				if (dateAsInt < closestDay[0]) {
-					closestDay[0] = dateAsInt;
-					closestDay[1] = i;
-					closestEvents.clear(); // Clear previous closest events
-					closestEvents.add(eventList.get(i));
-				} else if (dateAsInt == closestDay[0]) {
-					// If event falls on the same closest day, add it to the list
-					closestEvents.add(eventList.get(i));
+			try {
+				System.out.println("start event called");
+
+				Double[] closestDay = { Double.MAX_VALUE, -1.0 };
+				for (int i = 0; i < eventList.size(); i++) {
+					String[] tempDate = eventList.get(i).getDate().split("/");
+					double hour = Integer.parseInt(eventList.get(i).getTime().getHour());
+					hour -= timeZones.usTimezoneMap.get(eventList.get(i).getTime().getTimeZone());
+					int min = Integer.parseInt(eventList.get(i).getTime().getMin());
+					double dateAsInt = Double.parseDouble(tempDate[2] + tempDate[0] + tempDate[1]) + hour + min;
+					if (dateAsInt < closestDay[0]) {
+						closestDay[0] = dateAsInt;
+						closestDay[1] = i + 0.0;
+						closestEvents.clear(); // Clear previous closest events
+						closestEvents.add(eventList.get(i));
+					} else if (dateAsInt == closestDay[0]) {
+						// If event falls on the same closest day, add it to the list
+						closestEvents.add(eventList.get(i));
+					}
+				}
+				if (closestEvents.size() > 1) {
+					String msg = "";
+					int i = 0;
+					for (Event event : closestEvents) {
+						msg+=i + ": " + event.getName() + " " + event.getTime().getTimeAsString() + " "
+								+ event.getTime().getTimeZone() + " " + event.getDate() +"\n";
+						i++;
+					}
+					discord.getChannel().sendMessage("There are " + closestEvents.size()
+					+ " events, enter the number next to the event to start it \n" + msg);
+					areWeSelectingStartEvent = true;
+				} else {
+					closestDayAsInt = Integer
+							.parseInt((closestDay[1] + "").substring(0, (closestDay[1] + "").indexOf('.')));
+					discord.getChannel()
+							.sendMessage("Closest event is " + eventList.get(closestDayAsInt).getName() + " "
+									+ eventList.get(closestDayAsInt).getTime().getTimeAsString() + " "
+									+ eventList.get(closestDayAsInt).getTime().getTimeZone() + " "
+									+ eventList.get(closestDayAsInt).getDate() + "\nEnter \'start\' to start it");
+					areWeSelectingStartEvent = true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (areWeSelectingStartEvent) {
+			if (messageContent.toLowerCase().contains("start") && !discord.getMessage().getAuthor().isBotUser()) {
+				startEvent(eventList.get(closestDayAsInt), discord);
+			} else {
+				int index = Integer.parseInt(messageContent.trim());
+				for (int i = 0; i < eventList.size(); i++) {
+					if (eventList.get(i).equals(closestEvents.get(index))) {
+						startEvent(eventList.get(i), discord);
+						break;
+					}
 				}
 			}
-			System.out.println("Closest date is " + eventList.get(closestDay[1]).getDate() + " "
-					+ eventList.get(closestDay[1]).getName());
-			// If there are multiple events on the closest day, print them
-			if (closestEvents.size() > 1) {
-				System.out.println("Events on the closest day:");
-				for (Event event : closestEvents) {
-					System.out.println(event.getDate()); // or print event details as needed
-				}
-			}
+			areWeSelectingStartEvent = false;
 		}
 		// TAG
 		String listOfPeople = "err";
@@ -883,7 +920,7 @@ public class Schedule extends Feature {
 			areZonesBeingSet = false;
 			String role = null;
 			if (messageContent.contains(" ")) {
-	            role = messageContent.substring(6, messageContent.length()).trim();
+				role = messageContent.substring(6, messageContent.length()).trim();
 			}
 			if (messageContent.contains(" ") && !nextZones) {
 
@@ -905,7 +942,7 @@ public class Schedule extends Feature {
 						String userInfo = server.getMembers().toArray()[i].toString();
 						String userId = userInfo.substring(userInfo.indexOf("id") + 4, userInfo.indexOf(','));
 						Person p = null;
-					try {
+						try {
 							p = new Person(api.getUserById(userId).get());
 							p.setNickname(api.getUserById(userId).get().getNickname(server) + "");
 							p.setUsername(api.getUserById(userId).get().getName() + "");
@@ -945,7 +982,7 @@ public class Schedule extends Feature {
 				lastRoleUsed2 = roles.get(indexOfClosest).getName();
 				System.out.println("Found distance");
 			}
-            int numberForList = 0;
+			int numberForList = 0;
 			for (int i = 0; i < users.size(); i++) {
 				try {
 					if (role != null) {
@@ -972,7 +1009,7 @@ public class Schedule extends Feature {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
 
 			System.out.println("list of people string is made");
@@ -1015,11 +1052,11 @@ public class Schedule extends Feature {
 						discord.getChannel().sendMessage("Timezone not created in !settings or is invalid");
 					}
 					areZonesBeingSet = false;
-					discord.getChannel().sendMessage("Timezone " + users.get(index).getTimezone() + " set to " + users.get(index).getNickname());
+					discord.getChannel().sendMessage(
+							"Timezone " + users.get(index).getTimezone() + " set to " + users.get(index).getNickname());
 					nextZones = true;
 				}
-			} 
-			else {
+			} else {
 				int index = -1;
 				String[] msg = discord.getMessageContent().split(" ");
 				if (isANumber(msg[0].trim())) {
@@ -1030,10 +1067,9 @@ public class Schedule extends Feature {
 							+ printedUsers2.get(index - 1).getUsername() + ")\n";
 					System.out.println("user status made");
 					userStatus += "Current Timezone: " + printedUsers2.get(index - 1).getTimezone();
-					
+
 					discord.getChannel().sendMessage(
-							"enter a timezone or say \"no timezone\" to not add a timezone\n"
-									+ userStatus);
+							"enter a timezone or say \"no timezone\" to not add a timezone\n" + userStatus);
 
 					areZonesBeingSet = true;
 					mostRecentUserName2 = printedUsers2.get(index - 1).getUsername();
@@ -1054,11 +1090,6 @@ public class Schedule extends Feature {
 					}
 				}
 			}
-		}
-		//START EVENT
-		if (messageContent.toLowerCase().startsWith(start)) {
-			System.out.println("start event");
-			discord.getChannel().sendMessage(timeZones.getCurrentTime());
 		}
 //		SETTINGS
 //		SETTINGS
@@ -1088,13 +1119,28 @@ public class Schedule extends Feature {
 		}
 
 		if (messageContent.toLowerCase().startsWith("!test")) {
-
+			for (int i = 0 ;i < users.size(); i++) {
+				System.out.println(users.get(i).getUsername() +" is " + users.get(i).getUser().getStatus());
+			}
+			
+			
 		}
 		if (messageContent.toLowerCase().startsWith("!stop")) {
 			discord.getChannel().sendMessage("bye");
 			System.exit(0);
 		}
 
+	}
+	
+
+	void startEvent(Event event, MessageCreateEvent discord) {
+		discord.getChannel().sendMessage("Event " + event.getName() + " started");
+		String people = "";
+		for (int i = 0; i < event.getPeople().size(); i++) {
+			people += event.getPeople().get(i).getUser().getMentionTag() + "\n";
+		}
+		discord.getChannel().sendMessage("People Participating: \n" + people);
+		
 	}
 
 	public static boolean isANumber(String str) {
