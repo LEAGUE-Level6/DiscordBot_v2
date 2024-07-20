@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.DOMException;
 
 import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
+import net.aksingh.owmjapis.api.APIException;
 
 //To fix
 //adding a tag to an event making the date setting not work
@@ -43,6 +44,7 @@ public class Schedule extends Feature {
 	List<Role> roles = new ArrayList<Role>();
 	DiscordApi api;
 	ApiGetter get;
+	Timer timer = new Timer();
 	Boolean AMRmode = false;
 	public final String add = "!addevent";
 	public final String remove = "!removeevent";
@@ -84,7 +86,7 @@ public class Schedule extends Feature {
 	boolean areWeSelectingStartEvent;
 	int closestDayAsInt;
 	List<Event> closestEvents = new ArrayList<>();
-	int dmIfOfflineReminderOffset;
+	int howManyMinBeforeEventShouldReminderBeSent;
 	
 	
 	ArrayList<Event> eventList = new ArrayList<Event>();
@@ -417,8 +419,10 @@ public class Schedule extends Feature {
 							+ " |Date = |" + eventList.get(eventList.size() - 1).getDate() + "|" + " |Tag = |"
 							+ detectedTag + "|");
 			System.out.println("Message sent to channel");
+			
 			// event.getChannel().sendMessage("Sending a message to the channel");
 		}
+
 		// this will remove an event from the list
 		// REMOVE
 		// REMOVE
@@ -663,10 +667,9 @@ public class Schedule extends Feature {
 					if (dateAsInt < closestDay[0]) {
 						closestDay[0] = dateAsInt;
 						closestDay[1] = i + 0.0;
-						closestEvents.clear(); // Clear previous closest events
+						closestEvents.clear();
 						closestEvents.add(eventList.get(i));
 					} else if (dateAsInt == closestDay[0]) {
-						// If event falls on the same closest day, add it to the list
 						closestEvents.add(eventList.get(i));
 					}
 				}
@@ -1096,10 +1099,12 @@ public class Schedule extends Feature {
 //		SETTINGS
 //		SETTINGS
 		if (messageContent.toLowerCase().startsWith(settings)) {
-			discord.getChannel().sendMessage("Welcome to Settings here is the list of settings \n"
-					+ "addTimeZone: Enter a timezone abbreviation then the time diiffrence from PT (ex. IST +12:30)\n"
-					+ "disableAMR\n" + "addTimeZone\n" + "addTimeZone\n" + "addTimeZone\n" + "addTimeZone\n" + "");
-		} else if (messageContent.toLowerCase().startsWith("addtimezone")) {
+			discord.getChannel().sendMessage("Welcome to Settings here is the list of settings(for all commands say the command then a space then the value) \n"
+					+ "!addTimeZone: Enter a timezone abbreviation then the time diiffrence from PT (ex. IST +12:30)\n"
+					+ "!setReminder: Enter a number that will be the number of minutes before an event a reminder will go out\n" 
+					+ "addTimeZone\n" 
+					+ "addTimeZone\n" + "addTimeZone\n" + "");
+		} else if (messageContent.toLowerCase().startsWith("!addtimezone")) {
 			System.out.println("add time zone called");
 			String[] time = messageContent.split(" ");
 			System.out.println("split");
@@ -1117,19 +1122,49 @@ public class Schedule extends Feature {
 			timeZones.addTimezone(time[1], Double.parseDouble(time[2]));
 			System.out.println("timezone added");
 		}
-
+		 else if (messageContent.toLowerCase().startsWith("!setreminder")) {
+			 try {
+				System.out.println("set reminder called");
+				String[] time = messageContent.split(" ");
+				System.out.println("split");
+				int reminderTime = Integer.parseInt(time[1].trim());
+				howManyMinBeforeEventShouldReminderBeSent = reminderTime;
+			 }
+			 catch(Exception e) {
+				 discord.getChannel().sendMessage("Make sure you are entering a number");
+			 }
+				}
+				
 		if (messageContent.toLowerCase().startsWith("!test")) {
-			for (int i = 0 ;i < users.size(); i++) {
-				System.out.println(users.get(i).getUsername() +" is " + users.get(i).getUser().getStatus());
-			}
-			
-			
+			System.out.println("test");
+			System.out.println(timeZones.getCurrentTime(true));
 		}
 		if (messageContent.toLowerCase().startsWith("!stop")) {
 			discord.getChannel().sendMessage("bye");
 			System.exit(0);
 		}
-
+		checkTime();
+	}
+	
+	void checkTime() {
+		System.out.println("time being checked");
+		for(int i  = 0; i < eventList.size(); i++) {
+			int time;
+			System.out.println(eventList.get(i).getDate() + " current date " + timeZones.getCurrentDate());
+			if (eventList.get(i).getDate().equals(timeZones.getCurrentDate())) {
+				
+				timeZones.getCurrentTime(false);
+			}
+		}
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				if (timeZones.getCurrentTime(true) == "s") {
+					
+				}
+			}
+		};
+		timer.schedule(task, 1000*30);
 	}
 	
 
