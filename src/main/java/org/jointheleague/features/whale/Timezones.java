@@ -52,7 +52,7 @@ public class Timezones {
 		if (getAMPM) {
 			formatter = DateTimeFormatter.ofPattern("hh:mm:a");
 		} else {
-			formatter = DateTimeFormatter.ofPattern("HHmm");
+			formatter = DateTimeFormatter.ofPattern("HH:mm");
 		}
 		String formattedTime = currentTime.format(formatter);
 		return formattedTime;

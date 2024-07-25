@@ -5,7 +5,7 @@ public class Time {
 	private String min;
 	private Boolean isPm;
 	private String timeZone;
-	
+
 	public String getTimeZone() {
 		return timeZone;
 	}
@@ -22,6 +22,18 @@ public class Time {
 
 	public String getHour() {
 		return hour;
+	}
+
+	public String get24Hour() {
+		if (isPm == true) {
+			String time = (Integer.parseInt(hour) + 12) + "";
+			if (time.length() == 1) {
+				time = "0" + time;
+			}
+			return time;
+		} else {
+			return hour;
+		}
 	}
 
 	public void setHour(String hour) {
@@ -43,13 +55,13 @@ public class Time {
 	public void setIsPm(Boolean isPm) {
 		this.isPm = isPm;
 	}
+
 	public String getTimeAsString() {
 		if (isPm) {
-			return hour+":"+min+"pm";
-		}
-		else {
-			return hour+":"+min+"am";
+			return hour + ":" + min + "pm";
+		} else {
+			return hour + ":" + min + "am";
 		}
 	}
-	
+
 }

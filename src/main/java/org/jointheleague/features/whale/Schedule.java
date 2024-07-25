@@ -1,5 +1,7 @@
 package org.jointheleague.features.whale;
 
+import static org.mockito.ArgumentMatchers.intThat;
+
 import java.io.BufferedReader;
 import java.util.*;
 import java.io.InputStreamReader;
@@ -44,7 +46,6 @@ public class Schedule extends Feature {
 	List<Role> roles = new ArrayList<Role>();
 	DiscordApi api;
 	ApiGetter get;
-	Timer timer = new Timer();
 	Boolean AMRmode = false;
 	public final String add = "!addevent";
 	public final String remove = "!removeevent";
@@ -87,8 +88,7 @@ public class Schedule extends Feature {
 	int closestDayAsInt;
 	List<Event> closestEvents = new ArrayList<>();
 	int howManyMinBeforeEventShouldReminderBeSent;
-	
-	
+
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
 	public Schedule(String channelName, ApiGetter get) {
@@ -116,6 +116,7 @@ public class Schedule extends Feature {
 		String messageContent = discord.getMessageContent();
 		if (messageContent.contains(api.getYourself().getName() + " has connected")) {
 			setup(discord);
+			checkTime(discord);
 			System.out.println("setup ran");
 		}
 		if (messageContent.toLowerCase().startsWith("!examples")
@@ -419,8 +420,14 @@ public class Schedule extends Feature {
 							+ " |Date = |" + eventList.get(eventList.size() - 1).getDate() + "|" + " |Tag = |"
 							+ detectedTag + "|");
 			System.out.println("Message sent to channel");
-			
+
 			// event.getChannel().sendMessage("Sending a message to the channel");
+			for (int i = 0; i < eventList.size(); i++) {
+				if (eventList.get(i).isLive() == true) {
+					eventList.remove(i);
+					i = 0;
+				}
+			}
 		}
 
 		// this will remove an event from the list
@@ -677,12 +684,12 @@ public class Schedule extends Feature {
 					String msg = "";
 					int i = 0;
 					for (Event event : closestEvents) {
-						msg+=i + ": " + event.getName() + " " + event.getTime().getTimeAsString() + " "
-								+ event.getTime().getTimeZone() + " " + event.getDate() +"\n";
+						msg += i + ": " + event.getName() + " " + event.getTime().getTimeAsString() + " "
+								+ event.getTime().getTimeZone() + " " + event.getDate() + "\n";
 						i++;
 					}
 					discord.getChannel().sendMessage("There are " + closestEvents.size()
-					+ " events, enter the number next to the event to start it \n" + msg);
+							+ " events, enter the number next to the event to start it \n" + msg);
 					areWeSelectingStartEvent = true;
 				} else {
 					closestDayAsInt = Integer
@@ -1099,11 +1106,11 @@ public class Schedule extends Feature {
 //		SETTINGS
 //		SETTINGS
 		if (messageContent.toLowerCase().startsWith(settings)) {
-			discord.getChannel().sendMessage("Welcome to Settings here is the list of settings(for all commands say the command then a space then the value) \n"
-					+ "!addTimeZone: Enter a timezone abbreviation then the time diiffrence from PT (ex. IST +12:30)\n"
-					+ "!setReminder: Enter a number that will be the number of minutes before an event a reminder will go out\n" 
-					+ "addTimeZone\n" 
-					+ "addTimeZone\n" + "addTimeZone\n" + "");
+			discord.getChannel().sendMessage(
+					"Welcome to Settings here is the list of settings(for all commands say the command then a space then the value) \n"
+							+ "!addTimeZone: Enter a timezone abbreviation then the time diiffrence from PT (ex. IST +12:30)\n"
+							+ "!setReminder: Enter a number that will be the number of minutes before an event a reminder will go out\n"
+							+ "addTimeZone\n" + "addTimeZone\n" + "addTimeZone\n" + "");
 		} else if (messageContent.toLowerCase().startsWith("!addtimezone")) {
 			System.out.println("add time zone called");
 			String[] time = messageContent.split(" ");
@@ -1121,20 +1128,18 @@ public class Schedule extends Feature {
 			System.out.println("time at 1 " + time[1] + ", time at 2 " + time[2]);
 			timeZones.addTimezone(time[1], Double.parseDouble(time[2]));
 			System.out.println("timezone added");
-		}
-		 else if (messageContent.toLowerCase().startsWith("!setreminder")) {
-			 try {
+		} else if (messageContent.toLowerCase().startsWith("!setreminder")) {
+			try {
 				System.out.println("set reminder called");
 				String[] time = messageContent.split(" ");
 				System.out.println("split");
 				int reminderTime = Integer.parseInt(time[1].trim());
 				howManyMinBeforeEventShouldReminderBeSent = reminderTime;
-			 }
-			 catch(Exception e) {
-				 discord.getChannel().sendMessage("Make sure you are entering a number");
-			 }
-				}
-				
+			} catch (Exception e) {
+				discord.getChannel().sendMessage("Make sure you are entering a number");
+			}
+		}
+
 		if (messageContent.toLowerCase().startsWith("!test")) {
 			System.out.println("test");
 			System.out.println(timeZones.getCurrentTime(true));
@@ -1143,39 +1148,49 @@ public class Schedule extends Feature {
 			discord.getChannel().sendMessage("bye");
 			System.exit(0);
 		}
-		checkTime();
+		checkTime(discord);
 	}
-	
-	void checkTime() {
-		System.out.println("time being checked");
-		for(int i  = 0; i < eventList.size(); i++) {
-			int time;
-			System.out.println(eventList.get(i).getDate() + " current date " + timeZones.getCurrentDate());
+
+	void checkTime(MessageCreateEvent discord) {
+		System.out.println("time checked");
+		for (int i = 0; i < eventList.size(); i++) {
 			if (eventList.get(i).getDate().equals(timeZones.getCurrentDate())) {
-				
-				timeZones.getCurrentTime(false);
+				String currentTime = timeZones.getCurrentTime(false).split(":")[0];
+				String eventTime = eventList.get(i).getTime().get24Hour();
+				if (currentTime.equals(eventTime) || Integer.parseInt(currentTime) > Integer.parseInt(eventTime)) {
+					System.out.println("same hour");
+					String currentTime2 = timeZones.getCurrentTime(false).split(":")[1];
+					String eventTime2 = eventList.get(i).getTime().getMin();
+					if (currentTime2.equals(eventTime2) || Integer.parseInt(currentTime2) > Integer.parseInt(eventTime2)) {
+						System.out.println("same min");
+						startEvent(eventList.get(i), discord);
+					}
+				}
 			}
 		}
+		Timer timer = new Timer();
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
-				if (timeZones.getCurrentTime(true) == "s") {
-					
-				}
+				checkTime(discord);
 			}
 		};
 		timer.schedule(task, 1000*30);
 	}
-	
 
 	void startEvent(Event event, MessageCreateEvent discord) {
-		discord.getChannel().sendMessage("Event " + event.getName() + " started");
+		if (event.isLive() == false) {
+		event.setLive(true);
+		discord.getChannel().sendMessage("Event **" + event.getName() + "** started");
 		String people = "";
 		for (int i = 0; i < event.getPeople().size(); i++) {
 			people += event.getPeople().get(i).getUser().getMentionTag() + "\n";
 		}
+		if (people.equals("")) {
+			people = "none";
+		}
 		discord.getChannel().sendMessage("People Participating: \n" + people);
-		
+		}
 	}
 
 	public static boolean isANumber(String str) {

@@ -10,12 +10,14 @@ public class Event {
 	private Time endTime;
 	private String date;
 	private ArrayList<Person> people;
+	private boolean isLive; 
 	
 	Event(String name, Time time, String date) {
 		this.name = name;
 		this.time = time;
 		this.date = date;
 		people = new ArrayList<Person>();
+		setLive(false);
 	}
 
 	public String getName() {
@@ -55,6 +57,14 @@ public class Event {
 
 	public void setEndTime(Time endTime) {
 		this.endTime = endTime;
+	}
+
+	public boolean isLive() {
+		return isLive;
+	}
+
+	public void setLive(boolean isLive) {
+		this.isLive = isLive;
 	}
 	
 }
