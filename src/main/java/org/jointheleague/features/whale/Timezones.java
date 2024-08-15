@@ -57,6 +57,13 @@ public class Timezones {
 		String formattedTime = currentTime.format(formatter);
 		return formattedTime;
 	}
+	public String getCurrentTimeForStamp() {
+		LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("America/Los_Angeles"));
+		DateTimeFormatter formatter;
+			formatter = DateTimeFormatter.ISO_INSTANT;
+		String formattedTime = currentTime.format(formatter);
+		return formattedTime;
+	}
 
 	public String getCurrentDate() {
 		LocalDateTime currentTime = LocalDateTime.now(ZoneId.of("America/Los_Angeles"));

@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Array;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -55,7 +56,6 @@ public class Schedule extends Feature {
 	public final String start = "!startevent";
 	public final String end = "!endevent";
 	public final String settings = "!settings";
-	public final String poll = "!pollevent";
 	public final String[] available = { "!ican", "imavailable" };
 	public final String userTimeZone = "!timezones";
 	// removing
@@ -87,7 +87,7 @@ public class Schedule extends Feature {
 	boolean areWeSelectingStartEvent;
 	int closestDayAsInt;
 	List<Event> closestEvents = new ArrayList<>();
-	int howManyMinBeforeEventShouldReminderBeSent;
+	int howManyMinBeforeEventShouldReminderBeSent = 15;
 
 	ArrayList<Event> eventList = new ArrayList<Event>();
 
@@ -104,7 +104,6 @@ public class Schedule extends Feature {
 				+ "!timezones: edit users timezones so the bot knows what time for them the events will start (add a role name to only show users with that role)\n\n"
 				+ "!schedule: lists all events \n\n" + "!startEvent: starts the nearest event early\n\n"
 				+ "!endEvent: ends the current event \n\n"
-				+ "!pollEvent: ask users if they can make it to the event with a message and reactions\n\n"
 				+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
 				+ "!examples: shows examples for every command \n\n" + "!settings: configure the bot\n\n");
 	}
@@ -1143,6 +1142,10 @@ public class Schedule extends Feature {
 		if (messageContent.toLowerCase().startsWith("!test")) {
 			System.out.println("test");
 			System.out.println(timeZones.getCurrentTime(true));
+			long currentTime = Instant.parse(timeZones.getCurrentTimeForStamp()).getEpochSecond();
+	        // Format for Discord timestamp
+	        String discordTimestamp = "<t:" + currentTime + ":t>"; // 'f' is the format for date and time
+	        discord.getChannel().sendMessage(discordTimestamp);
 		}
 		if (messageContent.toLowerCase().startsWith("!stop")) {
 			discord.getChannel().sendMessage("bye");
@@ -1152,8 +1155,21 @@ public class Schedule extends Feature {
 	}
 
 	void checkTime(MessageCreateEvent discord) {
+		Date d = new Date();
+		Date d2 = new Date();
 		System.out.println("time checked");
 		for (int i = 0; i < eventList.size(); i++) {
+			Event e = eventList.get(i);
+			d.setDate(Integer.parseInt(e.getDate().split("/")[0]));
+			d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
+			d.setYear(Integer.parseInt(e.getDate().split("/")[2]));
+			if(e.getTime().getIsPm() == true) {
+				d.setHours(Integer.parseInt(e.getTime().getHour())+12);
+			} else {
+				d.setHours(Integer.parseInt(e.getTime().getHour()));
+			}
+			d.setMinutes(Integer.parseInt(e.getTime().getMin()));
+			d2.setTime(Instant.now().getEpochSecond());
 			if (eventList.get(i).getDate().equals(timeZones.getCurrentDate())) {
 				String currentTime = timeZones.getCurrentTime(false).split(":")[0];
 				String eventTime = eventList.get(i).getTime().get24Hour();
