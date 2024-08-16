@@ -1,45 +1,37 @@
 package org.jointheleague.features.whale;
 
-import static org.mockito.ArgumentMatchers.intThat;
-
-import java.io.BufferedReader;
-import java.util.*;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.sql.Array;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
+
+import javax.imageio.ImageIO;
+
 import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.json.simple.JSONObject;
-import org.springframework.util.StringUtils;
-import org.w3c.dom.DOMException;
-
-import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
-import net.aksingh.owmjapis.api.APIException;
 
 //To fix
 //adding a tag to an event making the date setting not work
 //TODO
 //allow a "all" command when setting tags
 public class Schedule extends Feature {
+	// temp vars
+	File imageFile = new File("/Users/league/Desktop/Scary.jpeg"); // Replace with your image path
+	byte[] ba;
+	//
 	Timezones timeZones = new Timezones();
 	ArrayList<Person> users = new ArrayList<Person>();
 	ArrayList<Person> printedUsers = new ArrayList<Person>();
@@ -1140,12 +1132,25 @@ public class Schedule extends Feature {
 		}
 
 		if (messageContent.toLowerCase().startsWith("!test")) {
-			System.out.println("test");
-			System.out.println(timeZones.getCurrentTime(true));
-			long currentTime = Instant.parse(timeZones.getCurrentTimeForStamp()).getEpochSecond();
-	        // Format for Discord timestamp
-	        String discordTimestamp = "<t:" + currentTime + ":t>"; // 'f' is the format for date and time
-	        discord.getChannel().sendMessage(discordTimestamp);
+			if (messageContent.toLowerCase().contains("2")) {
+				discord.getChannel().sendMessage("sending a image");
+				discord.getChannel().sendMessage("here is your image", imageFile);
+				discord.getChannel().sendMessage("sent");
+			} else {
+				discord.getChannel().sendMessage("sending a image");
+				ByteArrayInputStream bais = new ByteArrayInputStream(ba);
+				discord.getChannel().sendMessage("here is your image", bais, "Scary.jpeg");
+				discord.getChannel().sendMessage("sent");
+			}
+//			System.out.println("test");
+//			System.out.println(timeZones.getCurrentTime(true));
+//			long currentTime = Instant.parse(timeZones.getCurrentTimeForStamp()).getEpochSecond();
+//	        // Format for Discord timestamp
+//	        String discordTimestamp = "<t:" + currentTime + ":t>"; // 'f' is the format for date and time
+//	        discord.getChannel().sendMessage(discordTimestamp);
+
+			// Send the image file
+
 		}
 		if (messageContent.toLowerCase().startsWith("!stop")) {
 			discord.getChannel().sendMessage("bye");
@@ -1163,26 +1168,18 @@ public class Schedule extends Feature {
 			d.setDate(Integer.parseInt(e.getDate().split("/")[0]));
 			d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
 			d.setYear(Integer.parseInt(e.getDate().split("/")[2]));
-			if(e.getTime().getIsPm() == true) {
-				d.setHours(Integer.parseInt(e.getTime().getHour())+12);
+			d.setMinutes(d.getMinutes()-howManyMinBeforeEventShouldReminderBeSent);
+			if (e.getTime().getIsPm() == true) {
+				d.setHours(Integer.parseInt(e.getTime().getHour()) + 12);
 			} else {
 				d.setHours(Integer.parseInt(e.getTime().getHour()));
 			}
 			d.setMinutes(Integer.parseInt(e.getTime().getMin()));
 			d2.setTime(Instant.now().getEpochSecond());
-			if (eventList.get(i).getDate().equals(timeZones.getCurrentDate())) {
-				String currentTime = timeZones.getCurrentTime(false).split(":")[0];
-				String eventTime = eventList.get(i).getTime().get24Hour();
-				if (currentTime.equals(eventTime) || Integer.parseInt(currentTime) > Integer.parseInt(eventTime)) {
-					System.out.println("same hour");
-					String currentTime2 = timeZones.getCurrentTime(false).split(":")[1];
-					String eventTime2 = eventList.get(i).getTime().getMin();
-					if (currentTime2.equals(eventTime2) || Integer.parseInt(currentTime2) > Integer.parseInt(eventTime2)) {
-						System.out.println("same min");
-						startEvent(eventList.get(i), discord);
-					}
-				}
+			if (d.compareTo(d2) == 0) {
+				startEvent(eventList.get(i), discord);
 			}
+
 		}
 		Timer timer = new Timer();
 		TimerTask task = new TimerTask() {
@@ -1191,21 +1188,21 @@ public class Schedule extends Feature {
 				checkTime(discord);
 			}
 		};
-		timer.schedule(task, 1000*30);
+		timer.schedule(task, 1000 * 30);
 	}
 
 	void startEvent(Event event, MessageCreateEvent discord) {
 		if (event.isLive() == false) {
-		event.setLive(true);
-		discord.getChannel().sendMessage("Event **" + event.getName() + "** started");
-		String people = "";
-		for (int i = 0; i < event.getPeople().size(); i++) {
-			people += event.getPeople().get(i).getUser().getMentionTag() + "\n";
-		}
-		if (people.equals("")) {
-			people = "none";
-		}
-		discord.getChannel().sendMessage("People Participating: \n" + people);
+			event.setLive(true);
+			discord.getChannel().sendMessage("Event **" + event.getName() + "** started");
+			String people = "";
+			for (int i = 0; i < event.getPeople().size(); i++) {
+				people += event.getPeople().get(i).getUser().getMentionTag() + "\n";
+			}
+			if (people.equals("")) {
+				people = "none";
+			}
+			discord.getChannel().sendMessage("People Participating: \n" + people);
 		}
 	}
 
@@ -1223,6 +1220,7 @@ public class Schedule extends Feature {
 	}
 
 	public void setup(MessageCreateEvent discord) {
+		System.out.println("setup run from method");
 		long serverId = discord.getMessage().getServer().get().getId();
 		if (users.size() <= 0) {
 			api.getServerById(serverId).ifPresent(server -> {
@@ -1248,6 +1246,18 @@ public class Schedule extends Feature {
 
 			});
 			System.out.println("users in list");
+		}
+		try {
+			BufferedImage bi = ImageIO.read(imageFile);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(bi, "jpeg", baos);
+			baos.flush();
+			ba = baos.toByteArray();
+			baos.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
