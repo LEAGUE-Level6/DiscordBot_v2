@@ -515,7 +515,7 @@ public class Schedule extends Feature {
 				long serverId = discord.getServer().get().getId();
 				Server server = api.getServerById(serverId).get();
 				discord.getChannel().sendMessage(
-						"Enter the number next to the user then remove (ex. 3 remove) to add say a username then add (ex. whale1929 add) make sure to use the username not the nickname. Use commas to add and remove multiple people (ex. 1 add, 4 remove)");
+						"Enter the number next to the user then remove (ex. 3 remove) to add say a username then add (ex. whale1929 add) make sure to use the username not the nickname. Use commas to add and remove multiple people (ex. whale1929 add, 4 remove)");
 				String peopleInEvent = "";
 				if (event.getPeople().size() == 0) {
 					peopleInEvent += "\n There are no users in this event";
@@ -1162,27 +1162,55 @@ public class Schedule extends Feature {
 	void checkTime(MessageCreateEvent discord) {
 		Date d = new Date();
 		Date d2 = new Date();
-		System.out.println("time checked");
 		for (int i = 0; i < eventList.size(); i++) {
 			Event e = eventList.get(i);
-			d.setDate(Integer.parseInt(e.getDate().split("/")[0]));
+			if (e.isLive() == true) {
+				continue;
+			}
 			d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
-			d.setYear(Integer.parseInt(e.getDate().split("/")[2]));
-			d.setMinutes(d.getMinutes()-howManyMinBeforeEventShouldReminderBeSent);
+			System.out.println("Date" + Integer.parseInt(e.getDate().split("/")[1]));
+			d.setMonth(Integer.parseInt(e.getDate().split("/")[0])-1);
+			System.out.println("Month" + Integer.parseInt(e.getDate().split("/")[0]));
+			d.setYear(Integer.parseInt("1" + e.getDate().split("/")[2]));
+			System.out.println("Year" + Integer.parseInt(e.getDate().split("/")[2]));
+			d.setMinutes(Integer.parseInt(e.getTime().getMin()));
+			if (e.isReminderSent() == false) {
+			d.setMinutes(d.getMinutes() - howManyMinBeforeEventShouldReminderBeSent);
+			}
 			if (e.getTime().getIsPm() == true) {
 				d.setHours(Integer.parseInt(e.getTime().getHour()) + 12);
 			} else {
 				d.setHours(Integer.parseInt(e.getTime().getHour()));
 			}
-			d.setMinutes(Integer.parseInt(e.getTime().getMin()));
-			d2.setTime(Instant.now().getEpochSecond());
-			if (d.compareTo(d2) == 0) {
-				startEvent(eventList.get(i), discord);
+//			d2.setTime(Instant.now().getEpochSecond());
+			System.out.println("d: " + d.getTime() + " " + d.getDate() + " " + d.getMonth() + " " + d.getYear() + " "
+					+ d.getHours() + " " + d.getMinutes());
+			System.out.println("d2: " + d2.getTime() + " " + d2.getDate() + " " + d2.getMonth() + " " + d2.getYear()
+					+ " " + d2.getHours() + " " + d2.getMinutes());
+			if (d.getYear() == (d2.getYear())) {
+				System.out.println("same year");
+				if (d.getMonth() == d2.getMonth()) {
+					System.out.println("same month");
+					if (d.getDate() == d2.getDate()) {
+						System.out.println("same date");
+						if (d.getHours() == d2.getHours()) {
+							System.out.println("same hours");
+							System.out.println("d: " + d.getMinutes() + " d2: " + d2.getMinutes());
+							if ((d.getMinutes()+"").trim().equals((d2.getMinutes()+"").trim())) {
+								System.out.println("same min and event starting");
+								if (e.isReminderSent() == false) {
+								sendReminder(eventList.get(i), discord);
+								} else {
+								startEvent(eventList.get(i), discord);
+								}
+							}
+						}
+					}
+				}
 			}
-
 		}
-		Timer timer = new Timer();
-		TimerTask task = new TimerTask() {
+	Timer timer = new Timer();
+	TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
 				checkTime(discord);
@@ -1195,6 +1223,12 @@ public class Schedule extends Feature {
 		if (event.isLive() == false) {
 			event.setLive(true);
 			discord.getChannel().sendMessage("Event **" + event.getName() + "** started");
+		}
+	}
+	void sendReminder(Event event, MessageCreateEvent discord) {
+		if (event.isReminderSent() == false) {
+			event.setReminderSent(true);
+			discord.getChannel().sendMessage("Event **" + event.getName() + "** is starting in " + howManyMinBeforeEventShouldReminderBeSent + " minutes");
 			String people = "";
 			for (int i = 0; i < event.getPeople().size(); i++) {
 				people += event.getPeople().get(i).getUser().getMentionTag() + "\n";

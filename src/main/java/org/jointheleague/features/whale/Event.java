@@ -11,6 +11,7 @@ public class Event {
 	private String date;
 	private ArrayList<Person> people;
 	private boolean isLive; 
+	private boolean ReminderSent; 
 	
 	Event(String name, Time time, String date) {
 		this.name = name;
@@ -65,6 +66,14 @@ public class Event {
 
 	public void setLive(boolean isLive) {
 		this.isLive = isLive;
+	}
+
+	public boolean isReminderSent() {
+		return ReminderSent;
+	}
+
+	public void setReminderSent(boolean hasReminderBeenSent) {
+		this.ReminderSent = hasReminderBeenSent;
 	}
 	
 }
