@@ -640,7 +640,29 @@ public class Schedule extends Feature {
 		if (messageContent.toLowerCase().startsWith(schedule)) {
 			String listOfEvents = "";
 			for (int i = 0; i < eventList.size(); i++) {
-				listOfEvents += eventList.get(i).getName() + " " + eventList.get(i).getTime().getTimeAsString() + " "
+				Date d = new Date();
+				Event e = eventList.get(i);
+				d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
+				d.setMonth(Integer.parseInt(e.getDate().split("/")[0]) - 1);
+				d.setYear(Integer.parseInt("1" + e.getDate().split("/")[2]));
+				d.setMinutes(Integer.parseInt(e.getTime().getMin()));
+				if (e.getTime().getIsPm() == true) {
+					//PM
+					if (Integer.parseInt(e.getTime().getHour()) + 12 == 24) {
+						d.setHours(Integer.parseInt(e.getTime().getHour()));
+					} else {
+					d.setHours(Integer.parseInt(e.getTime().getHour())+12);
+					}
+				} else {
+					//AM
+					if (Integer.parseInt(e.getTime().getHour()) + 12 == 24) {
+						d.setHours(Integer.parseInt(e.getTime().getHour()) - 12);
+					} else {
+						d.setHours(Integer.parseInt(e.getTime().getHour()));
+					}
+					
+				}
+				listOfEvents += eventList.get(i).getName() + " " + timeZones.getTimeForStamp(d) + " "
 						+ eventList.get(i).getDate() + "\n";
 			}
 
@@ -1132,24 +1154,28 @@ public class Schedule extends Feature {
 		}
 
 		if (messageContent.toLowerCase().startsWith("!test")) {
-			if (messageContent.toLowerCase().contains("2")) {
-				discord.getChannel().sendMessage("sending a image");
-				discord.getChannel().sendMessage("here is your image", imageFile);
-				discord.getChannel().sendMessage("sent");
-			} else {
-				discord.getChannel().sendMessage("sending a image");
-				ByteArrayInputStream bais = new ByteArrayInputStream(ba);
-				discord.getChannel().sendMessage("here is your image", bais, "Scary.jpeg");
-				discord.getChannel().sendMessage("sent");
+//			if (messageContent.toLowerCase().contains("2")) {
+//				discord.getChannel().sendMessage("sending a image");
+//				discord.getChannel().sendMessage("here is your image", imageFile);
+//				discord.getChannel().sendMessage("sent");
+//			} else {
+//				discord.getChannel().sendMessage("sending a image");
+//				ByteArrayInputStream bais = new ByteArrayInputStream(ba);
+//				discord.getChannel().sendMessage("here is your image", bais, "Scary.jpeg");
+//				discord.getChannel().sendMessage("sent");
+//			}
+			System.out.println("test");
+			try {
+				Date d = new Date();
+				Event e = eventList.get(0);
+				d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
+				d.setMonth(Integer.parseInt(e.getDate().split("/")[0]) - 1);
+				d.setYear(Integer.parseInt("1" + e.getDate().split("/")[2]));
+				d.setMinutes(Integer.parseInt(e.getTime().getMin()));
+				discord.getChannel().sendMessage(timeZones.getTimeForStamp(d));
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-//			System.out.println("test");
-//			System.out.println(timeZones.getCurrentTime(true));
-//			long currentTime = Instant.parse(timeZones.getCurrentTimeForStamp()).getEpochSecond();
-//	        // Format for Discord timestamp
-//	        String discordTimestamp = "<t:" + currentTime + ":t>"; // 'f' is the format for date and time
-//	        discord.getChannel().sendMessage(discordTimestamp);
-
-			// Send the image file
 
 		}
 		if (messageContent.toLowerCase().startsWith("!stop")) {
@@ -1169,13 +1195,13 @@ public class Schedule extends Feature {
 			}
 			d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
 			System.out.println("Date" + Integer.parseInt(e.getDate().split("/")[1]));
-			d.setMonth(Integer.parseInt(e.getDate().split("/")[0])-1);
+			d.setMonth(Integer.parseInt(e.getDate().split("/")[0]) - 1);
 			System.out.println("Month" + Integer.parseInt(e.getDate().split("/")[0]));
 			d.setYear(Integer.parseInt("1" + e.getDate().split("/")[2]));
 			System.out.println("Year" + Integer.parseInt(e.getDate().split("/")[2]));
 			d.setMinutes(Integer.parseInt(e.getTime().getMin()));
 			if (e.isReminderSent() == false) {
-			d.setMinutes(d.getMinutes() - howManyMinBeforeEventShouldReminderBeSent);
+				d.setMinutes(d.getMinutes() - howManyMinBeforeEventShouldReminderBeSent);
 			}
 			if (e.getTime().getIsPm() == true) {
 				d.setHours(Integer.parseInt(e.getTime().getHour()) + 12);
@@ -1196,12 +1222,12 @@ public class Schedule extends Feature {
 						if (d.getHours() == d2.getHours()) {
 							System.out.println("same hours");
 							System.out.println("d: " + d.getMinutes() + " d2: " + d2.getMinutes());
-							if ((d.getMinutes()+"").trim().equals((d2.getMinutes()+"").trim())) {
+							if (d.getMinutes() == d2.getMinutes()) {
 								System.out.println("same min and event starting");
 								if (e.isReminderSent() == false) {
-								sendReminder(eventList.get(i), discord);
+									sendReminder(eventList.get(i), discord);
 								} else {
-								startEvent(eventList.get(i), discord);
+									startEvent(eventList.get(i), discord);
 								}
 							}
 						}
@@ -1209,8 +1235,8 @@ public class Schedule extends Feature {
 				}
 			}
 		}
-	Timer timer = new Timer();
-	TimerTask task = new TimerTask() {
+		Timer timer = new Timer();
+		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
 				checkTime(discord);
@@ -1225,10 +1251,12 @@ public class Schedule extends Feature {
 			discord.getChannel().sendMessage("Event **" + event.getName() + "** started");
 		}
 	}
+
 	void sendReminder(Event event, MessageCreateEvent discord) {
 		if (event.isReminderSent() == false) {
 			event.setReminderSent(true);
-			discord.getChannel().sendMessage("Event **" + event.getName() + "** is starting in " + howManyMinBeforeEventShouldReminderBeSent + " minutes");
+			discord.getChannel().sendMessage("Event **" + event.getName() + "** is starting in "
+					+ howManyMinBeforeEventShouldReminderBeSent + " minutes");
 			String people = "";
 			for (int i = 0; i < event.getPeople().size(); i++) {
 				people += event.getPeople().get(i).getUser().getMentionTag() + "\n";
@@ -1251,6 +1279,14 @@ public class Schedule extends Feature {
 
 	public void sendDm(String userId, String message, MessageCreateEvent discord) {
 		discord.getApi().getUserById(userId).thenAccept(user -> user.sendMessage(message));
+	}
+
+	public void createTimeStamp() {
+		System.out.println("test");
+		System.out.println(timeZones.getCurrentTime(true));
+		long currentTime = Instant.parse(timeZones.getCurrentTimeForStamp()).getEpochSecond();
+		// Format for Discord timestamp
+		String discordTimestamp = "<t:" + currentTime + ":t>"; // 'f' is the format for date and time
 	}
 
 	public void setup(MessageCreateEvent discord) {

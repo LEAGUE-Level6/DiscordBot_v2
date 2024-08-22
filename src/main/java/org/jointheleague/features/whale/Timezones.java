@@ -1,9 +1,11 @@
 package org.jointheleague.features.whale;
 
 import java.nio.file.spi.FileSystemProvider;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -62,6 +64,13 @@ public class Timezones {
 		DateTimeFormatter formatter;
 			formatter = DateTimeFormatter.ISO_INSTANT;
 		String formattedTime = currentTime.format(formatter);
+		formattedTime = "<t:"+formattedTime+":t>";
+		return formattedTime;
+	}
+	public String getTimeForStamp(Date d) {
+		Instant i = d.toInstant();
+		String formattedTime;
+		formattedTime = "<t:"+i.toEpochMilli()/1000+":t>";
 		return formattedTime;
 	}
 
