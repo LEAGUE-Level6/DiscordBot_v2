@@ -968,8 +968,12 @@ public class Schedule extends Feature {
 		}
 
 		if (messageContent.toLowerCase().startsWith("!test")) {
-			PexelsAPI pApi = new PexelsAPI();
+			SerpAPI pApi = new SerpAPI();
+			try {
 			pApi.testRequest("valorant");
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 //			if (messageContent.toLowerCase().contains("2")) {
 //				discord.getChannel().sendMessage("sending a image");
 //				discord.getChannel().sendMessage("here is your image", imageFile);

@@ -1,16 +1,17 @@
 package org.jointheleague.features.whale;
 
+import org.jointheleague.features.whale.DataTrasnferObjects.ImageSearchResult;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-public class PexelsAPI {
-	private static final String baseUrl = "https://api.pexels.com/v1/search?query=";
+public class SerpAPI {
+	private static final String baseUrl = "https://serpapi.com/search.json?engine=google&q=%searchhere%&location=United+States&google_domain=google.com&gl=us&hl=en&tbm=isch&api_key=5d839296455a3e7b9dcc3d060fb7ad2584f9dc2eb413c98089ce0a51d756bb25";
 
     private WebClient webClient;
 
-    public PexelsAPI() {
+    public SerpAPI() {
      
     }
 
@@ -21,14 +22,14 @@ public class PexelsAPI {
         */
     	   this.webClient = WebClient
                    .builder()
-                   .baseUrl(baseUrl+q)
+                   .baseUrl(baseUrl.replace("%searchhere%", q))
                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                   .defaultHeader("Authorization", "XVPfXCbnpVNRoqAXGE7ACGgD1qqtx3JWm0L1PoOrSPDcXEPVP5f132kv")
                    .build();
-    	Mono<String> stringMono = webClient.get().retrieve().bodyToMono(String.class);
+    	Mono<ImageSearchResult> stringMono = webClient.get().retrieve().bodyToMono(ImageSearchResult.class);
         //Collect the response from the Mono object
-    	String response = stringMono.block();
-    	System.out.println(response);
+    	ImageSearchResult response = stringMono.block();
+    	String imageURL = response.getImagesResults().get(0).getOriginal();
+    	System.out.println("url of 1st image " + imageURL);
         /*
         Print out the actual JSON response -
         this is what you will input into jsonschema2pojo.com
@@ -46,10 +47,10 @@ public class PexelsAPI {
         */
     }
 
-    public PexelsAPI getImage() {
-    	Mono<PexelsAPI> stringMono = webClient.get().retrieve().bodyToMono(PexelsAPI.class);
+    public SerpAPI getImage() {
+    	Mono<SerpAPI> stringMono = webClient.get().retrieve().bodyToMono(SerpAPI.class);
         //Collect the response from the Mono object
-    	PexelsAPI response = stringMono.block();
+    	SerpAPI response = stringMono.block();
         //Make the request, saving the response in an object of the type that you just created in your
         //data_transfer_objects package (CatWrapper)
 
@@ -63,7 +64,7 @@ public class PexelsAPI {
 
     public String findCatFact(){
         //use the getCatFact method to retrieve a cat fact
-    	PexelsAPI image = getImage();
+    	SerpAPI image = getImage();
         //return the first (and only) String in the Arraylist of data in the response
         return null;
     }
