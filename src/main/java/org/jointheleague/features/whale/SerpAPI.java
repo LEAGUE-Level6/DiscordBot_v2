@@ -7,69 +7,48 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 public class SerpAPI {
-	private static final String baseUrl = "https://serpapi.com/search.json?engine=google&q=%searchhere%&location=United+States&google_domain=google.com&gl=us&hl=en&tbm=isch&api_key=5d839296455a3e7b9dcc3d060fb7ad2584f9dc2eb413c98089ce0a51d756bb25";
-
+    private static final String baseUrl = "https://serpapi.com/search.json?engine=google&q=%searchhere%&location=United+States&google_domain=google.com&gl=us&hl=en&tbm=isch&api_key=5d839296455a3e7b9dcc3d060fb7ad2584f9dc2eb413c98089ce0a51d756bb25";
     private WebClient webClient;
 
     public SerpAPI() {
-     
+        this.webClient = WebClient
+                .builder()
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
     }
 
-    public void testRequest(String q){
-        /*
-        Use the WebClient to make the request, converting the response to String.class.
-        This request doesn't require url parameters, so you can omit the .uri() method call entirely
-        */
-    	   this.webClient = WebClient
-                   .builder()
-                   .baseUrl(baseUrl.replace("%searchhere%", q))
-                   .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                   .build();
-    	Mono<ImageSearchResult> stringMono = webClient.get().retrieve().bodyToMono(ImageSearchResult.class);
-        //Collect the response from the Mono object
-    	ImageSearchResult response = stringMono.block();
-    	String imageURL = response.getImagesResults().get(0).getOriginal();
-    	System.out.println("url of 1st image " + imageURL);
-        /*
-        Print out the actual JSON response -
-        this is what you will input into jsonschema2pojo.com
-         */
-
-
-        /*
-        Use http://www.jsonschema2pojo.org/ to generate your POJO
-        and place it in the cat_facts_API.data_transfer_objects package.
-        Select:
-        Class name: CatWrapper
-        Target Language = java
-        Source Type = JSON
-        Annotation Style = Gson
-        */
+    public static void main(String[] args) {
+        SerpAPI api = new SerpAPI();
+        api.testRequest("valorant");
     }
 
-    public SerpAPI getImage() {
-    	Mono<SerpAPI> stringMono = webClient.get().retrieve().bodyToMono(SerpAPI.class);
-        //Collect the response from the Mono object
-    	SerpAPI response = stringMono.block();
-        //Make the request, saving the response in an object of the type that you just created in your
-        //data_transfer_objects package (CatWrapper)
+    public void testRequest(String q) {
+        String url = baseUrl.replace("%searchhere%", q);
 
-        //Use block() to collect the response into a java object using the class you just created
+        // Make the request and retrieve the response as an ImageSearchResult
+        Mono<ImageSearchResult> ISRMono = webClient.get()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(ImageSearchResult.class);
 
-        //return the Object
-        return response;
+        // Block and get the response
+        ImageSearchResult response = ISRMono.block();
 
+        if (response != null && response.getImagesResults() != null && !response.getImagesResults().isEmpty()) {
+            String imageURL = response.getImagesResults().get(1).getOriginal();
+            System.out.println(response.getImagesResults().size());
+            System.out.println("URL of 1st image: " + imageURL);
+        } else {
+            System.out.println("No image results found.");
+        }
 
-    }
+        // Optionally, you can print the raw JSON response as a string if needed
+        Mono<String> stringMono = webClient.get()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(String.class);
 
-    public String findCatFact(){
-        //use the getCatFact method to retrieve a cat fact
-    	SerpAPI image = getImage();
-        //return the first (and only) String in the Arraylist of data in the response
-        return null;
-    }
-
-    public void setWebClient(WebClient webClient) {
-        this.webClient = webClient;
+        String responseS = stringMono.block();
+        System.out.println("Raw JSON response: " + responseS);
     }
 }

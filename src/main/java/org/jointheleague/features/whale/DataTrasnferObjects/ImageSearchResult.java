@@ -1,6 +1,7 @@
 
 package org.jointheleague.features.whale.DataTrasnferObjects;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
@@ -20,13 +21,13 @@ public class ImageSearchResult {
     private SearchInformation searchInformation;
     @SerializedName("suggested_searches")
     @Expose
-    private List<SuggestedSearch> suggestedSearches;
+    private List<SuggestedSearch> suggestedSearches = new ArrayList<SuggestedSearch>();
     @SerializedName("images_results")
     @Expose
-    private List<ImagesResult> imagesResults;
+    private List<ImagesResult> imagesResults = new ArrayList<ImagesResult>();
     @SerializedName("related_searches")
     @Expose
-    private List<RelatedSearch> relatedSearches;
+    private List<RelatedSearch> relatedSearches = new ArrayList<RelatedSearch>();
     @SerializedName("serpapi_pagination")
     @Expose
     private SerpapiPagination serpapiPagination;
