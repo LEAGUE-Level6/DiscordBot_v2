@@ -1,5 +1,6 @@
 package org.jointheleague.features.whale;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,6 +17,7 @@ import java.util.concurrent.ExecutionException;
 import javax.imageio.ImageIO;
 
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -634,36 +636,15 @@ public class Schedule extends Feature {
 		// SCHEDULE
 		// SCHEDULE
 		if (messageContent.toLowerCase().startsWith(schedule)) {
-			String listOfEvents = "";
+			EmbedBuilder[] embedBuilderArr = new EmbedBuilder[eventList.size()];
 			for (int i = 0; i < eventList.size(); i++) {
-				Date d = new Date();
-				Event e = eventList.get(i);
-				d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
-				d.setMonth(Integer.parseInt(e.getDate().split("/")[0]) - 1);
-				d.setYear(Integer.parseInt("1" + e.getDate().split("/")[2]));
-				d.setMinutes(Integer.parseInt(e.getTime().getMin()));
-				if (e.getTime().getIsPm() == true) {
-					//PM
-					if (Integer.parseInt(e.getTime().getHour()) + 12 == 24) {
-						d.setHours(Integer.parseInt(e.getTime().getHour()));
-					} else {
-					d.setHours(Integer.parseInt(e.getTime().getHour())+12);
-					}
-				} else {
-					//AM
-					if (Integer.parseInt(e.getTime().getHour()) + 12 == 24) {
-						d.setHours(Integer.parseInt(e.getTime().getHour()) - 12);
-					} else {
-						d.setHours(Integer.parseInt(e.getTime().getHour()));
-					}
-					
-				}
-				listOfEvents += eventList.get(i).getName() + " " + timeZones.getTimeForStamp(d) + " "
-						+ eventList.get(i).getDate() + "\n";
+				EmbedBuilder embedBuilder = embedCreator(eventList.get(i));
+		        embedBuilderArr[i] = embedBuilder;
 			}
 
-			discord.getChannel().sendMessage(listOfEvents);
+			discord.getChannel().sendMessage(embedBuilderArr);
 		}
+		
 
 //		START EVENT
 //		START EVENT
@@ -968,12 +949,10 @@ public class Schedule extends Feature {
 		}
 
 		if (messageContent.toLowerCase().startsWith("!test")) {
-			SerpAPI pApi = new SerpAPI();
-			try {
-			pApi.testRequest("valorant");
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
+			 EmbedBuilder embedBuilder = embedCreator(eventList.get(0));
+			        api.getTextChannelById("1240524647674548306").ifPresent(channel -> {
+			            channel.sendMessage(embedBuilder);
+			        });
 //			if (messageContent.toLowerCase().contains("2")) {
 //				discord.getChannel().sendMessage("sending a image");
 //				discord.getChannel().sendMessage("here is your image", imageFile);
@@ -1004,6 +983,64 @@ public class Schedule extends Feature {
 		}
 		checkTime(discord);
 	}
+	EmbedBuilder embedCreator(Event e) {
+		String listOfPeople = "Participants: ";
+		if(e.getPeople().size()==0) {
+			listOfPeople = "No participants added";
+		}
+		else if (e.getPeople().size() <=5) {
+			for (int i = 0; i < e.getPeople().size(); i++) {
+				if (i==e.getPeople().size()-1) {
+				listOfPeople+=e.getPeople().get(i).getNickname();
+				} else {
+				listOfPeople+=e.getPeople().get(i).getNickname() + ", ";
+				}
+			}
+		} else {
+			for (int i = 0; i < e.getPeople().size(); i++) {
+				if (i>5) {
+				listOfPeople+="and " + (e.getPeople().size()-i) + " more.";
+				break;
+				} else {
+				listOfPeople+=e.getPeople().get(i).getNickname() + ", ";
+				}
+			}
+		}
+		EmbedBuilder embedBuilder = new EmbedBuilder()
+				.setTitle(e.getName())
+				.setDescription(
+						getTimeStamp(e)+"\n"+
+						""+e.getDate()+""+"\n"+
+						listOfPeople)
+				.setThumbnail(e.getIconUrl())
+				.setColor(Color.getHSBColor((float) 0.48878205, (float)1.0, (float)0.40784314));
+				
+		return embedBuilder;
+	}
+	String getTimeStamp(Event e) {
+			Date d = new Date();
+			d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
+			d.setMonth(Integer.parseInt(e.getDate().split("/")[0]) - 1);
+			d.setYear(Integer.parseInt("1" + e.getDate().split("/")[2]));
+			d.setMinutes(Integer.parseInt(e.getTime().getMin()));
+			if (e.getTime().getIsPm() == true) {
+				//PM
+				if (Integer.parseInt(e.getTime().getHour()) + 12 == 24) {
+					d.setHours(Integer.parseInt(e.getTime().getHour()));
+				} else {
+				d.setHours(Integer.parseInt(e.getTime().getHour())+12);
+				}
+			} else {
+				//AM
+				if (Integer.parseInt(e.getTime().getHour()) + 12 == 24) {
+					d.setHours(Integer.parseInt(e.getTime().getHour()) - 12);
+				} else {
+					d.setHours(Integer.parseInt(e.getTime().getHour()));
+				}
+				
+			}
+			return timeZones.getTimeForStamp(d);
+		}
 
 	void checkTime(MessageCreateEvent discord) {
 		Date d = new Date();
@@ -1014,11 +1051,11 @@ public class Schedule extends Feature {
 				continue;
 			}
 			d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
-			System.out.println("Date" + Integer.parseInt(e.getDate().split("/")[1]));
+			//System.out.println("Date" + Integer.parseInt(e.getDate().split("/")[1]));
 			d.setMonth(Integer.parseInt(e.getDate().split("/")[0]) - 1);
-			System.out.println("Month" + Integer.parseInt(e.getDate().split("/")[0]));
+			//System.out.println("Month" + Integer.parseInt(e.getDate().split("/")[0]));
 			d.setYear(Integer.parseInt("1" + e.getDate().split("/")[2]));
-			System.out.println("Year" + Integer.parseInt(e.getDate().split("/")[2]));
+			//System.out.println("Year" + Integer.parseInt(e.getDate().split("/")[2]));
 			d.setMinutes(Integer.parseInt(e.getTime().getMin()));
 			if (e.isReminderSent() == false) {
 				d.setMinutes(d.getMinutes() - howManyMinBeforeEventShouldReminderBeSent);
@@ -1029,19 +1066,15 @@ public class Schedule extends Feature {
 				d.setHours(Integer.parseInt(e.getTime().getHour()));
 			}
 //			d2.setTime(Instant.now().getEpochSecond());
-			System.out.println("d: " + d.getTime() + " " + d.getDate() + " " + d.getMonth() + " " + d.getYear() + " "
-					+ d.getHours() + " " + d.getMinutes());
-			System.out.println("d2: " + d2.getTime() + " " + d2.getDate() + " " + d2.getMonth() + " " + d2.getYear()
-					+ " " + d2.getHours() + " " + d2.getMinutes());
 			if (d.getYear() == (d2.getYear())) {
-				System.out.println("same year");
+		//		System.out.println("same year");
 				if (d.getMonth() == d2.getMonth()) {
-					System.out.println("same month");
+				//	System.out.println("same month");
 					if (d.getDate() == d2.getDate()) {
-						System.out.println("same date");
+					//	System.out.println("same date");
 						if (d.getHours() == d2.getHours()) {
-							System.out.println("same hours");
-							System.out.println("d: " + d.getMinutes() + " d2: " + d2.getMinutes());
+						//	System.out.println("same hours");
+						//	System.out.println("d: " + d.getMinutes() + " d2: " + d2.getMinutes());
 							if (d.getMinutes() == d2.getMinutes()) {
 								System.out.println("same min and event starting");
 								if (e.isReminderSent() == false) {
@@ -1064,6 +1097,7 @@ public class Schedule extends Feature {
 		};
 		timer.schedule(task, 1000 * 5);
 	}
+
 
 	void startEvent(Event event, MessageCreateEvent discord) {
 		if (event.isLive() == false) {
@@ -1102,7 +1136,6 @@ public class Schedule extends Feature {
 	}
 
 	public void createTimeStamp() {
-		System.out.println("test");
 		System.out.println(timeZones.getCurrentTime(true));
 		long currentTime = Instant.parse(timeZones.getCurrentTimeForStamp()).getEpochSecond();
 		// Format for Discord timestamp

@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class HelpEmbed {
 	
-	private final Color color = Color.green;
+	private final Color color = Color.getHSBColor((float) 0.48878205, (float)1.0, (float)0.40784314);
 
 	private final String command;
 

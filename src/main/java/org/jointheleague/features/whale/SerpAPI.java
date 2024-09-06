@@ -48,12 +48,14 @@ public class SerpAPI {
 		String imgUrl = findUrl(responseS);
 
 		while (isImageFormatGood(imgUrl) == false) {
-			findUrl(imgUrl.substring(imgUrl.indexOf("original"), imgUrl.length() - 1));
+			imgUrl = findUrl(responseS.substring(imgUrl.indexOf("original")+8, responseS.length() - 1));
+			responseS = responseS.substring(imgUrl.indexOf("original")+8, responseS.length() - 1);
 		}
+		System.out.println("filtered image url: " + imgUrl);
 	}
 
 	boolean isImageFormatGood(String imgUrl) {
-		if (imgUrl.contains(".png") || imgUrl.contains(".jpeg")) {
+		if (imgUrl.contains(".png") || imgUrl.contains(".jpeg") || imgUrl.contains(".jpg")) {
 			return true;
 		} else {
 			return false;

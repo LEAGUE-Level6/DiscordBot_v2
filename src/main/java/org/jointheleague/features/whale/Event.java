@@ -12,6 +12,7 @@ public class Event {
 	private ArrayList<Person> people;
 	private boolean isLive; 
 	private boolean ReminderSent; 
+	private String iconUrl;
 	
 	Event(String name, Time time, String date) {
 		this.name = name;
@@ -74,6 +75,14 @@ public class Event {
 
 	public void setReminderSent(boolean hasReminderBeenSent) {
 		this.ReminderSent = hasReminderBeenSent;
+	}
+
+	public String getIconUrl() {
+		return iconUrl;
+	}
+
+	public void setIconUrl(String iconUrl) {
+		this.iconUrl = iconUrl;
 	}
 	
 }
