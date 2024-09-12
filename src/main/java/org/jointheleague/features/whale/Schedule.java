@@ -487,7 +487,7 @@ public class Schedule extends Feature {
 								+ eventList.get(index - 1).getTime().getTimeAsString() + " "
 								+ eventList.get(index - 1).getDate() + " selected");
 				indexOfEvent = index - 1;
-				discord.getChannel().sendMessage("Enter \n 1: name \n 2: time \n 3: date \n 4: people");
+				discord.getChannel().sendMessage("Enter \n 1: name \n 2: time \n 3: date \n 4: people \n 5: icon");
 				isEventSelected = true;
 				areWeEditing = false;
 			}
@@ -538,6 +538,10 @@ public class Schedule extends Feature {
 				discord.getChannel().sendMessage(peopleInEvent);
 				setPeople = true;
 				areWeEditing = false;
+			}
+			else if (option == 5) {
+				Event event = eventList.get(indexOfEvent);
+				discord.getChannel().sendMessage("");
 			}
 			isEventSelected = false;
 		}
@@ -998,13 +1002,16 @@ public class Schedule extends Feature {
 			}
 		} else {
 			for (int i = 0; i < e.getPeople().size(); i++) {
-				if (i>5) {
+				if (i+1>5) {
 				listOfPeople+="and " + (e.getPeople().size()-i) + " more.";
 				break;
 				} else {
 				listOfPeople+=e.getPeople().get(i).getNickname() + ", ";
 				}
 			}
+		}
+		if (listOfPeople.charAt(listOfPeople.length()-2) == ',') {
+			listOfPeople=listOfPeople.substring(0, listOfPeople.length()-2);
 		}
 		EmbedBuilder embedBuilder = new EmbedBuilder()
 				.setTitle(e.getName())

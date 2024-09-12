@@ -1,6 +1,5 @@
 package org.jointheleague.features.whale;
 
-import org.jointheleague.features.whale.DataTrasnferObjects.ImageSearchResult;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
