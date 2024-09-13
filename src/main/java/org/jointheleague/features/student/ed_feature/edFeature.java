@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class edFeature extends Feature{
     Random rand = new Random();
-    public final String COMMAND = "!edFeature";
+    public final String COMMAND = "!roll";
 
     public edFeature (String channelName){
         super(channelName);
@@ -21,18 +21,28 @@ public class edFeature extends Feature{
         String messageContent = event.getMessageContent();
 
         if( messageContent.contains(COMMAND)){
-            event.sendResponse("yup! Eddie's Feature can do stuff!");
+            event.sendResponse("dice rolled");
+            event.sendResponse(rollFeature(messageContent));
         }
     }
 
     private String rollFeature(String inputRoll){
-        inputRoll.replace(COMMAND, "");
+        inputRoll = inputRoll.replace(COMMAND, "");
+        inputRoll = inputRoll.replaceAll(" ", "");
         String finalTotal = "";
-        String[] dice = inputRoll.split("[+-]");
+        String[] dice = inputRoll.split("[+]");
+        int finalVal = 0;
+        int tempVal = 0;
         for(String nums : dice){
                 String[] toRoll = nums.toLowerCase().split("d");
-                finalTotal += nums + " rolled: " + rand.nextInt(Integer.parseInt(toRoll[1])) + "\n";
-                
+                finalTotal += toRoll[0]+"d" + toRoll[1] + " rolled: ";
+                for(int i = 0; i < Integer.parseInt(toRoll[0]);i++){
+                    tempVal =  rand.nextInt(Integer.parseInt(toRoll[1]));
+                    finalTotal += tempVal + " ";
+                    finalVal += tempVal;
+                }
+                finalTotal += "\n for a total of " + finalVal + "\n";
+
            }
         return finalTotal;
     }
