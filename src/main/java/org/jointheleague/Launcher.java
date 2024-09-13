@@ -7,7 +7,7 @@ public class Launcher {
     public static void main(String[] args) throws InterruptedException {
 
         //Initialize variables
-        String channelName = "";
+        String channelName = "eddie";
         String discordToken = "";
         boolean printDiscordInvite = true;
 
