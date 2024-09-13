@@ -12,7 +12,7 @@ public class Event {
 	private ArrayList<Person> people;
 	private boolean isLive; 
 	private boolean ReminderSent; 
-	private String iconUrl;
+	private String iconUrl = "none";
 	
 	Event(String name, Time time, String date) {
 		this.name = name;

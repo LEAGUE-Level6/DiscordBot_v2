@@ -62,6 +62,7 @@ public class Schedule extends Feature {
 	boolean setTime;
 	boolean setDate;
 	boolean setPeople;
+	boolean setIconChange;
 	int indexOfEvent;
 
 	// tags
@@ -538,10 +539,28 @@ public class Schedule extends Feature {
 				discord.getChannel().sendMessage(peopleInEvent);
 				setPeople = true;
 				areWeEditing = false;
-			}
-			else if (option == 5) {
+			} else if (option == 5) {
 				Event event = eventList.get(indexOfEvent);
-				discord.getChannel().sendMessage("");
+				if (event.getIconUrl() == "none") {
+					EmbedBuilder embedBuilder = new EmbedBuilder().setTitle(event.getName())
+							// \nEnter a description of your image that will go to google and get the first
+							// result(ex. valorant)
+							.setDescription("Current Icon: \"none\"").setColor(Color.WHITE);
+					discord.getChannel().sendMessage(embedBuilder);
+					discord.getChannel().sendMessage(
+							"Enter a description of your image that will go to google and get the first result(ex. valorant) or an image url");
+				} else {
+					EmbedBuilder embedBuilder = new EmbedBuilder().setTitle(event.getName())
+							// \nEnter a description of your image that will go to google and get the first
+							// result(ex. valorant)
+							.setDescription("Current Icon:").setThumbnail(event.getIconUrl()).setColor(Color.WHITE);
+					discord.getChannel().sendMessage(embedBuilder);
+					discord.getChannel().sendMessage(
+							"Enter a description of your image that will go to google and get the first result(ex. valorant) or an image url");
+				}
+
+				setIconChange = true;
+				areWeEditing = false;
 			}
 			isEventSelected = false;
 		}
@@ -632,6 +651,35 @@ public class Schedule extends Feature {
 
 			}
 			setPeople = false;
+		} else if (setIconChange && !discord.getMessage().getAuthor().isBotUser()) {
+			SerpAPI imageSearch = new SerpAPI();
+			Event event = eventList.get(indexOfEvent);
+			if (discord.getMessageContent().contains("/") && discord.getMessageContent().contains(".")) {
+				event.setIconUrl(discord.getMessageContent().trim());
+				EmbedBuilder embedBuilder = new EmbedBuilder().setTitle(event.getName()).setDescription("New Icon:")
+						.setThumbnail(event.getIconUrl()).setColor(Color.WHITE);
+				discord.getChannel().sendMessage(embedBuilder);
+				discord.getChannel().sendMessage("Btw there is only 100 icon searches a month so use them wisely");
+			} else {
+				System.out.println("image search on " + discord.getMessageContent());
+				Long messageID = (long) 0.0;
+				try {
+					messageID = discord.getChannel().sendMessage("Getting Image . . .").get().getId();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				String iconUrl = imageSearch.getImage(discord.getMessageContent());
+				discord.getChannel().deleteMessages(messageID);
+				event.setIconUrl(iconUrl);
+				EmbedBuilder embedBuilder = new EmbedBuilder().setTitle(event.getName()).setDescription("New Icon:")
+						.setThumbnail(event.getIconUrl()).setColor(Color.WHITE);
+				discord.getChannel().sendMessage(embedBuilder);
+			}
+			setIconChange = false;
 		}
 
 		System.out.println(areWeRemoving);
@@ -643,12 +691,11 @@ public class Schedule extends Feature {
 			EmbedBuilder[] embedBuilderArr = new EmbedBuilder[eventList.size()];
 			for (int i = 0; i < eventList.size(); i++) {
 				EmbedBuilder embedBuilder = embedCreator(eventList.get(i));
-		        embedBuilderArr[i] = embedBuilder;
+				embedBuilderArr[i] = embedBuilder;
 			}
 
 			discord.getChannel().sendMessage(embedBuilderArr);
 		}
-		
 
 //		START EVENT
 //		START EVENT
@@ -953,10 +1000,10 @@ public class Schedule extends Feature {
 		}
 
 		if (messageContent.toLowerCase().startsWith("!test")) {
-			 EmbedBuilder embedBuilder = embedCreator(eventList.get(0));
-			        api.getTextChannelById("1240524647674548306").ifPresent(channel -> {
-			            channel.sendMessage(embedBuilder);
-			        });
+			EmbedBuilder embedBuilder = embedCreator(eventList.get(0));
+			api.getTextChannelById("1240524647674548306").ifPresent(channel -> {
+				channel.sendMessage(embedBuilder);
+			});
 //			if (messageContent.toLowerCase().contains("2")) {
 //				discord.getChannel().sendMessage("sending a image");
 //				discord.getChannel().sendMessage("here is your image", imageFile);
@@ -987,67 +1034,64 @@ public class Schedule extends Feature {
 		}
 		checkTime(discord);
 	}
+
 	EmbedBuilder embedCreator(Event e) {
 		String listOfPeople = "Participants: ";
-		if(e.getPeople().size()==0) {
+		if (e.getPeople().size() == 0) {
 			listOfPeople = "No participants added";
-		}
-		else if (e.getPeople().size() <=5) {
+		} else if (e.getPeople().size() <= 5) {
 			for (int i = 0; i < e.getPeople().size(); i++) {
-				if (i==e.getPeople().size()-1) {
-				listOfPeople+=e.getPeople().get(i).getNickname();
+				if (i == e.getPeople().size() - 1) {
+					listOfPeople += e.getPeople().get(i).getNickname();
 				} else {
-				listOfPeople+=e.getPeople().get(i).getNickname() + ", ";
+					listOfPeople += e.getPeople().get(i).getNickname() + ", ";
 				}
 			}
 		} else {
 			for (int i = 0; i < e.getPeople().size(); i++) {
-				if (i+1>5) {
-				listOfPeople+="and " + (e.getPeople().size()-i) + " more.";
-				break;
+				if (i + 1 > 5) {
+					listOfPeople += "and " + (e.getPeople().size() - i) + " more.";
+					break;
 				} else {
-				listOfPeople+=e.getPeople().get(i).getNickname() + ", ";
+					listOfPeople += e.getPeople().get(i).getNickname() + ", ";
 				}
 			}
 		}
-		if (listOfPeople.charAt(listOfPeople.length()-2) == ',') {
-			listOfPeople=listOfPeople.substring(0, listOfPeople.length()-2);
+		if (listOfPeople.charAt(listOfPeople.length() - 2) == ',') {
+			listOfPeople = listOfPeople.substring(0, listOfPeople.length() - 2);
 		}
-		EmbedBuilder embedBuilder = new EmbedBuilder()
-				.setTitle(e.getName())
-				.setDescription(
-						getTimeStamp(e)+"\n"+
-						""+e.getDate()+""+"\n"+
-						listOfPeople)
+		EmbedBuilder embedBuilder = new EmbedBuilder().setTitle(e.getName())
+				.setDescription(getTimeStamp(e) + "\n" + "" + e.getDate() + "" + "\n" + listOfPeople)
 				.setThumbnail(e.getIconUrl())
-				.setColor(Color.getHSBColor((float) 0.48878205, (float)1.0, (float)0.40784314));
-				
+				.setColor(Color.getHSBColor((float) 0.48878205, (float) 1.0, (float) 0.40784314));
+
 		return embedBuilder;
 	}
+
 	String getTimeStamp(Event e) {
-			Date d = new Date();
-			d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
-			d.setMonth(Integer.parseInt(e.getDate().split("/")[0]) - 1);
-			d.setYear(Integer.parseInt("1" + e.getDate().split("/")[2]));
-			d.setMinutes(Integer.parseInt(e.getTime().getMin()));
-			if (e.getTime().getIsPm() == true) {
-				//PM
-				if (Integer.parseInt(e.getTime().getHour()) + 12 == 24) {
-					d.setHours(Integer.parseInt(e.getTime().getHour()));
-				} else {
-				d.setHours(Integer.parseInt(e.getTime().getHour())+12);
-				}
+		Date d = new Date();
+		d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
+		d.setMonth(Integer.parseInt(e.getDate().split("/")[0]) - 1);
+		d.setYear(Integer.parseInt("1" + e.getDate().split("/")[2]));
+		d.setMinutes(Integer.parseInt(e.getTime().getMin()));
+		if (e.getTime().getIsPm() == true) {
+			// PM
+			if (Integer.parseInt(e.getTime().getHour()) + 12 == 24) {
+				d.setHours(Integer.parseInt(e.getTime().getHour()));
 			} else {
-				//AM
-				if (Integer.parseInt(e.getTime().getHour()) + 12 == 24) {
-					d.setHours(Integer.parseInt(e.getTime().getHour()) - 12);
-				} else {
-					d.setHours(Integer.parseInt(e.getTime().getHour()));
-				}
-				
+				d.setHours(Integer.parseInt(e.getTime().getHour()) + 12);
 			}
-			return timeZones.getTimeForStamp(d);
+		} else {
+			// AM
+			if (Integer.parseInt(e.getTime().getHour()) + 12 == 24) {
+				d.setHours(Integer.parseInt(e.getTime().getHour()) - 12);
+			} else {
+				d.setHours(Integer.parseInt(e.getTime().getHour()));
+			}
+
 		}
+		return timeZones.getTimeForStamp(d);
+	}
 
 	void checkTime(MessageCreateEvent discord) {
 		Date d = new Date();
@@ -1058,11 +1102,11 @@ public class Schedule extends Feature {
 				continue;
 			}
 			d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
-			//System.out.println("Date" + Integer.parseInt(e.getDate().split("/")[1]));
+			// System.out.println("Date" + Integer.parseInt(e.getDate().split("/")[1]));
 			d.setMonth(Integer.parseInt(e.getDate().split("/")[0]) - 1);
-			//System.out.println("Month" + Integer.parseInt(e.getDate().split("/")[0]));
+			// System.out.println("Month" + Integer.parseInt(e.getDate().split("/")[0]));
 			d.setYear(Integer.parseInt("1" + e.getDate().split("/")[2]));
-			//System.out.println("Year" + Integer.parseInt(e.getDate().split("/")[2]));
+			// System.out.println("Year" + Integer.parseInt(e.getDate().split("/")[2]));
 			d.setMinutes(Integer.parseInt(e.getTime().getMin()));
 			if (e.isReminderSent() == false) {
 				d.setMinutes(d.getMinutes() - howManyMinBeforeEventShouldReminderBeSent);
@@ -1074,14 +1118,14 @@ public class Schedule extends Feature {
 			}
 //			d2.setTime(Instant.now().getEpochSecond());
 			if (d.getYear() == (d2.getYear())) {
-		//		System.out.println("same year");
+				// System.out.println("same year");
 				if (d.getMonth() == d2.getMonth()) {
-				//	System.out.println("same month");
+					// System.out.println("same month");
 					if (d.getDate() == d2.getDate()) {
-					//	System.out.println("same date");
+						// System.out.println("same date");
 						if (d.getHours() == d2.getHours()) {
-						//	System.out.println("same hours");
-						//	System.out.println("d: " + d.getMinutes() + " d2: " + d2.getMinutes());
+							// System.out.println("same hours");
+							// System.out.println("d: " + d.getMinutes() + " d2: " + d2.getMinutes());
 							if (d.getMinutes() == d2.getMinutes()) {
 								System.out.println("same min and event starting");
 								if (e.isReminderSent() == false) {
@@ -1104,7 +1148,6 @@ public class Schedule extends Feature {
 		};
 		timer.schedule(task, 1000 * 5);
 	}
-
 
 	void startEvent(Event event, MessageCreateEvent discord) {
 		if (event.isLive() == false) {
@@ -1191,4 +1234,4 @@ public class Schedule extends Feature {
 		}
 	}
 
-}				
+}

@@ -16,10 +16,10 @@ public class SerpAPI {
 
 	public static void main(String[] args) {
 		SerpAPI api = new SerpAPI();
-		api.testRequest("valorant");
+		//api.getImage("valorant");
 	}
 
-	public void testRequest(String q) {
+	public String getImage(String q) {
 		String url = baseUrl.replace("%searchhere%", q);
 
 		// Make the request and retrieve the response as an ImageSearchResult
@@ -51,6 +51,7 @@ public class SerpAPI {
 			responseS = responseS.substring(imgUrl.indexOf("original")+8, responseS.length() - 1);
 		}
 		System.out.println("filtered image url: " + imgUrl);
+		return imgUrl.substring(4, imgUrl.length()-2);
 	}
 
 	boolean isImageFormatGood(String imgUrl) {
