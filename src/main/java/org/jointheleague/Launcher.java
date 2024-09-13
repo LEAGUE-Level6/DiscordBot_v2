@@ -7,8 +7,8 @@ public class Launcher {
     public static void main(String[] args) throws InterruptedException {
 
         //Initialize variables
-        //String channelName = System.getenv("CHANNEL");
-        //String discordToken = System.getenv("TOKEN");
+        String channelName = "";
+        String discordToken = "";
         boolean printDiscordInvite = true;
 
         //Instantiate DiscordBot and connect
