@@ -1,5 +1,6 @@
 package org.jointheleague.features.examples.third_features;
 
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper;
@@ -34,6 +35,8 @@ public class CatFactsApi extends Feature {
             event.sendResponse(catFact);
         }
     }
+
+
 
     public String getCatFact() {
 
