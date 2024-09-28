@@ -50,7 +50,6 @@ public class Schedule extends Feature {
 	public final String start = "!startevent";
 	public final String end = "!endevent";
 	public final String settings = "!settings";
-	public final String[] available = { "!ican", "imavailable" };
 	public final String userTimeZone = "!timezones";
 	// removing
 	boolean areWeRemoving;
@@ -93,10 +92,12 @@ public class Schedule extends Feature {
 				+ "!editEvent: change the name, time, date, or people attending an event\n\n"
 				+ "!tags: edit the tags of users in an event (add a role name to only show users with that role)\n\n"
 				+ "!timezones: edit users timezones so the bot knows what time for them the events will start (add a role name to only show users with that role)\n\n"
-				+ "!schedule: lists all events \n\n" + "!startEvent: starts the nearest event early\n\n"
+				+ "!schedule: lists all events \n\n"
+				+ "!startEvent: starts the nearest event early\n\n"
 				+ "!endEvent: ends the current event \n\n"
 				+ "!iCan/!imAvailable: allows you to choose what event(s) you can make it to \n\n"
-				+ "!examples: shows examples for every command \n\n" + "!settings: configure the bot\n\n");
+				+ "!examples: shows examples for every command \n\n"
+				+ "!settings: configure the bot\n\n");
 	}
 
 	@Override
@@ -112,10 +113,15 @@ public class Schedule extends Feature {
 		if (messageContent.toLowerCase().startsWith("!examples")
 				|| messageContent.toLowerCase().startsWith("!example")) {
 			String examples = "Examples: \n"
-					+ "a /'->/' will mean a new messgae and (/'command/'/'command 2/') will mean 2 possible commands to send \n"
-					+ "!addEvent Valorant Grind 9:30pm pdt fri &val \n" + "!removeEvent -> (1/3, 5)\n"
-					+ "!tags spectator -> 1 tags -> spectator\n" + "!timezones -> 2 timezones -> GMT\n" + "!schedule \n"
-					+ "!endEvent \n" + "!pollEvent -> 2\n" + "!iCan/!imAvailable -> (1,2/3)\n" + "!examples \n"
+					+ "a /'->/' will mean a new messgae and (\"message\" or \"message\") will mean 2 possible commands to send \n"
+					+ "!addEvent Valorant Grind 9:30pm pdt fri &val \n"
+					+ "!removeEvent -> 1\n"
+					+ "!tags member -> 1 -> spectator\n"
+					+ "!timezones -> 2 timezones -> GMT\n"
+					+ "!schedule \n"
+					+ "!endEvent \n" + "!pollEvent -> 2\n"
+					+ "!iCan/!imAvailable -> (1,2/3)\n"
+					+ "!examples \n"
 					+ "!settings -> addTimeZone IST +12:30";
 			discord.getChannel().sendMessage(examples);
 		}
@@ -759,7 +765,8 @@ public class Schedule extends Feature {
 			}
 			areWeSelectingStartEvent = false;
 		}
-		// TAG
+		// TAGS
+		//tagshere
 		String listOfPeople = "err";
 		if (messageContent.toLowerCase().startsWith(editTags) || nextTags) {
 			nextTags = false;
@@ -781,7 +788,7 @@ public class Schedule extends Feature {
 			System.out.println("role string created");
 			System.out.println("!tags called");
 			long serverId = discord.getMessage().getServer().get().getId();
-			listOfPeople = "Tags are used to categorize people for easy event management \n add an \'&\' then the tag at the end of the message when creating an event \n Everyone with that tag will be added to that event and pinged when it starts \n\n"
+			listOfPeople = "Tags are used to categorize people for easy event management \n add an \'&(insert your tage here)\' at the end of the message when creating an event \n Everyone with that tag will be added to that event and pinged when it starts \n\n"
 					+ "Enter the number next to the user, say \"end tags\" to stop editing tags\n";
 			if (users.size() <= 0) {
 				api.getServerById(serverId).ifPresent(server -> {
@@ -939,8 +946,6 @@ public class Schedule extends Feature {
 					areTagsBeingSet = true;
 					mostRecentUserName = printedUsers.get(index - 1).getUsername();
 					System.out.println("message sent ");
-
-					// }
 					System.out.println(printedUsers.size());
 					// printedUsers.get(index - 1).setTags(tags);
 					System.out.println("set tags");

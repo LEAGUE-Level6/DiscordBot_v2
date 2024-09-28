@@ -25,7 +25,7 @@ public class Person {
 
 
 	public String getNickname() {
-		// its empt and not Optional.Empty because of the substring on line 38
+		// its empt and not Optional.Empty because of the substring on line 45
 		if (nickname.equalsIgnoreCase("empt")) {
 			return username;
 		} else {
