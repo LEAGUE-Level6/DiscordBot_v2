@@ -105,10 +105,17 @@ public class Schedule extends Feature {
 		String detectedTag = "null";
 		api = get.getApi();
 		String messageContent = discord.getMessageContent();
-		if (messageContent.contains(api.getYourself().getName() + " has connected")) {
+		try {
+		if (messageContent.contains
+				(api.getYourself()
+						.getName() + " has connected")) {
 			setup(discord);
 			checkTime(discord);
 			System.out.println("setup ran");
+		}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
 		}
 		if (messageContent.toLowerCase().startsWith("!examples")
 				|| messageContent.toLowerCase().startsWith("!example")) {

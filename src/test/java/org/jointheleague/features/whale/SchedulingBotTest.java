@@ -1,6 +1,8 @@
 package org.jointheleague.features.whale;
 
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
@@ -24,100 +26,104 @@ import static org.mockito.Mockito.never;
 
 class SchedulingBotTest {
 
-    private final String testChannelName = "test";
-    private final FeatureTemplate featureTemplate = new FeatureTemplate(testChannelName);
+	@Mock
+	DiscordApi api;
+	@Mock
+	User user;
 
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final PrintStream originalOut = System.out;
+	ApiGetter get = new ApiGetter(api);
 
-    @Mock
-    private MessageCreateEvent messageCreateEvent;
+	private final Schedule schedule = new Schedule("general", get);
 
-    @Mock
-    private TextChannel textChannel;
+	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private final PrintStream originalOut = System.out;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        System.setOut(new PrintStream(outContent));
-    }
+	@Mock
+	private MessageCreateEvent messageCreateEvent;
 
-    @AfterEach
-    public void itShouldNotPrintToSystemOut() {
-        String expected = "";
-        String actual = outContent.toString();
+	@Mock
+	private TextChannel textChannel;
 
-        assertEquals(expected, actual);
-        System.setOut(originalOut);
-    }
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
+		System.setOut(new PrintStream(outContent));
 
-    @Test
-    void itShouldHaveACommand() {
-        //Given
-        Schedule schedule = new Schedule(null, null);
-		//When
-        String command = schedule.add;
+	}
 
-        //Then
+	@AfterEach
+	public void itShouldNotPrintToSystemOut() {
+		String expected = "";
+		String actual = outContent.toString();
 
-        if(!(featureTemplate instanceof FeatureTemplate)){
-            assertNotEquals("!command", command);
-        }
+		assertEquals(expected, actual);
+		System.setOut(originalOut);
+	}
 
-        assertNotEquals("", command);
-        assertNotEquals("!", command);
-        assertEquals('!', command.charAt(0));
-        assertNotNull(command);
-    }
+	@Test
+	void itShouldHaveACommand() {
+		// Given
 
-    @Test
-    void itShouldHandleMessagesWithCommand() {
-        //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureTemplate.COMMAND, "test");
-        when(messageCreateEvent.getMessageContent()).thenReturn(featureTemplate.COMMAND);
-        when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+		// When
+		String command = schedule.add;
 
-        //When
-        featureTemplate.handle(messageCreateEvent);
+		// Then
+		assertNotEquals("", command);
+		assertNotEquals("!", command);
+		assertEquals('!', command.charAt(0));
+		assertNotNull(command);
+	}
 
-        //Then
-        verify(textChannel, times(1)).sendMessage(anyString());
-    }
+	@Test
+	void itShouldHandleMessagesWithHelpCommand() {
+		// Given
+		HelpEmbed helpEmbed = new HelpEmbed(schedule.helpEmbed.getTitle(), schedule.helpEmbed.getDescription());
+		when(messageCreateEvent.getMessageContent()).thenReturn(helpEmbed.getDescription());
+		when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+		when(api.getYourself()).thenReturn(user);
+		when(user.getName()).thenReturn("Whale's Bot");
 
-    @Test
-    void itShouldNotHandleMessagesWithoutCommand() {
-        //Given
-        String command = "";
-        when(messageCreateEvent.getMessageContent()).thenReturn(command);
+		// When
+		schedule.handle(messageCreateEvent);
 
-        //When
-        featureTemplate.handle(messageCreateEvent);
+		// Then
+		verify(textChannel, times(1)).sendMessage(anyString());
+	}
 
-        //Then
-        verify(textChannel, never()).sendMessage("");
-    }
+	@Test
+	void itShouldNotHandleMessagesWithoutCommand() {
+		// Given
+		String command = "";
+		when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
-    @Test
-    void itShouldHaveAHelpEmbed() {
-        //Given
+		// When
+		schedule.handle(messageCreateEvent);
 
-        //When
-        HelpEmbed actualHelpEmbed = featureTemplate.getHelpEmbed();
+		// Then
+		verify(textChannel, never()).sendMessage("");
+	}
 
-        //Then
-        assertNotNull(actualHelpEmbed);
-    }
+	@Test
+	void itShouldHaveAHelpEmbed() {
+		// Given
 
-    @Test
-    void itShouldHaveTheCommandAsTheTitleOfTheHelpEmbed() {
-        //Given
+		// When
+		HelpEmbed actualHelpEmbed = schedule.getHelpEmbed();
 
-        //When
-        String helpEmbedTitle = featureTemplate.getHelpEmbed().getTitle();
-        String command = featureTemplate.COMMAND;
+		// Then
+		assertNotNull(actualHelpEmbed);
+	}
 
-        //Then
-        assertEquals(command, helpEmbedTitle);
-    }
+	@Test
+	void itShouldHaveTheCommandAsTheTitleOfTheHelpEmbed() {
+		// Given
+
+		// When
+		String helpEmbedTitle = schedule.getHelpEmbed().getTitle();
+		String command = schedule.add;
+
+		// Then
+		assertEquals(command, helpEmbedTitle);
+	}
 
 }
