@@ -1,13 +1,16 @@
 package org.jointheleague.features.student.ed_feature;
 
+import net.dv8tion.jda.api.entities.User;
+
 import java.util.ArrayList;
 
 public class Player {
     ArrayList<Property> properties = new ArrayList<Property>();
-    String name;
+    User user;
     int cash;
-    public Player(String name){
-        this.name = name;
+    boolean isInJail = false;
+    public Player(User user){
+        this.user = user;
         cash = 1500;
     }
 
@@ -17,6 +20,7 @@ public class Player {
     public void changeCash(int newCash){
         cash += newCash;
     }
+    public String getName(User user){return user.getName();}
     public String getProps(){
         String propertoes = "";
         for (int i = 0; i < properties.size();i++){
@@ -24,4 +28,6 @@ public class Player {
         }
         return propertoes;
     }
+    public boolean inJail(){return isInJail;}
+    public void sendToJail(){isInJail = true;}
 }

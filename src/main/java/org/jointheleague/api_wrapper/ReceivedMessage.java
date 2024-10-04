@@ -2,6 +2,7 @@ package org.jointheleague.api_wrapper;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class ReceivedMessage {
@@ -11,6 +12,12 @@ public class ReceivedMessage {
     public ReceivedMessage(MessageReceivedEvent event) {
         this.event = event;
     }
+
+
+    public User getAuthor(){
+        return event.getAuthor();
+    }
+
 
     public String getMessageContent() {
         return this.event.getMessage().getContentStripped();
