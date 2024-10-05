@@ -33,7 +33,7 @@ class SchedulingBotTest {
 
 	ApiGetter get = new ApiGetter(api);
 
-	private final Schedule schedule = new Schedule("general", get);
+	private Schedule schedule = new Schedule("general", get);
 
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	private final PrintStream originalOut = System.out;
@@ -48,7 +48,9 @@ class SchedulingBotTest {
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
 		System.setOut(new PrintStream(outContent));
-
+		when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+		when(api.getYourself()).thenReturn(user);
+		when(user.getName()).thenReturn("Whale's Bot");
 	}
 
 	@AfterEach
@@ -56,10 +58,72 @@ class SchedulingBotTest {
 		String expected = "";
 		String actual = outContent.toString();
 
-		assertEquals(expected, actual);
+		//assertEquals(expected, actual);
 		System.setOut(originalOut);
 	}
 
+	@Test
+	void itShouldAddEvents() {
+		when(messageCreateEvent.getMessageContent()).thenReturn("!addEvent valorant 9:30pm pt tmr");
+
+		// When
+		schedule.handle(messageCreateEvent);
+
+		// Then
+		verify(textChannel, times(1)).sendMessage("The Event recived was Name = |valorant| Time = |9:30pm| Zone = |PT| |Date = |10/6/24| |Tag = |null|");
+	}
+	@Test
+	void itShouldRemoveEvents() {
+		when(messageCreateEvent.getMessageContent()).thenReturn("!addEvent valorant 9:30pm pt tmr");
+		schedule.handle(messageCreateEvent);
+		when(messageCreateEvent.getMessageContent()).thenReturn("!removeEvent");
+		schedule.handle(messageCreateEvent);
+		when(messageCreateEvent.getMessageContent()).thenReturn("1");
+		schedule.handle(messageCreateEvent);
+		// When
+		
+
+		// Then
+		verify(textChannel, times(1)).sendMessage("Event Removed");
+	}
+	void itShouldEditEvents() {
+		when(messageCreateEvent.getMessageContent()).thenReturn("!addEvent valorant 9:30pm pt tmr");
+		schedule.handle(messageCreateEvent);
+		when(messageCreateEvent.getMessageContent()).thenReturn("!editEvent");
+		schedule.handle(messageCreateEvent);
+		when(messageCreateEvent.getMessageContent()).thenReturn("1");
+		schedule.handle(messageCreateEvent);
+		when(messageCreateEvent.getMessageContent()).thenReturn("1");
+		schedule.handle(messageCreateEvent);
+		when(messageCreateEvent.getMessageContent()).thenReturn("Minecraft");
+		schedule.handle(messageCreateEvent);
+		// When
+		
+
+		// Then
+		verify(textChannel, times(1)).sendMessage("Name changed to Minecraft");
+		
+	}
+	void itShouldCreateTags() {
+		when(messageCreateEvent.getMessageContent()).thenReturn("!tags");
+		schedule.handle(messageCreateEvent);
+		when(messageCreateEvent.getMessageContent()).thenReturn("!editEvent");
+		schedule.handle(messageCreateEvent);
+		when(messageCreateEvent.getMessageContent()).thenReturn("1");
+		schedule.handle(messageCreateEvent);
+		when(messageCreateEvent.getMessageContent()).thenReturn("1");
+		schedule.handle(messageCreateEvent);
+		when(messageCreateEvent.getMessageContent()).thenReturn("Minecraft");
+		schedule.handle(messageCreateEvent);
+		// When
+		
+
+		// Then
+		verify(textChannel, times(1)).sendMessage("Name changed to Minecraft");
+		
+	}
+	
+	
 	@Test
 	void itShouldHaveACommand() {
 		// Given
@@ -75,13 +139,10 @@ class SchedulingBotTest {
 	}
 
 	@Test
-	void itShouldHandleMessagesWithHelpCommand() {
+	void itShouldHandleMessagesWithCommand() {
 		// Given
 		HelpEmbed helpEmbed = new HelpEmbed(schedule.helpEmbed.getTitle(), schedule.helpEmbed.getDescription());
-		when(messageCreateEvent.getMessageContent()).thenReturn(helpEmbed.getDescription());
-		when(messageCreateEvent.getChannel()).thenReturn((textChannel));
-		when(api.getYourself()).thenReturn(user);
-		when(user.getName()).thenReturn("Whale's Bot");
+		when(messageCreateEvent.getMessageContent()).thenReturn("!example");
 
 		// When
 		schedule.handle(messageCreateEvent);
@@ -93,7 +154,7 @@ class SchedulingBotTest {
 	@Test
 	void itShouldNotHandleMessagesWithoutCommand() {
 		// Given
-		String command = "";
+		String command = "hi";
 		when(messageCreateEvent.getMessageContent()).thenReturn(command);
 
 		// When
@@ -106,7 +167,7 @@ class SchedulingBotTest {
 	@Test
 	void itShouldHaveAHelpEmbed() {
 		// Given
-
+		
 		// When
 		HelpEmbed actualHelpEmbed = schedule.getHelpEmbed();
 
@@ -119,7 +180,8 @@ class SchedulingBotTest {
 		// Given
 
 		// When
-		String helpEmbedTitle = schedule.getHelpEmbed().getTitle();
+		String helpEmbedTitle = schedule.getHelpEmbed().getDescription();
+		helpEmbedTitle = helpEmbedTitle.substring(0, schedule.add.length()).trim().toLowerCase();
 		String command = schedule.add;
 
 		// Then

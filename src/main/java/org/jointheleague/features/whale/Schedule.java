@@ -30,9 +30,6 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 //TODO
 //allow a "all" command when setting tags
 public class Schedule extends Feature {
-	// temp vars
-	File imageFile = new File("/Users/league/Desktop/Scary.jpeg"); // Replace with your image path
-	byte[] ba;
 	//
 	Timezones timeZones = new Timezones();
 	ArrayList<Person> users = new ArrayList<Person>();
@@ -1231,18 +1228,6 @@ public class Schedule extends Feature {
 
 			});
 			System.out.println("users in list");
-		}
-		try {
-			BufferedImage bi = ImageIO.read(imageFile);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ImageIO.write(bi, "jpeg", baos);
-			baos.flush();
-			ba = baos.toByteArray();
-			baos.close();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
