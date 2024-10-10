@@ -50,7 +50,10 @@ public class Schedule extends Feature {
 	public final String userTimeZone = "!timezones";
 	// removing
 	boolean areWeRemoving;
-
+	
+	//shutdown
+	boolean shutDown;
+	
 	// edit events
 	boolean areWeEditing;
 	boolean isEventSelected;
@@ -103,9 +106,7 @@ public class Schedule extends Feature {
 		api = get.getApi();
 		String messageContent = discord.getMessageContent();
 		try {
-		if (messageContent.contains
-				(api.getYourself()
-						.getName() + " has connected")) {
+		if (messageContent.contains("Whale's Bot has connected")) {
 			setup(discord);
 			checkTime(discord);
 			System.out.println("setup ran");
@@ -1038,8 +1039,16 @@ public class Schedule extends Feature {
 
 		}
 		if (messageContent.toLowerCase().startsWith("!stop")) {
+			discord.getChannel().sendMessage("Are you sure you want the bot to shut down and delete all data \n !yes, !no");
+			shutDown = true;
+			
+		}
+		if(shutDown == true && messageContent.toLowerCase().startsWith("!yes")) {
 			discord.getChannel().sendMessage("bye");
+			shutDown = false;
 			System.exit(0);
+		} else if (shutDown == true && messageContent.toLowerCase().startsWith("!no")){
+			shutDown = false;
 		}
 		checkTime(discord);
 	}

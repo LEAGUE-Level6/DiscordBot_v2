@@ -2,6 +2,8 @@ package org.jointheleague.features.whale;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
@@ -16,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -30,6 +33,10 @@ class SchedulingBotTest {
 	DiscordApi api;
 	@Mock
 	User user;
+	@Mock
+	Message msg;
+	@Mock
+	MessageAuthor author;
 
 	ApiGetter get = new ApiGetter(api);
 
@@ -68,9 +75,13 @@ class SchedulingBotTest {
 
 		// When
 		schedule.handle(messageCreateEvent);
-
+		Date d = new Date();
+		String day = (d.getDate()+1)+"";
+		String month = (d.getMonth()+1)+"";
+		String year = (d.getYear()+"").substring(1,3);
+		System.out.println(day + " " + month + " " + year);
 		// Then
-		verify(textChannel, times(1)).sendMessage("The Event recived was Name = |valorant| Time = |9:30pm| Zone = |PT| |Date = |10/6/24| |Tag = |null|");
+		verify(textChannel, times(1)).sendMessage("The Event recived was Name = |valorant| Time = |9:30pm| Zone = |PT| |Date = |"+month+"/"+day+"/"+year+"| |Tag = |null|");
 	}
 	@Test
 	void itShouldRemoveEvents() {
@@ -86,15 +97,24 @@ class SchedulingBotTest {
 		// Then
 		verify(textChannel, times(1)).sendMessage("Event Removed");
 	}
+	@Test
 	void itShouldEditEvents() {
 		when(messageCreateEvent.getMessageContent()).thenReturn("!addEvent valorant 9:30pm pt tmr");
 		schedule.handle(messageCreateEvent);
+		verify(textChannel).sendMessage(anyString());
 		when(messageCreateEvent.getMessageContent()).thenReturn("!editEvent");
 		schedule.handle(messageCreateEvent);
+		verify(textChannel).sendMessage(anyString());
+		when(messageCreateEvent.getMessageContent()).thenReturn("1");
+		when(messageCreateEvent.getMessage()).thenReturn(msg);
+		when(msg.getAuthor()).thenReturn(author);
+		when(author.isBotUser()).thenReturn(true);
+		
+		schedule.handle(messageCreateEvent);
+		verify(textChannel).sendMessage(anyString());
 		when(messageCreateEvent.getMessageContent()).thenReturn("1");
 		schedule.handle(messageCreateEvent);
-		when(messageCreateEvent.getMessageContent()).thenReturn("1");
-		schedule.handle(messageCreateEvent);
+		verify(textChannel).sendMessage(anyString());
 		when(messageCreateEvent.getMessageContent()).thenReturn("Minecraft");
 		schedule.handle(messageCreateEvent);
 		// When
@@ -104,22 +124,21 @@ class SchedulingBotTest {
 		verify(textChannel, times(1)).sendMessage("Name changed to Minecraft");
 		
 	}
+	@Test
 	void itShouldCreateTags() {
 		when(messageCreateEvent.getMessageContent()).thenReturn("!tags");
 		schedule.handle(messageCreateEvent);
-		when(messageCreateEvent.getMessageContent()).thenReturn("!editEvent");
-		schedule.handle(messageCreateEvent);
 		when(messageCreateEvent.getMessageContent()).thenReturn("1");
 		schedule.handle(messageCreateEvent);
-		when(messageCreateEvent.getMessageContent()).thenReturn("1");
+		when(messageCreateEvent.getMessageContent()).thenReturn("gamer");
 		schedule.handle(messageCreateEvent);
-		when(messageCreateEvent.getMessageContent()).thenReturn("Minecraft");
+		when(messageCreateEvent.getMessageContent()).thenReturn("end tags");
 		schedule.handle(messageCreateEvent);
 		// When
 		
 
 		// Then
-		verify(textChannel, times(1)).sendMessage("Name changed to Minecraft");
+		verify(textChannel, times(1)).sendMessage("Stopped Modifying Tags");
 		
 	}
 	
