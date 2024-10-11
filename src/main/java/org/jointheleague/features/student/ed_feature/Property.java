@@ -1,23 +1,31 @@
 package org.jointheleague.features.student.ed_feature;
 
-public class Property {
-    String name;
-    int initialCost;
-    int houseCost;
-    int rent;
-    int space;
+import java.security.acl.Owner;
 
-    public Property (String name, int initialCost, int houseCost, int rent,int space ){
-        this.name = name;
+public class Property extends BoardSpace {
+
+    private int initialCost;
+    private int houseCost;
+    private int rent;
+    private int houseNum;
+    private Player owner;
+
+
+    public Property (String name, int initialCost, int houseCost, int rent){
+        super(name);
         this.initialCost = initialCost;
         this.houseCost = houseCost;
         this.rent = rent;
-        this.space = space;
+        houseNum = 0;
+        owner = new Player(null);
     }
 
-    public String getName(){return name;}
+    public String getName(){return super.getDesc();}
     public int getCost(){return initialCost;}
     public int getHouse(){return houseCost;}
+    public void buyHouse(){houseNum++;}
     public int getRent(){return rent;}
-    public int getSpace(){return space;}
+
+    public Player getOwner(){return owner;}
+    public void setOwner(Player owner){this.owner = owner;}
 }

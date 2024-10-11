@@ -6,12 +6,14 @@ import java.util.ArrayList;
 
 public class Player {
     ArrayList<Property> properties = new ArrayList<Property>();
-    User user;
-    int cash;
+    private final User user;
+    private int cash;
+    private int location;
     boolean isInJail = false;
     public Player(User user){
         this.user = user;
         cash = 1500;
+        location = 0;
     }
 
     public int getCash() {
@@ -30,4 +32,7 @@ public class Player {
     }
     public boolean inJail(){return isInJail;}
     public void sendToJail(){isInJail = true;}
+
+    public int getLocation(){return location;}
+    public void changeLocation(int change){location = location + change > 39 ? location + change - 40 : location + change;}
 }

@@ -16,11 +16,30 @@ public class EdMonopoly extends Feature {
   private String leader = "";
   private int playCount = 0;
   HashMap<String, Player> players;
+  BoardSpace[] locations;
   boolean stillRecruiting = true;
   boolean playing = false;
   public EdMonopoly(String channelName) {
         super(channelName);
         players = new HashMap<String, Player>();
+
+        locations = new BoardSpace[]{
+                new Property("Mediterranean Avenue", 60, 40, 20),
+                new BoardSpace("Community Chest"),
+                new Property("Baltic Avenue", 60, 40,20),
+                new BoardSpace("Luxury Tax"),
+                new Property( "Reading Railroad", 200, 0,  60),
+                new Property("Oriental Avenue", 100, 80, 30),
+                new Property("Vermont Avenue", 100, 80, 30),
+                new BoardSpace("Chance 1"),
+                new Property( "Connecticut Avenue", 120, 100, 40),
+                new BoardSpace("Jail"),
+                new Property("Saint Charles Place", 140, 120, 40),
+                new Property("Electric Company", 150, 0,50),
+                new Property("States Avenue", 140, 120, 40),
+                new Property("Virginia Avenue", 140, 120, 40),
+                new Property("Boardwalk", 400, 380, 130)
+        };
     }
 
 
@@ -42,6 +61,7 @@ public class EdMonopoly extends Feature {
             assert players.get(event.getAuthor().getName()) != null;
             event.sendResponse("" + players.get(event.getAuthor().getName()).getCash());
         }
+
     }
     @Override
     public void onMessageReactionAdd(MessageReactionAddEvent event){
@@ -57,8 +77,18 @@ public class EdMonopoly extends Feature {
 
     private void playGame(ReceivedMessage event){
       String[] order = players.keySet().toArray(new String[players.size()]);
+      int playerTurn = 0;
+      Player activePlayer = new Player(null);
+      int rollVal = 0;
       while(playing){
-
+        activePlayer = players.get(order[playerTurn]);
+        rollVal = rollDie();
+        activePlayer.changeLocation(rollVal);
+        event.sendResponse(rollVal + "rolled, you landed on" + locations[activePlayer.getLocation()].getDesc());
+         if(((Property)locations[activePlayer.getLocation()]).getOwner() != activePlayer){
+             event.sendResponse("Nobody owns this property! React with the cash face emoji to buy this property for " + ((Property)locations[activePlayer.getLocation()]).getCost());
+         }
+          ((Property)locations[activePlayer.getLocation() + rollVal]).getHouse();
       }
     }
     Random rand = new Random();
