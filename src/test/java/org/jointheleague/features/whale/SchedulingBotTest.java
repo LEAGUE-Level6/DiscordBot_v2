@@ -4,6 +4,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAuthor;
+import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
@@ -13,12 +14,15 @@ import org.jointheleague.features.whale.Schedule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -37,6 +41,10 @@ class SchedulingBotTest {
 	Message msg;
 	@Mock
 	MessageAuthor author;
+	@Mock
+	Optional<Server> Oserver;
+	@Mock
+	Server server;
 
 	ApiGetter get = new ApiGetter(api);
 
@@ -101,45 +109,75 @@ class SchedulingBotTest {
 	void itShouldEditEvents() {
 		when(messageCreateEvent.getMessageContent()).thenReturn("!addEvent valorant 9:30pm pt tmr");
 		schedule.handle(messageCreateEvent);
-		verify(textChannel).sendMessage(anyString());
-		when(messageCreateEvent.getMessageContent()).thenReturn("!editEvent");
-		schedule.handle(messageCreateEvent);
-		verify(textChannel).sendMessage(anyString());
-		when(messageCreateEvent.getMessageContent()).thenReturn("1");
+		
+		
 		when(messageCreateEvent.getMessage()).thenReturn(msg);
 		when(msg.getAuthor()).thenReturn(author);
-		when(author.isBotUser()).thenReturn(true);
+		when(author.isBotUser()).thenReturn(false);
 		
+		when(messageCreateEvent.getMessageContent()).thenReturn("!editEvent");
 		schedule.handle(messageCreateEvent);
-		verify(textChannel).sendMessage(anyString());
+		
+		
+		
 		when(messageCreateEvent.getMessageContent()).thenReturn("1");
 		schedule.handle(messageCreateEvent);
-		verify(textChannel).sendMessage(anyString());
+		
+		//schedule.areWeEditing = true;
+		when(messageCreateEvent.getMessageContent()).thenReturn("1");
+		schedule.handle(messageCreateEvent);
+		
 		when(messageCreateEvent.getMessageContent()).thenReturn("Minecraft");
+		//schedule.setName = true;
 		schedule.handle(messageCreateEvent);
 		// When
-		
 
 		// Then
-		verify(textChannel, times(1)).sendMessage("Name changed to Minecraft");
 		
+		ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+		verify(textChannel, times(6)).sendMessage(messageCaptor.capture());
+		List<String> messages = messageCaptor.getAllValues();
+		assertTrue(messages.contains("Name changed to Minecraft"));
+
 	}
 	@Test
 	void itShouldCreateTags() {
 		when(messageCreateEvent.getMessageContent()).thenReturn("!tags");
+		
+		when(messageCreateEvent.getMessage()).thenReturn(msg);
+		when(msg.getAuthor()).thenReturn(author);
+		when(author.isBotUser()).thenReturn(false);
+		
 		schedule.handle(messageCreateEvent);
+		
+		when(msg.getServer()).thenReturn(Oserver);
+		when(Oserver.get()).thenReturn(server);
+		long ID = 1240487344063385702L;
+		when(server.getId()).thenReturn(ID);
+		
+		when(messageCreateEvent.getMessageContent()).thenReturn("!editEvent");
+		schedule.handle(messageCreateEvent);
+		
+		
+		
 		when(messageCreateEvent.getMessageContent()).thenReturn("1");
 		schedule.handle(messageCreateEvent);
+		
+		//schedule.areWeEditing = true;
 		when(messageCreateEvent.getMessageContent()).thenReturn("gamer");
 		schedule.handle(messageCreateEvent);
+		
 		when(messageCreateEvent.getMessageContent()).thenReturn("end tags");
+		//schedule.setName = true;
 		schedule.handle(messageCreateEvent);
 		// When
-		
 
 		// Then
-		verify(textChannel, times(1)).sendMessage("Stopped Modifying Tags");
 		
+		ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+		verify(textChannel, times(6)).sendMessage(messageCaptor.capture());
+		List<String> messages = messageCaptor.getAllValues();
+		assertTrue(messages.contains("Stopped Modifying Tags"));
 	}
 	
 	

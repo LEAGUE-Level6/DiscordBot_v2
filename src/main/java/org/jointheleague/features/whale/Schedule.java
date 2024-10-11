@@ -793,6 +793,7 @@ public class Schedule extends Feature {
 			System.out.println("role string created");
 			System.out.println("!tags called");
 			long serverId = discord.getMessage().getServer().get().getId();
+			System.out.println("server id is " + discord.getMessage().getServer().get().getId());
 			listOfPeople = "Tags are used to categorize people for easy event management \n add an \'&(insert your tage here)\' at the end of the message when creating an event \n Everyone with that tag will be added to that event and pinged when it starts \n\n"
 					+ "Enter the number next to the user, say \"end tags\" to stop editing tags\n";
 			if (users.size() <= 0) {
