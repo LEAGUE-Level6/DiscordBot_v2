@@ -148,12 +148,16 @@ class SchedulingBotTest {
 		when(msg.getAuthor()).thenReturn(author);
 		when(author.isBotUser()).thenReturn(false);
 		
-		schedule.handle(messageCreateEvent);
-		
 		when(msg.getServer()).thenReturn(Oserver);
 		when(Oserver.get()).thenReturn(server);
 		long ID = 1240487344063385702L;
 		when(server.getId()).thenReturn(ID);
+		
+		when(api.getServerById(ID)).thenReturn(Oserver);
+		when(Oserver.isPresent()).thenReturn(true);
+		schedule.handle(messageCreateEvent);
+		
+		
 		
 		when(messageCreateEvent.getMessageContent()).thenReturn("!editEvent");
 		schedule.handle(messageCreateEvent);
