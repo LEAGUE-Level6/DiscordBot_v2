@@ -24,10 +24,11 @@ public class EdMonopoly extends Feature {
         players = new HashMap<String, Player>();
 
         locations = new BoardSpace[]{
+                new BoardSpace("GO"),
                 new Property("Mediterranean Avenue", 60, 40, 20),
-                new BoardSpace("Community Chest"),
+                new BoardSpace("Community Chest 1"),
                 new Property("Baltic Avenue", 60, 40,20),
-                new BoardSpace("Luxury Tax"),
+                new BoardSpace("Luxury Tax 1"),
                 new Property( "Reading Railroad", 200, 0,  60),
                 new Property("Oriental Avenue", 100, 80, 30),
                 new Property("Vermont Avenue", 100, 80, 30),
@@ -38,6 +39,30 @@ public class EdMonopoly extends Feature {
                 new Property("Electric Company", 150, 0,50),
                 new Property("States Avenue", 140, 120, 40),
                 new Property("Virginia Avenue", 140, 120, 40),
+                new Property("Pennsylvania Railroad", 200, 0, 60),
+                new Property("Saint James Place", 180, 160, 60),
+                new BoardSpace("Community Chest 2"),
+                new Property("Tennessee Avenue", 180, 160, 60),
+                new Property("New York Avenue", 200, 180, 60),
+                new BoardSpace("Free Parking"),
+                new Property("Kentucky Avenue", 220, 200, 70),
+                new BoardSpace("Chance 2"),
+                new Property("Indiana Avenue", 220, 200, 70),
+                new Property("Illinois Avenue", 240, 220, 80),
+                new Property("B. & O. Railroad", 200, 0, 60),
+                new Property("Atlantic Avenue", 260, 240, 80),
+                new Property("Vermont Avenue", 260, 240, 80),
+                new Property("Water Works", 150, 0, 50),
+                new Property("Marvin Gardens", 280, 240, 90),
+                new BoardSpace("Go To Jail"),
+                new Property("Pacific Avenue", 300, 280, 100),
+                new Property("North Carolina Avenue", 300, 280, 100),
+                new BoardSpace("Community Chest 3"),
+                new Property("Pennsylvania Avenue", 320, 300, 100),
+                new Property("Short Line", 200, 0, 60),
+                new BoardSpace("Chance 3"),
+                new Property("Park Place", 350, 320, 110),
+                new BoardSpace("Luxury Tax 2"),
                 new Property("Boardwalk", 400, 380, 130)
         };
     }
@@ -63,15 +88,21 @@ public class EdMonopoly extends Feature {
         }
 
     }
+    int propToFind = 0;
+    boolean buyTime = false;
     @Override
     public void onMessageReactionAdd(MessageReactionAddEvent event){
       String react = event.getReaction().getEmoji().getName();
       User playName = event.getUser();
-
       if(react.equals("✅") && stillRecruiting && playCount <= 8){
           assert playName != null;
           players.put(playName.getName(),new Player(playName));
             playCount++;
+      }
+      if(react.equals(":money_mouth") && buyTime){
+          buyTime = false;
+          assert playName != null;
+          ((Property)locations[propToFind]).setOwner(players.get(playName.getName()));
       }
     }
 
@@ -86,9 +117,11 @@ public class EdMonopoly extends Feature {
         activePlayer.changeLocation(rollVal);
         event.sendResponse(rollVal + "rolled, you landed on" + locations[activePlayer.getLocation()].getDesc());
          if(((Property)locations[activePlayer.getLocation()]).getOwner() != activePlayer){
-             event.sendResponse("Nobody owns this property! React with the cash face emoji to buy this property for " + ((Property)locations[activePlayer.getLocation()]).getCost());
+             event.sendResponse("Nobody owns this property! React with the :money_mouth: emoji to buy this property for " + ((Property)locations[activePlayer.getLocation()]).getCost());
+            propToFind = activePlayer.getLocation();
+            buyTime = true;
          }
-          ((Property)locations[activePlayer.getLocation() + rollVal]).getHouse();
+          //((Property)locations[activePlayer.getLocation() + rollVal]).getHouse();
       }
     }
     Random rand = new Random();

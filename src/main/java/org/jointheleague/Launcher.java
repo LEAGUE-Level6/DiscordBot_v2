@@ -8,7 +8,7 @@ public class Launcher {
 
         //Initialize variables
         String channelName = "eddie";
-        String discordToken = "";
+        String discordToken = "MTI2MTEyMjg0MTk0MDcyNTg3NQ.G_Pq2b.Jh8fzm_a7foHzmtCZzbDY0w9nLGRzqTHXOtqek";
         boolean printDiscordInvite = true;
 
         //Instantiate DiscordBot and connect
