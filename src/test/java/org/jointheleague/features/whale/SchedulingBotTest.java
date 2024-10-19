@@ -45,8 +45,8 @@ class SchedulingBotTest {
 	Optional<Server> Oserver;
 	@Mock
 	Server server;
-
-	ApiGetter get = new ApiGetter(api);
+	@Mock
+	ApiGetter get;
 
 	private Schedule schedule = new Schedule("general", get);
 
@@ -62,10 +62,14 @@ class SchedulingBotTest {
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
-		System.setOut(new PrintStream(outContent));
+		//System.setOut(new PrintStream(outContent));
 		when(messageCreateEvent.getChannel()).thenReturn((textChannel));
+		when(get.getApi()).thenReturn(api);
 		when(api.getYourself()).thenReturn(user);
 		when(user.getName()).thenReturn("Whale's Bot");
+		schedule = new Schedule("general", get);
+
+
 	}
 
 	@AfterEach
@@ -153,15 +157,11 @@ class SchedulingBotTest {
 		long ID = 1240487344063385702L;
 		when(server.getId()).thenReturn(ID);
 		
-		when(api.getServerById(ID)).thenReturn(Oserver);
+		
+		when(api.getServerById(anyLong())).thenReturn(Oserver);
+		when(Oserver.get()).thenReturn(server);
 		when(Oserver.isPresent()).thenReturn(true);
 		schedule.handle(messageCreateEvent);
-		
-		
-		
-		when(messageCreateEvent.getMessageContent()).thenReturn("!editEvent");
-		schedule.handle(messageCreateEvent);
-		
 		
 		
 		when(messageCreateEvent.getMessageContent()).thenReturn("1");
