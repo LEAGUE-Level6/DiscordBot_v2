@@ -829,6 +829,7 @@ public class Schedule extends Feature {
 					if (howFar < closest) {
 						System.out.println("new distance found");
 						closest = howFar;
+						System.out.println("role = " + role);
 						indexOfClosest = i;
 					}
 				}
@@ -842,15 +843,20 @@ public class Schedule extends Feature {
 			System.out.println("Found distance");
 		}
 		int numberForList = 0;
+		System.out.println("Users.size = " + users.size());
 		for (int i = 0; i < users.size(); i++) {
+			System.out.println("users.size > 0");
 			try {
 				if (role != null) {
+					System.out.println("role is not null");
 					roles = server.getRoles();
 					users.get(i).setUser(api.getUserById(users.get(i).getUser().getId()).get());
 					if (users.get(i).getUser().getRoles(server).contains(roles.get(indexOfClosest))) {
+						System.out.println("a role in the server matched the closest role");
 						users.get(i).setNickname(
 								api.getUserById(users.get(i).getUser().getId()).get().getNickname(server) + "");
 						users.get(i).setUsername(api.getUserById(users.get(i).getUser().getId()).get().getName() + "");
+						System.out.println("users.get i name = " + users.get(i).getNickname());
 						printedUsers.add(users.get(i));
 						System.out.println("updated users with specific roles");
 						listOfPeople += ((numberForList + 1) + ": " + users.get(i).getNickname() + " ("
@@ -930,6 +936,7 @@ public class Schedule extends Feature {
 				index = Integer.parseInt(msg[0].trim());
 				System.out.println("parse");
 				// if (discord.getMessageContent().toLowerCase().contains("tags")) {
+				System.out.println("printedUsers size = " + printedUsers.size());
 				String userStatus = printedUsers.get(index - 1).getNickname() + "("
 						+ printedUsers.get(index - 1).getUsername() + ")\n";
 				System.out.println("user status made");
@@ -1219,7 +1226,7 @@ public class Schedule extends Feature {
 		long serverId = discord.getMessage().getServer().get().getId();
 		if (users.size() <= 0) {
 			api.getServerById(serverId).ifPresent(server -> {
-				System.out.println(server.getMemberCount());
+				System.out.println("memeber count = " + server.getMemberCount());
 				for (int i = 0; i < server.getMemberCount(); i++) {
 					System.out.println(server.getMembers().toArray()[i]);
 					String userInfo = server.getMembers().toArray()[i].toString();

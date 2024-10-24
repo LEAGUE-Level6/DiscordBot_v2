@@ -4,6 +4,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAuthor;
+import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -20,9 +21,12 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -47,11 +51,22 @@ class SchedulingBotTest {
 	Server server;
 	@Mock
 	ApiGetter get;
+	@Mock
+	List<Role> roles;
+	@Mock
+	Role role;
+	@Mock
+	ArrayList<Person> printedUsersMock;
+	@Mock
+	Person person;
+	@Mock
+	CompletableFuture<User> Cuser;
 
 	private Schedule schedule = new Schedule("general", get);
 
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	private final PrintStream originalOut = System.out;
+	
 
 	@Mock
 	private MessageCreateEvent messageCreateEvent;
@@ -146,7 +161,8 @@ class SchedulingBotTest {
 	}
 	@Test
 	void itShouldCreateTags() {
-		when(messageCreateEvent.getMessageContent()).thenReturn("!tags");
+		when(messageCreateEvent.getMessageContent()).thenReturn("Whale's Bot has connected");
+		schedule.handle(messageCreateEvent);
 		
 		when(messageCreateEvent.getMessage()).thenReturn(msg);
 		when(msg.getAuthor()).thenReturn(author);
@@ -161,6 +177,32 @@ class SchedulingBotTest {
 		when(api.getServerById(anyLong())).thenReturn(Oserver);
 		when(Oserver.get()).thenReturn(server);
 		when(Oserver.isPresent()).thenReturn(true);
+		
+		when(server.getRoles()).thenReturn(roles);
+		when(roles.get(anyInt())).thenReturn(role);
+		when(role.getName()).thenReturn("everyone");
+		
+//		schedule.printedUsers = printedUsersMock;
+//		when(printedUsersMock.get(anyInt())).thenReturn(person);
+//		when(person.getNickname()).thenReturn("Bob");
+		Person p = new Person(user);
+		ArrayList<Person> users = new ArrayList<Person>();
+		users.add(p);
+		
+		when(api.getUserById(anyLong())).thenReturn(Cuser);
+		try {
+			when(Cuser.get()).thenReturn(user);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		schedule.users = users;
+		
+		when(messageCreateEvent.getMessageContent()).thenReturn("!tags");
 		schedule.handle(messageCreateEvent);
 		
 		
