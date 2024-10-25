@@ -82,7 +82,7 @@ public class EdMonopoly extends Feature {
             playing = true;
             playGame(event);
         }
-        if(received.equals("getMyMoney")){
+        if(received.equals("!getMyMoney")){
             assert players.get(event.getAuthor().getName()) != null;
             event.sendResponse("" + players.get(event.getAuthor().getName()).getCash());
         }
@@ -94,12 +94,13 @@ public class EdMonopoly extends Feature {
     public void onMessageReactionAdd(MessageReactionAddEvent event){
       String react = event.getReaction().getEmoji().getName();
       User playName = event.getUser();
+        System.out.println(react);
       if(react.equals("✅") && stillRecruiting && playCount <= 8){
           assert playName != null;
           players.put(playName.getName(),new Player(playName));
             playCount++;
       }
-      if(react.equals(":money_mouth") && buyTime){
+      if(react.equals("\uD83E\uDD11") && buyTime){
           buyTime = false;
           assert playName != null;
           ((Property)locations[propToFind]).setOwner(players.get(playName.getName()));
@@ -116,12 +117,23 @@ public class EdMonopoly extends Feature {
         rollVal = rollDie();
         activePlayer.changeLocation(rollVal);
         event.sendResponse(rollVal + "rolled, you landed on" + locations[activePlayer.getLocation()].getDesc());
-         if(((Property)locations[activePlayer.getLocation()]).getOwner() != activePlayer){
+         if(((Property)locations[activePlayer.getLocation()]).getOwner() != null){
              event.sendResponse("Nobody owns this property! React with the :money_mouth: emoji to buy this property for " + ((Property)locations[activePlayer.getLocation()]).getCost());
             propToFind = activePlayer.getLocation();
             buyTime = true;
          }
+
+         else if (locations[activePlayer.getLocation()].getDesc().contains("Chance")){
+            event.sendResponse("Chance Unimplemented");
+         }
+         else if (locations[activePlayer.getLocation()].getDesc().contains("Community Chest")){
+             event.sendResponse("Community Chest Unimplemented");
+         }
+         else if (((Property)locations[activePlayer.getLocation()]).getOwner()!= activePlayer){
+             activePlayer.changeCash(activePlayer.getCash() - ((Property)locations[activePlayer.getLocation()]).getCost());
+         }
           //((Property)locations[activePlayer.getLocation() + rollVal]).getHouse();
+      playerTurn = playerTurn == players.size()-1 ? 0 : playerTurn + 1;
       }
     }
     Random rand = new Random();
