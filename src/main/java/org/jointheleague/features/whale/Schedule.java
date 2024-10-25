@@ -936,7 +936,7 @@ public class Schedule extends Feature {
 				index = Integer.parseInt(msg[0].trim());
 				System.out.println("parse");
 				// if (discord.getMessageContent().toLowerCase().contains("tags")) {
-				System.out.println("printedUsers size = " + printedUsers.size());
+				System.out.println("printedUsers size = " + printedUsers.size() + " index = " + index);
 				String userStatus = printedUsers.get(index - 1).getNickname() + "("
 						+ printedUsers.get(index - 1).getUsername() + ")\n";
 				System.out.println("user status made");

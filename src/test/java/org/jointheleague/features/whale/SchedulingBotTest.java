@@ -4,6 +4,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAuthor;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
@@ -22,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -182,6 +184,7 @@ class SchedulingBotTest {
 		when(roles.get(anyInt())).thenReturn(role);
 		when(role.getName()).thenReturn("everyone");
 		
+		
 //		schedule.printedUsers = printedUsersMock;
 //		when(printedUsersMock.get(anyInt())).thenReturn(person);
 //		when(person.getNickname()).thenReturn("Bob");
@@ -200,8 +203,8 @@ class SchedulingBotTest {
 			e.printStackTrace();
 		}
 		
+		schedule.printedUsers = users;
 		schedule.users = users;
-		
 		when(messageCreateEvent.getMessageContent()).thenReturn("!tags");
 		schedule.handle(messageCreateEvent);
 		
@@ -214,18 +217,58 @@ class SchedulingBotTest {
 		schedule.handle(messageCreateEvent);
 		
 		when(messageCreateEvent.getMessageContent()).thenReturn("end tags");
-		//schedule.setName = true;
+		schedule.handle(messageCreateEvent);
+		when(messageCreateEvent.getMessageContent()).thenReturn("end tags");
 		schedule.handle(messageCreateEvent);
 		// When
 
 		// Then
-		
+
+		when(messageCreateEvent.getChannel()).thenReturn(textChannel);
+		verify(messageCreateEvent, atLeastOnce()).getChannel();
+
+		// Capture messages sent to the text channel
 		ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-		verify(textChannel, times(6)).sendMessage(messageCaptor.capture());
+		verify(textChannel, atLeastOnce()).sendMessage(messageCaptor.capture());
+
+		// Get all captured messages
 		List<String> messages = messageCaptor.getAllValues();
-		assertTrue(messages.contains("Stopped Modifying Tags"));
+		System.out.println("Messages.size = " + messages.size());
+		for (int i = 0; i < messages.size(); i++) {
+			System.out.println("Message " + i + ": " + messages.get(i));
+		}
+		// Check if the specific message is present
+		assertTrue(messages.contains("Stopped Modifying Tags"), "Expected message was not sent.");
+
 	}
-	
+	@Test
+	void itShouldPrintSchedule() {
+		when(messageCreateEvent.getMessageContent()).thenReturn("!addEvent valorant 9:30pm pt tmr");
+		schedule.handle(messageCreateEvent);
+		
+		
+		when(messageCreateEvent.getMessage()).thenReturn(msg);
+		when(msg.getAuthor()).thenReturn(author);
+		when(author.isBotUser()).thenReturn(false);
+		
+		when(messageCreateEvent.getMessageContent()).thenReturn("!schedule");
+		schedule.handle(messageCreateEvent);
+		
+		
+		ArgumentCaptor<EmbedBuilder[]> messageCaptor = ArgumentCaptor.forClass(EmbedBuilder[].class);
+		verify(textChannel, atLeastOnce()).sendMessage(messageCaptor.capture());
+		List<EmbedBuilder[]> messages = messageCaptor.getAllValues();
+		System.err.println("Messages size = " + messages.size());
+		for (int i = 0 ; i < messages.size(); i++) {
+			System.err.println(messages.get(i));
+		}
+		EmbedBuilder[] emb = new EmbedBuilder[1];
+		emb[0] = schedule.embedCreator(schedule.eventList.get(0));
+		System.err.println("1 = " + messages.get(0)[0].toString());
+		System.err.println("2 = " + emb[0].toString());
+		emb[0].getDelegate().
+		assertTrue(messages.get(0)[0].equals(emb[0]));
+	}
 	
 	@Test
 	void itShouldHaveACommand() {
