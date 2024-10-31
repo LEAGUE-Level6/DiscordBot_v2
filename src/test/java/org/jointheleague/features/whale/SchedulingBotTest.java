@@ -255,19 +255,51 @@ class SchedulingBotTest {
 		schedule.handle(messageCreateEvent);
 		
 		
-		ArgumentCaptor<EmbedBuilder[]> messageCaptor = ArgumentCaptor.forClass(EmbedBuilder[].class);
+		ArgumentCaptor<BetterEmbedBuilder[]> messageCaptor = ArgumentCaptor.forClass(BetterEmbedBuilder[].class);
 		verify(textChannel, atLeastOnce()).sendMessage(messageCaptor.capture());
-		List<EmbedBuilder[]> messages = messageCaptor.getAllValues();
+		List<BetterEmbedBuilder[]> messages = messageCaptor.getAllValues();
 		System.err.println("Messages size = " + messages.size());
 		for (int i = 0 ; i < messages.size(); i++) {
 			System.err.println(messages.get(i));
 		}
-		EmbedBuilder[] emb = new EmbedBuilder[1];
-		emb[0] = schedule.embedCreator(schedule.eventList.get(0));
-		System.err.println("1 = " + messages.get(0)[0].toString());
-		System.err.println("2 = " + emb[0].toString());
-		emb[0].getDelegate().
-		assertTrue(messages.get(0)[0].equals(emb[0]));
+		BetterEmbedBuilder emb = new BetterEmbedBuilder();
+		emb = schedule.embedCreator(schedule.eventList.get(0));
+		System.err.println("Messages Title: " + messages.get(0)[0].title);
+		System.err.println("Wanted Title: " + emb.title);
+		assertTrue(messages.get(0)[0].title.equals(emb.title));
+	}
+	
+	@Test
+	void itShouldStartEvent() {
+		when(messageCreateEvent.getMessageContent()).thenReturn("!addEvent valorant 9:30pm pt tmr");
+		schedule.handle(messageCreateEvent);
+		
+		when(messageCreateEvent.getMessage()).thenReturn(msg);
+		when(msg.getAuthor()).thenReturn(author);
+		when(author.isBotUser()).thenReturn(false);
+		
+		when(messageCreateEvent.getMessageContent()).thenReturn("!startEvent");
+		schedule.handle(messageCreateEvent);
+		
+		when(messageCreateEvent.getMessageContent()).thenReturn("start");
+		schedule.handle(messageCreateEvent);
+		
+		ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+		verify(textChannel, atLeastOnce()).sendMessage(messageCaptor.capture());
+
+		// Get all captured messages
+		List<String> messages = messageCaptor.getAllValues();
+		System.out.println("Messages.size = " + messages.size());
+		for (int i = 0; i < messages.size(); i++) {
+			System.out.println("Message " + i + ": " + messages.get(i));
+		}
+		// Check if the specific message is present
+		assertTrue(messages.contains("Event **valorant** started"), "Expected message was not sent.");
+	}
+	
+	@Test
+	void itShouldAdjustSettings() {
+		
 	}
 	
 	@Test

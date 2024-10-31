@@ -45,7 +45,6 @@ public class Schedule extends Feature {
 	public final String editTags = "!tags";
 	public final String schedule = "!schedule";
 	public final String start = "!startevent";
-	public final String end = "!endevent";
 	public final String settings = "!settings";
 	public final String userTimeZone = "!timezones";
 	// removing
@@ -118,7 +117,7 @@ public class Schedule extends Feature {
 					+ "a /'->/' will mean a new messgae and (\"message\" or \"message\") will mean 2 possible commands to send \n"
 					+ "!addEvent Valorant Grind 9:30pm pdt fri &val \n" + "!removeEvent -> 1\n"
 					+ "!tags member -> 1 -> spectator\n" + "!timezones -> 2 timezones -> GMT\n" + "!schedule \n"
-					+ "!endEvent \n" + "!pollEvent -> 2\n" + "!iCan/!imAvailable -> (1,2/3)\n" + "!examples \n"
+					+  "!pollEvent -> 2\n" + "!iCan/!imAvailable -> (1,2/3)\n" + "!examples \n"
 					+ "!settings -> addTimeZone IST +12:30";
 			discord.getChannel().sendMessage(examples);
 		}
@@ -691,9 +690,9 @@ public class Schedule extends Feature {
 		// SCHEDULE
 		// SCHEDULE
 		if (messageContent.toLowerCase().startsWith(schedule)) {
-			EmbedBuilder[] embedBuilderArr = new EmbedBuilder[eventList.size()];
+			BetterEmbedBuilder[] embedBuilderArr = new BetterEmbedBuilder[eventList.size()];
 			for (int i = 0; i < eventList.size(); i++) {
-				EmbedBuilder embedBuilder = embedCreator(eventList.get(i));
+				BetterEmbedBuilder embedBuilder = embedCreator(eventList.get(i));
 				embedBuilderArr[i] = embedBuilder;
 			}
 
@@ -1064,7 +1063,7 @@ public class Schedule extends Feature {
 	checkTime(discord);
 	}
 
-	EmbedBuilder embedCreator(Event e) {
+	BetterEmbedBuilder embedCreator(Event e) {
 		String listOfPeople = "Participants: ";
 		if (e.getPeople().size() == 0) {
 			listOfPeople = "No participants added";
@@ -1089,7 +1088,7 @@ public class Schedule extends Feature {
 		if (listOfPeople.charAt(listOfPeople.length() - 2) == ',') {
 			listOfPeople = listOfPeople.substring(0, listOfPeople.length() - 2);
 		}
-		EmbedBuilder embedBuilder = new EmbedBuilder().setTitle(e.getName())
+		BetterEmbedBuilder embedBuilder = (BetterEmbedBuilder) new BetterEmbedBuilder().setTitle(e.getName())
 				.setDescription(getTimeStamp(e) + "\n" + "" + e.getDate() + "" + "\n" + listOfPeople)
 				.setThumbnail(e.getIconUrl())
 				.setColor(Color.getHSBColor((float) 0.48878205, (float) 1.0, (float) 0.40784314));
