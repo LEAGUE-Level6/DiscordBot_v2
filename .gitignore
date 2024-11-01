@@ -2,7 +2,6 @@
 /target/
 .idea
 .settings
-*.xml
 !pom.xml
 src/main/java/org.jointheleague.Launcher.java
 .classpath
