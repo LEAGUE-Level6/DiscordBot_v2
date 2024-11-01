@@ -21,6 +21,10 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
+    
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.1' // replace with the latest version
+	implementation 'org.apache.logging.log4j:log4j-core:2.24.1' // replace with the latest version
+    
 }
 
 group = 'org.jointheleague'
@@ -35,11 +39,10 @@ test {
 
 run {
 	environment 'CHANNEL_NAME', 'general'
-
+	
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
-
 mainClassName = 'org.jointheleague.Launcher'

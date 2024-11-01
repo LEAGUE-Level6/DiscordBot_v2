@@ -298,8 +298,43 @@ class SchedulingBotTest {
 	}
 	
 	@Test
-	void itShouldAdjustSettings() {
+	void itShouldAdjustTimeZoneSettings() {
+		when(messageCreateEvent.getMessageContent()).thenReturn("!addTimeZone IST +12:30");
+		schedule.handle(messageCreateEvent);
 		
+		when(messageCreateEvent.getMessage()).thenReturn(msg);
+		when(msg.getAuthor()).thenReturn(author);
+		when(author.isBotUser()).thenReturn(false);
+		
+		ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+		verify(textChannel, atLeastOnce()).sendMessage(messageCaptor.capture());
+		List<String> messages = messageCaptor.getAllValues();
+		System.out.println("Messages.size = " + messages.size());
+		for (int i = 0; i < messages.size(); i++) {
+			System.out.println("Message " + i + ": " + messages.get(i));
+		}
+		// Check if the specific message is present
+		assertTrue(messages.contains("Timezone IST with a 12.5 hour difference to PT"), "Expected message was not sent.");
+	}
+	
+	@Test
+	void itShouldAdjustReminderSettings() {
+		when(messageCreateEvent.getMessageContent()).thenReturn("!setReminder 10");
+		schedule.handle(messageCreateEvent);
+		
+		when(messageCreateEvent.getMessage()).thenReturn(msg);
+		when(msg.getAuthor()).thenReturn(author);
+		when(author.isBotUser()).thenReturn(false);
+		
+		ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
+		verify(textChannel, atLeastOnce()).sendMessage(messageCaptor.capture());
+		List<String> messages = messageCaptor.getAllValues();
+		System.out.println("Messages.size = " + messages.size());
+		for (int i = 0; i < messages.size(); i++) {
+			System.out.println("Message " + i + ": " + messages.get(i));
+		}
+		// Check if the specific message is present
+		assertTrue(messages.contains("Reminder changed to 10 mins"), "Expected message was not sent.");
 	}
 	
 	@Test

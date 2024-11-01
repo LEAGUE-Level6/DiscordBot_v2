@@ -24,6 +24,9 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 //To fix
 //adding a tag to an event making the date setting not work
@@ -31,6 +34,8 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 //allow a "all" command when setting tags
 public class Schedule extends Feature {
 	//
+	private static final Logger logger = LogManager.getLogger(Schedule.class);
+	
 	Timezones timeZones = new Timezones();
 	ArrayList<Person> users = new ArrayList<Person>();
 	ArrayList<Person> printedUsers = new ArrayList<Person>();
@@ -46,7 +51,6 @@ public class Schedule extends Feature {
 	public final String schedule = "!schedule";
 	public final String start = "!startevent";
 	public final String settings = "!settings";
-	public final String userTimeZone = "!timezones";
 	// removing
 	boolean areWeRemoving;
 
@@ -106,7 +110,7 @@ public class Schedule extends Feature {
 			if (messageContent.contains(api.getYourself().getName() + " has connected")) {
 				setup(discord);
 				checkTime(discord);
-				System.out.println("setup ran");
+				logger.debug("setup ran");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -127,10 +131,10 @@ public class Schedule extends Feature {
 		// ADD
 		// ADD
 		if (messageContent.toLowerCase().startsWith(add) || messageContent.toLowerCase().startsWith("!addevnt")) {
-			System.out.println("!addEvent called");
+			logger.debug("!addEvent called");
 			String eventString = messageContent.substring(add.length()).trim();
 			if (eventString.contains(" ")) {
-				System.out.println("message contains a space");
+				logger.debug("message contains a space");
 				String[] values = eventString.split(" ");
 				ArrayList<User> usersForEvent = new ArrayList<User>();
 				String time = "";
@@ -145,26 +149,26 @@ public class Schedule extends Feature {
 				for (int i = 0; i < 10; i++) {
 					if (eventString.contains(i + ":")) {
 						indexOfTimes.add(eventString.indexOf(i + ":") + 1);
-						System.out.println("A \':\' was found at index" + (eventString.indexOf(i + ":") + 1));
+						logger.debug("A \':\' was found at index" + (eventString.indexOf(i + ":") + 1));
 						isThereTime = true;
 					}
 				}
 				if (isThereTime == false) {
 					discord.getChannel().sendMessage("No time included!");
 					discord.addReactionsToMessage("❌");
-					System.out.println("No time found");
+					logger.debug("No time found");
 				} else {
-					System.out.println("A time was found ");
+					logger.debug("A time was found ");
 				}
 				int indexOfTime = Integer.MAX_VALUE;
 				for (int i = 0; i < indexOfTimes.size(); i++) {
 					if (indexOfTimes.get(i) < indexOfTime) {
 						indexOfTime = indexOfTimes.get(i);
-						System.out.println("The index of the time was found(" + indexOfTime + ")");
+						logger.debug("The index of the time was found(" + indexOfTime + ")");
 					}
 				}
 				if (isANumber(eventString.charAt(indexOfTime - 2) + "")) {
-					System.out.println("found at indexoftime -2");
+					logger.debug("found at indexoftime -2");
 
 					name = eventString.substring(0, indexOfTime - 3);
 					time = eventString.substring(indexOfTime - 2, eventString.length()).trim();
@@ -174,29 +178,29 @@ public class Schedule extends Feature {
 
 					for (int i = 0; i < timeZones.usTimezoneMap.size(); i++) {
 						if (time.toUpperCase().contains(" " + timeZones.usTimezoneMap.keySet().toArray()[i])) {
-							System.out.println("Found timezone");
+							logger.debug("Found timezone");
 							realTime.setTimeZone((String) timeZones.usTimezoneMap.keySet().toArray()[i]);
-							System.out.println("realTime timezone " + realTime.getTimeZone());
+							logger.debug("realTime timezone " + realTime.getTimeZone());
 							break;
 						}
 					}
 				} else if (isANumber(eventString.charAt(indexOfTime - 1) + "")) {
 
-					System.out.println("found at indexoftime -1");
+					logger.debug("found at indexoftime -1");
 					name = eventString.substring(0, indexOfTime - 2);
 					time = eventString.substring(indexOfTime - 1, eventString.length()).trim();
 					realTime = new Time(time.charAt(0) + "", time.charAt(2) + "" + time.charAt(3) + "");
 					for (int i = 0; i < timeZones.usTimezoneMap.size(); i++) {
 						if (time.toUpperCase().contains("" + timeZones.usTimezoneMap.keySet().toArray()[i])) {
-							System.out.println("Found timezone");
+							logger.debug("Found timezone");
 							realTime.setTimeZone((String) timeZones.usTimezoneMap.keySet().toArray()[i]);
-							System.out.println("realTime timezone " + realTime.getTimeZone());
+							logger.debug("realTime timezone " + realTime.getTimeZone());
 							break;
 						}
 					}
 
 				} else {
-					System.out.println("invalid time format");
+					logger.debug("invalid time format");
 					discord.getChannel().sendMessage("Invalid Format");
 					discord.addReactionsToMessage("❌");
 					realTime = null;
@@ -221,143 +225,143 @@ public class Schedule extends Feature {
 					time = time.substring(0, time.indexOf('&') - 1);
 					detectedTag = tag;
 				}
-				System.out.println("time after prossesing is " + realTime.getHour() + " " + realTime.getMin());
+				logger.debug("time after prossesing is " + realTime.getHour() + " " + realTime.getMin());
 
-				System.out.println("name and realtime values set");
+				logger.debug("name and realtime values set");
 				// get the date from the time var -Done
 				// tmr will be the next day - Done
 				// nothing will be same day or tmr depending on if the time is in the past
 				// all days of the week(mon) will be the next day that is that day of the week
 				// a maunual date (5/21) set that date in the same year
 				String[] dateTime = time.split(" ");
-				System.out.println("Time is " + time);
+				logger.debug("Time is " + time);
 				date = dateTime[dateTime.length - 1];
 				if (date.toLowerCase().contains("tmr")) {
-					System.out.println("the string \"tmr\" was found");
+					logger.debug("the string \"tmr\" was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
 
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate() + 1) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
-					System.out.println("realDate set");
+					logger.debug("realDate set");
 				} else if (date.toLowerCase().contains("mon") || date.toLowerCase().contains("monday")) {
-					System.out.println("\'mon\' was found");
+					logger.debug("\'mon\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
-					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
+					logger.debug("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 					if (d.getDay() == 1) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("Same day detected and day added");
+						logger.debug("Same day detected and day added");
 					}
 					while (d.getDay() != 1) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("day added " + d.getDate());
+						logger.debug("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
 				} else if (date.toLowerCase().contains("tue") || date.toLowerCase().contains("tues")
 						|| date.toLowerCase().contains("tuesday")) {
-					System.out.println("\'tue\' was found");
+					logger.debug("\'tue\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
-					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
+					logger.debug("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 
 					if (d.getDay() == 2) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("Same day detected and day added");
+						logger.debug("Same day detected and day added");
 					}
 					while (d.getDay() != 2) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("day added " + d.getDate());
+						logger.debug("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
 				} else if (date.toLowerCase().contains("wed") || date.toLowerCase().contains("wednesday")) {
-					System.out.println("\'tue\' was found");
+					logger.debug("\'tue\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
-					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
+					logger.debug("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 
 					if (d.getDay() == 3) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("Same day detected and day added");
+						logger.debug("Same day detected and day added");
 					}
 					while (d.getDay() != 3) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("day added " + d.getDate());
+						logger.debug("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
 				} else if (date.toLowerCase().contains("thurs") || date.toLowerCase().contains("thu")
 						|| date.toLowerCase().contains("thur") || date.toLowerCase().contains("thursday")) {
-					System.out.println("\'thurs\' was found");
+					logger.debug("\'thurs\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
-					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
+					logger.debug("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 
 					if (d.getDay() == 4) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("Same day detected and day added");
+						logger.debug("Same day detected and day added");
 					}
 					while (d.getDay() != 4) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("day added " + d.getDate());
+						logger.debug("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
 				} else if (date.toLowerCase().contains("fri") || date.toLowerCase().contains("friday")) {
-					System.out.println("\'fri\' was found");
+					logger.debug("\'fri\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
-					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
+					logger.debug("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 
 					if (d.getDay() == 5) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("Same day detected and day added");
+						logger.debug("Same day detected and day added");
 					}
 					while (d.getDay() != 5) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("day added " + d.getDate());
+						logger.debug("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
 				} else if (date.toLowerCase().contains("sat") || date.toLowerCase().contains("saturday")) {
-					System.out.println("\'sat\' was found");
+					logger.debug("\'sat\' was found");
 					Date d = new Date();
 					int currentDate = d.getDate();
 					d.setMonth(d.getMonth());
-					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
+					logger.debug("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 					if (d.getDay() == 6) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("Same day detected and day added");
+						logger.debug("Same day detected and day added");
 					}
 					while (d.getDay() != 6) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("day added " + d.getDate());
+						logger.debug("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
 				} else if (date.toLowerCase().contains("sun") || date.toLowerCase().contains("sunday")) {
-					System.out.println("\'sun\' was found");
+					logger.debug("\'sun\' was found");
 					Date d = new Date();
 					d.setMonth(d.getMonth());
-					System.out.println("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
+					logger.debug("Current Date " + (d.getMonth() + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length())));
 
 					if (d.getDay() == 0) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("Same day detected and day added");
+						logger.debug("Same day detected and day added");
 
 					}
 					while (d.getDay() != 0) {
 						d.setDate(d.getDate() + 1);
-						System.out.println("day added " + d.getDate());
+						logger.debug("day added " + d.getDate());
 					}
 					realDate = ((d.getMonth() + 1) + "/" + (d.getDate()) + "/"
 							+ (d.getYear() + "").substring(1, (d.getYear() + "").length()));
@@ -395,9 +399,9 @@ public class Schedule extends Feature {
 				}
 				eventList.add(event);
 
-				System.out.println("Date = " + realDate);
-				System.out.println("Timezone " + eventList.get(eventList.size() - 1).getTime().getTimeZone());
-				System.out.println("event constructed");
+				logger.debug("Date = " + realDate);
+				logger.debug("Timezone " + eventList.get(eventList.size() - 1).getTime().getTimeZone());
+				logger.debug("event constructed");
 				discord.addReactionsToMessage("✅");
 
 			} else {
@@ -411,7 +415,7 @@ public class Schedule extends Feature {
 							+ "| Zone = |" + eventList.get(eventList.size() - 1).getTime().getTimeZone() + "|"
 							+ " |Date = |" + eventList.get(eventList.size() - 1).getDate() + "|" + " |Tag = |"
 							+ detectedTag + "|");
-			System.out.println("Message sent to channel");
+			logger.debug("Message sent to channel");
 
 			// event.getChannel().sendMessage("Sending a message to the channel");
 			for (int i = 0; i < eventList.size(); i++) {
@@ -440,31 +444,31 @@ public class Schedule extends Feature {
 		} else if (areWeRemoving) {
 			int index = -1;
 			if (isANumber(discord.getMessageContent())) {
-				System.out.println("No commas");
+				logger.debug("No commas");
 				index = Integer.parseInt(discord.getMessageContent());
 				eventList.remove(index - 1);
 				discord.getChannel().sendMessage("Event Removed");
 				areWeRemoving = false;
 			} else if (discord.getMessageContent().contains(",")) {
-				System.out.println("Has commas");
+				logger.debug("Has commas");
 				String[] indexesString = discord.getMessageContent().split(",");
-				System.out.println("split");
+				logger.debug("split");
 				Integer[] indexes = new Integer[indexesString.length];
-				System.out.println("int array made");
+				logger.debug("int array made");
 				int smallest = Integer.MAX_VALUE;
 				for (int i = 0; i < indexesString.length; i++) {
-					System.out.println("parseInt for " + indexesString[i]);
+					logger.debug("parseInt for " + indexesString[i]);
 					indexes[i] = Integer.parseInt(indexesString[i]);
 				}
 				Event[] events = new Event[indexes.length];
-				System.out.println("Event List created");
+				logger.debug("Event List created");
 				for (int i = 0; i < events.length; i++) {
 					events[i] = eventList.get(indexes[i] - 1);
-					System.out.println("Setting" + (indexes[i] - 1));
+					logger.debug("Setting" + (indexes[i] - 1));
 				}
 				for (int i = 0; i < events.length; i++) {
 					eventList.remove(events[i]);
-					System.out.println("removing " + events[i].getName());
+					logger.debug("removing " + events[i].getName());
 				}
 				areWeRemoving = false;
 			}
@@ -614,18 +618,18 @@ public class Schedule extends Feature {
 			for (int i = 0; i < split.length; i++) {
 				String[] msg = split[i].trim().split(" ");
 				if (msg[1].contains("add")) {
-					System.out.println("adding");
+					logger.debug("adding");
 					int indexOfClosest = -1;
 					String name = msg[0];
 					LevenshteinDistance distance = new LevenshteinDistance();
-					System.out.println("LevenshteinDistance made");
+					logger.debug("LevenshteinDistance made");
 					int closest = Integer.MAX_VALUE;
-					System.out.println("User size " + users.size());
+					logger.debug("User size " + users.size());
 					for (int o = 0; o < users.size(); o++) {
-						System.out.println("checking distance");
+						logger.debug("checking distance");
 						int howFar = distance.calculate(name, users.get(o).getUsername());
 						if (howFar < closest) {
-							System.out.println("new distance found");
+							logger.debug("new distance found");
 							closest = howFar;
 							indexOfClosest = o;
 						}
@@ -663,7 +667,7 @@ public class Schedule extends Feature {
 				discord.getChannel().sendMessage(embedBuilder);
 				discord.getChannel().sendMessage("Btw there is only 100 icon searches a month so use them wisely");
 			} else {
-				System.out.println("image search on " + discord.getMessageContent());
+				logger.debug("image search on " + discord.getMessageContent());
 				Long messageID = (long) 0.0;
 				try {
 					messageID = discord.getChannel().sendMessage("Getting Image . . .").get().getId();
@@ -684,7 +688,7 @@ public class Schedule extends Feature {
 			setIconChange = false;
 		}
 
-		System.out.println(areWeRemoving);
+		logger.debug(areWeRemoving);
 		// SCHEDULE
 		// SCHEDULE
 		// SCHEDULE
@@ -705,7 +709,7 @@ public class Schedule extends Feature {
 //		START EVENT
 		if (messageContent.toLowerCase().startsWith(start)) {
 			try {
-				System.out.println("start event called");
+				logger.debug("start event called");
 
 				Double[] closestDay = { Double.MAX_VALUE, -1.0 };
 				for (int i = 0; i < eventList.size(); i++) {
@@ -781,17 +785,17 @@ public class Schedule extends Feature {
 			if (discord.getMessage().getAuthor().isBotUser()) {
 				role = lastRoleUsed;
 			}
-			System.out.println("role string created");
-			System.out.println("!tags called");
+			logger.debug("role string created");
+			logger.debug("!tags called");
 			long serverId = discord.getMessage().getServer().get().getId();
-			System.out.println("server id is " + discord.getMessage().getServer().get().getId());
+			logger.debug("server id is " + discord.getMessage().getServer().get().getId());
 			listOfPeople = "Tags are used to categorize people for easy event management \n add an \'&(insert your tage here)\' at the end of the message when creating an event \n Everyone with that tag will be added to that event and pinged when it starts \n\n"
 					+ "Enter the number next to the user, say \"end tags\" to stop editing tags\n";
 			if (users.size() <= 0) {
 				api.getServerById(serverId).ifPresent(server -> {
-					System.out.println(server.getMemberCount());
+					logger.debug(server.getMemberCount());
 					for (int i = 0; i < server.getMemberCount(); i++) {
-						System.out.println(server.getMembers().toArray()[i]);
+						logger.debug(server.getMembers().toArray()[i]);
 						String userInfo = server.getMembers().toArray()[i].toString();
 						String userId = userInfo.substring(userInfo.indexOf("id") + 4, userInfo.indexOf(','));
 						Person p = null;
@@ -810,54 +814,54 @@ public class Schedule extends Feature {
 					}
 
 				});
-				System.out.println("users in list");
+				logger.debug("users in list");
 			}
 			Server server = api.getServerById(serverId).get();
-			System.out.println("user list size " + users.size());
+			logger.debug("user list size " + users.size());
 			int indexOfClosest = -1;
 			if (role != null) {
 				LevenshteinDistance distance = new LevenshteinDistance();
 				int closest = Integer.MAX_VALUE;
 				roles = server.getRoles();
-				System.out.println("Roles list size = " + role.length());
+				logger.debug("Roles list size = " + role.length());
 				for (int i = 0; i < roles.size(); i++) {
-					System.out.println("checking distance");
+					logger.debug("checking distance");
 					int howFar = distance.calculate(role, roles.get(i).getName());
 					howFar = 1;
-					System.out.println("howFar = " + howFar);
+					logger.debug("howFar = " + howFar);
 					if (howFar < closest) {
-						System.out.println("new distance found");
+						logger.debug("new distance found");
 						closest = howFar;
-						System.out.println("role = " + role);
+						logger.debug("role = " + role);
 						indexOfClosest = i;
 					}
 				}
 			
 			
 
-			System.out.println("Org Role: " + role);
-			System.out.println("indexofClosest: " + indexOfClosest);
-			System.out.println("Closest Role name: " + roles.get(indexOfClosest).getName());
+			logger.debug("Org Role: " + role);
+			logger.debug("indexofClosest: " + indexOfClosest);
+			logger.debug("Closest Role name: " + roles.get(indexOfClosest).getName());
 			lastRoleUsed = roles.get(indexOfClosest).getName();
-			System.out.println("Found distance");
+			logger.debug("Found distance");
 		}
 		int numberForList = 0;
-		System.out.println("Users.size = " + users.size());
+		logger.debug("Users.size = " + users.size());
 		for (int i = 0; i < users.size(); i++) {
-			System.out.println("users.size > 0");
+			logger.debug("users.size > 0");
 			try {
 				if (role != null) {
-					System.out.println("role is not null");
+					logger.debug("role is not null");
 					roles = server.getRoles();
 					users.get(i).setUser(api.getUserById(users.get(i).getUser().getId()).get());
 					if (users.get(i).getUser().getRoles(server).contains(roles.get(indexOfClosest))) {
-						System.out.println("a role in the server matched the closest role");
+						logger.debug("a role in the server matched the closest role");
 						users.get(i).setNickname(
 								api.getUserById(users.get(i).getUser().getId()).get().getNickname(server) + "");
 						users.get(i).setUsername(api.getUserById(users.get(i).getUser().getId()).get().getName() + "");
-						System.out.println("users.get i name = " + users.get(i).getNickname());
+						logger.debug("users.get i name = " + users.get(i).getNickname());
 						printedUsers.add(users.get(i));
-						System.out.println("updated users with specific roles");
+						logger.debug("updated users with specific roles");
 						listOfPeople += ((numberForList + 1) + ": " + users.get(i).getNickname() + " ("
 								+ users.get(i).getUsername() + ")\n");
 						numberForList++;
@@ -875,10 +879,10 @@ public class Schedule extends Feature {
 
 		}
 
-		System.out.println("list of people string is made");
+		logger.debug("list of people string is made");
 
-		System.out.println("List of people updated");
-		System.out.println(listOfPeople);
+		logger.debug("List of people updated");
+		logger.debug(listOfPeople);
 		discord.getChannel().sendMessage(listOfPeople);
 		areWePeopleing = true;
 	}else if(areWePeopleing&&!discord.getMessage().getAuthor().isBotUser())
@@ -900,8 +904,8 @@ public class Schedule extends Feature {
 			}
 			if (messageContent.contains(",")) {
 
-				System.out.println("Most recent user index is " + index);
-				System.out.println("Person at " + users.get(index));
+				logger.debug("Most recent user index is " + index);
+				logger.debug("Person at " + users.get(index));
 				String[] tags = messageContent.trim().split(", ");
 				users.get(index).addTags(tags);
 				String whatTagsAreSet = "Tags ";
@@ -918,11 +922,11 @@ public class Schedule extends Feature {
 				areTagsBeingSet = false;
 				nextTags = true;
 			} else {
-				System.out.println("Most recent user index is " + index);
-				System.out.println("Person at " + users.get(index));
+				logger.debug("Most recent user index is " + index);
+				logger.debug("Person at " + users.get(index));
 				String[] tags = { messageContent.trim() };
 				users.get(index).addTags(tags);
-				System.out.println("Tags of user: " + users.get(index).getTags().get(0));
+				logger.debug("Tags of user: " + users.get(index).getTags().get(0));
 				areTagsBeingSet = false;
 				discord.getChannel().sendMessage("Tag " + tags[0] + " set to " + users.get(index).getNickname());
 				nextTags = true;
@@ -931,14 +935,14 @@ public class Schedule extends Feature {
 			int index = -1;
 			String[] msg = discord.getMessageContent().split(" ");
 			if (isANumber(msg[0].trim())) {
-				System.out.println("No commas");
+				logger.debug("No commas");
 				index = Integer.parseInt(msg[0].trim());
-				System.out.println("parse");
+				logger.debug("parse");
 				// if (discord.getMessageContent().toLowerCase().contains("tags")) {
-				System.out.println("printedUsers size = " + printedUsers.size() + " index = " + index);
+				logger.debug("printedUsers size = " + printedUsers.size() + " index = " + index);
 				String userStatus = printedUsers.get(index - 1).getNickname() + "("
 						+ printedUsers.get(index - 1).getUsername() + ")\n";
-				System.out.println("user status made");
+				logger.debug("user status made");
 				userStatus += "Current Tags: ";
 				if (printedUsers.get(index - 1).getTags().size() == 0) {
 					userStatus += "none";
@@ -947,7 +951,7 @@ public class Schedule extends Feature {
 						userStatus += printedUsers.get(index - 1).getTags().get(i) + ", ";
 						userStatus = userStatus.substring(0, userStatus.length() - 2);
 					}
-					System.out.println("for loop ran");
+					logger.debug("for loop ran");
 				}
 				discord.getChannel().sendMessage(
 						"enter a list of tags to add or just one (ex. gamer, all) say \"no tag\" to not add a tag\n"
@@ -955,10 +959,10 @@ public class Schedule extends Feature {
 
 				areTagsBeingSet = true;
 				mostRecentUserName = printedUsers.get(index - 1).getUsername();
-				System.out.println("message sent ");
-				System.out.println(printedUsers.size());
+				logger.debug("message sent ");
+				logger.debug(printedUsers.size());
 				// printedUsers.get(index - 1).setTags(tags);
-				System.out.println("set tags");
+				logger.debug("set tags");
 
 				printedUsers = new ArrayList<Person>();
 			}
@@ -985,15 +989,15 @@ public class Schedule extends Feature {
 				"Welcome to Settings here is the list of settings(for all commands say the command then a space then the value) \n"
 						+ "!addTimeZone: Enter a timezone abbreviation then the time diiffrence from PT (ex. IST +12:30)\n"
 						+ "!setReminder: Enter a number that will be the number of minutes before an event a reminder will go out\n"
-						+ "addTimeZone\n" + "addTimeZone\n" + "addTimeZone\n" + "");
+						);
 	}else if(messageContent.toLowerCase().startsWith("!addtimezone"))
 	{
-		System.out.println("add time zone called");
+		logger.debug("add time zone called");
 		String[] time = messageContent.split(" ");
-		System.out.println("split");
+		logger.debug("split");
 		if (time[2].contains("+")) {
 			time[2] = time[2].substring(1).trim();
-			System.out.println("+ removed and trimed");
+			logger.debug("+ removed and trimed");
 		}
 		if (time[2].contains(":30")) {
 			time[2] = time[2].replace(":30", ".5");
@@ -1001,17 +1005,19 @@ public class Schedule extends Feature {
 		if (time[2].contains(":45")) {
 			time[2] = time[2].replace(":45", ".75");
 		}
-		System.out.println("time at 1 " + time[1] + ", time at 2 " + time[2]);
+		logger.debug("time at 1 " + time[1] + ", time at 2 " + time[2]);
 		timeZones.addTimezone(time[1], Double.parseDouble(time[2]));
-		System.out.println("timezone added");
+		logger.debug("timezone added");
+		discord.getChannel().sendMessage("Timezone " + time[1] + " with a " + time[2] + " hour difference to PT");
 	}else if(messageContent.toLowerCase().startsWith("!setreminder"))
 	{
 		try {
-			System.out.println("set reminder called");
+			logger.debug("set reminder called");
 			String[] time = messageContent.split(" ");
-			System.out.println("split");
+			logger.debug("split");
 			int reminderTime = Integer.parseInt(time[1].trim());
 			howManyMinBeforeEventShouldReminderBeSent = reminderTime;
+			discord.getChannel().sendMessage("Reminder changed to " + howManyMinBeforeEventShouldReminderBeSent + " mins");
 		} catch (Exception e) {
 			discord.getChannel().sendMessage("Make sure you are entering a number");
 		}
@@ -1033,7 +1039,7 @@ public class Schedule extends Feature {
 //				discord.getChannel().sendMessage("here is your image", bais, "Scary.jpeg");
 //				discord.getChannel().sendMessage("sent");
 //			}
-		System.out.println("test");
+		logger.debug("test");
 //			try {
 //				Date d = new Date();
 //				Event e = eventList.get(0);
@@ -1130,11 +1136,11 @@ public class Schedule extends Feature {
 				continue;
 			}
 			d.setDate(Integer.parseInt(e.getDate().split("/")[1]));
-			// System.out.println("Date" + Integer.parseInt(e.getDate().split("/")[1]));
+			// logger.debug("Date" + Integer.parseInt(e.getDate().split("/")[1]));
 			d.setMonth(Integer.parseInt(e.getDate().split("/")[0]) - 1);
-			// System.out.println("Month" + Integer.parseInt(e.getDate().split("/")[0]));
+			// logger.debug("Month" + Integer.parseInt(e.getDate().split("/")[0]));
 			d.setYear(Integer.parseInt("1" + e.getDate().split("/")[2]));
-			// System.out.println("Year" + Integer.parseInt(e.getDate().split("/")[2]));
+			// logger.debug("Year" + Integer.parseInt(e.getDate().split("/")[2]));
 			d.setMinutes(Integer.parseInt(e.getTime().getMin()));
 			if (e.isReminderSent() == false) {
 				d.setMinutes(d.getMinutes() - howManyMinBeforeEventShouldReminderBeSent);
@@ -1146,16 +1152,16 @@ public class Schedule extends Feature {
 			}
 //			d2.setTime(Instant.now().getEpochSecond());
 			if (d.getYear() == (d2.getYear())) {
-				// System.out.println("same year");
+				// logger.debug("same year");
 				if (d.getMonth() == d2.getMonth()) {
-					// System.out.println("same month");
+					// logger.debug("same month");
 					if (d.getDate() == d2.getDate()) {
-						// System.out.println("same date");
+						// logger.debug("same date");
 						if (d.getHours() == d2.getHours()) {
-							// System.out.println("same hours");
-							// System.out.println("d: " + d.getMinutes() + " d2: " + d2.getMinutes());
+							// logger.debug("same hours");
+							// logger.debug("d: " + d.getMinutes() + " d2: " + d2.getMinutes());
 							if (d.getMinutes() == d2.getMinutes()) {
-								System.out.println("same min and event starting");
+								logger.debug("same min and event starting");
 								if (e.isReminderSent() == false) {
 									sendReminder(eventList.get(i), discord);
 								} else {
@@ -1214,20 +1220,20 @@ public class Schedule extends Feature {
 	}
 
 	public void createTimeStamp() {
-		System.out.println(timeZones.getCurrentTime(true));
+		logger.debug(timeZones.getCurrentTime(true));
 		long currentTime = Instant.parse(timeZones.getCurrentTimeForStamp()).getEpochSecond();
 		// Format for Discord timestamp
 		String discordTimestamp = "<t:" + currentTime + ":t>"; // 'f' is the format for date and time
 	}
 
 	public void setup(MessageCreateEvent discord) {
-		System.out.println("setup run from method");
+		logger.debug("setup run from method");
 		long serverId = discord.getMessage().getServer().get().getId();
 		if (users.size() <= 0) {
 			api.getServerById(serverId).ifPresent(server -> {
-				System.out.println("memeber count = " + server.getMemberCount());
+				logger.debug("memeber count = " + server.getMemberCount());
 				for (int i = 0; i < server.getMemberCount(); i++) {
-					System.out.println(server.getMembers().toArray()[i]);
+					logger.debug(server.getMembers().toArray()[i]);
 					String userInfo = server.getMembers().toArray()[i].toString();
 					String userId = userInfo.substring(userInfo.indexOf("id") + 4, userInfo.indexOf(','));
 					Person p = null;
@@ -1246,7 +1252,7 @@ public class Schedule extends Feature {
 				}
 
 			});
-			System.out.println("users in list");
+			logger.debug("users in list");
 		}
 	}
 
