@@ -9,19 +9,20 @@ import org.jointheleague.features.abstract_classes.Feature;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 public class EdMonopoly extends Feature {
   public final String command = "!playMonopoly";
   private String leader = "";
   private int playCount = 0;
-  HashMap<String, Player> players;
+  PlayerManager playerManage;
   BoardSpace[] locations;
   boolean stillRecruiting = true;
   boolean playing = false;
   public EdMonopoly(String channelName) {
         super(channelName);
-        players = new HashMap<String, Player>();
+        playerManage = new PlayerManager();
 
         locations = new BoardSpace[]{
                 new BoardSpace("GO"),
@@ -72,7 +73,7 @@ public class EdMonopoly extends Feature {
     public void handle(ReceivedMessage event) {
         String received = event.getMessageContent();
         if(received.equals(command)) {
-            players.put(event.getAuthor().getName(), new Player(event.getAuthor()));
+            playerManage.addPlayer(new Player(event.getAuthor()));
             leader = event.getAuthor().getName();
             playCount++;
             event.sendResponse("Game starting! React to this message with ✅ to begin.");
@@ -83,8 +84,7 @@ public class EdMonopoly extends Feature {
             playGame(event);
         }
         if(received.equals("!getMyMoney")){
-            assert players.get(event.getAuthor().getName()) != null;
-            event.sendResponse("" + players.get(event.getAuthor().getName()).getCash());
+            event.sendResponse("" + playerManage.getCurr().getCash());
         }
 
     }
@@ -97,43 +97,40 @@ public class EdMonopoly extends Feature {
         System.out.println(react);
       if(react.equals("✅") && stillRecruiting && playCount <= 8){
           assert playName != null;
-          players.put(playName.getName(),new Player(playName));
+          playerManage.addPlayer(new Player(playName));
             playCount++;
       }
       if(react.equals("\uD83E\uDD11") && buyTime){
           buyTime = false;
           assert playName != null;
-          ((Property)locations[propToFind]).setOwner(players.get(playName.getName()));
+          ((Property)locations[propToFind]).setOwner(playerManage.getCurr());
       }
     }
 
     private void playGame(ReceivedMessage event){
-      String[] order = players.keySet().toArray(new String[players.size()]);
-      int playerTurn = 0;
+        int playerTurn = 0;
       Player activePlayer = new Player(null);
       int rollVal = 0;
-      while(playing){
-        activePlayer = players.get(order[playerTurn]);
-        rollVal = rollDie();
-        activePlayer.changeLocation(rollVal);
-        event.sendResponse(rollVal + "rolled, you landed on" + locations[activePlayer.getLocation()].getDesc());
-         if(((Property)locations[activePlayer.getLocation()]).getOwner() != null){
-             event.sendResponse("Nobody owns this property! React with the :money_mouth: emoji to buy this property for " + ((Property)locations[activePlayer.getLocation()]).getCost());
-            propToFind = activePlayer.getLocation();
-            buyTime = true;
-         }
+      while(playing) {
+          if (!buyTime) {
+              activePlayer = playerManage.getCurr();
+              rollVal = rollDie();
+              activePlayer.changeLocation(rollVal);
+              event.sendResponse(rollVal + "rolled, you landed on" + locations[activePlayer.getLocation()].getDesc());
+              if (((Property) locations[activePlayer.getLocation()]).getOwner() != null) {
+                  event.sendResponse("Nobody owns this property! React with :money_mouth: in the next 10 seconds to buy this property for " + ((Property) locations[activePlayer.getLocation()]).getCost());
+                  propToFind = activePlayer.getLocation();
+                  buyTime = true;
+              } else if (locations[activePlayer.getLocation()].getDesc().contains("Chance")) {
+                  event.sendResponse("Chance Unimplemented");
+              } else if (locations[activePlayer.getLocation()].getDesc().contains("Community Chest")) {
+                  event.sendResponse("Community Chest Unimplemented");
+              } else if (((Property) locations[activePlayer.getLocation()]).getOwner() != activePlayer) {
+                  activePlayer.changeCash(activePlayer.getCash() - ((Property) locations[activePlayer.getLocation()]).getCost());
+              }
+              //((Property)locations[activePlayer.getLocation() + rollVal]).getHouse();
 
-         else if (locations[activePlayer.getLocation()].getDesc().contains("Chance")){
-            event.sendResponse("Chance Unimplemented");
-         }
-         else if (locations[activePlayer.getLocation()].getDesc().contains("Community Chest")){
-             event.sendResponse("Community Chest Unimplemented");
-         }
-         else if (((Property)locations[activePlayer.getLocation()]).getOwner()!= activePlayer){
-             activePlayer.changeCash(activePlayer.getCash() - ((Property)locations[activePlayer.getLocation()]).getCost());
-         }
-          //((Property)locations[activePlayer.getLocation() + rollVal]).getHouse();
-      playerTurn = playerTurn == players.size()-1 ? 0 : playerTurn + 1;
+          }
       }
     }
     Random rand = new Random();
@@ -155,4 +152,14 @@ public class EdMonopoly extends Feature {
         }
       return totalRolled;
     }
+}
+
+class PlayerManager {
+    List<Player> players = new ArrayList<Player>();
+    int turnTracker = 0;
+
+    void addPlayer(Player newP){players.add(newP);}
+    Player getCurr(){return players.get(turnTracker);}
+
+    void advanceTurn(){turnTracker = turnTracker == players.size()?0:turnTracker+1;}
 }

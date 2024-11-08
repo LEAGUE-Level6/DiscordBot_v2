@@ -1,6 +1,6 @@
 package org.jointheleague.features.student.ed_feature;
 
-import java.security.acl.Owner;
+
 
 public class Property extends BoardSpace {
 

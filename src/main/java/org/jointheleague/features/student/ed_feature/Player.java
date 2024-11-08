@@ -22,7 +22,7 @@ public class Player {
     public void changeCash(int newCash){
         cash += newCash;
     }
-    public String getName(User user){return user.getName();}
+    public String getName(){return user.getName();}
     public String getProps(){
         String propertoes = "";
         for (int i = 0; i < properties.size();i++){
