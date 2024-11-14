@@ -14,6 +14,8 @@ import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.first_feature.FeatureOne;
+import org.jointheleague.features.whale.ApiGetter;
+import org.jointheleague.features.whale.Schedule;
 
 public class DiscordBot {
 
@@ -33,10 +35,8 @@ public class DiscordBot {
 
 	public void connect(boolean printInvite) throws InterruptedException {
 
-		api = JDABuilder.createDefault(token)
-				.enableIntents(GatewayIntent.MESSAGE_CONTENT) // enables explicit access to message.getContentDisplay()
-				.build();
-		api.awaitReady();
+		api = new DiscordApiBuilder().setToken(token).setAllIntents().login().join();
+		//api = new DiscordApiBuilder().setToken(token).addAllIntents(Intent.MESSAGE_CONTENT).login().join();
 
 		//Print the URL to invite the bot
 		if (printInvite) {
@@ -45,26 +45,26 @@ public class DiscordBot {
 		}
 
 		//Send bot connected message in channel
-		MessageCreateData botConnected = new MessageCreateBuilder()
-				.addContent(api.getSelfUser().getName() + " has connected")
-				.build();
-		api.getTextChannelsByName(channelName, true).forEach(e -> {
-			e.sendMessage(botConnected).submit().join();
-		});
+
+		api.getServerTextChannelsByName(channelName).forEach(e -> e.sendMessage(api.getYourself().getName() + " has connected, \nDo !help for all commands"));
+		
 
 		//add help listener to bot
 		api.addEventListener(helpListener);
 
 		//add features
-		addFeature(new FeatureOne(channelName));
-		addFeature(new CurrentTime(channelName));
-		addFeature(new HighLowGame(channelName));
-		addFeature(new NewsApi(channelName));
-		addFeature(new CatFactsApi(channelName));
+//		addFeature(new FeatureOne(channelName));
+//		addFeature(new CurrentTime(channelName));
+//		addFeature(new HighLowGame(channelName));
+//		addFeature(new NewsApi(channelName));
+//		addFeature(new CatFactsApi(channelName));
+//		addFeature(new RandomNumber(channelName));
+		addFeature(new Schedule(channelName, new ApiGetter(api)));
 	}
 
 	private void addFeature(Feature feature){
 		api.addEventListener(feature);
 		helpListener.addHelpEmbed(feature.getHelpEmbed());
+		
 	}
 }

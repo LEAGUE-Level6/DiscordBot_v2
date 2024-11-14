@@ -2,7 +2,6 @@
 /target/
 .idea
 .settings
-*.xml
 !pom.xml
 src/main/java/org.jointheleague.Launcher.java
 .classpath
@@ -10,4 +9,6 @@ src/main/java/org.jointheleague.Launcher.java
 .travis.yml
 run.sh
 appspec.yml
+/.gradle/
 .gradle/
+build/
