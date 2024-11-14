@@ -3,8 +3,8 @@ package org.jointheleague.features.help_embed;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 
 public class HelpListener extends Feature {
@@ -17,10 +17,10 @@ public class HelpListener extends Feature {
 	}
 
 	@Override
-	public void handle(MessageCreateEvent event) {
+	public void handle(ReceivedMessage event) {
 		if(event.getMessageContent().equalsIgnoreCase(COMMAND)) {
 			for(HelpEmbed helpEmbed : helpEmbeds) {
-				event.getChannel().sendMessage(helpEmbed.getEmbed());
+				event.sendResponse(helpEmbed.getEmbed());
 			}
 		}
 	}

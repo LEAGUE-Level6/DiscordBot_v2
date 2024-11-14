@@ -1,7 +1,7 @@
 package org.jointheleague.features.student.first_feature;
 
-import org.javacord.api.event.message.MessageCreateEvent;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.templates.FeatureTemplate;
 
@@ -21,7 +21,7 @@ public class FeatureOne extends FeatureTemplate {
     }
 //IGNORE
     @Override
-    public void handle(MessageCreateEvent event) {
+    public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
@@ -29,17 +29,17 @@ public class FeatureOne extends FeatureTemplate {
             int ranInt = ran.nextInt(5);
 
             switch(ranInt){
-                case 0:event.getChannel().sendMessage("What’s the best thing about Switzerland? \n \n I don’t know, but the flag is a big plus.");
+                case 0:event.sendResponse("What’s the best thing about Switzerland? \n \n I don’t know, but the flag is a big plus.");
                 break;
-                case 1:event.getChannel().sendMessage("I invented a new word! \n \n Plagiarism!");
+                case 1:event.sendResponse("I invented a new word! \n \n Plagiarism!");
                 break;
-                case 2:event.getChannel().sendMessage("Hear about the new restaurant called Karma? \n \n There’s no menu: You get what you deserve.");
+                case 2:event.sendResponse("Hear about the new restaurant called Karma? \n \n There’s no menu: You get what you deserve.");
                     break;
-                case 3:event.getChannel().sendMessage("Did you hear about the claustrophobic astronaut? \n \n He just needed a little space.");
+                case 3:event.sendResponse("Did you hear about the claustrophobic astronaut? \n \n He just needed a little space.");
                     break;
-                case 4:event.getChannel().sendMessage("Why don’t scientists trust atoms? \n \n Because they make up everything.");
+                case 4:event.sendResponse("Why don’t scientists trust atoms? \n \n Because they make up everything.");
                     break;
-                default:event.getChannel().sendMessage("What’s the different between a cat and a comma? \n \n A cat has claws at the end of paws; A comma is a pause at the end of a clause. ");
+                default:event.sendResponse("What’s the different between a cat and a comma? \n \n A cat has claws at the end of paws; A comma is a pause at the end of a clause. ");
                     break;
             }
 

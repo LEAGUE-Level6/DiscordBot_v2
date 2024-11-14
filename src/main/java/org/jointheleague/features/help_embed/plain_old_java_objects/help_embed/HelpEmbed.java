@@ -1,6 +1,8 @@
 package org.jointheleague.features.help_embed.plain_old_java_objects.help_embed;
 
-import org.javacord.api.entity.message.embed.EmbedBuilder;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+
 import java.awt.*;
 
 public class HelpEmbed {
@@ -28,11 +30,12 @@ public class HelpEmbed {
 		return description;
 	}
 	
-	public EmbedBuilder getEmbed() {
-		EmbedBuilder embed = new EmbedBuilder();
-		embed.setColor(this.color);
-		embed.setTitle(this.command);
-		embed.setDescription(this.description);
+	public MessageEmbed getEmbed() {
+		MessageEmbed embed = new EmbedBuilder()
+			.setColor(this.color)
+			.setTitle(this.command)
+			.setDescription(this.description)
+			.build();
 		return embed;
 	}
 	

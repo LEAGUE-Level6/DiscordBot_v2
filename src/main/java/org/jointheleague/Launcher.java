@@ -3,7 +3,7 @@ package org.jointheleague;
 import org.jointheleague.discord_bot.DiscordBot;
 
 public class Launcher {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         //Initialize variables
         String channelName = System.getenv("CHANNEL_NAME");
