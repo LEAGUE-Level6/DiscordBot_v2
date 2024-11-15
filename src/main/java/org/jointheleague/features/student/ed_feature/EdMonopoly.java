@@ -72,53 +72,70 @@ public class EdMonopoly extends Feature {
     @Override
     public void handle(ReceivedMessage event) {
         String received = event.getMessageContent();
-        if(received.equals(command)) {
+        switch(received){
+        case command:
+
             playerManage.addPlayer(new Player(event.getAuthor()));
             leader = event.getAuthor().getName();
             playCount++;
-            event.sendResponse("Game starting! React to this message with ✅ to begin.");
-        }
-        if(received.equals("!startGame")){
+            event.sendResponse("Game starting! Type !join to begin.");
+        break;
+            case"!startGame":
             stillRecruiting = false;
             playing = true;
             playGame(event);
-        }
-        if(received.equals("!getMyMoney")){
+        break;
+            case "!getMyMoney":
             event.sendResponse("" + playerManage.getCurr().getCash());
+        break;
+        case "!join":
+                if( stillRecruiting && playCount <= 8){
+            playerManage.addPlayer(new Player(event.getAuthor()));
+            playCount++;
+        }
+        break;
+        case "!buy":
+            buyTime = false;
+            assert buyTime;
+            ((Property)locations[propToFind]).setOwner(playerManage.getCurr());
+            buyTime = false;
+        break;
+        case "!end":
+            playerManage.advanceTurn();
+        break;
         }
 
     }
     int propToFind = 0;
     boolean buyTime = false;
-    @Override
-    public void onMessageReactionAdd(MessageReactionAddEvent event){
-      String react = event.getReaction().getEmoji().getName();
-      User playName = event.getUser();
-        System.out.println(react);
-      if(react.equals("✅") && stillRecruiting && playCount <= 8){
-          assert playName != null;
-          playerManage.addPlayer(new Player(playName));
-            playCount++;
-      }
-      if(react.equals("\uD83E\uDD11") && buyTime){
-          buyTime = false;
-          assert playName != null;
-          ((Property)locations[propToFind]).setOwner(playerManage.getCurr());
-      }
-    }
+//    @Override
+//    public void onMessageReactionAdd(MessageReactionAddEvent event){
+//      String react = event.getReaction().getEmoji().getName();
+//      User playName = event.getUser();
+//        System.out.println(react);
+//      if(react.equals("✅") && stillRecruiting && playCount <= 8){
+//          assert playName != null;
+//          playerManage.addPlayer(new Player(playName));
+//            playCount++;
+//      }
+//      if(react.equals("\uD83E\uDD11") && buyTime){
+//          buyTime = false;
+//          assert playName != null;
+//          ((Property)locations[propToFind]).setOwner(playerManage.getCurr());
+//      }
+//    }
 
     private void playGame(ReceivedMessage event){
-        int playerTurn = 0;
-      Player activePlayer = new Player(null);
+      Player activePlayer = null;
       int rollVal = 0;
       while(playing) {
           if (!buyTime) {
               activePlayer = playerManage.getCurr();
               rollVal = rollDie();
               activePlayer.changeLocation(rollVal);
-              event.sendResponse(rollVal + "rolled, you landed on" + locations[activePlayer.getLocation()].getDesc());
+              event.sendResponse(rollVal + "rolled, you landed on" + locations[activePlayer.getLocation()].getDesc()+ "\nTo end your turn, type !end.");
               if (((Property) locations[activePlayer.getLocation()]).getOwner() != null) {
-                  event.sendResponse("Nobody owns this property! React with :money_mouth: in the next 10 seconds to buy this property for " + ((Property) locations[activePlayer.getLocation()]).getCost());
+                  event.sendResponse("Nobody owns this property! Reply with !buy to buy this property for " + ((Property) locations[activePlayer.getLocation()]).getCost());
                   propToFind = activePlayer.getLocation();
                   buyTime = true;
               } else if (locations[activePlayer.getLocation()].getDesc().contains("Chance")) {
@@ -127,6 +144,7 @@ public class EdMonopoly extends Feature {
                   event.sendResponse("Community Chest Unimplemented");
               } else if (((Property) locations[activePlayer.getLocation()]).getOwner() != activePlayer) {
                   activePlayer.changeCash(activePlayer.getCash() - ((Property) locations[activePlayer.getLocation()]).getCost());
+                  event.sendResponse("Uh Oh! You landed on " + ((Property) locations[activePlayer.getLocation()]).getOwner() + "'s property! You lose $" + ((Property) locations[activePlayer.getLocation()]).getCost());
               }
               //((Property)locations[activePlayer.getLocation() + rollVal]).getHouse();
 
