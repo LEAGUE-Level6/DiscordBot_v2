@@ -9,7 +9,7 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 public class GuessTheSong extends Feature {
 
     public final String COMMAND = "!guessthesong";
-    private String currentSong;
+    String currentSong;
     private String currentLyrics;
     private final String[][] songs = {
             {"Don't Stop Believin'", "Just a small town girl, living in a lonely world..."},
@@ -43,7 +43,7 @@ public class GuessTheSong extends Feature {
             currentSong = songs[index][0];
             currentLyrics = songs[index][1];
             
-            event.sendResponse("Guess the Song! Lyrics; " + currentLyrics);
+            event.sendResponse("Guess the Song! Lyrics: " + currentLyrics);
             isGameActive = true;
         }
             else if (isGameActive && messageContent.equalsIgnoreCase(currentSong)) {

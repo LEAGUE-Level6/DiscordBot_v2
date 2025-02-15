@@ -20,7 +20,7 @@ public class Greeter extends Feature{
 	        String messageContent = event.getMessageContent();
 	        if (messageContent.startsWith(COMMAND)) {
 	            //respond to message here
-	            event.sendResponse("Hello!");
+	            event.sendResponse("Hello! How can I help you?");
 	        }
 	    }
 	}
