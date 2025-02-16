@@ -16,6 +16,7 @@ import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.first_feature.FeatureOne;
 import org.jointheleague.features.student.first_feature.Greeter;
 import org.jointheleague.features.student.first_feature.GuessTheSong;
+import org.jointheleague.features.student.second_feature.WordChainFeature;
 
 public class DiscordBot {
 
@@ -65,6 +66,7 @@ public class DiscordBot {
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new Greeter(channelName));
 		addFeature(new GuessTheSong(channelName));
+		addFeature(new WordChainFeature(channelName));
 	}
 
 	private void addFeature(Feature feature){
