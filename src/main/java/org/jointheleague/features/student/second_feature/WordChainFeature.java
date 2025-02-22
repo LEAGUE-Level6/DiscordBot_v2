@@ -12,9 +12,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class WordChainFeature extends FeatureTemplate {
-	private static final String START_COMMAND = "!startwordchain";
-    private static final String WORD_COMMAND = "!word";
-    private static final String END_COMMAND = "!endwordchain";
+	public final String START_COMMAND = "!startwordchain";
+    public final String WORD_COMMAND = "!word";
+    public final String END_COMMAND = "!endwordchain";
 
     private String lastWord = null;
     private ArrayList<String> usedWords = new ArrayList<>();
@@ -39,17 +39,15 @@ public class WordChainFeature extends FeatureTemplate {
         String command = words[0];
         String word = words.length > 1 ? words[1].toLowerCase() : "";
 
-        switch (command) {
-            case START_COMMAND:
-                startGame(event, word);
-                break;
-            case WORD_COMMAND:
-                playWord(event, word);
-                break;
-            case END_COMMAND:
-                endGame(event);
-                break;
-        }
+        if(command == START_COMMAND) {
+            startGame(event, word);
+    }
+    else if (command == WORD_COMMAND) {
+            playWord(event, word);
+    }
+    else {
+            endGame(event);
+    }
     }
 
     private void startGame(ReceivedMessage event, String word) {
