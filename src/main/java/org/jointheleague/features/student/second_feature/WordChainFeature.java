@@ -14,7 +14,7 @@ import java.util.Set;
 public class WordChainFeature extends FeatureTemplate {
 	public final String START_COMMAND = "!startwordchain";
     public final String WORD_COMMAND = "!word";
-    public final String END_COMMAND = "!endwordchain";
+    public final String END_COMMAND = "!end";
 
     private String lastWord = null;
     private ArrayList<String> usedWords = new ArrayList<>();
@@ -24,10 +24,10 @@ public class WordChainFeature extends FeatureTemplate {
 
         helpEmbed = new HelpEmbed(
                 START_COMMAND + ", " + WORD_COMMAND + ", " + END_COMMAND,
-                "Play a word chain game! \n" +
+                "Play a word chain game \n" +
                         "!startwordchain [word] - Start the game with a word.\n" +
                         "!word [word] - Submit a word that starts with the last letter of the previous word.\n" +
-                        "!endwordchain - End the game."
+                        "!end - End the game."
         );
     }
 
@@ -45,8 +45,8 @@ public class WordChainFeature extends FeatureTemplate {
     else if (command == WORD_COMMAND) {
             playWord(event, word);
     }
-    else {
-            endGame(event);
+    else if (command == END_COMMAND) {
+    	//endGame(event);
     }
     }
 
@@ -63,10 +63,6 @@ public class WordChainFeature extends FeatureTemplate {
     }
 
     private void playWord(ReceivedMessage event, String word) {
-        if (lastWord == null) {
-            event.sendResponse("No active game.");
-            return;
-        }
 
         if (word.isEmpty()) {
             event.sendResponse("Please provide a word.");

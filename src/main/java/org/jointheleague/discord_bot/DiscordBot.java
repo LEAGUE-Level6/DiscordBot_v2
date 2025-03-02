@@ -60,14 +60,14 @@ public class DiscordBot {
 		api.addEventListener(helpListener);
 
 		//add features
-		addFeature(new FeatureOne(channelName));
-		addFeature(new CurrentTime(channelName));
-		addFeature(new HighLowGame(channelName));
-		addFeature(new NewsApi(channelName));
-		addFeature(new CatFactsApi(channelName));
+		//addFeature(new FeatureOne(channelName));
+		//addFeature(new CurrentTime(channelName));
+		//addFeature(new HighLowGame(channelName));
+		//addFeature(new NewsApi(channelName));
+		//addFeature(new CatFactsApi(channelName));
 		addFeature(new Greeter(channelName));
 		addFeature(new GuessTheSong(channelName));
-		addFeature(new WordChainFeature(channelName));
+		//addFeature(new WordChainFeature(channelName));
 		addFeature(new AIStoryMaker(channelName));
 	}
 
