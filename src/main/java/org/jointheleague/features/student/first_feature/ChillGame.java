@@ -6,7 +6,9 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 
 public class ChillGame extends Feature {
 
-    public final String COMMAND = "!command";
+    public final String COMMAND = "!chillGame";
+    String wordToGuess = "";
+    String currentDisplay = "";
 
     public ChillGame(String channelName) {
         super(channelName);
@@ -23,7 +25,12 @@ public class ChillGame extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
-            event.sendResponse("Sending a message to the channel");
+            if (messageContent.equals(COMMAND)){
+                event.sendResponse("There is a word you need to guess, guess a letter by doing the command, then a letter. Ex: \"!chillGame e\"");
+                wordToGuess = Utilities.readRandomLineFromFile("dictionary.txt");
+                event.sendResponse("DEBUG: " + wordToGuess);
+                System.out.println(wordToGuess);
+            }
         }
     }
 
