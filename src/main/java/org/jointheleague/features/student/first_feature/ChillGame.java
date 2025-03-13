@@ -26,10 +26,11 @@ public class ChillGame extends Feature {
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
             if (messageContent.equals(COMMAND)){
-                event.sendResponse("There is a word you need to guess, guess a letter by doing the command, then a letter. Ex: \"!chillGame e\"");
-                wordToGuess = Utilities.readRandomLineFromFile("dictionary.txt");
-                event.sendResponse("DEBUG: " + wordToGuess);
+                wordToGuess = Utilities.readRandomLineFromFile("src/main/java/org/jointheleague/features/student/first_feature/dictionary.txt");
+                event.sendResponse("There is a word you need to guess, guess a letter by doing the command, then a letter. Ex: \"!chillGame e\"" + "\nDEBUG: " + wordToGuess);
                 System.out.println(wordToGuess);
+            } else {
+
             }
         }
     }
