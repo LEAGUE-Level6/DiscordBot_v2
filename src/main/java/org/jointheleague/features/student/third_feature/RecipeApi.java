@@ -26,14 +26,18 @@ public class RecipeApi extends Feature {
 
 	    @Override
 	    public void handle(ReceivedMessage event) {
+	    	System.out.println("Handling Message.");
 	        String messageContent = event.getMessageContent();
 	        if (messageContent.startsWith(COMMAND)) {
 	            messageContent = messageContent
 	                    .replace(COMMAND, "")
 	                    .replace(" ", "");
+	            System.out.println("Found Command.");
 	            if (messageContent.equals("")) {
+	            	System.out.println("Did not find prompt");
 	                event.sendResponse("Please provide a recipe name after the command: " + COMMAND + " italian wedding soup)");
 	            } else {
+	            	System.out.println("Finding recipe.");
 	                String recipeDetails = findRecipe(messageContent);
 	                event.sendResponse(recipeDetails);
 	            }
@@ -41,23 +45,29 @@ public class RecipeApi extends Feature {
 	    }
 
 	    public RecipeWrapper getRecipe(String food) {
-	        Mono<RecipeWrapper> recipeWrapperMono = webClient.get()
-	                .uri(uriBuilder -> uriBuilder
-	                        .queryParam("query", food)
-	                        .queryParam("apiKey", apiKey)
-	                        .build())
-	                .retrieve()
-	                .bodyToMono(RecipeWrapper.class);
+	    	System.out.println("getting recipe.");
+	    	Mono<String> recipeWrapperMono = webClient.get()
+	    		    .uri(uriBuilder -> uriBuilder
+	    		        .queryParam("query", food)
+	    		        .build())
+	    		    .header("X-RapidAPI-Key", apiKey) 
+	    		    //.header("X-RapidAPI-Host", "recipe-by-api-ninjas.p.rapidapi.com")
+	    		    .header("X-RapidAPI-Host", "zestful.p.rapidapi.com")
+	    		    .retrieve()
+	    		    .bodyToMono(String.class);
 
-	        return recipeWrapperMono.block();
+	    	System.out.println("Got recipe.");
+	    	System.out.println("Recipe: " + recipeWrapperMono);
+	        return null;
 	    }
 
 	    public String findRecipe(String food) {
+	    	System.out.println("Finding recipe in findRecipe().");
 	        RecipeWrapper recipeWrapper = getRecipe(food);
-
+	        System.out.println("Found recipe");
 	        if (recipeWrapper != null ) {
 	            Recipe recipe = recipeWrapper.getRecipes().get(0);
-
+	            
 	            String title = recipe.getTitle();
 	            String ingredients = String.join(",", recipe.getIngredients());
 	            String instructions = recipe.getInstructions();
