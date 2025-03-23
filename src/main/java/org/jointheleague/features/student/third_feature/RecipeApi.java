@@ -11,7 +11,7 @@ public class RecipeApi extends Feature {
 	    public final String COMMAND = "!recipeApi";
 
 	    private WebClient webClient;
-	    private static final String baseUrl = "https://recipe-by-api-ninjas.p.rapidapi.com/v1/recipe";
+	    private static final String baseUrl = "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com";
 	    private final String apiKey = "eaf0e5e978msh83da62360af2aa6p1af406jsn8f0cceea3bea";  
 	    public RecipeApi(String channelName) {
 	    	
@@ -21,6 +21,8 @@ public class RecipeApi extends Feature {
 	        this.webClient = WebClient
 	                .builder()
 	                .baseUrl(baseUrl)
+	                .defaultHeader("x-rapidapi-key", apiKey) 
+	                .defaultHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com") 
 	                .build();
 	    }
 
@@ -46,19 +48,19 @@ public class RecipeApi extends Feature {
 
 	    public RecipeWrapper getRecipe(String food) {
 	    	System.out.println("getting recipe.");
-	    	Mono<String> recipeWrapperMono = webClient.get()
+	    	RecipeWrapper recipeWrapper = webClient.get()
 	    		    .uri(uriBuilder -> uriBuilder
+	    		    	.path("/recipes/complexSearch")
 	    		        .queryParam("query", food)
+	    		        .queryParam("number", 1)
 	    		        .build())
-	    		    .header("X-RapidAPI-Key", apiKey) 
-	    		    //.header("X-RapidAPI-Host", "recipe-by-api-ninjas.p.rapidapi.com")
-	    		    .header("X-RapidAPI-Host", "zestful.p.rapidapi.com")
 	    		    .retrieve()
-	    		    .bodyToMono(String.class);
+	    		    .bodyToMono(RecipeWrapper.class)
+	    		    .block();
 
 	    	System.out.println("Got recipe.");
-	    	System.out.println("Recipe: " + recipeWrapperMono);
-	        return null;
+	    	System.out.println("Recipe: " + recipeWrapper);
+	        return recipeWrapper;
 	    }
 
 	    public String findRecipe(String food) {

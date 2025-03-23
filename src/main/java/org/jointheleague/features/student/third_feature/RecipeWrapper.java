@@ -7,16 +7,16 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class RecipeWrapper {
-		@SerializedName("recipes")
+		@SerializedName("results")
 		@Expose
-	    private List<Recipe> recipes;  
+	    private List<Recipe> results;  
 
 	    public List<Recipe> getRecipes() {
-	        return recipes;
+	        return results;
 	    }
 
-	    public void setRecipes(List<Recipe> recipes) {
-	        this.recipes = recipes;
+	    public void setRecipes(List<Recipe> results) {
+	        this.results = results;
 	    }
 	}
 
