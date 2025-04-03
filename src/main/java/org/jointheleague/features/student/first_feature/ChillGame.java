@@ -56,7 +56,14 @@ public class ChillGame extends Feature {
                    }
 
                    if (wordToGuess.contains(guess + "") && currentDisplay.contains(guess + "")){
-
+                       System.out.println("skib");
+                    char[] chars = currentDisplay.toCharArray();
+                    for (int i = 0; i < wordToGuess.length(); i++) {
+                        if (wordToGuess.charAt(i) == guess){
+                            chars[i] = guess;
+                        }
+                    }
+                    currentDisplay = new String(chars);
                    } else {
                        event.sendResponse("Incorrect Guess!!\n" + currentDisplay);
                    }
