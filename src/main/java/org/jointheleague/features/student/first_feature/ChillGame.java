@@ -26,12 +26,16 @@ public class ChillGame extends Feature {
         if (messageContent.startsWith(COMMAND)) {
             //respond to message here
             if (messageContent.equals(COMMAND)){
-                wordToGuess = Utilities.readRandomLineFromFile("src/main/java/org/jointheleague/features/student/first_feature/dictionary.txt");
-                for (int i = 0; i < wordToGuess.length(); i++){
-                    currentDisplay += "_";
+                if (wordToGuess.isEmpty()){
+                    wordToGuess = Utilities.readRandomLineFromFile("src/main/java/org/jointheleague/features/student/first_feature/dictionary.txt");
+                    for (int i = 0; i < wordToGuess.length(); i++){
+                        currentDisplay += "-";
+                    }
+                    event.sendResponse("There is a word you need to guess, guess a letter by doing the command, then a letter. Ex: \"!chillGame e\"");
+                    System.out.println(wordToGuess);
+                } else {
+                    event.sendResponse("You still haven't guessed the current word!");
                 }
-                event.sendResponse("There is a word you need to guess, guess a letter by doing the command, then a letter. Ex: \"!chillGame e\"" + "\nDEBUG: " + wordToGuess);
-                System.out.println(wordToGuess);
             } else {
                 //check if the game has been started
                 if(wordToGuess.isEmpty()){
@@ -55,8 +59,8 @@ public class ChillGame extends Feature {
                        return;
                    }
 
-                   if (wordToGuess.contains(guess + "") && currentDisplay.contains(guess + "")){
-                       System.out.println("skib");
+                   if (wordToGuess.contains(guess + "") && !currentDisplay.contains(guess + "")){
+
                     char[] chars = currentDisplay.toCharArray();
                     for (int i = 0; i < wordToGuess.length(); i++) {
                         if (wordToGuess.charAt(i) == guess){
@@ -64,15 +68,24 @@ public class ChillGame extends Feature {
                         }
                     }
                     currentDisplay = new String(chars);
+                    if (currentDisplay.contains("-")){
+                        event.sendResponse("Correct Guess!!\n" + currentDisplay);
+                    } else {
+                        event.sendResponse("Correct! The word I picked was " + wordToGuess);
+                        wordToGuess = "";
+                        currentDisplay = "";
+                    }
+
                    } else {
                        event.sendResponse("Incorrect Guess!!\n" + currentDisplay);
                    }
 
                } else {
                     //they got it correct
-                    event.sendResponse("Correct!  The word I picked was " + wordToGuess);
+                    event.sendResponse("Correct! The word I picked was " + wordToGuess);
                     //set wordToGuess back to empty string
                     wordToGuess = "";
+                    currentDisplay = "";
                }
 
 
