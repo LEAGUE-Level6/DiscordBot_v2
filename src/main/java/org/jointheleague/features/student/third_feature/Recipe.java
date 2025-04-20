@@ -1,36 +1,51 @@
 package org.jointheleague.features.student.third_feature;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Recipe {
-	    private String title;
-	    private List<String> ingredients;
-	    private String instructions;
+    private int id;
+    private String title;
+    private String instructions;
 
-	    public String getTitle() {
-	        return title;
-	    }
+    @SerializedName("extendedIngredients")
+    private List<Ingredient> ingredients;
 
-	    public void setTitle(String title) {
-	        this.title = title;
-	    }
+    
+    public int getId() { 
+    	return id; 
+    	}
 
-	    public List<String> getIngredients() {
-	        return ingredients;
-	    }
+    public void setId(int id) { 
+    	this.id = id; 
+    	}
 
-	    public void setIngredients(List<String> ingredients) {
-	        this.ingredients = ingredients;
-	    }
+    public String getTitle() {
+    	return title; 
+    	}
 
-	    public String getInstructions() {
-	        return instructions;
-	    }
+    public void setTitle(String title) {
+    	this.title = title;
+    	}
 
-	    public void setInstructions(String instructions) {
-	        this.instructions = instructions;
-	    }
-	}
+    public String getInstructions() {
+    	return instructions;
+    	}
 
+    public void setInstructions(String instructions) {
+    	this.instructions = instructions;
+    	}
 
+    public List<Ingredient> getIngredients() {
+    	return ingredients;
+    	}
+
+    public void setIngredients(List<Ingredient> ingredients) {
+    	this.ingredients = ingredients;
+    	}
+    public String getRecipe () {
+    	return title + ingredients + instructions;
+    }
+}

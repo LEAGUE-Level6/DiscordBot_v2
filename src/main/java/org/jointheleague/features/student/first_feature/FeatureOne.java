@@ -3,11 +3,10 @@ package org.jointheleague.features.student.first_feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.templates.FeatureTemplate;
 
 import java.util.Random;
 
-public class FeatureOne extends FeatureTemplate {
+public class FeatureOne extends Feature {
     public final String COMMAND = "!joke";
 
     public FeatureOne(String channelName) {

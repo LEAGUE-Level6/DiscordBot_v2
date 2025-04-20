@@ -1,8 +1,19 @@
 package org.jointheleague.features.student.third_feature;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import com.google.gson.Gson;
+
 import reactor.core.publisher.Mono;
 
 
@@ -40,45 +51,87 @@ public class RecipeApi extends Feature {
 	                event.sendResponse("Please provide a recipe name after the command: " + COMMAND + " italian wedding soup)");
 	            } else {
 	            	System.out.println("Finding recipe.");
-	                String recipeDetails = findRecipe(messageContent);
-	                event.sendResponse(recipeDetails);
+	                Recipe recipeDetails = findRecipe(messageContent);
+	                event.sendResponse(recipeDetails.getRecipe());
 	            }
 	        }
 	    }
-
-	    public RecipeWrapper getRecipe(String food) {
+	    public String newGetRecipe () throws IOException, InterruptedException {
+	    	HttpRequest request = HttpRequest.newBuilder()
+	    			.uri(URI.create("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random?tags=vegetarian%2Cdessert&number=1"))
+	    			.header("x-rapidapi-key", apiKey)
+	    			.header("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
+	    			.method("GET", HttpRequest.BodyPublishers.noBody())
+	    			.build();
+	    	HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+	    	return response.body();
+	    }
+	    
+	    public Recipe getRecipe(String food) {
 	    	System.out.println("getting recipe.");
-	    	RecipeWrapper recipeWrapper = webClient.get()
+	    	String recipeWrapper = webClient.get()
 	    		    .uri(uriBuilder -> uriBuilder
 	    		    	.path("/recipes/complexSearch")
 	    		        .queryParam("query", food)
 	    		        .queryParam("number", 1)
 	    		        .build())
 	    		    .retrieve()
-	    		    .bodyToMono(RecipeWrapper.class)
+	    		    .bodyToMono(String.class)
 	    		    .block();
-
-	    	System.out.println("Got recipe.");
-	    	System.out.println("Recipe: " + recipeWrapper);
-	        return recipeWrapper;
+	    		System.out.println(recipeWrapper);
+	    	 //if (recipeWrapper != null && recipeWrapper.getRecipes().size() > 0) {
+	    		 	
+	    	        //return recipeWrapper.getRecipes().get(0);
+	    	    //}
+	    	    return null;
 	    }
-
-	    public String findRecipe(String food) {
-	    	System.out.println("Finding recipe in findRecipe().");
-	        RecipeWrapper recipeWrapper = getRecipe(food);
-	        System.out.println("Found recipe");
-	        if (recipeWrapper != null ) {
-	            Recipe recipe = recipeWrapper.getRecipes().get(0);
-	            
-	            String title = recipe.getTitle();
-	            String ingredients = String.join(",", recipe.getIngredients());
-	            String instructions = recipe.getInstructions();
-
-	            return String.format("Recipe: "+title+"\nIngredients: " +ingredients + "\nInstructions: "+instructions);
-	        } else {
-	            return "No recipe found";
-	        }
+	    
+	    public Recipe getRecipeDetail(int id) {
+	        return webClient.get()
+	            .uri("/recipes/" + id + "/information")
+	            .retrieve()
+	            .bodyToMono(Recipe.class) 
+	            .block();
 	    }
+	    
+	    public Recipe findRecipe(String food) {
+	    	Recipe data;
+	    	try {
+				String testRecipe = newGetRecipe();
+				System.out.println(testRecipe);
+				RecipeWrapper recipeWrapper = new Gson().fromJson(testRecipe, RecipeWrapper.class);
+				System.out.println("RecipeWrapped"+ recipeWrapper);
+				List<Recipe> recipes = recipeWrapper.getRecipes();
+				System.out.println("Got List "+recipes.size());
+				data = recipes.get(0);
+				System.out.println("data.getTitle(): "+data.getTitle());
+				return data;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	return null;
+	    	
+	    	
+//	    	Recipe recipeSummary = getRecipe(food);
+//	        if (recipeSummary != null) {
+//	            Recipe fullRecipe = getRecipeDetail(recipeSummary.getId());
+//
+//	            if (fullRecipe != null) {
+//	                String title = fullRecipe.getTitle();
+//	                String instructions = fullRecipe.getInstructions();
+//	                List<Ingredient> ingredients = fullRecipe.getIngredients();
+//
+//	                return String.format(title + ": \n" + "Ingredients: "+ ingredients +"\n Instructions: "+ instructions);
+//	            }
+//	        }
+//	        return "No recipe found.";
+	    }
+	    
+	    
 
 	    public void setWebClient(WebClient webClient) {
 	        this.webClient = webClient;

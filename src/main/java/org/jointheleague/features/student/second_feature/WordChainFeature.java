@@ -3,15 +3,15 @@ package org.jointheleague.features.student.second_feature;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import org.jointheleague.api_wrapper.ReceivedMessage;
+import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.jointheleague.features.templates.FeatureTemplate;
 
 import java.awt.List;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class WordChainFeature extends FeatureTemplate {
+public class WordChainFeature extends Feature {
 	public final String START_COMMAND = "!startwordchain";
     public final String WORD_COMMAND = "!word";
     public final String END_COMMAND = "!end";
