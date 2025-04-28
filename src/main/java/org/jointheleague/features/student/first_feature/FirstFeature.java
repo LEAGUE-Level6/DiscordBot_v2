@@ -31,25 +31,30 @@ public class FirstFeature extends Feature {
 
 
         String messageContent = event.getMessageContent();
-        System.out.println(messageContent);
+      //  System.out.println(messageContent);
 
-        if (messageContent.startsWith(COMMAND) && !messageContent.contains(ANSWERCOMMAND)) {
+        if (messageContent.startsWith(COMMAND) && !messageContent.contains(ANSWERCOMMAND)&&!riddleSent) {
+
             generatedRiddle = generateRiddle();
             //respond to message here
             event.sendResponse("Here is your riddle:\n" + generatedRiddle[0] + "\nType '" + ANSWERCOMMAND + "' to get the answer!");
             riddleSent = true;
         }
-        if (messageContent.startsWith(ANSWERCOMMAND) && riddleSent) {
+        else if (messageContent.startsWith(ANSWERCOMMAND) && riddleSent) {
             event.sendResponse("The answer to your riddle is:\n" + generatedRiddle[1]);
             riddleSent = false;
 
         }
-        if (messageContent.startsWith(ANSWERCOMMAND) && !riddleSent {
+        else if (messageContent.startsWith(ANSWERCOMMAND)  && !riddleSent ){
             event.sendResponse("You have to ask for a riddle first!");
+        }
+        else{
+            return;
         }
     }
 
     public String[] generateRiddle() {
+        System.out.println("gen");
         String[] riddle = new String[2];
         Random r = new Random();
         int rand = r.nextInt(10);
@@ -110,6 +115,7 @@ public class FirstFeature extends Feature {
 
         }
         ;
+        System.out.println(riddle[0]+riddle[1]);
         return riddle;
     }
 
