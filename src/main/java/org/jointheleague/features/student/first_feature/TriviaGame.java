@@ -1,14 +1,17 @@
 package org.jointheleague.features.student.first_feature;
 
+import org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.Random;
 
 public class TriviaGame extends FeatureTemplate {
     public final String COMMAND = "!trivia";
+    boolean questionActive = false;
 
     private WebClient webClient;
     public static final String baseUrl = "https://opentdb.com/api.php?amount=10";
@@ -34,8 +37,30 @@ public class TriviaGame extends FeatureTemplate {
         if (messageContent.startsWith(COMMAND)) {
             if (messageContent.equals(COMMAND)){
                 event.sendResponse("I will tell you a trivia question, and you will attempt to answer it using the command. Ex: \"!trivia George Washington\"");
+                boolean questionActive = true;
             }
         }
+    }
+
+    public String getQuestion () {
+
+        //Make the request, accepting the response as a plain old java object you created
+        Mono<TriviaWrapper> triviaWrapperMono = webClient.get()
+                .retrieve()
+                .bodyToMono(TriviaWrapper.class);
+
+        //collect the response into a plain old java object
+        TriviaWrapper triviaWrapper = triviaWrapperMono.block();
+
+        //get the cat fact from the response
+        //String message = triviaWrapper.getData().get(0);
+
+        //send the message
+        return null;
+    }
+
+    public void setWebClient(WebClient webClient) {
+        this.webClient = webClient;
     }
 }
 
