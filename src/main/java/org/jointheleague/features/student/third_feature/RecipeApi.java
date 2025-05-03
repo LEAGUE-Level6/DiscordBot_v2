@@ -58,7 +58,7 @@ public class RecipeApi extends Feature {
 	    }
 	    public String newGetRecipe () throws IOException, InterruptedException {
 	    	HttpRequest request = HttpRequest.newBuilder()
-	    			.uri(URI.create("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/random?tags=vegetarian%2Cdessert&number=1"))
+	    			.uri(URI.create("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch"))
 	    			.header("x-rapidapi-key", apiKey)
 	    			.header("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
 	    			.method("GET", HttpRequest.BodyPublishers.noBody())
@@ -67,23 +67,28 @@ public class RecipeApi extends Feature {
 	    	return response.body();
 	    }
 	    
-	    public Recipe getRecipe(String food) {
+	    public String getRecipe(String food) {
 	    	System.out.println("getting recipe.");
-	    	String recipeWrapper = webClient.get()
+	    	Mono<String> recipeWrapper = webClient.get()
 	    		    .uri(uriBuilder -> uriBuilder
-	    		    	.path("/recipes/complexSearch")
 	    		        .queryParam("query", food)
-	    		        .queryParam("number", 1)
+	    		        .queryParam("apiKey", apiKey)
 	    		        .build())
-	    		    .retrieve()
-	    		    .bodyToMono(String.class)
-	    		    .block();
-	    		System.out.println(recipeWrapper);
+	    
+	    
+	    		    	
+	    			.retrieve()
+	    		    .bodyToMono(String.class);
+	    			
+	    			System.out.println("Mono to string: " + recipeWrapper);
+	    			String blocked = recipeWrapper.block();
+	    			
+	    		System.out.println(blocked);
 	    	 //if (recipeWrapper != null && recipeWrapper.getRecipes().size() > 0) {
 	    		 	
 	    	        //return recipeWrapper.getRecipes().get(0);
 	    	    //}
-	    	    return null;
+	    	    return blocked;
 	    }
 	    
 	    public Recipe getRecipeDetail(int id) {
@@ -96,8 +101,8 @@ public class RecipeApi extends Feature {
 	    
 	    public Recipe findRecipe(String food) {
 	    	Recipe data;
-	    	try {
-				String testRecipe = newGetRecipe();
+//	    	try {
+				String testRecipe = getRecipe(food);
 				System.out.println(testRecipe);
 				RecipeWrapper recipeWrapper = new Gson().fromJson(testRecipe, RecipeWrapper.class);
 				System.out.println("RecipeWrapped"+ recipeWrapper);
@@ -106,14 +111,15 @@ public class RecipeApi extends Feature {
 				data = recipes.get(0);
 				System.out.println("data.getTitle(): "+data.getTitle());
 				return data;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    	return null;
+//			} 
+//	    	catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//	    	return null;
 	    	
 	    	
 //	    	Recipe recipeSummary = getRecipe(food);
