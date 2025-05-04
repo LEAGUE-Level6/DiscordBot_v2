@@ -56,13 +56,20 @@ public class RecipeApi extends Feature {
 	            }
 	        }
 	    }
-	    public String newGetRecipe () throws IOException, InterruptedException {
-	    	HttpRequest request = HttpRequest.newBuilder()
-	    			.uri(URI.create("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch"))
-	    			.header("x-rapidapi-key", apiKey)
-	    			.header("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
-	    			.method("GET", HttpRequest.BodyPublishers.noBody())
-	    			.build();
+	    public String newGetRecipe (String query, int number, boolean addRecipeInformation) throws IOException, InterruptedException {
+	    	StringBuilder uriBuilder = new StringBuilder("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch");
+
+	        // Append query parameters
+	        uriBuilder.append("?query=").append(query);
+	        uriBuilder.append("&number=").append(number);
+	        uriBuilder.append("&addRecipeInformation=").append(addRecipeInformation);
+
+	        HttpRequest request = HttpRequest.newBuilder()
+	            .uri(URI.create(uriBuilder.toString()))
+	            .header("x-rapidapi-key", apiKey)
+	            .header("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
+	            .GET()
+	            .build();
 	    	HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 	    	return response.body();
 	    }
@@ -100,26 +107,30 @@ public class RecipeApi extends Feature {
 	    }
 	    
 	    public Recipe findRecipe(String food) {
-	    	Recipe data;
-//	    	try {
-				String testRecipe = getRecipe(food);
-				System.out.println(testRecipe);
-				RecipeWrapper recipeWrapper = new Gson().fromJson(testRecipe, RecipeWrapper.class);
-				System.out.println("RecipeWrapped"+ recipeWrapper);
-				List<Recipe> recipes = recipeWrapper.getRecipes();
-				System.out.println("Got List "+recipes.size());
-				data = recipes.get(0);
-				System.out.println("data.getTitle(): "+data.getTitle());
-				return data;
-//			} 
-//	    	catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//	    	return null;
+	    	String testRecipe = "";
+			try {
+				testRecipe = newGetRecipe(food,3,false);
+			} catch (IOException | InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(testRecipe);
+			RecipeWrapper recipeWrapper = new Gson().fromJson(testRecipe, RecipeWrapper.class);
+			System.out.println("RecipeWrapped"+ recipeWrapper);
+			List<Recipe> recipes = recipeWrapper.getRecipes();
+			System.out.println("Got List "+recipes.size());
+			if (recipes == null) {
+				System.out.println("No recipes found");
+				return null;
+			}
+			
+			Recipe summaryRecipe = recipes.get(0);
+		    System.out.println("Found recipe summary: " + summaryRecipe.getTitle());
+
+		    Recipe fullRecipe = getRecipeDetail(summaryRecipe.getId());
+
+		    System.out.println("Full recipe: " + fullRecipe.getTitle());
+		    return fullRecipe;
 	    	
 	    	
 //	    	Recipe recipeSummary = getRecipe(food);

@@ -7,8 +7,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class RecipeWrapper {
-		@Expose
-	    private List<Recipe> recipes;  
+		@SerializedName("results")
+	    private List<Recipe> recipes = new ArrayList();  
 
 	    public List<Recipe> getRecipes() {
 	        return recipes;
