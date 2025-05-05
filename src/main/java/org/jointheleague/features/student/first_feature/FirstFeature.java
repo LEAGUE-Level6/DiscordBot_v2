@@ -31,7 +31,7 @@ public class FirstFeature extends Feature {
 
 
         String messageContent = event.getMessageContent();
-      //  System.out.println(messageContent);
+
 
         if (messageContent.startsWith(COMMAND) && !messageContent.contains(ANSWERCOMMAND)&&!riddleSent) {
 
@@ -54,7 +54,6 @@ public class FirstFeature extends Feature {
     }
 
     public String[] generateRiddle() {
-        System.out.println("gen");
         String[] riddle = new String[2];
         Random r = new Random();
         int rand = r.nextInt(10);
@@ -115,7 +114,7 @@ public class FirstFeature extends Feature {
 
         }
         ;
-        System.out.println(riddle[0]+riddle[1]);
+
         return riddle;
     }
 
