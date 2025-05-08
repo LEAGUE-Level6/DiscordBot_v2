@@ -34,10 +34,14 @@ public class TriviaGame extends FeatureTemplate {
     @Override
     public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
+        // newline character might interfere, printed 1 but not 2.
+        messageContent = messageContent.trim();
         if (messageContent.startsWith(COMMAND)) {
+            System.out.println("1");
             if (messageContent.equals(COMMAND)){
-                event.sendResponse("I will tell you a trivia question, and you will attempt to answer it using the command. Ex: \"!trivia George Washington\"");
+                event.sendResponse("I will tell you a trivia question, and you will attempt to answer it using the command. Ex: \"!trivia George Washington\"\nDEBUG: " + getQuestion());
                 boolean questionActive = true;
+                System.out.println("2");
             }
         }
     }
@@ -52,11 +56,11 @@ public class TriviaGame extends FeatureTemplate {
         //collect the response into a plain old java object
         TriviaWrapper triviaWrapper = triviaWrapperMono.block();
 
-        //get the cat fact from the response
-        //String message = triviaWrapper.getData().get(0);
+        //get the question from the response
+        //assert triviaWrapper != null;
 
         //send the message
-        return null;
+        return triviaWrapper.getData().get(0);
     }
 
     public void setWebClient(WebClient webClient) {
