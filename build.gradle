@@ -28,7 +28,8 @@ dependencies {
 group = 'org.jointheleague'
 version = '2.0'
 description = 'discordbot'
-sourceCompatibility = '1.8'
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 
 test {

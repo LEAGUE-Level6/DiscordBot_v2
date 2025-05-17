@@ -51,18 +51,29 @@ public class RecipeApi extends Feature {
 	                event.sendResponse("Please provide a recipe name after the command: " + COMMAND + " italian wedding soup)");
 	            } else {
 	            	System.out.println("Finding recipe.");
-	                Recipe recipeDetails = findRecipe(messageContent);
-	                event.sendResponse(recipeDetails.getRecipe());
+	                String recipeDetails = null;
+					try {
+						recipeDetails = findRecipe(messageContent);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	                event.sendResponse(recipeDetails);
 	            }
 	        }
 	    }
-	    public String newGetRecipe (String query, int number, boolean addRecipeInformation) throws IOException, InterruptedException {
+	    public String newGetRecipe (String query, int number, boolean addRecipeInstructions) throws IOException, InterruptedException {
 	    	StringBuilder uriBuilder = new StringBuilder("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch");
 
 	        // Append query parameters
 	        uriBuilder.append("?query=").append(query);
 	        uriBuilder.append("&number=").append(number);
-	        uriBuilder.append("&addRecipeInformation=").append(addRecipeInformation);
+	        uriBuilder.append("&addRecipeInformation=").append(addRecipeInstructions);
+	        uriBuilder.append("addRecipeInstructions=").append(addRecipeInstructions);
+	        
 
 	        HttpRequest request = HttpRequest.newBuilder()
 	            .uri(URI.create(uriBuilder.toString()))
@@ -98,18 +109,12 @@ public class RecipeApi extends Feature {
 	    	    return blocked;
 	    }
 	    
-	    public Recipe getRecipeDetail(int id) {
-	        return webClient.get()
-	            .uri("/recipes/" + id + "/information")
-	            .retrieve()
-	            .bodyToMono(Recipe.class) 
-	            .block();
-	    }
+	   
 	    
-	    public Recipe findRecipe(String food) {
+	    public String findRecipe(String food) throws IOException, InterruptedException {
 	    	String testRecipe = "";
 			try {
-				testRecipe = newGetRecipe(food,3,false);
+				testRecipe = newGetRecipe(food,3,true);
 			} catch (IOException | InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -126,11 +131,21 @@ public class RecipeApi extends Feature {
 			
 			Recipe summaryRecipe = recipes.get(0);
 		    System.out.println("Found recipe summary: " + summaryRecipe.getTitle());
+		    System.out.println("ID: " +summaryRecipe.getId());
+		    StringBuilder uriBuilder = new StringBuilder("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/");
 
-		    Recipe fullRecipe = getRecipeDetail(summaryRecipe.getId());
+	        uriBuilder.append(summaryRecipe.getId());
+	        uriBuilder.append("/summary");
+	        
 
-		    System.out.println("Full recipe: " + fullRecipe.getTitle());
-		    return fullRecipe;
+	        HttpRequest request = HttpRequest.newBuilder()
+	            .uri(URI.create(uriBuilder.toString()))
+	            .header("x-rapidapi-key", apiKey)
+	            .header("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
+	            .GET()
+	            .build();
+	    	HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+	    	return response.body();
 	    	
 	    	
 //	    	Recipe recipeSummary = getRecipe(food);
