@@ -14,6 +14,12 @@ import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.examples.first_features.RandomNumber;
 import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.first_feature.FeatureOne;
+import org.jointheleague.features.student.first_feature.Greeter;
+import org.jointheleague.features.student.first_feature.GuessTheSong;
+import org.jointheleague.features.student.second_feature.WordChainFeature;
+import org.jointheleague.features.student.third_feature.AIStoryMaker;
+import org.jointheleague.features.student.third_feature.Recipe;
+import org.jointheleague.features.student.third_feature.RecipeApi;
 
 public class DiscordBot {
 
@@ -56,11 +62,15 @@ public class DiscordBot {
 		api.addEventListener(helpListener);
 
 		//add features
-		addFeature(new FeatureOne(channelName));
-		addFeature(new CurrentTime(channelName));
-		addFeature(new HighLowGame(channelName));
-		addFeature(new NewsApi(channelName));
-		addFeature(new CatFactsApi(channelName));
+		//addFeature(new FeatureOne(channelName));
+		//addFeature(new CurrentTime(channelName));
+		//addFeature(new HighLowGame(channelName));
+		//addFeature(new NewsApi(channelName));
+		//addFeature(new CatFactsApi(channelName));
+		addFeature(new Greeter(channelName));
+		addFeature(new GuessTheSong(channelName));
+		//addFeature(new WordChainFeature(channelName));
+		addFeature(new RecipeApi(channelName));
 	}
 
 	private void addFeature(Feature feature){

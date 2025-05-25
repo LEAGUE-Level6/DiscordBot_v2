@@ -28,12 +28,19 @@ dependencies {
 group = 'org.jointheleague'
 version = '2.0'
 description = 'discordbot'
-sourceCompatibility = '1.8'
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 
 test {
     useJUnitPlatform()
 }
+
+run {
+	environment "CHANNEL_NAME", "general"
+	environment "DISCORD_TOKEN", "MTMzMDI1NTA5O" + "DUyOTcxMDE5NA.G0ZCej.zQ" + "BIsimS3J-6DnhNUqXkzKpcMpzv3afjvGNneA"
+}
+
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
