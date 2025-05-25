@@ -72,9 +72,7 @@ public class RecipeApi extends Feature {
 	        uriBuilder.append("?query=").append(query);
 	        uriBuilder.append("&number=").append(number);
 	        uriBuilder.append("&addRecipeInformation=").append(addRecipeInstructions);
-	        uriBuilder.append("addRecipeInstructions=").append(addRecipeInstructions);
 	        
-
 	        HttpRequest request = HttpRequest.newBuilder()
 	            .uri(URI.create(uriBuilder.toString()))
 	            .header("x-rapidapi-key", apiKey)
@@ -112,41 +110,48 @@ public class RecipeApi extends Feature {
 	   
 	    
 	    public String findRecipe(String food) throws IOException, InterruptedException {
-	    	String testRecipe = "";
-			try {
-				testRecipe = newGetRecipe(food,3,true);
-			} catch (IOException | InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println(testRecipe);
-			RecipeWrapper recipeWrapper = new Gson().fromJson(testRecipe, RecipeWrapper.class);
-			System.out.println("RecipeWrapped"+ recipeWrapper);
-			List<Recipe> recipes = recipeWrapper.getRecipes();
-			System.out.println("Got List "+recipes.size());
-			if (recipes == null) {
-				System.out.println("No recipes found");
-				return null;
-			}
-			
-			Recipe summaryRecipe = recipes.get(0);
-		    System.out.println("Found recipe summary: " + summaryRecipe.getTitle());
-		    System.out.println("ID: " +summaryRecipe.getId());
-		    StringBuilder uriBuilder = new StringBuilder("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/");
+	    	String responseJson = newGetRecipe(food, 1, false);  // Just get ID and title
+	        RecipeWrapper recipeWrapper = new Gson().fromJson(responseJson, RecipeWrapper.class);
+	        List<Recipe> recipes = recipeWrapper.getRecipes();
 
-	        uriBuilder.append(summaryRecipe.getId());
-	        uriBuilder.append("/summary");
-	        
+	        if (recipes == null || recipes.size() == 0) {
+	            return "No recipes found.";
+	        }
+
+	        Recipe selectedRecipe = recipes.get(0);
+	        int recipeId = selectedRecipe.getId();
+
+	        String url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/" + recipeId + "/information";
 
 	        HttpRequest request = HttpRequest.newBuilder()
-	            .uri(URI.create(uriBuilder.toString()))
+	            .uri(URI.create(url))
 	            .header("x-rapidapi-key", apiKey)
-	            .header("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
+	            .header("x-rapidapi-host", baseUrl)
 	            .GET()
 	            .build();
-	    	HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-	    	return response.body();
-	    	
+
+	        HttpResponse<String> fullInfoResponse = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+	        Recipe detailedRecipe = new Gson().fromJson(fullInfoResponse.body(), Recipe.class);
+
+	        StringBuilder result = new StringBuilder();
+	        result.append("**").append(detailedRecipe.getTitle()).append("**\n\n");
+
+	        result.append("**Ingredients:**\n");
+	        for (Ingredient ing : detailedRecipe.getIngredients()) {
+	            result.append("- ").append(ing.getOriginal()).append("\n");
+	        }
+
+	        result.append("\n**Instructions:**\n");
+	        result.append(detailedRecipe.getInstructions());
+	        
+	        System.out.println("Got instructions");
+	        String resultString = result.toString();
+	        resultString = resultString.replace("<.{1,10}>", "");
+	        System.out.println(resultString);		
+	        
+	        return resultString;
+	    }
 	    	
 //	    	Recipe recipeSummary = getRecipe(food);
 //	        if (recipeSummary != null) {
@@ -161,7 +166,7 @@ public class RecipeApi extends Feature {
 //	            }
 //	        }
 //	        return "No recipe found.";
-	    }
+	    
 	    
 	    
 
