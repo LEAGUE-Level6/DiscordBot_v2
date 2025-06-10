@@ -16,12 +16,12 @@ public class FeatureTwo extends Feature {
     public String[][] words = {
             {"six", "cat", "dog", "two","bye","man","fan","pan","zap", "hat","log","rug","pug","wet","net", "set","fix","and"},//l1
             {"iron","wood","tree","tent","duck","king","high","gold","game","fire","hate","inch","deck","farm","dust","flow","food","halt"},//l2
-            {"hi", "bye"},
-            {"hi", "bye"},
-            {"hi", "bye"},
-            {"hi", "bye"},
-            {"hi", "bye"},
-            {"hi", "bye"},
+            {"eager", "eagle","cable", "cabin", "caddy", "apple","noise", "sound","wheel","hills","boxes","threw","chart","share","worth","chord","labor"},//l3
+            {"honest", "drawer","adieu","holder","govern","liquid","lonely","evolve", "excess","doctor","singer","easily","driven","fourth","friend","casino","canyon","combat"},//l4
+            {"abandon", "advisor","allured","ironed","anxious","babysat","backlit","advance","bargain","boombox","gallery","gallons","habitat","haircut","eagerly","soundly","eardrum","factory"},//l5
+            {"capacity", "engineer","aircraft","advanced","delivery","compound","exposure","original","northern","galactic","reaction","triangle","treasury","humanity","included","facility","everyday","equation"},//l6
+            {"beginning", "household","candidate","jewellery","deduction","important","marketing","governing","practical","judgement","breathing","combating","zealously","reconquer","normalize","objectify","quadratic"},//l7
+            {"puzzlingly", "highjacked","maximizing","texturized","laboringly","racetracks","nationhood","complexity","aquaphobia"},//l8
     };
 
     public FeatureTwo(String channelName) {
@@ -39,7 +39,7 @@ public class FeatureTwo extends Feature {
     public void handle(ReceivedMessage event) {
 
         String messageContent = event.getMessageContent();
-        System.out.println(messageContent);
+
         if (messageContent.startsWith(COMMAND)&&!ready) {
 
              responseScramble = getScrambled(levelCounter);
@@ -52,21 +52,28 @@ public class FeatureTwo extends Feature {
             }
             ready = true;
         }
-        if (messageContent.startsWith(COMMAND)&&ready){
-            if(responseScramble[1].equals(messageContent.substring(COMMAND.length()+1))){
-                event.sendResponse("Nice, You unscrambled it correctly!\nThe word was "+responseScramble[1]+"\n Type "+COMMAND+" to continue!");
-                ready=false;
-                levelCounter+=1;
-            }
-            else{
-                event.sendResponse("Not quite! Try again.");
-            }
+        if (messageContent.startsWith(COMMAND)&&ready) {
+            if (messageContent.length() > COMMAND.length()) {
+                if (responseScramble[1].equals(messageContent.substring(COMMAND.length() + 1))) {
+                    if (levelCounter != 7) {
+                        event.sendResponse("Nice, You unscrambled it correctly!\nThe word was " + responseScramble[1] + "\n Type " + COMMAND + " to continue!");
+                        ready = false;
+                        levelCounter += 1;
+                    } else {
+                        event.sendResponse("WOW, You've beaten  the game! Congrats on unscrambling all those words! \nType !help to find more commands!");
+                        ready = false;
+                        levelCounter = 0;
+                    }
+                } else {
+                    event.sendResponse("Not quite! Try again.");
+                }
 
+            }
         }
     }
 
     public String[] getScrambled(int level) {
-        System.out.println("scramble");
+
         String[] scrambled = new String[2];
         Random rand = new Random();
         String word = words[level][rand.nextInt(words[level].length - 1)];
