@@ -1,16 +1,12 @@
 package org.jointheleague.features.student.third_feature;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.cat_facts_api.CatWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.awt.*;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 
 public class FeatureThree extends Feature {
 
@@ -38,12 +34,21 @@ public class FeatureThree extends Feature {
         System.out.println("Message Received");
         System.out.println(messageContent);
         if (messageContent.startsWith(COMMAND)) {
+
+            TextChannel textChannel = event.getMessageChannel();
+
             //respond to message here
             System.out.println("Printing Image");
             String imageLink = getAPOD();
-            EmbedBuilder embed = new EmbedBuilder();
-            embed.setImage(imageLink);
-            event.sendResponse(embed.build());
+//            EmbedBuilder embed = new EmbedBuilder();
+//            embed.setImage("https://apod.nasa.gov/apod/image/2507/MwSpires_Chay_960.jpg");
+            // embed.setAuthor(imageLink);
+            // Create the EmbedBuilder instance
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setImage("https://apod.nasa.gov/apod/image/2507/MwSpires_Chay_1874.jpg");
+            textChannel.sendMessageEmbeds(eb.build()).queue();
+            textChannel.sendMessage("https://apod.nasa.gov/apod/image/2507/MwSpires_Chay_1874.jpg").queue();
+
         }
     }
     public String getAPOD(){
