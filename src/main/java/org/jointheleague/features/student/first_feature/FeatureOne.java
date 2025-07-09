@@ -10,10 +10,13 @@ import java.util.Random;
 public class FeatureOne extends FeatureTemplate {
     public final String COMMAND = "fob??";
     public final String password = "7219";
-
-    public FeatureOne(String channelName) {
+    
+    private boolean testMode;
+    
+    public FeatureOne(String channelName, boolean testMode) {
         super(channelName);
 
+        this.testMode = testMode;
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
@@ -30,11 +33,10 @@ public class FeatureOne extends FeatureTemplate {
         else if(messageContent.startsWith(COMMAND)) {
         	event.sendResponse("How can I help? Do not expect responses in a timely manner.");
         }
-        else if(messageContent.strip().startsWith("DIE!")) {
+        else if(messageContent.trim().startsWith("DIE!")) {
         	event.sendResponse("You killed Fob! What's wrong with you??");
-        	System.exit(0);
-        }
-        else if(messageContent.strip().toLowerCase().startsWith("please help me with this math problem")) {
+        	if(!testMode) {System.exit(0);}}
+        else if(messageContent.trim().toLowerCase().startsWith("please help me with this math problem")) {
         	event.sendResponse("It's simple the answer is " + new Random().nextInt(100));
         }
     }

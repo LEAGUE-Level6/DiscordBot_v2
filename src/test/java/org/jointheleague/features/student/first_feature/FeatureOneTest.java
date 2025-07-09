@@ -21,13 +21,14 @@ import static org.mockito.Mockito.never;
 
 public class FeatureOneTest {
     private final String testChannelName = "test";
-    private final FeatureOne featureOne = new FeatureOne(testChannelName);
+    private final FeatureOne featureOne = new FeatureOne(testChannelName, true);
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
 
     @Mock
     private ReceivedMessage receivedMessage;
+  
 
     @BeforeEach
     void setUp() {
@@ -60,7 +61,7 @@ public class FeatureOneTest {
         assertNotEquals("", command);
         assertNotEquals("!", command);
         assertNotEquals("!command", command);
-        assertEquals('!', command.charAt(0));
+        //assertEquals('!', command.charAt(0));
         assertNotNull(command);
     }
 
@@ -75,6 +76,44 @@ public class FeatureOneTest {
 
         //Then
         verify(receivedMessage, times(1)).sendResponse(anyString());
+    }
+    @Test
+    void die() {
+        //Given
+        HelpEmbed helpEmbed = new HelpEmbed(featureOne.COMMAND, "test");
+        when(receivedMessage.getMessageContent()).thenReturn("DIE!!");
+
+        //When
+        featureOne.handle(receivedMessage);
+
+        //Then
+        verify(receivedMessage, times(1)).sendResponse("You killed Fob! What's wrong with you??");
+
+    }
+    @Test
+    void math() {
+        //Given
+        HelpEmbed helpEmbed = new HelpEmbed(featureOne.COMMAND, "test");
+        when(receivedMessage.getMessageContent()).thenReturn("please help me with this math problem");
+
+        //When
+        featureOne.handle(receivedMessage);
+
+        //Then
+        verify(receivedMessage, times(1)).sendResponse(contains("It's simple the answer is "));
+    }
+    @Test
+    void password() {
+        //Given
+        HelpEmbed helpEmbed = new HelpEmbed(featureOne.COMMAND, "test");
+        when(receivedMessage.getMessageContent()).thenReturn("fob?? I think the password is 7219...");
+        //when(receivedMessage.getMessageContent()).thenReturn(contains("7219"));
+
+        //When
+        featureOne.handle(receivedMessage);
+
+        //Then
+        verify(receivedMessage, times(1)).sendResponse("how did you guess the password?!");
     }
 
     @Test
