@@ -34,8 +34,9 @@ public class FirstFeature extends Feature {
 
 
         if (messageContent.startsWith(COMMAND) && !messageContent.contains(ANSWERCOMMAND)&&!riddleSent) {
-
-            generatedRiddle = generateRiddle();
+            Random r = new Random();
+            int rand = r.nextInt(10);
+            generatedRiddle = generateRiddle(rand);
             //respond to message here
             event.sendResponse("Here is your riddle:\n" + generatedRiddle[0] + "\nType '" + ANSWERCOMMAND + "' to get the answer!");
             riddleSent = true;
@@ -53,10 +54,10 @@ public class FirstFeature extends Feature {
         }
     }
 
-    public String[] generateRiddle() {
+    public String[] generateRiddle(int r) {
         String[] riddle = new String[2];
-        Random r = new Random();
-        int rand = r.nextInt(10);
+        int rand = r;
+
         switch (rand) {
             case 0:
                 riddle[0] = "What is always on the ground but never dirty?";
@@ -106,12 +107,10 @@ public class FirstFeature extends Feature {
             case 9:
                 riddle[0] = "What has 13 hearts but no other organs?";
                 riddle[1] = "A deck of cards";
-
                 break;
             default:
                 riddle[0] = "What has 4 fingers and a thumb, but isn't alive?";
                 riddle[1] = "A glove";
-
         }
         ;
 
