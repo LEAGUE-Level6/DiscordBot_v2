@@ -8,6 +8,7 @@ import org.jointheleague.features.examples.second_features.HighLowGame;
 import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.help_embed.HelpListener;
+import org.jointheleague.features.student.first_feature.BananaSoftware;
 import org.jointheleague.features.student.first_feature.FeatureOne;
 
 import net.dv8tion.jda.api.JDA;
@@ -58,6 +59,7 @@ public class DiscordBot {
 
 		//add features
 		addFeature(new FeatureOne(channelName, false));
+		addFeature(new BananaSoftware(channelName));
 		addFeature(new CurrentTime(channelName));
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
