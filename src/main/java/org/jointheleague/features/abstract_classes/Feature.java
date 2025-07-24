@@ -5,8 +5,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 
-public abstract class Feature extends ListenerAdapter
-{
+import java.io.IOException;
+
+public abstract class Feature extends ListenerAdapter {
 
     protected String channelName;
 
@@ -19,7 +20,11 @@ public abstract class Feature extends ListenerAdapter
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getChannel().getName().equals(channelName)) {
-            handle(new ReceivedMessage(event));
+            try {
+                handle(new ReceivedMessage(event));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -27,6 +32,6 @@ public abstract class Feature extends ListenerAdapter
         return this.helpEmbed;
     }
 
-    public abstract void handle(ReceivedMessage event);
+    public abstract void handle(ReceivedMessage event) throws IOException;
 
 }

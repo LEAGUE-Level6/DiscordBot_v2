@@ -1,18 +1,28 @@
 package org.jointheleague.features.student.third_feature;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+
 public class FeatureThree extends Feature {
 
     public final String COMMAND = "!SpacePic";
     private WebClient webClient;
-    private static final String baseUrl = "https://api.nasa.gov/planetary/apod?api_key="+System.getenv("API_KEY");
+    boolean messageSent = false;
+    boolean provideData = false;
+    private static final String baseUrl = "https://api.nasa.gov/planetary/apod?api_key=" + System.getenv("API_KEY");
+
     public FeatureThree(String channelName) {
         super(channelName);
 
@@ -28,27 +38,50 @@ public class FeatureThree extends Feature {
     }
 
     @Override
-    public void handle(ReceivedMessage event) {
-
+    public void handle(ReceivedMessage event) throws IOException {
+        String messageDataID = "";
         String messageContent = event.getMessageContent();
-        System.out.println("Message Received");
+
         System.out.println(messageContent);
+        MessageChannel mc = event.getMessageChannel();
+
         if (messageContent.startsWith(COMMAND)) {
 
-            TextChannel textChannel = event.getMessageChannel();
 
             //respond to message here
-            System.out.println("Printing Image");
+
             String imageLink = getAPOD();
 //            EmbedBuilder embed = new EmbedBuilder();
 //            embed.setImage("https://apod.nasa.gov/apod/image/2507/MwSpires_Chay_960.jpg");
             // embed.setAuthor(imageLink);
             // Create the EmbedBuilder instance
-            EmbedBuilder eb = new EmbedBuilder();
-            eb.setImage("https://apod.nasa.gov/apod/image/2507/MwSpires_Chay_1874.jpg");
-            textChannel.sendMessageEmbeds(eb.build()).queue();
-            textChannel.sendMessage("https://apod.nasa.gov/apod/image/2507/MwSpires_Chay_1874.jpg").queue();
 
+            EmbedBuilder eb = new EmbedBuilder();
+            InputStream file = new URL(imageLink).openStream();
+            eb.setImage("attachment://upload.jpg");
+            eb.setDescription("Here is NASA's space picture of the day!");
+
+            FileUpload fu = FileUpload.fromData(file, "upload.jpg");
+            mc.sendFiles(fu).setEmbeds(eb.build()).queue();
+
+            mc.sendMessage("Do you want to know more?").queue();
+            messageDataID = mc.getLatestMessageId();
+            messageSent = true;
+        }
+
+        if (messageSent && provideData) {
+            System.out.println("here");
+            if (messageContent.contentEquals("Yes") || messageContent.contentEquals("YES") || messageContent.contentEquals("yes")) {
+                System.out.println("here");
+                EmbedBuilder eb = new EmbedBuilder();
+                ArrayList<String> data = getAPODData();
+                eb.setAuthor("Photographer: " + data.get(2));
+                eb.setTitle("Title: " + data.get(0));
+                eb.setDescription("Explanation: " + data.get(1));
+                eb.setColor(Color.BLUE);
+                mc.sendMessageEmbeds(eb.build()).queue();
+                messageSent = false;
+            }
         }
     }
     public String getAPOD(){
@@ -63,5 +96,22 @@ public class FeatureThree extends Feature {
         System.out.println(image);
         return image;
     }
+
+    public ArrayList<String> getAPODData() {
+
+        Mono<ImageWrapper> imageWrapperMono = webClient.get()
+                .retrieve()
+                .bodyToMono(ImageWrapper.class);
+
+        //collect the response into a plain old java object
+        ImageWrapper imageWrapper = imageWrapperMono.block();
+        ArrayList<String> dataList = new ArrayList<String>();
+        dataList.add(imageWrapper.getTitle());
+        dataList.add(imageWrapper.getExplanation());
+        dataList.add(imageWrapper.getCopyright());
+
+        return dataList;
+    }
+
 
 }
