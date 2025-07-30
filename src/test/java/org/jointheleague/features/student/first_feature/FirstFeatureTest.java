@@ -4,6 +4,7 @@ import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -110,7 +111,7 @@ public class FirstFeatureTest {
         firstFeature.handle(receivedMessage);
 
         //Then
-        verify(receivedMessage.getMessageContent().contains("The answer to your riddle is:"));
+        Assertions.assertTrue(receivedMessage.getMessageContent().contains("The answer to your riddle is:"));
 
     }
 
