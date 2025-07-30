@@ -17,11 +17,12 @@ import java.util.ArrayList;
 
 public class FeatureThree extends Feature {
 
-    public final String COMMAND = "!SpacePic";
-    private WebClient webClient;
-    boolean messageSent = false;
-    boolean provideData = false;
     private static final String baseUrl = "https://api.nasa.gov/planetary/apod?api_key=" + System.getenv("API_KEY");
+    public final String COMMAND = "!SpacePic";
+    boolean messageSent = false;
+
+    boolean waitForMessage = false;
+    private final WebClient webClient;
 
     public FeatureThree(String channelName) {
         super(channelName);
@@ -39,40 +40,16 @@ public class FeatureThree extends Feature {
 
     @Override
     public void handle(ReceivedMessage event) throws IOException {
-        String messageDataID = "";
+
         String messageContent = event.getMessageContent();
 
         System.out.println(messageContent);
         MessageChannel mc = event.getMessageChannel();
 
-        if (messageContent.startsWith(COMMAND)) {
+        if (waitForMessage && messageSent) {
 
+            if (messageContent.equalsIgnoreCase("yes")) {
 
-            //respond to message here
-
-            String imageLink = getAPOD();
-//            EmbedBuilder embed = new EmbedBuilder();
-//            embed.setImage("https://apod.nasa.gov/apod/image/2507/MwSpires_Chay_960.jpg");
-            // embed.setAuthor(imageLink);
-            // Create the EmbedBuilder instance
-
-            EmbedBuilder eb = new EmbedBuilder();
-            InputStream file = new URL(imageLink).openStream();
-            eb.setImage("attachment://upload.jpg");
-            eb.setDescription("Here is NASA's space picture of the day!");
-
-            FileUpload fu = FileUpload.fromData(file, "upload.jpg");
-            mc.sendFiles(fu).setEmbeds(eb.build()).queue();
-
-            mc.sendMessage("Do you want to know more?").queue();
-            messageDataID = mc.getLatestMessageId();
-            messageSent = true;
-        }
-
-        if (messageSent && provideData) {
-            System.out.println("here");
-            if (messageContent.contentEquals("Yes") || messageContent.contentEquals("YES") || messageContent.contentEquals("yes")) {
-                System.out.println("here");
                 EmbedBuilder eb = new EmbedBuilder();
                 ArrayList<String> data = getAPODData();
                 eb.setAuthor("Photographer: " + data.get(2));
@@ -81,11 +58,34 @@ public class FeatureThree extends Feature {
                 eb.setColor(Color.BLUE);
                 mc.sendMessageEmbeds(eb.build()).queue();
                 messageSent = false;
+            } else {
+                waitForMessage = false;
             }
+
+        } else if (messageContent.startsWith(COMMAND)) {
+
+            //respond to message here
+            String imageLink = getAPOD();
+            EmbedBuilder eb = new EmbedBuilder();
+            InputStream file = new URL(imageLink).openStream();
+            eb.setImage("attachment://upload.jpg");
+            eb.setDescription("Here is NASA's space picture of the day!");
+
+            FileUpload fu = FileUpload.fromData(file, "upload.jpg");
+            mc.sendFiles(fu).setEmbeds(eb.build()).complete();
+
+            mc.sendMessage("Do you want to know more?").queue((message -> {
+                messageSent = true;
+                waitForMessage = true;
+            }));
+
         }
+
+
     }
-    public String getAPOD(){
-        System.out.println("Getting Image");
+
+    public String getAPOD() {
+
         Mono<ImageWrapper> imageWrapperMono = webClient.get()
                 .retrieve()
                 .bodyToMono(ImageWrapper.class);
