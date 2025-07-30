@@ -108,9 +108,7 @@ public class FirstFeature extends Feature {
                 riddle[0] = "What has 13 hearts but no other organs?";
                 riddle[1] = "A deck of cards";
                 break;
-            default:
-                riddle[0] = "What has 4 fingers and a thumb, but isn't alive?";
-                riddle[1] = "A glove";
+
         }
         ;
 
