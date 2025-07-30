@@ -3,8 +3,6 @@ package org.jointheleague.features.student.second_feature;
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
-import org.jointheleague.features.student.second_feature.FeatureTwo;
-import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -113,5 +111,14 @@ public class FeatureTwoTest {
         //Then
         assertEquals(command, helpEmbedTitle);
     }
+
+    @Test
+    void itShouldCheckAnswers() {
+        for (int i = 0; i < 7; i++) {
+            String[] testScram = featureTwo.getScrambled(i);
+            assertEquals(featureTwo.get);
+        }
+    }
+
 
 }
