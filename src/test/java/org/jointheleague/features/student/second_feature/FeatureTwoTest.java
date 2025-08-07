@@ -113,11 +113,51 @@ public class FeatureTwoTest {
     }
 
     @Test
-    void itShouldCheckAnswers() {
+    void itShouldCheckScramble() {
         for (int i = 0; i < 7; i++) {
-            String[] testScram = featureTwo.getScrambled(i);
-            assertEquals(featureTwo.get);
+            String[] testScram = featureTwo.getScrambled(i, 1);
+            assertNotEquals(testScram[0], testScram[1]);
         }
+    }
+
+    @Test
+    void checkLevelsAdvance() {
+        featureTwo.levelCounter = 0;
+        featureTwo.ready = false;
+        when(receivedMessage.getMessageContent()).thenReturn(featureTwo.COMMAND);
+        featureTwo.handle(receivedMessage);
+        for (int i = 0; i <= 7; i++) {
+
+
+            if (i != 7) {
+                for (int j = 0; j < featureTwo.words[i].length - 1; j++) {
+                    String word = featureTwo.words[i][j];
+                    when(receivedMessage.getMessageContent()).thenReturn(featureTwo.COMMAND + " " + word);
+
+                    featureTwo.handle(receivedMessage);
+                    if (featureTwo.responseScramble[1].equals(word)) {
+                        assertEquals(i + 1, featureTwo.levelCounter);
+                    } else {
+                        assertNotEquals(word, featureTwo.responseScramble[1]);
+                    }
+                }
+
+
+            } else {
+                for (int j = 0; j < featureTwo.words[i].length - 1; j++) {
+                    String word = featureTwo.words[i][j];
+                    when(receivedMessage.getMessageContent()).thenReturn(featureTwo.COMMAND + " " + word);
+
+                    featureTwo.handle(receivedMessage);
+                    if (featureTwo.responseScramble[1].equals(word)) {
+                        assertEquals();
+                    } else {
+                        assertNotEquals(word, featureTwo.responseScramble[1]);
+                    }
+                }
+            }
+        }
+
     }
 
 

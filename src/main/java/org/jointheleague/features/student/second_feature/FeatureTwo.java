@@ -13,6 +13,8 @@ public class FeatureTwo extends Feature {
     boolean ready = false;
     int levelCounter=0;
     String[] responseScramble = null;
+
+
     public String[][] words = {
             {"six", "cat", "dog", "two","bye","man","fan","pan","zap", "hat","log","rug","pug","wet","net", "set","fix","and"},//l1
             {"iron","wood","tree","tent","duck","king","high","gold","game","fire","hate","inch","deck","farm","dust","flow","food","halt"},//l2
@@ -41,13 +43,14 @@ public class FeatureTwo extends Feature {
         String messageContent = event.getMessageContent();
 
         if (messageContent.startsWith(COMMAND)&&!ready) {
-
-             responseScramble = getScrambled(levelCounter);
-            if(levelCounter==0){
+            Random rand = new Random();
+            int id = rand.nextInt(words[levelCounter].length - 1);
+            getScrambled(levelCounter, id);
+            responseScramble = getScrambled(levelCounter, id);
+            if (levelCounter == 0) {
                 event.sendResponse("Alright, lets start a game of unscramble! \n" +
-                        "Unscramble the letters and reply with: \n"+COMMAND+" followed by your guess.\nLevel "+(levelCounter+1)+": "+responseScramble[0] );
-            }
-            else {
+                        "Unscramble the letters and reply with: \n" + COMMAND + " followed by your guess.\nLevel " + (levelCounter + 1) + ": " + responseScramble[0]);
+            } else {
                 event.sendResponse("Level " + (levelCounter + 1) + ": " + responseScramble[0]);
             }
             ready = true;
@@ -72,16 +75,15 @@ public class FeatureTwo extends Feature {
         }
     }
 
-    public String[] getScrambled(int level) {
+    public String[] getScrambled(int level, int num) {
 
         String[] scrambled = new String[2];
-        Random rand = new Random();
-        String word = words[level][rand.nextInt(words[level].length - 1)];
+        String word = words[level][num];
         char[] arrayofChars = word.toCharArray();
-        for (int i = 0; i < word.length() ; i++) {
+        for (int i = 0; i < word.length(); i++) {
             char c = arrayofChars[i];
             Random r = new Random();
-            int ran = rand.nextInt(word.length() - 1);
+            int ran = r.nextInt(word.length() - 1);
 
             arrayofChars[i] = arrayofChars[ran];
             arrayofChars[ran] = c;
