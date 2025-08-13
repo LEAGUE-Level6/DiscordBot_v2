@@ -43,15 +43,9 @@ public class BananaSoftware extends FeatureTemplate {
         
         else if(messageContent.toLowerCase().startsWith(COMMAND) && BananaMode) {
 
-        	//Scanner s = new Scanner(System.in);
-    			
     			String t = messageContent.substring(7); // good
     			String[] things = t.trim().split(" ");
-    			System.out.println("****");
-    			for(String i : things) {
-    				System.out.println(i);
-    			}
-    			System.out.println("****");
+
     			if(things.length <3 && !things[0].toUpperCase().equals("OFF")) event.sendResponse("So youre meant to *include* __both__ numbers in your argument");
     			
     			switch(things[0].toLowerCase()) {
@@ -133,7 +127,7 @@ public class BananaSoftware extends FeatureTemplate {
     					event.sendResponse(bbbb/dddd+"");
     				}
     				catch(ArithmeticException ae) {
-    					event.sendResponse("> Dividing by 0 is bad because it breaks the fundamental rules of arithmetic: there's no number you can multiply by 0 to get a nonzero result, so division by 0 has no meaningful answer. For example, if you try to divide 5 by 0, you're asking \"what number times 0 equals 5?\"—but anything times 0 is 0, not 5. This creates a contradiction, leading to undefined or infinite results, which can cause errors or crashes in math, computers, and science. --ChatGPT");
+    					event.sendResponse("bruh");
     				}
     				catch(Exception e){
     					event.sendResponse("hey i dont think thats an integer");
@@ -159,54 +153,31 @@ public class BananaSoftware extends FeatureTemplate {
     		
     		try {
     			Thread.sleep(r.nextInt(3500)+500);
-    		} catch (InterruptedException e) {
-    			e.printStackTrace();
-    		}
     		
-    		event.sendResponse("Loading... [---           ] 20%");
-    		
-    		try {
+    			event.sendResponse("Loading... [---           ] 20%");
+
     			Thread.sleep(r.nextInt(1500)+500);
-    		} catch (InterruptedException e) {
-    			e.printStackTrace();
-    		}
     		
-    		event.sendResponse("Loading... [------        ] 40%");
-    		
-    		try {
+    			event.sendResponse("Loading... [------        ] 40%");
+
     			Thread.sleep(r.nextInt(300)+100);
-    		} catch (InterruptedException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
     		
-    		event.sendResponse("Loading... [--------      ] 60%");
-    		
-    		try {
+    			event.sendResponse("Loading... [--------      ] 60%");
+    
     			Thread.sleep(300+r.nextInt(800));
-    		} catch (InterruptedException e) {
-    			e.printStackTrace();
-    		}
     		
-    		event.sendResponse("Loading... [-----------   ] 80%");
-    		
-    		try {
+    			event.sendResponse("Loading... [-----------   ] 80%");
+    
     			Thread.sleep(500+r.nextInt(3000));
-    		} catch (InterruptedException e) {
-    			e.printStackTrace();
-    		}
     		
-    		event.sendResponse("Loading... [--------------] 100%");
-    		
-    		try {
+    			event.sendResponse("Loading... [--------------] 100%");
+    
     			Thread.sleep(500+r.nextInt(2000));
-    		} catch (InterruptedException e) {
-    			e.printStackTrace();
-    		}
-    		event.sendResponse("-------- \n\n");
+    	
+    			event.sendResponse("-------- \n\n");
     		
-    		try {
     			Thread.sleep(200);
+    			
     		} catch (InterruptedException e) {
     			e.printStackTrace();
     		}

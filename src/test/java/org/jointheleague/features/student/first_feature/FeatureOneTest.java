@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.PrintStream; 
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
