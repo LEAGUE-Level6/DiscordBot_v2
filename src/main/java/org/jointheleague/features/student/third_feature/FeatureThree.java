@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class FeatureThree extends Feature {
+public class  FeatureThree extends Feature {
 
     private static final String baseUrl = "https://api.nasa.gov/planetary/apod?api_key=" + System.getenv("API_KEY");
     public final String COMMAND = "!SpacePic";
@@ -43,7 +43,7 @@ public class FeatureThree extends Feature {
 
         String messageContent = event.getMessageContent();
 
-        System.out.println(messageContent);
+       
         MessageChannel mc = event.getMessageChannel();
 
         if (waitForMessage && messageSent) {
@@ -93,7 +93,7 @@ public class FeatureThree extends Feature {
         //collect the response into a plain old java object
         ImageWrapper imageWrapper = imageWrapperMono.block();
         String image = imageWrapper.getUrl();
-        System.out.println(image);
+
         return image;
     }
 
