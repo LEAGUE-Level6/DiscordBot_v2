@@ -150,7 +150,7 @@ public class FeatureTwoTest {
 
                     featureTwo.handle(receivedMessage);
                     if (featureTwo.responseScramble[1].equals(word)) {
-                        assertEquals();
+                        assertEquals(word, featureTwo.responseScramble[1]);
                     } else {
                         assertNotEquals(word, featureTwo.responseScramble[1]);
                     }
