@@ -21,11 +21,40 @@ public class CookieClicker extends Feature {
     @Override
     public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
+        int cookies = 0;
+        int click = 1;
         if (messageContent.equals("!fishingFrenzy help")) {
             //respond to message here
             event.sendResponse("Commands:\n`!cookieCliker click` to bake a cookie.\n`!cookieClicker cookies` to see how much cookies you have.\n`!cookieClicker upgrades` to buy upgrades.");
         }
-        
+        if (messageContent.equals("!cookieClicker click")) {
+        	event.sendResponse("You gained " + click + " cookie");
+        	cookies += click;
+        }
+        if (messageContent.equals("!cookieClicker cookies")) {
+        	event.sendResponse("You have " + cookies + " cookies in total.");
+        }
+        if (messageContent.equals("!cookieClicker upgrades")) {
+        	event.sendResponse("Upgrades: Increases cookies per click. To buy, just type `!cookieClicker [upgrade name]`\nCursor (+1): 10 cookies\nGramma (+5): 50 cookies\nFarm (+10): 100 cookies\nMine (+50): 300 cookies");
+        }
+        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("cursor")) {
+        	click += 1;
+        }
+        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("gramma")) {
+        	click += 1;
+        }
+        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("cursor")) {
+        	click += 1;
+        }
+        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("cursor")) {
+        	click += 1;
+        }
+        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("cursor")) {
+        	click += 1;
+        }
+        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("cursor")) {
+        	click += 1;
+        }
     }
 
 }
