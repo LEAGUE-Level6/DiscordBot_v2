@@ -30,7 +30,7 @@ public class  FeatureThree extends Feature {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "Provides the picture of the day from the NASA APOD API by default. Add"
+                "Provides the picture of the day from the NASA APOD API by default. If you want more info, reply 'yes' when prompted."
         );
         this.webClient = WebClient
                 .builder()
