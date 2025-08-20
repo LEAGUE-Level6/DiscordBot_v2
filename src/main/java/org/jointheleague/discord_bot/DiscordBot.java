@@ -10,6 +10,7 @@ import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.first_feature.BananaSoftware;
 import org.jointheleague.features.student.first_feature.FeatureOne;
+import org.jointheleague.features.student.first_feature.WeatherAPI;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -58,6 +59,7 @@ public class DiscordBot {
 		api.addEventListener(helpListener);
 
 		//add features
+		addFeature(new WeatherAPI(channelName));
 		addFeature(new FeatureOne(channelName, false));
 		addFeature(new BananaSoftware(channelName));
 		addFeature(new CurrentTime(channelName));
