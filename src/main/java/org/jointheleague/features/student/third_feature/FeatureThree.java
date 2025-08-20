@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class  FeatureThree extends Feature {
 
-    private static final String baseUrl = "https://api.nasa.gov/planetary/apod?api_key=" + System.getenv("API_KEY");
+    private static final String baseUrl = "https://api.nasa.gov/planetary/apod?api_key=wUNlLS9OfyHwHL3XhFn1FcfJtptC2b85BKrNQSqj";// + System.getenv("API_KEY");
     public final String COMMAND = "!SpacePic";
     boolean messageSent = false;
 

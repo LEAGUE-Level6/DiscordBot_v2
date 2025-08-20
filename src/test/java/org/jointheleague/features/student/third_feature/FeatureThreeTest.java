@@ -2,11 +2,15 @@ package org.jointheleague.features.student.third_feature;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.EmbedType;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageEmbedEvent;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.function.Consumer;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -76,20 +83,78 @@ public class FeatureThreeTest {
     @Test
     void itShouldHandleMessagesWithCommand() throws IOException {
         TextChannel text = mock(TextChannel.class);
-        //Given
-        HelpEmbed helpEmbed = new HelpEmbed(featureThree.COMMAND, "test");
-        when(receivedMessage.getMessageContent()).thenReturn(featureThree.COMMAND);
+        MessageCreateAction mockAction = mock(MessageCreateAction.class);
 
+        when(receivedMessage.getMessageContent()).thenReturn(featureThree.COMMAND);
         when(receivedMessage.getMessageChannel()).thenReturn(text);
 
-        //When
+        when(text.sendFiles(any(FileUpload.class))).thenReturn(mockAction);
+        when(mockAction.setEmbeds(any(MessageEmbed.class))).thenReturn(mockAction);
+        when(mockAction.complete()).thenReturn(null);
+
+        when(text.sendMessage(anyString())).thenReturn(mockAction);
+        doNothing().when(mockAction).queue(any());
+        featureThree.handle(receivedMessage);
+
+        verify(text).sendFiles(any(FileUpload.class));
+        verify(text).sendMessage(anyString());
+        verify(mockAction).queue(any());
+    }
+    @Test
+    void itShouldGetAPI() throws IOException {
+        ArrayList<String> dataList = featureThree.getAPODData();
+        assertNotNull(dataList);
+    }
+    @Test
+    void itShouldGiveMoreInfo() throws IOException {
+        featureThree.messageSent = true;
+        featureThree.waitForMessage = true;
+        when(receivedMessage.getMessageContent()).thenReturn("yes");
+        TextChannel mockChannel = mock(TextChannel.class);
+        when(receivedMessage.getMessageChannel()).thenReturn( mockChannel);
+
+        MessageCreateAction mockAction = mock(MessageCreateAction.class);
+        when(mockChannel.sendMessageEmbeds(any(MessageEmbed.class))).thenReturn(mockAction);
+        doNothing().when(mockAction).queue(any());
         featureThree.handle(receivedMessage);
 
 
-
-        //Then
-
+        verify(mockChannel, times(1)).sendMessageEmbeds(any(MessageEmbed.class));
+        verify(mockAction, times(1)).queue();
     }
+    @Test
+    void itShouldResetWaitForMessageOnNonYes() throws IOException {
+        featureThree.messageSent = true;
+        featureThree.waitForMessage = true;
+        when(receivedMessage.getMessageContent()).thenReturn("no");
+
+        featureThree.handle(receivedMessage);
+
+        assertFalse(featureThree.waitForMessage);
+        assertTrue(featureThree.messageSent); // still true, only reset on "yes"
+    }
+    @Test
+    void itShouldBeReadyForResponse() throws IOException {
+        TextChannel text = mock(TextChannel.class);
+        MessageCreateAction mockAction = mock(MessageCreateAction.class);
+
+        when(receivedMessage.getMessageContent()).thenReturn(featureThree.COMMAND);
+        when(receivedMessage.getMessageChannel()).thenReturn(text);
+        when(text.sendFiles(any(FileUpload.class))).thenReturn(mockAction);
+        when(mockAction.setEmbeds(any(MessageEmbed.class))).thenReturn(mockAction);
+        when(mockAction.complete()).thenReturn(null);
+
+        when(text.sendMessage(anyString())).thenReturn(mockAction);
+        doAnswer(invocation -> {
+            Consumer<Message> successCallback = invocation.getArgument(0);
+            successCallback.accept(mock(Message.class));
+            return null;
+        }).when(mockAction).queue(any());
+        featureThree.handle(receivedMessage);
+        assertTrue(featureThree.waitForMessage);
+        assertTrue(featureThree.messageSent);
+    }
+
 
 
     @Test
