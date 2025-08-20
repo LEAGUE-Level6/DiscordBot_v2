@@ -2,11 +2,13 @@ package org.jointheleague.api_wrapper;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class ReceivedMessage {
 
     private MessageReceivedEvent event;
+
 
     public ReceivedMessage(MessageReceivedEvent event) {
         this.event = event;
@@ -24,4 +26,7 @@ public class ReceivedMessage {
         return this.event.getChannel().sendMessageEmbeds(embed).submit().join();
     }
 
+    public TextChannel getMessageChannel() {
+        return this.event.getChannel().asTextChannel();
+    }
 }
