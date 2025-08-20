@@ -59,7 +59,7 @@ public class FeatureTwo extends Feature {
             if (messageContent.length() > COMMAND.length()) {
                 if (responseScramble[1].equals(messageContent.substring(COMMAND.length() + 1))) {
                     if (levelCounter != 7) {
-                        event.sendResponse("Nice, You unscrambled it correctly!\nThe word was " + responseScramble[1] + "\n Type " + COMMAND + " to continue!");
+                        event.sendResponse("Nice, You unscrambled it correctly!\nThe word was " + responseScramble[1] + "\nType " + COMMAND + " to continue!");
                         ready = false;
                         levelCounter += 1;
                     } else {
