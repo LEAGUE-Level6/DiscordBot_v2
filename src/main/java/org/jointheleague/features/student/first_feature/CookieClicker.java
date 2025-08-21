@@ -7,7 +7,8 @@ import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.H
 public class CookieClicker extends Feature {
 
     public final String COMMAND = "!cookieClicker";
-
+    int cookies = 0;
+    int click = 1;
     public CookieClicker(String channelName) {
         super(channelName);
 
@@ -21,9 +22,7 @@ public class CookieClicker extends Feature {
     @Override
     public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
-        int cookies = 0;
-        int click = 1;
-        if (messageContent.equals("!fishingFrenzy help")) {
+        if (messageContent.equals("!cookieClicker help")) {
             //respond to message here
             event.sendResponse("Commands:\n`!cookieCliker click` to bake a cookie.\n`!cookieClicker cookies` to see how much cookies you have.\n`!cookieClicker upgrades` to buy upgrades.");
         }
@@ -39,21 +38,19 @@ public class CookieClicker extends Feature {
         }
         if (messageContent.startsWith(COMMAND) && messageContent.endsWith("cursor")) {
         	click += 1;
+        	cookies -= 10;
         }
         if (messageContent.startsWith(COMMAND) && messageContent.endsWith("gramma")) {
-        	click += 1;
+        	click += 5;
+        	cookies -= 50;
         }
-        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("cursor")) {
-        	click += 1;
+        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("farm")) {
+        	click += 10;
+        	cookies -= 100;
         }
-        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("cursor")) {
-        	click += 1;
-        }
-        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("cursor")) {
-        	click += 1;
-        }
-        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("cursor")) {
-        	click += 1;
+        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("mine")) {
+        	click += 50;
+        	cookies -= 300;
         }
     }
 
