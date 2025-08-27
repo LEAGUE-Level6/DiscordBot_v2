@@ -13,7 +13,7 @@ public class WeatherAPI extends FeatureTemplate{
 
 public final String COMMAND = "weather";
 	
-	private static final String key = "82d1da6ca0b64c12ada224552252008";
+	private static final String key = "65e242ae27dd4a83a3d224705252708";
     private static final String URL = "http://api.weatherapi.com/v1/current.json";
 
     private  WebClient webClient = WebClient.create(URL);
@@ -30,17 +30,32 @@ public final String COMMAND = "weather";
 	
 	
 
-    public String getCurrentWeather(String city) {
+    public CurrentWeather getCurrentWeather(String city) {
+    	
+    	Mono<CurrentWeather> apiExampleWrapperMono = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("q", city)
+                        .queryParam("key", key)
+                        .build())
+                .retrieve()
+                .bodyToMono(CurrentWeather.class);
+    	
+    	return apiExampleWrapperMono.block();
+
+    }
+    
+
+    public void printCurrentWeather(String city) {
     	
     	Mono<String> apiExampleWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("q", city)
-                        .queryParam("apiKey", key)
+                        .queryParam("key", key)
                         .build())
                 .retrieve()
                 .bodyToMono(String.class);
     	
-    	return apiExampleWrapperMono.block();
+    	System.out.println( apiExampleWrapperMono.block());
 
     }
 	
@@ -52,11 +67,22 @@ public final String COMMAND = "weather";
 		
 		if(mc.trim().toLowerCase().startsWith(COMMAND)) {
 			
-			String city = mc.trim().substring(8);
+			String city = mc.trim().substring(COMMAND.length()+2);
 			System.out.println("before block"); // debug
-			String temp = getCurrentWeather(city);
+			printCurrentWeather(city);
+			CurrentWeather data = getCurrentWeather(city);
 			System.out.println("after block"); // debug
-			event.sendResponse(temp + " fsd fsdfsdfs");
+			
+			String temp = data.getCurrent().getTempC()+"";
+			//String hum = data.getCurrent().getHumidity()+"";
+			System.out.println(data);
+			
+			event.sendResponse("Temperature (F):" + temp);
+		//	event.sendResponse("Humidity (%): " + hum);
+			
+			
+			// do the cumbersome block(String.class).substring() method to get values when blocking to string instead of wrapper
+			
 		}
     }
 	
