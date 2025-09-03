@@ -12,8 +12,9 @@ import reactor.core.publisher.Mono;
 public class WeatherAPI extends FeatureTemplate{
 
 public final String COMMAND = "weather";
+public final String COMMAND_ = "raw_weather";
 	
-	private static final String key = "65e242ae27dd4a83a3d224705252708";
+	private static final String key = "7a59fc69444d4617a5a225318250309";
     private static final String URL = "http://api.weatherapi.com/v1/current.json";
 
     private  WebClient webClient = WebClient.create(URL);
@@ -30,22 +31,22 @@ public final String COMMAND = "weather";
 	
 	
 
-    public CurrentWeather getCurrentWeather(String city) {
+    public String getCurrentWeather(String city) {
     	
-    	Mono<CurrentWeather> apiExampleWrapperMono = webClient.get()
+    	Mono<String> apiExampleWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("q", city)
                         .queryParam("key", key)
                         .build())
                 .retrieve()
-                .bodyToMono(CurrentWeather.class);
+                .bodyToMono(String.class);
     	
     	return apiExampleWrapperMono.block();
 
     }
     
 
-    public void printCurrentWeather(String city) {
+    /*public void printCurrentWeather(String city) {
     	
     	Mono<String> apiExampleWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -57,32 +58,63 @@ public final String COMMAND = "weather";
     	
     	System.out.println( apiExampleWrapperMono.block());
 
-    }
+    }*/
 	
 	public void handle(ReceivedMessage event) {
 		String mc = event.getMessageContent();
-		if(mc.trim().toLowerCase().equals(COMMAND)) {
+		if(mc.trim().toLowerCase().equals(COMMAND)||mc.trim().toLowerCase().equals(COMMAND_)) {
 			event.sendResponse("Please add a city.");
 		}
-		
+
 		if(mc.trim().toLowerCase().startsWith(COMMAND)) {
 			
-			String city = mc.trim().substring(COMMAND.length()+2);
-			System.out.println("before block"); // debug
-			printCurrentWeather(city);
-			CurrentWeather data = getCurrentWeather(city);
-			System.out.println("after block"); // debug
+			String city = mc.trim().substring(COMMAND.length()+1);
+		
+			String json = getCurrentWeather(city);
 			
-			String temp = data.getCurrent().getTempC()+"";
-			//String hum = data.getCurrent().getHumidity()+"";
-			System.out.println(data);
+			//event.sendResponse(json);
 			
-			event.sendResponse("Temperature (F):" + temp);
-		//	event.sendResponse("Humidity (%): " + hum);
+			String tempKey = "\"temp_f\":";
+	        int tempStart = json.indexOf(tempKey) + tempKey.length();
+	        int tempEnd = json.indexOf(",", tempStart);
+	        String temp = json.substring(tempStart, tempEnd);
+
+	        // Extract humidity
+	        String humidityKey = "\"humidity\":";
+	        int humidityStart = json.indexOf(humidityKey) + humidityKey.length();
+	        int humidityEnd = json.indexOf(",", humidityStart);
+	        String humidity = json.substring(humidityStart, humidityEnd);
+	        
+	        String iconKey = "\"icon\":\"";
+	        int iconStart = json.indexOf(iconKey) + iconKey.length();
+	        int iconEnd = json.indexOf("\"", iconStart);
+	        String icon = json.substring(iconStart, iconEnd);
+	        
+	        String regionKey = "\"region\":\"";
+	        int regionStart = json.indexOf(regionKey) + regionKey.length();
+	        int regionEnd = json.indexOf("\"", regionStart);
+	        String region = json.substring(regionStart, regionEnd);
+
+	        String countryKey = "\"country\":\"";
+	        int countryStart = json.indexOf(countryKey) + countryKey.length();
+	        int countryEnd = json.indexOf("\"", countryStart);
+	        String country = json.substring(countryStart, countryEnd);
+	        
+	        event.sendResponse("__Conditions for " + city + ", "+country+".__" );
+	        event.sendResponse("Temperature (F): "+temp);
+	        event.sendResponse("Humidity (%): "+humidity);
+	        event.sendResponse("https:"+icon);
+	        
 			
+			// TODO: Make a thread run this code so that I can have an external Timer 
+	        // and after some time has elapsed interrupt and say "city not found" 
 			
-			// do the cumbersome block(String.class).substring() method to get values when blocking to string instead of wrapper
+		}
+		if(mc.trim().toLowerCase().startsWith(COMMAND_)) {
+			String city = mc.trim().substring(COMMAND.length()+1);
 			
+			String json = getCurrentWeather(city);
+			event.sendResponse(json);
 		}
     }
 	
