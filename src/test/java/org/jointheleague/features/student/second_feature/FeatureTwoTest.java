@@ -144,15 +144,23 @@ public class FeatureTwoTest {
 
 
             } else {
-                for (int j = 0; j < featureTwo.words[i].length - 1; j++) {
+                for (int j = 0; j < featureTwo.words[i].length; j++) {
                     String word = featureTwo.words[i][j];
                     when(receivedMessage.getMessageContent()).thenReturn(featureTwo.COMMAND + " " + word);
 
                     featureTwo.handle(receivedMessage);
-                    if (featureTwo.responseScramble[1].equals(word)) {
-                        assertEquals(word, featureTwo.responseScramble[1]);
+                    if (i != 7) {
+                        if (featureTwo.responseScramble[1].equals(word)) {
+                            assertEquals(i + 1, featureTwo.levelCounter);
+                        } else {
+                            assertNotEquals(word, featureTwo.responseScramble[1]);
+                        }
                     } else {
-                        assertNotEquals(word, featureTwo.responseScramble[1]);
+                        if (featureTwo.responseScramble[1].equals(word)) {
+                            assertEquals(word, featureTwo.responseScramble[1]);
+                        } else {
+                            assertNotEquals(word, featureTwo.responseScramble[1]);
+                        }
                     }
                 }
             }

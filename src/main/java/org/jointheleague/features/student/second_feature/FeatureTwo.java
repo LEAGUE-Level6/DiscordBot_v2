@@ -9,7 +9,7 @@ import java.util.Random;
 public class FeatureTwo extends Feature {
 
     public final String COMMAND = "!unscramble";
-
+    Random rand = new Random();
     boolean ready = false;
     int levelCounter=0;
     String[] responseScramble = null;
@@ -43,8 +43,7 @@ public class FeatureTwo extends Feature {
         String messageContent = event.getMessageContent();
 
         if (messageContent.startsWith(COMMAND)&&!ready) {
-            Random rand = new Random();
-            int id = rand.nextInt(words[levelCounter].length - 1);
+            int id = rand.nextInt(words[levelCounter].length);
             getScrambled(levelCounter, id);
             responseScramble = getScrambled(levelCounter, id);
             if (levelCounter == 0) {
@@ -82,8 +81,8 @@ public class FeatureTwo extends Feature {
         char[] arrayofChars = word.toCharArray();
         for (int i = 0; i < word.length(); i++) {
             char c = arrayofChars[i];
-            Random r = new Random();
-            int ran = r.nextInt(word.length() - 1);
+
+            int ran = rand.nextInt(word.length());
 
             arrayofChars[i] = arrayofChars[ran];
             arrayofChars[ran] = c;
