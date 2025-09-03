@@ -12,7 +12,7 @@ public class FirstFeature extends Feature {
     public final String COMMAND = "!riddle";
     public final String ANSWERCOMMAND = "!riddleanswer";
     boolean riddleSent = false;
-
+    Random r = new Random();
     String[] generatedRiddle;
 
     public FirstFeature(String channelName) {
@@ -34,7 +34,7 @@ public class FirstFeature extends Feature {
 
 
         if (messageContent.startsWith(COMMAND) && !messageContent.contains(ANSWERCOMMAND)&&!riddleSent) {
-            Random r = new Random();
+
             int rand = r.nextInt(10);
             generatedRiddle = generateRiddle(rand);
             //respond to message here
