@@ -16,6 +16,7 @@ import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.first_feature.CookieClicker;
 import org.jointheleague.features.student.first_feature.FeatureOne;
 import org.jointheleague.features.student.first_feature.FishingFrenzy;
+import org.jointheleague.features.student.first_feature.TriviaAPI;
 
 public class DiscordBot {
 
@@ -65,6 +66,7 @@ public class DiscordBot {
 		addFeature(new CatFactsApi(channelName));
 		addFeature(new FishingFrenzy(channelName));
 		addFeature(new CookieClicker(channelName));
+		addFeature(new TriviaAPI(channelName));
 	}
 
 	private void addFeature(Feature feature){
