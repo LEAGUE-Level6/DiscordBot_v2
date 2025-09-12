@@ -42,11 +42,13 @@ public class TriviaAPI extends Feature {
               //  String story = findStory(messageContent);
             	try {
                 TriviaQuestions tq = getQuestionsByTopic(messageContent);
-            	//event.sendResponse(tq.toString());
+                System.out.println(tq);
+                for(Result r : tq.getResults()) {
+                	event.sendResponse(r.getQuestion());
+                }
             	}catch(Exception e) {
             		e.printStackTrace();
             	}
-                event.sendResponse("after tq");
             }
         }
     }
@@ -56,12 +58,11 @@ public class TriviaAPI extends Feature {
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("amount", 10)
                         .queryParam("category", "19")
+                        .queryParam("type", "boolean")
                         .build())
                 .retrieve()
                 .bodyToMono(TriviaQuestions.class);
-        System.out.println("before block");
         TriviaQuestions tq = apiExampleWrapperMono.block();
-        System.out.println("after block");
         return tq;
     }
 
