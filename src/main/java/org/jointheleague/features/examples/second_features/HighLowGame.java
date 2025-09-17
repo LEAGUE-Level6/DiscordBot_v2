@@ -52,6 +52,10 @@ public class HighLowGame extends Feature {
                 return;
             }
 
+            if(guess > 100 || guess < 1) {
+            	event.sendResponse("dang that guess was useless");
+            }
+            
             if (guess < numberToGuess) {
                 //tell them it's too low
                 event.sendResponse(guess + " is too low.  Guess again!");

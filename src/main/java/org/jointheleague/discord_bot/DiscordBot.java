@@ -1,19 +1,22 @@
 package org.jointheleague.discord_bot;
 
+import java.util.Random;
+
+import org.jointheleague.features.abstract_classes.Feature;
+import org.jointheleague.features.examples.first_features.CurrentTime;
+import org.jointheleague.features.examples.second_features.HighLowGame;
+import org.jointheleague.features.examples.third_features.CatFactsApi;
+import org.jointheleague.features.examples.third_features.NewsApi;
+import org.jointheleague.features.help_embed.HelpListener;
+import org.jointheleague.features.student.first_feature.BananaSoftware;
+import org.jointheleague.features.student.first_feature.FeatureOne;
+import org.jointheleague.features.student.first_feature.WeatherAPI;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-
-import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.second_features.HighLowGame;
-import org.jointheleague.features.examples.third_features.CatFactsApi;
-import org.jointheleague.features.examples.third_features.NewsApi;
-import org.jointheleague.features.examples.first_features.CurrentTime;
-import org.jointheleague.features.examples.first_features.RandomNumber;
-import org.jointheleague.features.help_embed.HelpListener;
-import org.jointheleague.features.student.first_feature.FeatureOne;
 
 public class DiscordBot {
 
@@ -46,7 +49,7 @@ public class DiscordBot {
 
 		//Send bot connected message in channel
 		MessageCreateData botConnected = new MessageCreateBuilder()
-				.addContent(api.getSelfUser().getName() + " has connected")
+				.addContent(""+new Random().nextInt())
 				.build();
 		api.getTextChannelsByName(channelName, true).forEach(e -> {
 			e.sendMessage(botConnected).submit().join();
@@ -56,7 +59,9 @@ public class DiscordBot {
 		api.addEventListener(helpListener);
 
 		//add features
-		addFeature(new FeatureOne(channelName));
+		addFeature(new WeatherAPI(channelName));
+		addFeature(new FeatureOne(channelName, false));
+		addFeature(new BananaSoftware(channelName));
 		addFeature(new CurrentTime(channelName));
 		addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));

@@ -8,41 +8,36 @@ import org.jointheleague.features.templates.FeatureTemplate;
 import java.util.Random;
 
 public class FeatureOne extends FeatureTemplate {
-    public final String COMMAND = "!joke";
-
-    public FeatureOne(String channelName) {
+    public final String COMMAND = "fob??";
+    public final String password = "7219";
+    
+    private boolean testMode;
+    
+    public FeatureOne(String channelName, boolean testMode) {
         super(channelName);
 
+        this.testMode = testMode;
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "This command prints cheesy jokes."
+                "Fob Fobbin"
         );
     }
 //IGNORE
     @Override
     public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
-        if (messageContent.startsWith(COMMAND)) {
-            //respond to message here
-            Random ran = new Random();
-            int ranInt = ran.nextInt(5);
-
-            switch(ranInt){
-                case 0:event.sendResponse("What’s the best thing about Switzerland? \n \n I don’t know, but the flag is a big plus.");
-                break;
-                case 1:event.sendResponse("I invented a new word! \n \n Plagiarism!");
-                break;
-                case 2:event.sendResponse("Hear about the new restaurant called Karma? \n \n There’s no menu: You get what you deserve.");
-                    break;
-                case 3:event.sendResponse("Did you hear about the claustrophobic astronaut? \n \n He just needed a little space.");
-                    break;
-                case 4:event.sendResponse("Why don’t scientists trust atoms? \n \n Because they make up everything.");
-                    break;
-                default:event.sendResponse("What’s the different between a cat and a comma? \n \n A cat has claws at the end of paws; A comma is a pause at the end of a clause. ");
-                    break;
-            }
-
+        if (messageContent.startsWith(COMMAND) && messageContent.contains(password)) {
+        	event.sendResponse("how did you guess the password?!");
+        }
+        else if(messageContent.startsWith(COMMAND)) {
+        	event.sendResponse("How can I help? Do not expect responses in a timely manner.");
+        }
+        else if(messageContent.trim().startsWith("DIE!")) {
+        	event.sendResponse("You killed Fob! What's wrong with you??");
+        	if(!testMode) {System.exit(0);}}
+        else if(messageContent.trim().toLowerCase().startsWith("please help me with this math problem")) {
+        	event.sendResponse("It's simple the answer is " + new Random().nextInt(100));
         }
     }
 }
