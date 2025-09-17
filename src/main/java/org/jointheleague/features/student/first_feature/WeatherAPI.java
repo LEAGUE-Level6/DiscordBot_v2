@@ -12,12 +12,12 @@ import reactor.core.publisher.Mono;
 public class WeatherAPI extends FeatureTemplate{
 
 public final String COMMAND = "weather";
-public final String COMMAND_ = "raw_weather";
+//public final String COMMAND_ = "raw_weather";
 	
 	private static final String key = "7a59fc69444d4617a5a225318250309";
     private static final String URL = "http://api.weatherapi.com/v1/current.json";
 
-    private  WebClient webClient = WebClient.create(URL);
+    private  WebClient webClient;
 	
 	public WeatherAPI(String channelName) {
 		super(channelName);
@@ -29,8 +29,15 @@ public final String COMMAND_ = "raw_weather";
                 .build();
 	}
 	
+	public WeatherAPI(String channelName, WebClient wc) {
+		super(channelName);
+		// TODO Auto-generated constructor stub
+		
+		this.webClient = wc;
+	}
 	
-
+	
+	/*@Deprecated
     public String getCurrentWeather(String city) {
     	
     	Mono<String> apiExampleWrapperMono = webClient.get()
@@ -43,9 +50,22 @@ public final String COMMAND_ = "raw_weather";
     	
     	return apiExampleWrapperMono.block();
 
+    }*/
+    
+    public CurrentWeather getCurrentWeather2(String city) {
+    	
+    	Mono<CurrentWeather> apiExampleWrapperMono = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("q", city)
+                        .queryParam("key", key)
+                        .build())
+                .retrieve()
+                .bodyToMono(CurrentWeather.class);
+    	
+    	return apiExampleWrapperMono.block();
+
     }
     
-
     /*public void printCurrentWeather(String city) {
     	
     	Mono<String> apiExampleWrapperMono = webClient.get()
@@ -62,19 +82,21 @@ public final String COMMAND_ = "raw_weather";
 	
 	public void handle(ReceivedMessage event) {
 		String mc = event.getMessageContent();
-		if(mc.trim().toLowerCase().equals(COMMAND)||mc.trim().toLowerCase().equals(COMMAND_)) {
+		if(mc.trim().toLowerCase().equals(COMMAND)/*||mc.trim().toLowerCase().equals(COMMAND_)*/) {
 			event.sendResponse("Please add a city.");
 		}
 
-		if(mc.trim().toLowerCase().startsWith(COMMAND)) {
+		else if(mc.trim().toLowerCase().startsWith(COMMAND)) {
 			
 			String city = mc.trim().substring(COMMAND.length()+1);
 		
-			String json = getCurrentWeather(city);
+			//String json = getCurrentWeather(city);
+			
+			CurrentWeather actualObject = getCurrentWeather2(city);
 			
 			//event.sendResponse(json);
 			
-			String tempKey = "\"temp_f\":";
+			/*String tempKey = "\"temp_f\":";
 	        int tempStart = json.indexOf(tempKey) + tempKey.length();
 	        int tempEnd = json.indexOf(",", tempStart);
 	        String temp = json.substring(tempStart, tempEnd);
@@ -98,24 +120,24 @@ public final String COMMAND_ = "raw_weather";
 	        String countryKey = "\"country\":\"";
 	        int countryStart = json.indexOf(countryKey) + countryKey.length();
 	        int countryEnd = json.indexOf("\"", countryStart);
-	        String country = json.substring(countryStart, countryEnd);
+	        String country = json.substring(countryStart, countryEnd);*/
 	        
-	        event.sendResponse("__Conditions for " + city + ", "+country+".__" );
-	        event.sendResponse("Temperature (F): "+temp);
-	        event.sendResponse("Humidity (%): "+humidity);
-	        event.sendResponse("https:"+icon);
+	        event.sendResponse("__Conditions for " + city + ", "+actualObject.getLocation().getCountry()+".__" );
+	        event.sendResponse("Temperature (F): "+actualObject.getCurrent().getTempF());
+	        event.sendResponse("Humidity (%): "+actualObject.getCurrent().getHumidity());
+	        event.sendResponse("https:"+actualObject.getCurrent().getCondition().getIcon());
 	        
 			
 			// TODO: Make a thread run this code so that I can have an external Timer 
 	        // and after some time has elapsed interrupt and say "city not found" 
 			
 		}
-		if(mc.trim().toLowerCase().startsWith(COMMAND_)) {
+		/*if(mc.trim().toLowerCase().startsWith(COMMAND_)) {
 			String city = mc.trim().substring(COMMAND.length()+1);
 			
 			String json = getCurrentWeather(city);
 			event.sendResponse(json);
-		}
+		}*/
     }
 	
 	
