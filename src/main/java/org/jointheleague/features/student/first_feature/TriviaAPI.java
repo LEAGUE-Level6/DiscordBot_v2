@@ -1,5 +1,9 @@
 package org.jointheleague.features.student.first_feature;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
@@ -18,7 +22,7 @@ public class TriviaAPI extends Feature {
 
     public TriviaAPI(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "TriviaAPI gives trivia questions of different topics. This returns a trivia question related to topic 3 (e.g. !triviaAPI 3)");
+        helpEmbed = new HelpEmbed(COMMAND, "TriviaAPI gives trivia true or false questions of different topics. This starts a trivia quiz related to topic 9 (e.g. !triviaAPI 9)");
 
         //build the WebClient
         this.webClient = WebClient
@@ -26,38 +30,85 @@ public class TriviaAPI extends Feature {
                 .baseUrl(baseUrl)
                 .build();
     }
-
+    boolean quizStarted = false;
+    TriviaQuestions tq;
+    int currentQuestion = 0;
     @Override
     public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
-            messageContent = messageContent
-                    .replace(COMMAND, "")
-                    .replace(" " , "");
-            if (messageContent.equals("")) {
-                event.sendResponse("Please put a topic after the command (e.g. " + COMMAND + " 3)");
+            if (messageContent.equals("!triviaAPI")) {
+                event.sendResponse("Please put a topic after the command (e.g. " + COMMAND + " 9)");
             }
-            else{
-            	System.out.println(messageContent);
-              //  String story = findStory(messageContent);
+            if (messageContent.equals("!triviaAPI categories")) {
+            	StringBuilder sb = new StringBuilder();
+            	for (Integer key : categories.keySet()) {
+            		sb.append(key + " : " + categories.get(key) + "\n");
+            	}
+            	event.sendResponse(sb.toString());
+            }
+            if (messageContent.equals("!triviaAPI stopQuiz")) {
+            	quizStarted = false;
+            	event.sendResponse("Quiz stopped.");
+            }
+            if (messageContent.startsWith("!triviaAPI startQuiz")){
+            	quizStarted = true;
+              //  String story = findStory(messageContent); 
+            
+            
+            
+            
             	try {
-                TriviaQuestions tq = getQuestionsByTopic(messageContent);
-                System.out.println(tq);
-                for(Result r : tq.getResults()) {
-                	event.sendResponse(r.getQuestion());
+               
+                	tq = getQuestionsByTopic(messageContent);
+                	event.sendResponse("Starting 10 question quiz about topic: ");
+                //
+                
+                int questionNumber = 1;
+                for(Question r : tq.getResults()) {
+                	event.sendResponse("Question #" + questionNumber + ": " + r.getQuestion() + " True or false?");
                 }
-            	}catch(Exception e) {
+            	}
+            	catch(Exception e) {
             		e.printStackTrace();
             	}
             }
         }
     }
+    Map<Integer, String> categories = new TreeMap<>();
+    {
+    	categories.put(9, "General Knowledge");
+    	categories.put(10, "Books");
+    	categories.put(11, "Film");
+    	categories.put(12, "Music");
+    	categories.put(13, "Musical and Theater");
+    	categories.put(14, "Television");
+    	categories.put(15, "Video Games");
+    	categories.put(16, "Board Games");
+    	categories.put(17, "Science and Nature");
+    	categories.put(18, "Computers");
+    	categories.put(19, "Math");
+    	categories.put(20, "Mythology");
+    	categories.put(21, "Sports");
+    	categories.put(22, "Geography");
+    	categories.put(23, "History");
+    	categories.put(24, "Politics");
+    	categories.put(25, "Art");
+    	categories.put(26, "Celebrities");
+    	categories.put(27, "Animals");
+    	categories.put(28, "Vehicles");
+    	categories.put(29, "Comics");
+    	categories.put(30, "Gadgets");
+    	categories.put(31, "Anime");
+    	categories.put(32, "Cartoons");
+    }
 
+    
     public TriviaQuestions getQuestionsByTopic(String topic) {
         Mono<TriviaQuestions> apiExampleWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("amount", 10)
-                        .queryParam("category", "19")
+                        .queryParam("category", topic)
                         .queryParam("type", "boolean")
                         .build())
                 .retrieve()

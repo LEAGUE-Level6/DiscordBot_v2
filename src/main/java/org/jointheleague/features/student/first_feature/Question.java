@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "incorrect_answers"
 })
 @Generated("jsonschema2pojo")
-public class Result {
+public class Question {
 
     @JsonProperty("type")
     private String type;
@@ -112,7 +112,7 @@ public class Result {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(Result.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(Question.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("type");
         sb.append('=');
         sb.append(((this.type == null)?"<null>":this.type));
