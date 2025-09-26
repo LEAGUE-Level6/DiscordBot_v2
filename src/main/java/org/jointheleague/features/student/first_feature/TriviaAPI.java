@@ -11,6 +11,7 @@ import org.jointheleague.features.examples.third_features.plain_old_java_objects
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import org.apache.commons.text.StringEscapeUtils;
 
 //Documentation for the API can be found here: https://newsapi.org/docs/get-started
 public class TriviaAPI extends Feature {
@@ -33,48 +34,7 @@ public class TriviaAPI extends Feature {
     boolean quizStarted = false;
     TriviaQuestions tq;
     int currentQuestion = 0;
-    @Override
-    public void handle(ReceivedMessage event) {
-        String messageContent = event.getMessageContent();
-        if (messageContent.startsWith(COMMAND)) {
-            if (messageContent.equals("!triviaAPI")) {
-                event.sendResponse("Please put a topic after the command (e.g. " + COMMAND + " 9)");
-            }
-            if (messageContent.equals("!triviaAPI categories")) {
-            	StringBuilder sb = new StringBuilder();
-            	for (Integer key : categories.keySet()) {
-            		sb.append(key + " : " + categories.get(key) + "\n");
-            	}
-            	event.sendResponse(sb.toString());
-            }
-            if (messageContent.equals("!triviaAPI stopQuiz")) {
-            	quizStarted = false;
-            	event.sendResponse("Quiz stopped.");
-            }
-            if (messageContent.startsWith("!triviaAPI startQuiz")){
-            	quizStarted = true;
-              //  String story = findStory(messageContent); 
-            
-            
-            
-            
-            	try {
-               
-                	tq = getQuestionsByTopic(messageContent);
-                	event.sendResponse("Starting 10 question quiz about topic: ");
-                //
-                
-                int questionNumber = 1;
-                for(Question r : tq.getResults()) {
-                	event.sendResponse("Question #" + questionNumber + ": " + r.getQuestion() + " True or false?");
-                }
-            	}
-            	catch(Exception e) {
-            		e.printStackTrace();
-            	}
-            }
-        }
-    }
+    int score = 0;
     Map<Integer, String> categories = new TreeMap<>();
     {
     	categories.put(9, "General Knowledge");
@@ -101,6 +61,68 @@ public class TriviaAPI extends Feature {
     	categories.put(30, "Gadgets");
     	categories.put(31, "Anime");
     	categories.put(32, "Cartoons");
+    }
+    @Override
+    public void handle(ReceivedMessage event) {
+        String messageContent = event.getMessageContent();
+        if (messageContent.startsWith(COMMAND)) {
+            if (messageContent.equals("!triviaAPI help")) {
+                event.sendResponse("Commands:\n`!triviaAPI categories` to list all topics.\n`!triviaAPI startQuiz [topic number]` to start a quiz based on a topic.\n`!triviaAPI stopQuiz` to stop the current quiz.\n`!triviaAPI answer [answer]` to answer a question.");
+            }
+            if (messageContent.equals("!triviaAPI categories")) {
+            	StringBuilder sb = new StringBuilder();
+            	for (Integer key : categories.keySet()) {
+            		sb.append(key + " : " + categories.get(key) + "\n");
+            	}
+            	event.sendResponse(sb.toString());
+            }
+            if (messageContent.equals("!triviaAPI stopQuiz")) {
+            	quizStarted = false;
+            	event.sendResponse("Quiz stopped. You got a final score of " + score + "/" + currentQuestion);
+            }
+            if (messageContent.startsWith("!triviaAPI startQuiz")){
+            	messageContent = messageContent.replace("!triviaAPI startQuiz ", "");
+            	quizStarted = true;
+              //  String story = findStory(messageContent); 
+            
+            
+            
+            
+            	try {
+               
+                	tq = getQuestionsByTopic(messageContent);
+                	event.sendResponse("Starting 10 question quiz about topic: " + (categories.get(Integer.parseInt(messageContent))));
+                //
+                	event.sendResponse("Question #" + (currentQuestion+1) + ": " + StringEscapeUtils.unescapeHtml4(tq.getResults().get(currentQuestion).getQuestion() + " True or false?"));
+            	}
+            	catch(Exception e) {
+            		e.printStackTrace();
+            	}
+            }
+            if (messageContent.startsWith("!triviaAPI answer")) {
+            	if (quizStarted) {
+            		messageContent = messageContent.replace("!triviaAPI answer ", "");
+            		if (messageContent.toLowerCase().equals(tq.getResults().get(currentQuestion).getCorrectAnswer().toLowerCase())) {
+            			event.sendResponse("Correct!");
+            			score++;
+            			currentQuestion++;
+            		}
+            		else {
+            			event.sendResponse("Incorrect! The answer was " + tq.getResults().get(currentQuestion).getCorrectAnswer());
+            			currentQuestion++;
+            		}
+            		if (currentQuestion == 10) {
+            			event.sendResponse("Congrats! You have finished the quiz! You got a final score of " + score + "/" + currentQuestion);
+            		}
+            		else {
+            			event.sendResponse("Question #" + (currentQuestion+1) + ": " + StringEscapeUtils.unescapeHtml4(tq.getResults().get(currentQuestion).getQuestion() + " True or false?"));
+            		}
+            	}
+            	else {
+            		event.sendResponse("There is no quiz started.");
+            	}
+            }
+        }
     }
 
     
