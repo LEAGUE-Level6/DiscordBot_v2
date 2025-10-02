@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
-public class FeatureOneTest {
+public class TriviaAPITest {
     private final String testChannelName = "test";
     private final FeatureOne featureOne = new FeatureOne(testChannelName);
 

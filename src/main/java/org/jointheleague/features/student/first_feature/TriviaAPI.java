@@ -77,8 +77,14 @@ public class TriviaAPI extends Feature {
             	event.sendResponse(sb.toString());
             }
             if (messageContent.equals("!triviaAPI stopQuiz")) {
+            	if (!quizStarted) {
+            		event.sendResponse("There is no quiz started.");
+            		return;
+            	}
             	quizStarted = false;
             	event.sendResponse("Quiz stopped. You got a final score of " + score + "/" + currentQuestion);
+            	currentQuestion = 0;
+            	score = 0;
             }
             if (messageContent.startsWith("!triviaAPI startQuiz")){
             	messageContent = messageContent.replace("!triviaAPI startQuiz ", "");
@@ -110,9 +116,12 @@ public class TriviaAPI extends Feature {
             		else {
             			event.sendResponse("Incorrect! The answer was " + tq.getResults().get(currentQuestion).getCorrectAnswer());
             			currentQuestion++;
+        
             		}
             		if (currentQuestion == 10) {
             			event.sendResponse("Congrats! You have finished the quiz! You got a final score of " + score + "/" + currentQuestion);
+            			currentQuestion = 0;
+            			score = 0;
             		}
             		else {
             			event.sendResponse("Question #" + (currentQuestion+1) + ": " + StringEscapeUtils.unescapeHtml4(tq.getResults().get(currentQuestion).getQuestion() + " True or false?"));

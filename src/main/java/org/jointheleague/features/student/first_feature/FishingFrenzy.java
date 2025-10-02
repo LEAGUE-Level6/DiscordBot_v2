@@ -32,33 +32,37 @@ public class FishingFrenzy extends Feature {
         else if (messageContent.equals("!fishingFrenzy fish")) {
         	Random r = new Random();
             double randomNumber = r.nextDouble() * 100;
-            if (randomNumber < 1) {
-                event.sendResponse("You caught a Dragonfish! (Legendary: 1%)\nYou gained 750 coins!");
-                coins+=750;
-            } else if (randomNumber < 5){
-                event.sendResponse("You caught a Golden Koi! (Mythic: 4%)\nYou gained 300 coins!");
-                coins+=300;
-            }
-            else if (randomNumber < 15) {
-            	event.sendResponse("You caught a Swordfish! (Epic: 10%)\nYou gained 150 coins!");
-            	coins+=150;
-            }
-            else if (randomNumber < 30) {
-            	event.sendResponse("You caught a Salmon! (Rare: 15%)\nYou gained 75 coins!");
-            	coins+=75;
-            }
-            else if (randomNumber < 55) {
-            	event.sendResponse("You caught a Mackeral! (Uncommon: 25%)\nYou gained 30 coins!");
-            	coins+=30;
-            }
-            else {
-            	event.sendResponse("You caught a Carp! (Common: 45%)\nYou gained 10 coins!");
-            	coins+=10;
-            }
+            fishdrops(event, randomNumber);
         }
         else if (messageContent.equals("!fishingFrenzy balance")) {
         	event.sendResponse("You have " + coins + " coins.");
         }
     }
+
+	public void fishdrops(ReceivedMessage event, double randomNumber) {
+		if (randomNumber < 1) {
+		    event.sendResponse("You caught a Dragonfish! (Legendary: 1%)\nYou gained 750 coins!");
+		    coins+=750;
+		} else if (randomNumber < 5){
+		    event.sendResponse("You caught a Golden Koi! (Mythic: 4%)\nYou gained 300 coins!");
+		    coins+=300;
+		}
+		else if (randomNumber < 15) {
+			event.sendResponse("You caught a Swordfish! (Epic: 10%)\nYou gained 150 coins!");
+			coins+=150;
+		}
+		else if (randomNumber < 30) {
+			event.sendResponse("You caught a Salmon! (Rare: 15%)\nYou gained 75 coins!");
+			coins+=75;
+		}
+		else if (randomNumber < 55) {
+			event.sendResponse("You caught a Mackeral! (Uncommon: 25%)\nYou gained 30 coins!");
+			coins+=30;
+		}
+		else {
+			event.sendResponse("You caught a Carp! (Common: 45%)\nYou gained 10 coins!");
+			coins+=10;
+		}
+	}
 
 }
