@@ -22,33 +22,36 @@ public class CookieClicker extends Feature {
     @Override
     public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
-        if (messageContent.equals("!cookieClicker help")) {
+        if (messageContent.equals(COMMAND)) {
+        	event.sendResponse("Please type something after the command.");
+        }
+        else if (messageContent.equals("!cookieClicker help")) {
             //respond to message here
             event.sendResponse("Commands:\n`!cookieCliker click` to bake a cookie.\n`!cookieClicker cookies` to see how much cookies you have.\n`!cookieClicker upgrades` to buy upgrades.");
         }
-        if (messageContent.equals("!cookieClicker click")) {
-        	event.sendResponse("You gained " + click + " cookie");
+        else if (messageContent.equals("!cookieClicker click")) {
         	cookies += click;
+        	event.sendResponse("You gained " + click + " cookie");
         }
-        if (messageContent.equals("!cookieClicker cookies")) {
+        else if (messageContent.equals("!cookieClicker cookies")) {
         	event.sendResponse("You have " + cookies + " cookies in total.");
         }
-        if (messageContent.equals("!cookieClicker upgrades")) {
+        else if (messageContent.equals("!cookieClicker upgrades")) {
         	event.sendResponse("Upgrades: Increases cookies per click. To buy, just type `!cookieClicker [upgrade name]`\nCursor (+1): 10 cookies\nGramma (+5): 50 cookies\nFarm (+10): 100 cookies\nMine (+50): 300 cookies");
         }
-        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("cursor")) {
+        else if (messageContent.equals("!cookieClicker cursor")) {
         	click += 1;
         	cookies -= 10;
         }
-        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("gramma")) {
+        else if (messageContent.equals("!cookieClicker gramma")) {
         	click += 5;
         	cookies -= 50;
         }
-        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("farm")) {
+        else if (messageContent.equals("!cookieClicker farm")) {
         	click += 10;
         	cookies -= 100;
         }
-        if (messageContent.startsWith(COMMAND) && messageContent.endsWith("mine")) {
+        else if (messageContent.equals("!cookieClicker mine")) {
         	click += 50;
         	cookies -= 300;
         }
