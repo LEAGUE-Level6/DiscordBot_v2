@@ -9,7 +9,7 @@ import org.jointheleague.features.abstract_classes.Feature;
 
 public class HelpListener extends Feature {
 
-	public final String COMMAND = "!help";
+	public final String COMMAND = "/help";
 	private List<HelpEmbed> helpEmbeds = new ArrayList<>();
 
 	public HelpListener(String channelName) {

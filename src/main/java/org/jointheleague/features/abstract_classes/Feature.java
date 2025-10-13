@@ -13,7 +13,7 @@ public abstract class Feature extends ListenerAdapter
 
     public HelpEmbed helpEmbed;
 
-    public Feature(String channelName) {
+    public Feature(String channelName ) {
         this.channelName = channelName;
     }
 

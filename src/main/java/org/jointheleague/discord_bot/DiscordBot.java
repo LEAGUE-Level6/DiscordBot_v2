@@ -7,11 +7,11 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import org.jointheleague.features.abstract_classes.Feature;
-import org.jointheleague.features.examples.second_features.HighLowGame;
-import org.jointheleague.features.examples.third_features.CatFactsApi;
 import org.jointheleague.features.examples.third_features.NewsApi;
-import org.jointheleague.features.examples.first_features.CurrentTime;
 import org.jointheleague.features.help_embed.HelpListener;
+import org.jointheleague.features.student.Hooray;
+import org.jointheleague.features.student.TryAgain;
+import org.jointheleague.features.student.Input;
 
 public class DiscordBot {
 
@@ -37,14 +37,15 @@ public class DiscordBot {
 		api.awaitReady();
 
 		//Print the URL to invite the bot
-		if (printInvite) {
+		//if (printInvite) {
 			System.out.println("To authorize your bot, send your teacher this link: " + api.getInviteUrl()
 					+"\n\tThis message can be disabled in org.jointheleague.Launcher.java");
-		}
+			//api.getTextChannelsByName(channelName, true).forEach(e -> e.sendMessage(api.getInviteUrl()).submit());
+		//}
 
 		//Send bot connected message in channel
 		MessageCreateData botConnected = new MessageCreateBuilder()
-				.addContent(api.getSelfUser().getName() + " has entered the building")
+				.addContent(api.getSelfUser().getName() + " has blessed you with his presence")
 				.build();
 		api.getTextChannelsByName(channelName, true).forEach(e -> {
 			e.sendMessage(botConnected).submit().join();
@@ -55,10 +56,12 @@ public class DiscordBot {
 
 		//add features
 		addFeature(new TryAgain(channelName));
-		addFeature(new CurrentTime(channelName));
-		addFeature(new HighLowGame(channelName));
+		addFeature(new Hooray(channelName));
+		addFeature(new Input(channelName));
+		//addFeature(new CurrentTime(channelName));
+		//addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
-		addFeature(new CatFactsApi(channelName));
+		//addFeature(new CatFactsApi(channelName));
 	}
 
 	private void addFeature(Feature feature){
