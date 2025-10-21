@@ -24,4 +24,6 @@ public class ReceivedMessage {
         return this.event.getChannel().sendMessageEmbeds(embed).submit().join();
     }
 
+    public String getAuthor() { return this.event.getAuthor().getId(); }
+
 }

@@ -12,6 +12,7 @@ import org.jointheleague.features.help_embed.HelpListener;
 import org.jointheleague.features.student.Hooray;
 import org.jointheleague.features.student.TryAgain;
 import org.jointheleague.features.student.Input;
+import org.jointheleague.features.student.first_feature.PriceNotifier;
 
 public class DiscordBot {
 
@@ -61,6 +62,7 @@ public class DiscordBot {
 		//addFeature(new CurrentTime(channelName));
 		//addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
+		addFeature(new PriceNotifier(channelName));
 		//addFeature(new CatFactsApi(channelName));
 	}
 
