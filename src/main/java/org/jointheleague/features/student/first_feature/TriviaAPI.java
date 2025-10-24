@@ -94,16 +94,16 @@ public class TriviaAPI extends Feature {
             
             
             
-            	try {
+//            	try {
                
                 	tq = getQuestionsByTopic(messageContent);
                 	event.sendResponse("Starting 10 question quiz about topic: " + (categories.get(Integer.parseInt(messageContent))));
                 //
                 	event.sendResponse("Question #" + (currentQuestion+1) + ": " + StringEscapeUtils.unescapeHtml4(tq.getResults().get(currentQuestion).getQuestion() + " True or false?"));
-            	}
-            	catch(Exception e) {
-            		e.printStackTrace();
-            	}
+//            	}
+//            	catch(Exception e) {
+//            		e.printStackTrace();
+//            	}
             }
             if (messageContent.startsWith("!triviaAPI answer")) {
             	if (quizStarted) {

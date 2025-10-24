@@ -1,5 +1,6 @@
 package org.jointheleague.features.student.first_feature;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.ApiExampleWrapper;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -137,9 +139,41 @@ public class TriviaAPITest {
     @Test
     void itShouldStartQuiz() {
         //Given
-    	when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND + " startQuiz");
+    	when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND + " startQuiz 15");
         //When
     	featureOne.handle(receivedMessage);
+    	verify(receivedMessage).sendResponse("Starting 10 question quiz about topic: " + (featureOne.categories.get(15)));
+    	verify(receivedMessage).sendResponse("Question #" + (featureOne.currentQuestion+1) + ": " + StringEscapeUtils.unescapeHtml4(featureOne.tq.getResults().get(featureOne.currentQuestion).getQuestion() + " True or false?"));
+    }
+    @Test
+    void itShouldAnswer() {
+    	Question q = new Question();
+    	q.question = "1+1 = 2";
+    	q.correctAnswer = "true";
+    	Question q2 = new Question();
+    	q.question = "2+2 = 5";
+    	q.correctAnswer = "false";
+    	TriviaQuestions tq = new TriviaQuestions();
+    	tq.results = new ArrayList<Question> ();
+    	tq.results.add(q);
+    	tq.results.add(q2);
+    	featureOne.tq = tq;
+        //Given
+    	when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND + " answer true");
+    	featureOne.handle(receivedMessage);
+        //When
+    	int score = featureOne.score;
+    	int currentQuestion = featureOne.currentQuestion;
+    	if(featureOne.quizStarted) {
+    		if (featureOne.tq.getResults().get(featureOne.currentQuestion).getCorrectAnswer().toLowerCase().equals("true")) {
+    			verify(receivedMessage).sendResponse("Correct");
+    			assertEquals(score+1, featureOne.score);
+    			assertEquals(currentQuestion+1, featureOne.currentQuestion);
+    		}
+    		featureOne.handle(receivedMessage);
+    		verify(receivedMessage).sendResponse("Incorrect! The answer was " + featureOne.tq.getResults().get(featureOne.currentQuestion).getCorrectAnswer());
+    		assertEquals(currentQuestion+1, featureOne.currentQuestion);
+    	}
     	
     }
 }

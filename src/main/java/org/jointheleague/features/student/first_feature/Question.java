@@ -31,9 +31,9 @@ public class Question {
     @JsonProperty("category")
     private String category;
     @JsonProperty("question")
-    private String question;
+    public String question;
     @JsonProperty("correct_answer")
-    private String correctAnswer;
+    public String correctAnswer;
     @JsonProperty("incorrect_answers")
     private List<String> incorrectAnswers;
     @JsonIgnore

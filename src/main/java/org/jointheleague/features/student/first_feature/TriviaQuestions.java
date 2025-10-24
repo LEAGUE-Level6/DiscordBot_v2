@@ -23,7 +23,7 @@ public class TriviaQuestions {
     @JsonProperty("response_code")
     private Integer responseCode;
     @JsonProperty("results")
-    private List<Question> results;
+    public List<Question> results;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new LinkedHashMap<String, Object>();
 
