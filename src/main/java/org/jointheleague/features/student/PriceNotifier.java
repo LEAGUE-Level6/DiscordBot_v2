@@ -1,4 +1,4 @@
-package org.jointheleague.features.student.first_feature;
+package org.jointheleague.features.student;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -10,6 +10,11 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
+import org.jointheleague.features.student.pojo.AuctionDataWrapper;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+import java.util.Random;
 
 public class PriceNotifier extends Feature {
     //when an item on ah reaches a certain min/max price it notifies users that it happened and notifies when it is
@@ -30,9 +35,11 @@ public class PriceNotifier extends Feature {
     //https://api.hypixel.net/#tag/SkyBlock/paths/~1v2~1skyblock~1auctions/get
     //https://developer.hypixel.net/
 
+        public final String COMMAND = "/money";
         protected String channelName;
-
         public HelpEmbed helpEmbed;
+        private WebClient webClient;
+        private static final String baseUrl = "https://api.hypixel.net/v2/skyblock/auctions";
 
     public PriceNotifier(String channelName) {
         super(channelName);
@@ -40,16 +47,16 @@ public class PriceNotifier extends Feature {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "Give a brief description of your feature here, including how the user interacts with it"
+                "Notifies you when specified items reach a certain price threshold" +
+                        "\nhttps://api.hypixel.net/#tag/SkyBlock/paths/~1v2~1skyblock~1auctions/get"
         );
-    }
 
-        @Override
-        public void onMessageReceived(MessageReceivedEvent event) {
-            if (event.getChannel().getName().equals(channelName)) {
-                handle(new ReceivedMessage(event));
-            }
-        }
+        this.webClient = WebClient
+                .builder()
+                .baseUrl(baseUrl)
+                .build()
+                ;
+    }
 
         public HelpEmbed getHelpEmbed() {
             return this.helpEmbed;
@@ -57,7 +64,28 @@ public class PriceNotifier extends Feature {
 
     @Override
     public void handle(ReceivedMessage event) {
+        String messageContent = event.getMessageContent();
+        if (messageContent.startsWith(COMMAND)) {
+            String out = "";
+           // event.sendResponse(out = new Random().nextBoolean() ? ":thumbsup:" : ":thumbsdown:");
+            event.sendResponse("g");
 
+            getData();
+
+            event.sendResponse("status: " );
+
+        }
+    }
+    public AuctionDataWrapper getData(){
+        Mono<AuctionDataWrapper> request = webClient.get().retrieve().bodyToMono(AuctionDataWrapper.class);
+        System.out.println("no errors pulling data");
+        AuctionDataWrapper out = null;
+        try{
+            out = request.block();
+        }catch(Exception e){
+e.printStackTrace();
+        }
+        return out;
     }
 
 }

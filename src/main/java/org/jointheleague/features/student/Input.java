@@ -10,7 +10,7 @@ import java.util.Locale;
 
 public class Input extends Feature {
 
-    public final String COMMAND = "im";
+    public final String COMMAND = "I'm . . .";
 
     public Input(String channelName) {
         super(channelName);
@@ -18,7 +18,7 @@ public class Input extends Feature {
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
                 COMMAND,
-                "Give a brief description of your feature here, including how the user interacts with it"
+                "Greats you by your name"
         );
     }
 
@@ -26,7 +26,7 @@ public class Input extends Feature {
     public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
         if (!event.getAuthor().equals("1424893152765935738")){
-            if (messageContent.toLowerCase().contains(COMMAND)) {
+            if (messageContent.toLowerCase().contains("im")) {
                 event.sendResponse("Hey " + caps(messageContent.substring(messageContent.toLowerCase().indexOf("im") + 3)) + ", the name's LeBron");
             } else if (messageContent.toLowerCase().contains("i'm")) {
                 event.sendResponse("Hey " + caps(messageContent.substring(messageContent.toLowerCase().indexOf("i'm") + 4)) + ", the name's LeBron");

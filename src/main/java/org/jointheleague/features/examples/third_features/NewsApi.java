@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 //Documentation for the API can be found here: https://newsapi.org/docs/get-started
 public class NewsApi extends Feature {
 
-    public final String COMMAND = "!newsApi";
+    public final String COMMAND = "/newsApi";
 
     private WebClient webClient;
     private static final String baseUrl = "http://newsapi.org/v2/everything";
@@ -19,7 +19,7 @@ public class NewsApi extends Feature {
 
     public NewsApi(String channelName) {
         super(channelName);
-        helpEmbed = new HelpEmbed(COMMAND, "Example of using an API to get information from another service.  This returns a news story related to a topic (e.g. !apiExample cats)");
+        helpEmbed = new HelpEmbed(COMMAND, "Example of using an API to get information from another service.  This returns a news story related to a topic (e.g. /newApi cement)");
 
         //build the WebClient
         this.webClient = WebClient
