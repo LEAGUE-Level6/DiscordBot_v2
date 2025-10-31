@@ -146,34 +146,70 @@ public class TriviaAPITest {
     	verify(receivedMessage).sendResponse("Question #" + (featureOne.currentQuestion+1) + ": " + StringEscapeUtils.unescapeHtml4(featureOne.tq.getResults().get(featureOne.currentQuestion).getQuestion() + " True or false?"));
     }
     @Test
-    void itShouldAnswer() {
+    void testUserSendsAnswerWithoutQuizStarted() {
+    	featureOne.quizStarted = false;
+    	when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND + " answer true");
+    	featureOne.handle(receivedMessage);
+    	verify(receivedMessage).sendResponse("There is no quiz started.");
+    }
+    @Test
+    void itShouldHaveIncorrectAnswer() {
     	Question q = new Question();
     	q.question = "1+1 = 2";
     	q.correctAnswer = "true";
     	Question q2 = new Question();
-    	q.question = "2+2 = 5";
-    	q.correctAnswer = "false";
+    	q2.question = "2+2 = 5";
+    	q2.correctAnswer = "false";
+    	TriviaQuestions tq = new TriviaQuestions();
+    	tq.results = new ArrayList<Question> ();
+    	tq.results.add(q);
+    	tq.results.add(q2);
+    	featureOne.tq = tq;
+    	int currentQuestion = featureOne.currentQuestion;
+    	featureOne.quizStarted = true;
+    	when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND + " answer false");
+    	featureOne.handle(receivedMessage);
+    	verify(receivedMessage).sendResponse("Incorrect! The answer was " + featureOne.tq.getResults().get(featureOne.currentQuestion).getCorrectAnswer());
+    	assertEquals(currentQuestion+1, featureOne.currentQuestion);
+    }
+    @Test
+    void itShouldHaveCorrectAnswer() {
+    	Question q = new Question();
+    	q.question = "1+1 = 2";
+    	q.correctAnswer = "true";
+    	Question q2 = new Question();
+    	q2.question = "2+2 = 5";
+    	q2.correctAnswer = "false";
     	TriviaQuestions tq = new TriviaQuestions();
     	tq.results = new ArrayList<Question> ();
     	tq.results.add(q);
     	tq.results.add(q2);
     	featureOne.tq = tq;
         //Given
-    	when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND + " answer true");
-    	featureOne.handle(receivedMessage);
-        //When
+    	featureOne.quizStarted = true;
     	int score = featureOne.score;
     	int currentQuestion = featureOne.currentQuestion;
-    	if(featureOne.quizStarted) {
-    		if (featureOne.tq.getResults().get(featureOne.currentQuestion).getCorrectAnswer().toLowerCase().equals("true")) {
-    			verify(receivedMessage).sendResponse("Correct");
-    			assertEquals(score+1, featureOne.score);
-    			assertEquals(currentQuestion+1, featureOne.currentQuestion);
-    		}
-    		featureOne.handle(receivedMessage);
-    		verify(receivedMessage).sendResponse("Incorrect! The answer was " + featureOne.tq.getResults().get(featureOne.currentQuestion).getCorrectAnswer());
-    		assertEquals(currentQuestion+1, featureOne.currentQuestion);
-    	}
-    	
+    	when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND + " answer true");
+    	featureOne.handle(receivedMessage);
+    	verify(receivedMessage).sendResponse("Correct!");
+    	assertEquals(currentQuestion+1, featureOne.currentQuestion);
+    	assertEquals(score+1, featureOne.score);
     }
+//    @Test
+//    void itShouldEndQuiz() {
+//    	Question q = new Question();
+//    	q.question = "1+1 = 2";
+//    	q.correctAnswer = "true";
+//    	TriviaQuestions tq = new TriviaQuestions();
+//    	tq.results = new ArrayList<Question> ();
+//    	tq.results.add(q);
+//    	featureOne.tq = tq;
+//    	featureOne.currentQuestion = 9;
+//    	featureOne.quizStarted = true;
+//    	when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND + " answer true");
+//    	featureOne.handle(receivedMessage);
+//    	verify(receivedMessage).sendResponse("Congrats! You have finished the quiz! You got a final score of " + featureOne.score + "/" + featureOne.currentQuestion);
+//    	assertEquals(featureOne.score, 0);
+//    	assertEquals(featureOne.currentQuestion, 0);
+//    }
 }
