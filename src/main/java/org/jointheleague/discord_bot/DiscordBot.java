@@ -46,10 +46,11 @@ public class DiscordBot {
 
 		//Send bot connected message in channel
 		MessageCreateData botConnected = new MessageCreateBuilder()
-				.addContent(api.getSelfUser().getName() + " has blessed you with his presence")
+				.addContent(api.getSelfUser().getName() + " has blessed you with his presence (line 53)")
 				.build();
 		api.getTextChannelsByName(channelName, true).forEach(e -> {
 			e.sendMessage(botConnected).submit().join();
+			e.sendMessage("/run").submit();
 		});
 
 		//add help listener to bot

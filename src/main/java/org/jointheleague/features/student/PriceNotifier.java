@@ -14,6 +14,7 @@ import org.jointheleague.features.student.pojo.AuctionDataWrapper;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class PriceNotifier extends Feature {
@@ -54,6 +55,7 @@ public class PriceNotifier extends Feature {
         this.webClient = WebClient
                 .builder()
                 .baseUrl(baseUrl)
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(2 * 1024 * 1024 * 2))
                 .build()
                 ;
     }
@@ -67,13 +69,21 @@ public class PriceNotifier extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             String out = "";
+            AuctionDataWrapper auctions = getData();
            // event.sendResponse(out = new Random().nextBoolean() ? ":thumbsup:" : ":thumbsdown:");
-            event.sendResponse("g");
+            event.sendResponse("h");
 
-            getData();
+            event.sendResponse("status: " + auctions.getTotalAuctions());
 
-            event.sendResponse("status: " );
 
+            //Finds LBIN
+            int indexed=0;
+            long cheapest = 5;
+            for (int i = 0; i<auctions.getTotalAuctions(); i++){
+                indexed++;
+
+            }
+            event.sendResponse("indexed: " + indexed);
         }
     }
     public AuctionDataWrapper getData(){

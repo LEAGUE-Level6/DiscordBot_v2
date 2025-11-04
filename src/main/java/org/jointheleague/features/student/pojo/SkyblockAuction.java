@@ -45,7 +45,7 @@ public class SkyblockAuction {
         return item_name;
     }
 
-    public String getItem_lore(String author) {
+    public String getItem_lore() {
         return item_lore;
     }
 

@@ -25,7 +25,7 @@ public class Hooray extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.toLowerCase().startsWith(COMMAND)) {
             //respond to message here
-            event.sendResponse("hooray!");
+            event.sendResponse("hooray");
         }
     }
 
