@@ -75,17 +75,35 @@ public class PriceNotifier extends Feature {
 
             event.sendResponse("status: " + auctions.getTotalAuctions());
 
-
-            //Finds LBIN
-            int indexed=0;
-            long cheapest = 5;
-            for (int i = 0; i<auctions.getTotalAuctions(); i++){
-                indexed++;
-
-            }
-            event.sendResponse("indexed: " + indexed);
+//Finds LBIN
+            String item = "Treasure Talisman";
+            int lbin = getLBIN(auctions, item);
+            event.sendResponse("indexed: " + lbin);
         }
     }
+
+    int getLBIN(AuctionDataWrapper auctions, String item) {
+System.out.println("started");
+        int lBin=0;
+        long cheapest = 5;
+        try {
+            for (int i = 0; i < auctions.getAuctions().length; i++) {
+               // if (auctions.getAuctions()[i].getItem_name().equals(item)) {
+                //    System.out.println("lBin++");
+                //    lBin++;
+               // }
+                if(auctions.getAuctions()[i].getIsBin()){
+                    lBin++;
+                }
+
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        System.out.println("ran");
+        return lBin;
+    }
+
     public AuctionDataWrapper getData(){
         Mono<AuctionDataWrapper> request = webClient.get().retrieve().bodyToMono(AuctionDataWrapper.class);
         System.out.println("no errors pulling data");

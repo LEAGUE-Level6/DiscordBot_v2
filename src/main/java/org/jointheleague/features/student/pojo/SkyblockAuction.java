@@ -32,6 +32,11 @@ public class SkyblockAuction {
     @SerializedName("highest_bid_amount")
     @Expose
     private long highest_bid_amount;
+    @SerializedName("bin")
+    @Expose
+    private Boolean isBin;
+
+    public Boolean getIsBin() { return isBin;}
 
     public String getId() {
         return id;
