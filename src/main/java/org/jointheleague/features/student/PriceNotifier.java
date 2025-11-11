@@ -11,13 +11,14 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.student.pojo.AuctionDataWrapper;
+import org.jointheleague.features.templates.FeatureTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.Random;
 
-public class PriceNotifier extends Feature {
+public class PriceNotifier extends FeatureTemplate {
     //when an item on ah reaches a certain min/max price it notifies users that it happened and notifies when it is
     //no longer past that threshold (islands or minion skins (blocks too) could be good for testing)
 
@@ -36,11 +37,16 @@ public class PriceNotifier extends Feature {
     //https://api.hypixel.net/#tag/SkyBlock/paths/~1v2~1skyblock~1auctions/get
     //https://developer.hypixel.net/
 
-        public final String COMMAND = "/money";
+        public final String COMMAND = "M";
         protected String channelName;
         public HelpEmbed helpEmbed;
         private WebClient webClient;
         private static final String baseUrl = "https://api.hypixel.net/v2/skyblock/auctions";
+        int indexed=0;
+        int count = 0;
+        AuctionDataWrapper auctions;
+        int pages = 0;
+
 
     public PriceNotifier(String channelName) {
         super(channelName);
@@ -54,7 +60,7 @@ public class PriceNotifier extends Feature {
 
         this.webClient = WebClient
                 .builder()
-                .baseUrl(baseUrl)
+               // .baseUrl(baseUrl)
                 .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(2 * 1024 * 1024 * 2))
                 .build()
                 ;
@@ -69,52 +75,58 @@ public class PriceNotifier extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.startsWith(COMMAND)) {
             String out = "";
-            AuctionDataWrapper auctions = getData();
+            auctions = getData(0);
            // event.sendResponse(out = new Random().nextBoolean() ? ":thumbsup:" : ":thumbsdown:");
             event.sendResponse("h");
 
             event.sendResponse("status: " + auctions.getTotalAuctions());
 
-//Finds LBIN
-            String item = "Treasure Talisman";
-            int lbin = getLBIN(auctions, item);
-            event.sendResponse("indexed: " + lbin);
+
+            //Finds LBIN
+
+            long cheapest = 5;
+            index();
+            try {
+                event.sendResponse("indexed: " + indexed+"\ncount: "+count+"\nsize: " + auctions.getPages());
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
     }
+    public AuctionDataWrapper getData(int page){
+        Mono<AuctionDataWrapper> request = webClient.get().uri(baseUrl+"?page="+page).retrieve().bodyToMono(AuctionDataWrapper.class);
+        System.out.println("no errors pulling data");
+        AuctionDataWrapper out = null;
+            out = request.block();
+        return out;
+    }
 
-    int getLBIN(AuctionDataWrapper auctions, String item) {
-System.out.println("started");
-        int lBin=0;
-        long cheapest = 5;
+
+    public void index(){
+        System.out.println("ran");
+        Boolean run = true;
+        AuctionDataWrapper data;
+        int i = 0;
         try {
-            for (int i = 0; i < auctions.getAuctions().length; i++) {
-               // if (auctions.getAuctions()[i].getItem_name().equals(item)) {
-                //    System.out.println("lBin++");
-                //    lBin++;
-               // }
-                if(auctions.getAuctions()[i].getIsBin()){
-                    lBin++;
+            System.out.println("working");
+            while(run){
+              data=getData(i);
+                System.out.println("working");
+                if(data.getStatus()) {
+                    for (int j = 0; j < data.getAuctions().length - 1; j++) {
+                        count++;
+                        System.out.println("working 2");
+                        if (auctions.getAuctions()[j].getBin()) {
+                            indexed++;
+                        }
+                    }
+                }else{
+                    run=false;
                 }
-
             }
         }catch(Exception e){
             e.printStackTrace();
         }
-        System.out.println("ran");
-        return lBin;
     }
-
-    public AuctionDataWrapper getData(){
-        Mono<AuctionDataWrapper> request = webClient.get().retrieve().bodyToMono(AuctionDataWrapper.class);
-        System.out.println("no errors pulling data");
-        AuctionDataWrapper out = null;
-        try{
-            out = request.block();
-        }catch(Exception e){
-e.printStackTrace();
-        }
-        return out;
-    }
-
 }
 

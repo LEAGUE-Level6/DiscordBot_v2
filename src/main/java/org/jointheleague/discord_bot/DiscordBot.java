@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
+import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.examples.third_features.NewsApi;
 import org.jointheleague.features.help_embed.HelpListener;
@@ -46,11 +47,11 @@ public class DiscordBot {
 
 		//Send bot connected message in channel
 		MessageCreateData botConnected = new MessageCreateBuilder()
-				.addContent(api.getSelfUser().getName() + " has blessed you with his presence (line 53)")
+				.addContent(api.getSelfUser().getName() + " has blessed you with his presence")
 				.build();
 		api.getTextChannelsByName(channelName, true).forEach(e -> {
 			e.sendMessage(botConnected).submit().join();
-			e.sendMessage("/run").submit();
+			//e.sendMessage("/money").submit();
 		});
 
 		//add help listener to bot
@@ -64,7 +65,7 @@ public class DiscordBot {
 		//addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
 		addFeature(new PriceNotifier(channelName));
-		//addFeature(new CatFactsApi(channelName));
+						//addFeature(new CatFactsApi(channelName));
 	}
 
 	private void addFeature(Feature feature){

@@ -34,13 +34,13 @@ public class SkyblockAuction {
     private long highest_bid_amount;
     @SerializedName("bin")
     @Expose
-    private Boolean isBin;
-
-    public Boolean getIsBin() { return isBin;}
+    private Boolean bin;
 
     public String getId() {
         return id;
     }
+
+    public boolean getBin() { return bin; }
 
     public long getStart(Source source) {
         return start;

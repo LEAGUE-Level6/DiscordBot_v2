@@ -16,19 +16,26 @@ public class AuctionDataWrapper {
     @SerializedName("auctions")
     @Expose
     private SkyblockAuction[] auctions;
+    @SerializedName("totalPages")
+    @Expose
+    private Integer totalPages;
     @SerializedName("lastUpdated")
     @Expose
     private long lastUpdated;
+
 
     public Boolean getStatus() {
         return status;
     }
 
-    public Integer getTotalAuctions() {
-        return totalAuctions;
-    }
+    public Integer getPages() { return totalPages; }
+
+    public Integer getTotalAuctions() { return totalAuctions; }
 
     public SkyblockAuction[] getAuctions() {
         return auctions;
     }
+
+
+
 }
