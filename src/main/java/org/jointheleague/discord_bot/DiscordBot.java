@@ -51,7 +51,8 @@ public class DiscordBot {
 				.build();
 		api.getTextChannelsByName(channelName, true).forEach(e -> {
 			e.sendMessage(botConnected).submit().join();
-			//e.sendMessage("/money").submit();
+			e.sendMessage("/test").submit();
+
 		});
 
 		//add help listener to bot

@@ -7,33 +7,38 @@ import org.jointheleague.features.examples.third_features.plain_old_java_objects
 import java.util.List;
 
 public class AuctionDataWrapper {
-    @SerializedName("status")
-    @Expose
-    private Boolean status;
     @SerializedName("totalAuctions")
     @Expose
-    private Integer totalAuctions;
+    private int totalAuctions;
     @SerializedName("auctions")
     @Expose
     private SkyblockAuction[] auctions;
     @SerializedName("totalPages")
     @Expose
-    private Integer totalPages;
+    private int totalPages;
     @SerializedName("lastUpdated")
     @Expose
     private long lastUpdated;
+    @SerializedName("success")
+    @Expose
+    private boolean success;
+
+    public boolean getSuccess(){ return success; }
 
 
-    public Boolean getStatus() {
-        return status;
+    public boolean getStatus() {
+        return success;
     }
 
-    public Integer getPages() { return totalPages; }
+    public Integer getTotalPages() { return totalPages; }
 
     public Integer getTotalAuctions() { return totalAuctions; }
 
     public SkyblockAuction[] getAuctions() {
         return auctions;
+    }
+    public void spoof(){
+        success=false;
     }
 
 

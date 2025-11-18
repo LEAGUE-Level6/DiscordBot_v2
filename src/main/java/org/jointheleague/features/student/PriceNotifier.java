@@ -11,11 +11,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jointheleague.api_wrapper.ReceivedMessage;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import org.jointheleague.features.student.pojo.AuctionDataWrapper;
+import org.jointheleague.features.student.pojo.PreDataWrapper;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 
 public class PriceNotifier extends FeatureTemplate {
@@ -78,26 +80,36 @@ public class PriceNotifier extends FeatureTemplate {
             auctions = getData(0);
            // event.sendResponse(out = new Random().nextBoolean() ? ":thumbsup:" : ":thumbsdown:");
             event.sendResponse("h");
-
             event.sendResponse("status: " + auctions.getTotalAuctions());
+
 
 
             //Finds LBIN
 
             long cheapest = 5;
-            index();
+
             try {
-                event.sendResponse("indexed: " + indexed+"\ncount: "+count+"\nsize: " + auctions.getPages());
+                index();
+                event.sendResponse("indexed: " + indexed+"\ncount: "+count+"\nsize: " + auctions.getTotalPages());
+                event.sendResponse("status: " + auctions.getTotalAuctions());
             }catch(Exception e){
                 e.printStackTrace();
             }
         }
     }
     public AuctionDataWrapper getData(int page){
-        Mono<AuctionDataWrapper> request = webClient.get().uri(baseUrl+"?page="+page).retrieve().bodyToMono(AuctionDataWrapper.class);
-        System.out.println("no errors pulling data");
-        AuctionDataWrapper out = null;
-            out = request.block();
+        System.out.println(baseUrl+"?page="+page);
+        AuctionDataWrapper out;
+        try{
+            out = webClient.get().uri(baseUrl+"?page="+page).retrieve().bodyToMono(AuctionDataWrapper.class).block();
+            System.out.println("no errors pulling data");
+        }catch(Exception e){
+            System.out.println(page+"data spoofed");
+             out = new AuctionDataWrapper();
+            out.spoof();
+        }
+        //Mono<AuctionDataWrapper> request = webClient.get().uri(baseUrl+"?page="+page).retrieve().bodyToMono(AuctionDataWrapper.class);
+
         return out;
     }
 
@@ -108,25 +120,27 @@ public class PriceNotifier extends FeatureTemplate {
         AuctionDataWrapper data;
         int i = 0;
         try {
-            System.out.println("working");
             while(run){
               data=getData(i);
-                System.out.println("working");
+                //System.out.println("working.2  "+data.getTotalPages()+" "+data.getAuctions().length);
                 if(data.getStatus()) {
                     for (int j = 0; j < data.getAuctions().length - 1; j++) {
-                        count++;
-                        System.out.println("working 2");
-                        if (auctions.getAuctions()[j].getBin()) {
-                            indexed++;
+                        indexed++;
+                        if (auctions.getAuctions()[j].getBin() && auctions.getAuctions()[j].getItem_name().contains("Ember")) {
+                            count++;
+                            System.out.println("found "+auctions.getAuctions()[j].getItem_name());
                         }
                     }
                 }else{
                     run=false;
                 }
+                System.out.println("cycle "+i+"/"+data.getTotalPages());
+                i++;
             }
         }catch(Exception e){
             e.printStackTrace();
         }
+        System.out.println("fin");
     }
 }
 

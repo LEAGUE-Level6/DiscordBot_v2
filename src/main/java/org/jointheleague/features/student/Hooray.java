@@ -8,7 +8,7 @@ import java.util.Locale;
 
 public class Hooray extends Feature {
 
-    public final String COMMAND = "hip hip";
+    public final String COMMAND = "/test";
 
     public Hooray(String channelName) {
         super(channelName);
@@ -25,7 +25,7 @@ public class Hooray extends Feature {
         String messageContent = event.getMessageContent();
         if (messageContent.toLowerCase().startsWith(COMMAND)) {
             //respond to message here
-            event.sendResponse("hooray");
+            event.sendResponse("M");
         }
     }
 
