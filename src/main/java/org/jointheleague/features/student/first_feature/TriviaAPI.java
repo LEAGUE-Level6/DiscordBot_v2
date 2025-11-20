@@ -20,7 +20,7 @@ public class TriviaAPI extends Feature {
 
     private WebClient webClient;
     private static final String baseUrl = "https://opentdb.com/api.php";
-
+    public int totalNumberOfQuestions = 10;
     public TriviaAPI(String channelName) {
         super(channelName);
         helpEmbed = new HelpEmbed(COMMAND, "TriviaAPI gives trivia true or false questions of different topics. This starts a trivia quiz related to topic 9 (e.g. !triviaAPI 9)");
@@ -118,7 +118,7 @@ public class TriviaAPI extends Feature {
             			currentQuestion++;
         
             		}
-            		if (currentQuestion == 10) {
+            		if (currentQuestion == totalNumberOfQuestions) {
             			event.sendResponse("Congrats! You have finished the quiz! You got a final score of " + score + "/" + currentQuestion);
             			currentQuestion = 0;
             			score = 0;
@@ -175,9 +175,6 @@ public class TriviaAPI extends Feature {
 //        return message;
 //    }
 
-    public void setWebClient(WebClient webClient) {
-        this.webClient = webClient;
-    }
 
 }
 

@@ -59,11 +59,6 @@ public class DiscordBot {
 		api.addEventListener(helpListener);
 
 		//add features
-		addFeature(new FeatureOne(channelName));
-		addFeature(new CurrentTime(channelName));
-		addFeature(new HighLowGame(channelName));
-		addFeature(new NewsApi(channelName));
-		addFeature(new CatFactsApi(channelName));
 		addFeature(new FishingFrenzy(channelName));
 		addFeature(new CookieClicker(channelName));
 		addFeature(new TriviaAPI(channelName));

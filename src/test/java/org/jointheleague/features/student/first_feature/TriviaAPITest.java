@@ -169,7 +169,7 @@ public class TriviaAPITest {
     	featureOne.quizStarted = true;
     	when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND + " answer false");
     	featureOne.handle(receivedMessage);
-    	verify(receivedMessage).sendResponse("Incorrect! The answer was " + featureOne.tq.getResults().get(featureOne.currentQuestion).getCorrectAnswer());
+    	verify(receivedMessage).sendResponse("Incorrect! The answer was " + featureOne.tq.getResults().get(currentQuestion).getCorrectAnswer());
     	assertEquals(currentQuestion+1, featureOne.currentQuestion);
     }
     @Test
@@ -195,21 +195,26 @@ public class TriviaAPITest {
     	assertEquals(currentQuestion+1, featureOne.currentQuestion);
     	assertEquals(score+1, featureOne.score);
     }
-//    @Test
-//    void itShouldEndQuiz() {
-//    	Question q = new Question();
-//    	q.question = "1+1 = 2";
-//    	q.correctAnswer = "true";
-//    	TriviaQuestions tq = new TriviaQuestions();
-//    	tq.results = new ArrayList<Question> ();
-//    	tq.results.add(q);
-//    	featureOne.tq = tq;
-//    	featureOne.currentQuestion = 9;
-//    	featureOne.quizStarted = true;
-//    	when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND + " answer true");
-//    	featureOne.handle(receivedMessage);
-//    	verify(receivedMessage).sendResponse("Congrats! You have finished the quiz! You got a final score of " + featureOne.score + "/" + featureOne.currentQuestion);
-//    	assertEquals(featureOne.score, 0);
-//    	assertEquals(featureOne.currentQuestion, 0);
-//    }
+    @Test
+    void itShouldHave10Questions() {
+    	featureOne.totalNumberOfQuestions = 1;
+    	Question q = new Question();
+    	q.question = "1+1 = 2";
+    	q.correctAnswer = "true";
+    	TriviaQuestions tq = new TriviaQuestions();
+    	tq.results = new ArrayList<Question> ();
+    	tq.results.add(q);
+    	featureOne.tq = tq;
+    	featureOne.currentQuestion = 0;
+        //Given
+    	featureOne.quizStarted = true;
+    	int score = featureOne.score;
+    	int currentQuestion = featureOne.currentQuestion;
+    	when(receivedMessage.getMessageContent()).thenReturn(featureOne.COMMAND + " answer false");
+    	featureOne.handle(receivedMessage);
+    	verify(receivedMessage).sendResponse("Incorrect! The answer was " + tq.getResults().get(0).getCorrectAnswer());
+    	verify(receivedMessage).sendResponse("Congrats! You have finished the quiz! You got a final score of " + score + "/" + (currentQuestion+1));
+    	assertEquals(featureOne.score, 0);
+    	assertEquals(featureOne.currentQuestion, 0);
+    }
 }
