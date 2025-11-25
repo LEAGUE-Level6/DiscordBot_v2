@@ -14,11 +14,10 @@ import org.jointheleague.features.student.pojo.AuctionDataWrapper;
 import org.jointheleague.features.student.pojo.PreDataWrapper;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+//CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.GXH_GQ.1d6QZjCJFRvdmNO-rEmPjP5JAhZxf7GOMF-9fE
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class PriceNotifier extends FeatureTemplate {
     //when an item on ah reaches a certain min/max price it notifies users that it happened and notifies when it is
@@ -35,11 +34,21 @@ public class PriceNotifier extends FeatureTemplate {
     //  command to check current values could be cool - shows initial and current price, threshold direction (higher/lower),
     //      -item name, date set, if it's past the threshold, and date last retrieved
     //      These should all be variables already stored
-
+//CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.GXH_GQ.1d6QZjCJFRvdmNO-rEmPjP5JAhZxf7GOMF-9fE
     //https://api.hypixel.net/#tag/SkyBlock/paths/~1v2~1skyblock~1auctions/get
     //https://developer.hypixel.net/
 
-        public final String COMMAND = "M";
+
+/*USER PROCESS
+    /money
+        if blank it will ask for input, if not, takes in stuff after space as input (all inputs)
+    checks what comes back with the input, and confirms with the user if its what they want
+            if there's multiple allow user to say number/name of item to confirm
+    ask to set price
+            allow for commas/ k/b/m markers
+
+ */
+        public final String COMMAND = "m";
         protected String channelName;
         public HelpEmbed helpEmbed;
         private WebClient webClient;
@@ -48,6 +57,9 @@ public class PriceNotifier extends FeatureTemplate {
         int count = 0;
         AuctionDataWrapper auctions;
         int pages = 0;
+        long max = 10_102_000_000_000l;
+
+        String target = "aspiring leap";
 
 
     public PriceNotifier(String channelName) {
@@ -75,13 +87,11 @@ public class PriceNotifier extends FeatureTemplate {
     @Override
     public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
-        if (messageContent.startsWith(COMMAND)) {
+        if (messageContent.toLowerCase().startsWith(COMMAND)) {
             String out = "";
+            event.sendResponse("h");
             auctions = getData(0);
            // event.sendResponse(out = new Random().nextBoolean() ? ":thumbsup:" : ":thumbsdown:");
-            event.sendResponse("h");
-            event.sendResponse("status: " + auctions.getTotalAuctions());
-
 
 
             //Finds LBIN
@@ -90,8 +100,8 @@ public class PriceNotifier extends FeatureTemplate {
 
             try {
                 index();
-                event.sendResponse("indexed: " + indexed+"\ncount: "+count+"\nsize: " + auctions.getTotalPages());
-                event.sendResponse("status: " + auctions.getTotalAuctions());
+                System.out.println("indexed: " + indexed+"\ncount: "+count+"\nsize: " + auctions.getTotalPages()+"\nstatus: "+auctions.getTotalAuctions());
+                event.sendResponse("final");
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -102,7 +112,7 @@ public class PriceNotifier extends FeatureTemplate {
         AuctionDataWrapper out;
         try{
             out = webClient.get().uri(baseUrl+"?page="+page).retrieve().bodyToMono(AuctionDataWrapper.class).block();
-            System.out.println("no errors pulling data");
+            //System.out.println("no errors pulling data");
         }catch(Exception e){
             System.out.println(page+"data spoofed");
              out = new AuctionDataWrapper();
@@ -115,7 +125,9 @@ public class PriceNotifier extends FeatureTemplate {
 
 
     public void index(){
+        long cheapest = max;
         System.out.println("ran");
+        ArrayList<Long> prices = new ArrayList<Long>();
         Boolean run = true;
         AuctionDataWrapper data;
         int i = 0;
@@ -126,21 +138,62 @@ public class PriceNotifier extends FeatureTemplate {
                 if(data.getStatus()) {
                     for (int j = 0; j < data.getAuctions().length - 1; j++) {
                         indexed++;
-                        if (auctions.getAuctions()[j].getBin() && auctions.getAuctions()[j].getItem_name().contains("Ember")) {
+                        if (data.getAuctions()[j].getBin() && data.getAuctions()[j].getItem_name().toLowerCase().contains(target)) {
                             count++;
-                            System.out.println("found "+auctions.getAuctions()[j].getItem_name());
+                            System.out.println("found "+data.getAuctions()[j].getItem_name());
+                            prices.add(data.getAuctions()[j].getStarting_bid());
+                            if(data.getAuctions()[j].getStarting_bid()<cheapest){
+                                cheapest=data.getAuctions()[j].getStarting_bid();
+                                System.out.println("new cheapest ^"+data.getAuctions()[j].getStarting_bid());
+                            }
+                            //set.add(auctions.getAuctions()[j].getId());
                         }
                     }
                 }else{
                     run=false;
                 }
-                System.out.println("cycle "+i+"/"+data.getTotalPages());
+                //System.out.println("cycle "+i+"/"+data.getTotalPages());
                 i++;
             }
         }catch(Exception e){
             e.printStackTrace();
         }
-        System.out.println("fin");
+        System.out.println("fin: cheapest "+cheapest + " averaged to "+ averageN(prices));
+    }
+    //finds the average price of the (5) cheapest numbers in an array
+    //really unoptimized, iterates through everything in the "best" array to find the\n
+    //most expensive index everytime, then replaces that one
+    public long averageN(ArrayList<Long> in){
+        int out=0;
+        long track=0;
+        int index=0;
+        int averageRange = 5;
+        long[] best = new long[averageRange];
+        Arrays.fill(best, max);
+        for (int i = 0; i<in.size(); i++){
+            track=0;
+            index=0;
+            for (int j = 0; j<averageRange; j++){
+
+                if (best[j]>track){
+                    track=best[j];
+                    index=j;
+                }
+            }
+            System.out.println("largest "+best[index]+" at "+index);
+            if(in.get(i)<best[index]){
+                best[index]=in.get(i);
+            }
+        }
+        for (int j = 0; j<averageRange; j++){
+            if(best[j]==max){
+            best[j]=0;
+            averageRange--;
+            }
+            out+=best[j];
+            System.out.println(j+"j ="+best[j]);
+        }
+        return (out/averageRange);
     }
 }
 
