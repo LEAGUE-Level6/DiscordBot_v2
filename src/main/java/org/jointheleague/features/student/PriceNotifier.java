@@ -34,7 +34,7 @@ public class PriceNotifier extends FeatureTemplate {
     //  command to check current values could be cool - shows initial and current price, threshold direction (higher/lower),
     //      -item name, date set, if it's past the threshold, and date last retrieved
     //      These should all be variables already stored
-//CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.GXH_GQ.1d6QZjCJFRvdmNO-rEmPjP5JAhZxf7GOMF-9fE
+
     //https://api.hypixel.net/#tag/SkyBlock/paths/~1v2~1skyblock~1auctions/get
     //https://developer.hypixel.net/
 
@@ -57,7 +57,7 @@ public class PriceNotifier extends FeatureTemplate {
         int count = 0;
         AuctionDataWrapper auctions;
         int pages = 0;
-        long max = 10_102_000_000_000l;
+        long max = 10_002_000_000_000l;
 
         String target = "aspiring leap";
 
