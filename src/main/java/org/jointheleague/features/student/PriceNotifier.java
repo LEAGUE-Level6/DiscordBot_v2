@@ -14,7 +14,7 @@ import org.jointheleague.features.student.pojo.AuctionDataWrapper;
 import org.jointheleague.features.student.pojo.PreDataWrapper;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-//t
+//CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.GXH_GQ.1d6QZjCJFRvdmNO-rEmPjP5JAhZxf7GOMF-9fE
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -34,7 +34,7 @@ public class PriceNotifier extends FeatureTemplate {
     //  command to check current values could be cool - shows initial and current price, threshold direction (higher/lower),
     //      -item name, date set, if it's past the threshold, and date last retrieved
     //      These should all be variables already stored
-//t
+//
     //https://api.hypixel.net/#tag/SkyBlock/paths/~1v2~1skyblock~1auctions/get
     //https://developer.hypixel.net/
 
