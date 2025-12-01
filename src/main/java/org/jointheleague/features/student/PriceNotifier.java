@@ -16,7 +16,7 @@ import org.jointheleague.features.templates.FeatureTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.core.publisher.Mono;
-
+ 
 import java.util.*;
 
 public class PriceNotifier extends FeatureTemplate {
