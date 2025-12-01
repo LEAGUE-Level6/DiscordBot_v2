@@ -14,7 +14,7 @@ import org.jointheleague.features.student.pojo.AuctionDataWrapper;
 import org.jointheleague.features.student.pojo.PreDataWrapper;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-//CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.GXH_GQ.1d6QZjCJFRvdmNO-rEmPjP5JAhZxf7GOMF-9fE
+
 import reactor.core.publisher.Mono;
 
 import java.util.*;
