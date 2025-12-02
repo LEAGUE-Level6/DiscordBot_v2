@@ -14,7 +14,8 @@ import org.jointheleague.features.student.pojo.AuctionDataWrapper;
 import org.jointheleague.features.student.pojo.PreDataWrapper;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-//CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.GXH_GQ.1d6QZjCJFRvdmNO-rEmPjP5JAhZxf7GOMF-9fE
+// split URouUH0zfXDNOatcfdGPz0cWw8heCos
+//CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.G2Djbq.3nRWdT-
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -48,7 +49,7 @@ public class PriceNotifier extends FeatureTemplate {
             allow for commas/ k/b/m markers
 
  */
-        public final String COMMAND = "m";
+        public final String COMMAND = "/money";
         protected String channelName;
         public HelpEmbed helpEmbed;
         private WebClient webClient;
@@ -59,7 +60,7 @@ public class PriceNotifier extends FeatureTemplate {
         int pages = 0;
         long max = 10_002_000_000_000l;
 
-        String target = "aspiring leap";
+        String target = "Jerry Candy";
 
 
     public PriceNotifier(String channelName) {
@@ -87,9 +88,10 @@ public class PriceNotifier extends FeatureTemplate {
     @Override
     public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
-        if (messageContent.toLowerCase().startsWith(COMMAND)) {
+        if (messageContent.split(" ")[0].toLowerCase().startsWith(COMMAND) || messageContent.split(" ")[0].toLowerCase().startsWith("m")) {
             String out = "";
-            event.sendResponse("h");
+            commandParser(messageContent);
+            event.sendResponse("searching for "+target +" at "+f(max));
             auctions = getData(0);
            // event.sendResponse(out = new Random().nextBoolean() ? ":thumbsup:" : ":thumbsdown:");
 
@@ -99,9 +101,10 @@ public class PriceNotifier extends FeatureTemplate {
             long cheapest = 5;
 
             try {
-                index();
-                System.out.println("indexed: " + indexed+"\ncount: "+count+"\nsize: " + auctions.getTotalPages()+"\nstatus: "+auctions.getTotalAuctions());
-                event.sendResponse("final");
+                event.sendResponse(index());
+                String stats = "indexed: " + f(indexed)+"\ncount: "+f(count)+"\nsize: " + auctions.getTotalPages()+"\nstatus: "+f(auctions.getTotalAuctions());
+                System.out.println(stats);
+                event.sendResponse(stats);
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -124,7 +127,9 @@ public class PriceNotifier extends FeatureTemplate {
     }
 
 
-    public void index(){
+    public String index(){
+        count = 0;
+        indexed=0;
         long cheapest = max;
         System.out.println("ran");
         ArrayList<Long> prices = new ArrayList<Long>();
@@ -158,7 +163,7 @@ public class PriceNotifier extends FeatureTemplate {
         }catch(Exception e){
             e.printStackTrace();
         }
-        System.out.println("fin: cheapest "+cheapest + " averaged to "+ averageN(prices));
+        return("cheapest "+f(cheapest) + " averaged to "+ f(averageN(prices)));
     }
     //finds the average price of the (5) cheapest numbers in an array
     //really unoptimized, iterates through everything in the "best" array to find the\n
@@ -180,7 +185,6 @@ public class PriceNotifier extends FeatureTemplate {
                     index=j;
                 }
             }
-            System.out.println("largest "+best[index]+" at "+index);
             if(in.get(i)<best[index]){
                 best[index]=in.get(i);
             }
@@ -191,9 +195,88 @@ public class PriceNotifier extends FeatureTemplate {
             averageRange--;
             }
             out+=best[j];
-            System.out.println(j+"j ="+best[j]);
         }
         return (out/averageRange);
     }
+    //sets variables (target & setPrice) to what the user inputs
+    public void commandParser(String in){
+        int offset = 0;
+        String[] split = in.toLowerCase().split(" ");
+        if(split.length>1){
+            target=split[1];
+            try{
+                max = fd(split[split.length-1]);
+                System.out.println(max + "<- setPrice");
+                offset=1;
+            }catch(Exception e){
+
+            }
+            for (int i = 2; i<split.length-offset; i++) {
+                target += " "+split[i];
+            }
+            System.out.println(offset + " offset");
+            System.out.println(target + "<- target");
+        }else{
+            System.out.println("no input/too many "+split.length);
+
+        }
+    }
+    //formats numbers to have commas or k/m/b/t
+    public String f(long in){
+        boolean markers = true;
+        String marker = "";
+        String str = ""+in;
+        String out = "";
+        int track = 0;
+        for (int i = str.length()-1; i >= 0; i--){
+            if(track==3){
+                track=0;
+                        out=","+out;
+            }
+            out=str.charAt(i)+out;
+            track++;
+        }
+
+        if(markers & out.chars().filter(num -> num == ',').count()>1){
+            str = out.split(",")[0];
+        if(out.chars().filter(num -> num == ',').count()==2){
+            marker="m";
+        }else if(out.chars().filter(num -> num == ',').count()==3){
+            marker="b";
+        }else if(out.chars().filter(num -> num == ',').count()==4){
+            marker="t";
+        }else{
+            marker="q";
+            System.out.println("over 4 commas in number");
+        }
+
+        }
+
+        return str+marker;
+    }
+    //decodes numbers
+    public long fd(String in){
+        long out = 676867;
+        if(in.contains(",")){
+            out=Long.parseLong(in.replace(",", ""));
+        }else{
+            if(in.contains("m")){
+                out=Long.parseLong(in.substring(0, in.length()-2))*1_000_000;
+            }else if(in.contains("b")){
+                out=Long.parseLong(in.substring(0, in.length()-2))*1_000_000_000;
+            }else if(in.contains("t")){
+                out=Long.parseLong(in.substring(0, in.length()-2))*1_000_000_000_000l;
+            }else{
+                try{
+                    out=Long.parseLong(in);
+                }catch (Exception e){
+                    Long.parseLong(in.substring(0,in.length()-2));
+                    System.out.println("removed foreign symbol from number");
+                }
+            }
+        }
+        return out;
+    }
+
 }
 
