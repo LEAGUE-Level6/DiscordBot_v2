@@ -59,8 +59,11 @@ public class PriceNotifier extends FeatureTemplate {
         AuctionDataWrapper auctions;
         int pages = 0;
         long max = 10_002_000_000_000l;
-
-        String target = "Jerry Candy";
+        long total = 0;
+        int averageRange = 5;
+        String target = "jerry candy";
+        Map<String, Long> everything = new HashMap<>(50_000);
+        Map<String, Integer> counts = new HashMap<>(50_000);
 
 
     public PriceNotifier(String channelName) {
@@ -102,9 +105,11 @@ public class PriceNotifier extends FeatureTemplate {
 
             try {
                 event.sendResponse(index());
-                String stats = "indexed: " + f(indexed)+"\ncount: "+f(count)+"\nsize: " + auctions.getTotalPages()+"\nstatus: "+f(auctions.getTotalAuctions());
+                String stats = /*"indexed: " + f(indexed)+*/"\ncount: "+f(count)/*+"\nsize: " + auctions.getTotalPages()+"\nstatus: "+f(auctions.getTotalAuctions())
+                        */+"\n\nTotal cost to buy out: "+f(total);
                 System.out.println(stats);
                 event.sendResponse(stats);
+                dealFinder();
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -143,6 +148,16 @@ public class PriceNotifier extends FeatureTemplate {
                 if(data.getStatus()) {
                     for (int j = 0; j < data.getAuctions().length - 1; j++) {
                         indexed++;
+                        try{
+                        everything.get(data.getAuctions()[j].getItem_name()).equals(
+                                everything.get(data.getAuctions()[j].getItem_name()).longValue()+data.getAuctions()[j].getStarting_bid());
+                        counts.get(data.getAuctions()[j].getItem_name()).equals(
+                                counts.get(data.getAuctions()[j].getItem_name()).intValue()+1);
+                        }catch (Exception e){
+                            everything.putIfAbsent(data.getAuctions()[j].getItem_name(), data.getAuctions()[j].getStarting_bid());
+                            counts.putIfAbsent(data.getAuctions()[j].getItem_name(), 1);
+                        }
+
                         if (data.getAuctions()[j].getBin() && data.getAuctions()[j].getItem_name().toLowerCase().contains(target)) {
                             count++;
                             System.out.println("found "+data.getAuctions()[j].getItem_name());
@@ -163,7 +178,7 @@ public class PriceNotifier extends FeatureTemplate {
         }catch(Exception e){
             e.printStackTrace();
         }
-        return("cheapest "+f(cheapest) + " averaged to "+ f(averageN(prices)));
+        return("lowest "+f(cheapest) + " averaged "+ f(averageN(prices)) +" across " + averageRange + " cheapest");
     }
     //finds the average price of the (5) cheapest numbers in an array
     //really unoptimized, iterates through everything in the "best" array to find the\n
@@ -172,12 +187,13 @@ public class PriceNotifier extends FeatureTemplate {
         int out=0;
         long track=0;
         int index=0;
-        int averageRange = 5;
+
         long[] best = new long[averageRange];
         Arrays.fill(best, max);
         for (int i = 0; i<in.size(); i++){
             track=0;
             index=0;
+            total += in.get(i);
             for (int j = 0; j<averageRange; j++){
 
                 if (best[j]>track){
@@ -198,6 +214,31 @@ public class PriceNotifier extends FeatureTemplate {
         }
         return (out/averageRange);
     }
+    //finds the best items to test with
+    public String dealFinder(){
+        boolean out = false;
+        long sum = 0;
+        for (int i = 0; i<everything.size(); i++){
+            for (String key : everything.keySet()) {
+                if(everything.get(key).longValue()>fd("1b")) {
+                    System.out.println(f(everything.get(key).longValue()) + " to buy all "+ counts.get(key).intValue()+ " " + key+"s");
+                    if(counts.get(key).intValue()<20 && counts.get(key).intValue()>5){
+                        System.out.println("matches count criteria");
+                    }
+                }
+            }
+        }
+
+        /*for (int i = 0; i<in.size(); i++) {
+            total += in.get(i);
+        }
+        /*if((total/in.size())>15_000_000 && in.size()>5 && in.size()<20) {
+            return name;
+        }else{*/
+            return "";
+        //}
+    }
+
     //sets variables (target & setPrice) to what the user inputs
     public void commandParser(String in){
         int offset = 0;
@@ -205,11 +246,12 @@ public class PriceNotifier extends FeatureTemplate {
         if(split.length>1){
             target=split[1];
             try{
-                max = fd(split[split.length-1]);
+                System.out.println("suffix -> " + split[split.length-1]);
+                max = fd(split[split.length-1].trim());
                 System.out.println(max + "<- setPrice");
                 offset=1;
             }catch(Exception e){
-
+                e.printStackTrace();
             }
             for (int i = 2; i<split.length-offset; i++) {
                 target += " "+split[i];
@@ -236,8 +278,8 @@ public class PriceNotifier extends FeatureTemplate {
             out=str.charAt(i)+out;
             track++;
         }
-
-        if(markers & out.chars().filter(num -> num == ',').count()>1){
+//     change this 0 to 1 if you dont want to abbreviate thousands |
+        if(markers & out.chars().filter(num -> num == ',').count()>0){
             str = out.split(",")[0];
         if(out.chars().filter(num -> num == ',').count()==2){
             marker="m";
@@ -245,7 +287,9 @@ public class PriceNotifier extends FeatureTemplate {
             marker="b";
         }else if(out.chars().filter(num -> num == ',').count()==4){
             marker="t";
-        }else{
+        }else if(out.chars().filter(num -> num == ',').count()==1){
+                marker="k";
+            }else{
             marker="q";
             System.out.println("over 4 commas in number");
         }
@@ -256,21 +300,22 @@ public class PriceNotifier extends FeatureTemplate {
     }
     //decodes numbers
     public long fd(String in){
-        long out = 676867;
+        long out = 67_000_000_000l;
         if(in.contains(",")){
             out=Long.parseLong(in.replace(",", ""));
-        }else{
-            if(in.contains("m")){
-                out=Long.parseLong(in.substring(0, in.length()-2))*1_000_000;
+        }else{if(in.contains("k")){
+            out=Long.parseLong(in.substring(0, in.length()-1))*1_000;
+        }else if(in.contains("m")){
+                out=Long.parseLong(in.substring(0, in.length()-1))*1_000_000;
             }else if(in.contains("b")){
-                out=Long.parseLong(in.substring(0, in.length()-2))*1_000_000_000;
+                out=Long.parseLong(in.substring(0, in.length()-1))*1_000_000_000;
             }else if(in.contains("t")){
-                out=Long.parseLong(in.substring(0, in.length()-2))*1_000_000_000_000l;
+                out=Long.parseLong(in.substring(0, in.length()-1))*1_000_000_000_000l;
             }else{
                 try{
                     out=Long.parseLong(in);
                 }catch (Exception e){
-                    Long.parseLong(in.substring(0,in.length()-2));
+                    Long.parseLong(in.substring(0,in.length()-1));
                     System.out.println("removed foreign symbol from number");
                 }
             }
