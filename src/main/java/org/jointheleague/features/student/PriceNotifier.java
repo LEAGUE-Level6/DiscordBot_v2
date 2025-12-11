@@ -225,7 +225,20 @@ public class PriceNotifier extends FeatureTemplate {
                     }*/
                 }
             }
-            }
+            }long specPrice = 0;
+            int specTotal = 0;
+        for (String key : everything.keySet()) {
+
+                specPrice = 0;
+                specTotal = 0;
+                for (int i = 0; i < everything.get(key).size(); i++) {
+                    specPrice += everything.get(key).get(i);
+                    specTotal++;
+                }
+                if(8==specTotal && /*12>=specTotal &&*/ specPrice<fd("12m") && specPrice>fd("8m")) {
+                    System.out.println(f(specPrice) + " to buy all " + specTotal + " " + star(key) + "s");
+                }
+        }
 
 
         /*for (int i = 0; i<in.size(); i++) {
