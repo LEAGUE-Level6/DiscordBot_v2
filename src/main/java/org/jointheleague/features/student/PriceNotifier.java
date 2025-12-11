@@ -62,8 +62,9 @@ public class PriceNotifier extends FeatureTemplate {
         long total = 0;
         int averageRange = 5;
         String target = "jerry candy";
-        Map<String, Long> everything = new HashMap<>(50_000);
-        Map<String, Integer> counts = new HashMap<>(50_000);
+        //Map<String, Long> everything = new HashMap<>(50_000_000);
+        Map<String, ArrayList<Long>> everything = new HashMap<>(50_000_000);
+        Map<String, Integer> counts = new HashMap<>(50_000_000);
 
 
     public PriceNotifier(String channelName) {
@@ -148,15 +149,10 @@ public class PriceNotifier extends FeatureTemplate {
                 if(data.getStatus()) {
                     for (int j = 0; j < data.getAuctions().length - 1; j++) {
                         indexed++;
-                        try{
-                        everything.get(data.getAuctions()[j].getItem_name()).equals(
-                                everything.get(data.getAuctions()[j].getItem_name()).longValue()+data.getAuctions()[j].getStarting_bid());
-                        counts.get(data.getAuctions()[j].getItem_name()).equals(
-                                counts.get(data.getAuctions()[j].getItem_name()).intValue()+1);
-                        }catch (Exception e){
-                            everything.putIfAbsent(data.getAuctions()[j].getItem_name(), data.getAuctions()[j].getStarting_bid());
-                            counts.putIfAbsent(data.getAuctions()[j].getItem_name(), 1);
-                        }
+                        everything.putIfAbsent(data.getAuctions()[j].getItem_name().toLowerCase(), new ArrayList<Long>());
+
+                       everything.get(data.getAuctions()[j].getItem_name().toLowerCase())
+                               .add(data.getAuctions()[j].getStarting_bid());
 
                         if (data.getAuctions()[j].getBin() && data.getAuctions()[j].getItem_name().toLowerCase().contains(target)) {
                             count++;
@@ -218,16 +214,19 @@ public class PriceNotifier extends FeatureTemplate {
     public String dealFinder(){
         boolean out = false;
         long sum = 0;
-        for (int i = 0; i<everything.size(); i++){
             for (String key : everything.keySet()) {
-                if(everything.get(key).longValue()>fd("1b")) {
-                    System.out.println(f(everything.get(key).longValue()) + " to buy all "+ counts.get(key).intValue()+ " " + key+"s");
-                    if(counts.get(key).intValue()<20 && counts.get(key).intValue()>5){
+                for (int i = 0; i < everything.get(key).size(); i++) {
+                if (everything.get(key).get(i) > fd("1") && key.toLowerCase().contains("god pot")) {
+                    //   lumpsum.get(key).add(everything.get(key));
+                    //System.out.println(f(everything.get(key).longValue()) + " to buy all "+ counts.get(key).intValue()+ " " + star(key)+"s");
+                    System.out.println("could be worse");
+                    /*if (counts.get(key).intValue() < 20 && counts.get(key).intValue() > 5) {
                         System.out.println("matches count criteria");
-                    }
+                    }*/
                 }
             }
-        }
+            }
+
 
         /*for (int i = 0; i<in.size(); i++) {
             total += in.get(i);
@@ -237,6 +236,30 @@ public class PriceNotifier extends FeatureTemplate {
         }else{*/
             return "";
         //}
+    }
+    public String star(String in){
+        if(in.contains("✪")){
+            int countS = 0;
+
+            for(int i=0; i < in.length(); i++) {
+                if(in.charAt(i) == '✪') {
+                    countS++;
+                }else if(in.charAt(i) == '➊'){
+                    countS+=1;
+                }else if(in.charAt(i) == '➋'){
+                    countS+=2;
+                }else if(in.charAt(i) == '➌'){
+                    countS+=3;
+                }else if(in.charAt(i) == '➍'){
+                    countS+=4;
+                }else if(in.charAt(i) == '➎'){
+                    countS+=5;
+                }
+            }
+            in=in.replaceFirst("✪", (count+"✪"));
+            in=in.replaceAll("✪", "");
+        }
+        return in;
     }
 
     //sets variables (target & setPrice) to what the user inputs
