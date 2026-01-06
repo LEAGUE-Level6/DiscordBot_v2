@@ -46,7 +46,7 @@ public class PriceNotifier extends FeatureTemplate {
     checks what comes back with the input, and confirms with the user if its what they want
             if there's multiple allow user to say number/name of item to confirm
     ask to set price
-            allow for commas/ k/b/m markers
+            allow for commas/ k/m/b markers
 
  */
         public final String COMMAND = "/money";
@@ -56,13 +56,18 @@ public class PriceNotifier extends FeatureTemplate {
         private static final String baseUrl = "https://api.hypixel.net/v2/skyblock/auctions";
         int indexed=0;
         int count = 0;
-        AuctionDataWrapper auctions;
+        //AuctionDataWrapper auctions;
         int pages = 0;
         long max = 10_002_000_000_000l;
         long total = 0;
         int averageRange = 5;
+        boolean hasIndexed = false;
+        String indexMsg = "";
         String target = "jerry candy";
-        //Map<String, Long> everything = new HashMap<>(50_000_000);
+    String minp="8m";
+    String maxp="12m";
+    int minc=7;
+    int maxc=9;
         Map<String, ArrayList<Long>> everything = new HashMap<>(50_000_000);
         Map<String, Integer> counts = new HashMap<>(50_000_000);
 
@@ -92,30 +97,34 @@ public class PriceNotifier extends FeatureTemplate {
     @Override
     public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
-        if (messageContent.split(" ")[0].toLowerCase().startsWith(COMMAND) || messageContent.split(" ")[0].toLowerCase().startsWith("m")) {
-            String out = "";
+        //main command
+        if (messageContent.split(" ")[0].toLowerCase().startsWith(COMMAND)
+        || messageContent.split(" ")[0].toLowerCase().startsWith("m")) {
             commandParser(messageContent);
-            event.sendResponse("searching for "+target +" at "+f(max));
-            auctions = getData(0);
-           // event.sendResponse(out = new Random().nextBoolean() ? ":thumbsup:" : ":thumbsdown:");
-
-
-            //Finds LBIN
-
-            long cheapest = 5;
-
+            event.sendResponse("\u200Esearching for "+target +" under "+f(max));
+            event.sendResponse("indexed: " + f(indexed)+"\ncount: "+f(count)+"\ntotal cost to buy out: "+f(total)+"\n"+ index());
+            hasIndexed = true;
+        }
+        //market manipulation finder
+        else if(messageContent.split(" ")[0].toLowerCase().startsWith("search")){
             try {
-                event.sendResponse(index());
-                String stats = /*"indexed: " + f(indexed)+*/"\ncount: "+f(count)/*+"\nsize: " + auctions.getTotalPages()+"\nstatus: "+f(auctions.getTotalAuctions())
-                        */+"\n\nTotal cost to buy out: "+f(total);
-                System.out.println(stats);
-                event.sendResponse(stats);
-                dealFinder();
+                if (!hasIndexed) {
+                    index();
+                    hasIndexed = true;
+                }
+                commandParser(messageContent);
+                ArrayList<String> found = dealFinder();
+                String deals = found.get(0);
+                for (int i = 1; i < found.size() - 1; i++) {
+                    deals += "\n" + found.get(i);
+                }
+                event.sendResponse(deals);
             }catch(Exception e){
                 e.printStackTrace();
             }
         }
     }
+    //gets the AH data of a specific page (used in index)
     public AuctionDataWrapper getData(int page){
         System.out.println(baseUrl+"?page="+page);
         AuctionDataWrapper out;
@@ -127,12 +136,10 @@ public class PriceNotifier extends FeatureTemplate {
              out = new AuctionDataWrapper();
             out.spoof();
         }
-        //Mono<AuctionDataWrapper> request = webClient.get().uri(baseUrl+"?page="+page).retrieve().bodyToMono(AuctionDataWrapper.class);
 
         return out;
     }
-
-
+    //iterates through every auction for stats message and to make dealfinder work
     public String index(){
         count = 0;
         indexed=0;
@@ -177,8 +184,8 @@ public class PriceNotifier extends FeatureTemplate {
         return("lowest "+f(cheapest) + " averaged "+ f(averageN(prices)) +" across " + averageRange + " cheapest");
     }
     //finds the average price of the (5) cheapest numbers in an array
-    //really unoptimized, iterates through everything in the "best" array to find the\n
-    //most expensive index everytime, then replaces that one
+    //really unoptimized, iterates through everything in the "best" array to find the
+        //most expensive index everytime, then replaces that one
     public long averageN(ArrayList<Long> in){
         int out=0;
         long track=0;
@@ -211,19 +218,11 @@ public class PriceNotifier extends FeatureTemplate {
         return (out/averageRange);
     }
     //finds the best items to test with
-    public String dealFinder(){
-        boolean out = false;
-        long sum = 0;
+    public ArrayList<String> dealFinder(){
+        System.out.println(minp + " " + maxp + " " + minc + " " + maxc);
+        ArrayList<String> out = new ArrayList<String>();
             for (String key : everything.keySet()) {
                 for (int i = 0; i < everything.get(key).size(); i++) {
-                if (everything.get(key).get(i) > fd("1") && key.toLowerCase().contains("god pot")) {
-                    //   lumpsum.get(key).add(everything.get(key));
-                    //System.out.println(f(everything.get(key).longValue()) + " to buy all "+ counts.get(key).intValue()+ " " + star(key)+"s");
-                    System.out.println("could be worse");
-                    /*if (counts.get(key).intValue() < 20 && counts.get(key).intValue() > 5) {
-                        System.out.println("matches count criteria");
-                    }*/
-                }
             }
             }long specPrice = 0;
             int specTotal = 0;
@@ -235,21 +234,14 @@ public class PriceNotifier extends FeatureTemplate {
                     specPrice += everything.get(key).get(i);
                     specTotal++;
                 }
-                if(8==specTotal && /*12>=specTotal &&*/ specPrice<fd("12m") && specPrice>fd("8m")) {
-                    System.out.println(f(specPrice) + " to buy all " + specTotal + " " + star(key) + "s");
+                if(minc<=specTotal && maxc>=specTotal && specPrice<fd(maxp) && specPrice>fd(minp)) {
+                    System.out.println(f(specPrice) + " for " + specTotal + " " + star(key) + "'s");
+                    out.add(f(specPrice) + " for " + specTotal + " " + star(key) + "'s");
                 }
         }
-
-
-        /*for (int i = 0; i<in.size(); i++) {
-            total += in.get(i);
-        }
-        /*if((total/in.size())>15_000_000 && in.size()>5 && in.size()<20) {
-            return name;
-        }else{*/
-            return "";
-        //}
+            return out;
     }
+    //Rewrites star values to be more readable (used in dealfinder)
     public String star(String in){
         if(in.contains("✪")){
             int countS = 0;
@@ -274,29 +266,40 @@ public class PriceNotifier extends FeatureTemplate {
         }
         return in;
     }
-
     //sets variables (target & setPrice) to what the user inputs
     public void commandParser(String in){
-        int offset = 0;
-        String[] split = in.toLowerCase().split(" ");
-        if(split.length>1){
-            target=split[1];
-            try{
-                System.out.println("suffix -> " + split[split.length-1]);
-                max = fd(split[split.length-1].trim());
-                System.out.println(max + "<- setPrice");
-                offset=1;
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            for (int i = 2; i<split.length-offset; i++) {
-                target += " "+split[i];
-            }
-            System.out.println(offset + " offset");
-            System.out.println(target + "<- target");
-        }else{
-            System.out.println("no input/too many "+split.length);
+        //main command
+        //start, item name, price (optional)
+        if(in.toLowerCase().startsWith("m")||in.toLowerCase().startsWith(COMMAND)) {
+            int offset = 0;
+            String[] split = in.toLowerCase().split(" ");
+            if (split.length > 1) {
+                target = split[1];
+                try {
+                    System.out.println("suffix -> " + split[split.length - 1]);
+                    max = fd(split[split.length - 1].trim());
+                    System.out.println(max + "<- setPrice");
+                    offset = 1;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                for (int i = 2; i < split.length - offset; i++) {
+                    target += " " + split[i];
+                }
+                System.out.println(offset + " offset");
+                System.out.println(target + "<- target");
+            } else {
+                System.out.println("no input/too many " + split.length);
 
+            }
+        }
+        //search
+        if(in.toLowerCase().startsWith("search")){
+            String[] split = in.toLowerCase().split(" ");
+            minp=split[1];
+            maxp=split[2];
+            minc=Integer.parseInt(split[3]);
+            maxc=Integer.parseInt(split[4]);
         }
     }
     //formats numbers to have commas or k/m/b/t
