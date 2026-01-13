@@ -25,6 +25,9 @@ public class DiscordBot {
 
 	HelpListener helpListener;
 
+	String progressId="";
+	Boolean ran = false;
+
 	public DiscordBot(String token, String channelName) {
 		this.token = token;
 		this.channelName = channelName;
@@ -44,16 +47,18 @@ public class DiscordBot {
 					+"\n\tThis message can be disabled in org.jointheleague.Launcher.java");
 			//api.getTextChannelsByName(channelName, true).forEach(e -> e.sendMessage(api.getInviteUrl()).submit());
 		//}
-
+		PriceNotifier pn = new PriceNotifier(channelName, this);
 		//Send bot connected message in channel
 		MessageCreateData botConnected = new MessageCreateBuilder()
 				.addContent(api.getSelfUser().getName() + " has blessed you with his presence")
 				.build();
 		api.getTextChannelsByName(channelName, true).forEach(e -> {
 			e.sendMessage(botConnected).submit().join();
-			//e.sendMessage("/test").submit();
+			e.sendMessage("indexing...").submit();
+			e.sendTyping();
 
 		});
+		pn.index();
 
 		//add help listener to bot
 		api.addEventListener(helpListener);
@@ -65,12 +70,36 @@ public class DiscordBot {
 		//addFeature(new CurrentTime(channelName));
 		//addFeature(new HighLowGame(channelName));
 		addFeature(new NewsApi(channelName));
-		addFeature(new PriceNotifier(channelName));
+		addFeature(pn);
 						//addFeature(new CatFactsApi(channelName));
 	}
 
 	private void addFeature(Feature feature){
 		api.addEventListener(feature);
 		helpListener.addHelpEmbed(feature.getHelpEmbed());
+	}
+	public void sendMessage(String in){
+		api.getTextChannelsByName(channelName, true).forEach(e -> {
+			e.sendMessage(in).submit();
+		//	e.getLatestMessageId()
+		//	e.editMessageById()
+	});
+	}
+	public void progressMsg(int in, int max) {
+		if (!ran) {
+			api.getTextChannelsByName(channelName, true).forEach(e -> {
+				e.sendMessage("Indexing ?/?").submit();
+				progressId=e.getLatestMessageId();
+				System.out.println("message to edit: "+e.retrieveMessageById(progressId).complete().getContentDisplay());});
+			ran=true;
+		}else{
+			api.getTextChannelsByName(channelName, true).forEach(e -> {
+				try {
+					e.editMessageById(progressId, ("Indexing " + in + "/" + max));
+				}catch(Exception p){
+					p.printStackTrace();
+				}
+				});
+		}
 	}
 }

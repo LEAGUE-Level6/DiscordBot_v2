@@ -3,6 +3,7 @@ package org.jointheleague.features.student;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jointheleague.api_wrapper.ReceivedMessage;
+import org.jointheleague.discord_bot.DiscordBot;
 import org.jointheleague.features.abstract_classes.Feature;
 import org.jointheleague.features.help_embed.plain_old_java_objects.help_embed.HelpEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -17,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 // split URouUH0zfXDNOatcfdGPz0cWw8heCos
 //CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.G2Djbq.3nRWdT-
 import reactor.core.publisher.Mono;
+
 
 import java.util.*;
 
@@ -49,31 +51,33 @@ public class PriceNotifier extends FeatureTemplate {
             allow for commas/ k/m/b markers
 
  */
-        public final String COMMAND = "/money";
-        protected String channelName;
-        public HelpEmbed helpEmbed;
-        private WebClient webClient;
-        private static final String baseUrl = "https://api.hypixel.net/v2/skyblock/auctions";
-        int indexed=0;
-        int count = 0;
-        //AuctionDataWrapper auctions;
-        int pages = 0;
-        long max = 10_002_000_000_000l;
-        long total = 0;
-        int averageRange = 5;
-        boolean hasIndexed = false;
-        String indexMsg = "";
-        String target = "jerry candy";
-    String minp="8m";
-    String maxp="12m";
-    int minc=7;
-    int maxc=9;
-        Map<String, ArrayList<Long>> everything = new HashMap<>(50_000_000);
-        Map<String, Integer> counts = new HashMap<>(50_000_000);
+    public final String COMMAND = "/money";
+    protected String channelName;
+    public HelpEmbed helpEmbed;
+    private WebClient webClient;
+    private static final String baseUrl = "https://api.hypixel.net/v2/skyblock/auctions";
+    int indexed = 0;
+    int count = 0;
+    //AuctionDataWrapper auctions;
+    int pages = 0;
+    long max = 10_002_000_000_000l;
+    long total = 0;
+    int averageRange = 5;
+    boolean hasIndexed = false;
+    String indexMsg = "";
+    String target = "jerry candy";
+    String minp = "8m";
+    String maxp = "12m";
+    int minc = 7;
+    int maxc = 9;
+    Map<String, ArrayList<Long>> everything = new HashMap<>(50_000_000);
+    Map<String, Integer> counts = new HashMap<>(50_000_000);
+    DiscordBot discord;
 
 
-    public PriceNotifier(String channelName) {
+    public PriceNotifier(String channelName, DiscordBot discord) {
         super(channelName);
+        this.discord=discord;
 
         //Create a help embed to describe feature when !help command is sent
         helpEmbed = new HelpEmbed(
@@ -96,13 +100,15 @@ public class PriceNotifier extends FeatureTemplate {
 
     @Override
     public void handle(ReceivedMessage event) {
+
         String messageContent = event.getMessageContent();
         //main command
         if (messageContent.split(" ")[0].toLowerCase().startsWith(COMMAND)
         || messageContent.split(" ")[0].toLowerCase().startsWith("m")) {
             commandParser(messageContent);
             event.sendResponse("\u200Esearching for "+target +" under "+f(max));
-            event.sendResponse("indexed: " + f(indexed)+"\ncount: "+f(count)+"\ntotal cost to buy out: "+f(total)+"\n"+ index());
+            event.sendResponse("indexed: " + f(indexed)+"\ncount: "+f(count)+"\ntotal cost to buy out: "+f(total)+"\n"
+            +target + "found at "+ cheapest(target));
             hasIndexed = true;
         }
         //market manipulation finder
@@ -140,7 +146,9 @@ public class PriceNotifier extends FeatureTemplate {
         return out;
     }
     //iterates through every auction for stats message and to make dealfinder work
-    public String index(){
+    //iterates through every auction and populates the price and quantity arrays
+        //works by saving arraylists containing every bin price of an item and saving the arraylists to hashmaps with the item name as the key
+    public void index(){
         count = 0;
         indexed=0;
         long cheapest = max;
@@ -152,36 +160,54 @@ public class PriceNotifier extends FeatureTemplate {
         try {
             while(run){
               data=getData(i);
-                //System.out.println("working.2  "+data.getTotalPages()+" "+data.getAuctions().length);
                 if(data.getStatus()) {
                     for (int j = 0; j < data.getAuctions().length - 1; j++) {
                         indexed++;
-                        everything.putIfAbsent(data.getAuctions()[j].getItem_name().toLowerCase(), new ArrayList<Long>());
-
-                       everything.get(data.getAuctions()[j].getItem_name().toLowerCase())
-                               .add(data.getAuctions()[j].getStarting_bid());
-
-                        if (data.getAuctions()[j].getBin() && data.getAuctions()[j].getItem_name().toLowerCase().contains(target)) {
-                            count++;
-                            System.out.println("found "+data.getAuctions()[j].getItem_name());
-                            prices.add(data.getAuctions()[j].getStarting_bid());
-                            if(data.getAuctions()[j].getStarting_bid()<cheapest){
-                                cheapest=data.getAuctions()[j].getStarting_bid();
-                                System.out.println("new cheapest ^"+data.getAuctions()[j].getStarting_bid());
-                            }
-                            //set.add(auctions.getAuctions()[j].getId());
+                        discord.progressMsg(i, data.getTotalPages());
+                        if(data.getAuctions()[j].getBin()) {
+                            //if it hasnt already, adds a new arraylist to the hashmap matching the item's name
+                            everything.putIfAbsent(data.getAuctions()[j].getItem_name().toLowerCase(), new ArrayList<Long>());
+                            //adds the item's price to the arraylist
+                            everything.get(data.getAuctions()[j].getItem_name().toLowerCase())
+                                    .add(data.getAuctions()[j].getStarting_bid());
                         }
                     }
                 }else{
                     run=false;
                 }
-                //System.out.println("cycle "+i+"/"+data.getTotalPages());
                 i++;
             }
         }catch(Exception e){
             e.printStackTrace();
         }
-        return("lowest "+f(cheapest) + " averaged "+ f(averageN(prices)) +" across " + averageRange + " cheapest");
+        //return("lowest "+f(cheapest) + " averaged "+ f(averageN(prices)) +" across " + averageRange + " cheapest");
+        System.out.println("indexing finished");
+        discord.sendMessage("indexing finished");
+        discord.sendMessage("m ember");
+    }
+    public long cheapest(String in){
+        String placehold = "";
+        try {
+            long cheapest = max;
+            for (String i : everything.keySet()) {
+                if (i.contains(target)) {
+                    System.out.println("found, " + i);
+                    for (int j = 0; j < everything.get(i).size(); j++) {
+                        System.out.println(everything.get(i).size());
+                        System.out.print("/");
+                        if (everything.get(i).get(j) < cheapest) {
+                            cheapest = everything.get(i).get(j);
+                            System.out.println("\nnew cheapest: " + everything.get(i).get(j));
+                        }
+                    }
+                }
+            }
+            System.out.println("");
+            return cheapest;
+        }catch(Exception e){
+            e.printStackTrace();
+            return 0;
+        }
     }
     //finds the average price of the (5) cheapest numbers in an array
     //really unoptimized, iterates through everything in the "best" array to find the
@@ -281,7 +307,7 @@ public class PriceNotifier extends FeatureTemplate {
                     System.out.println(max + "<- setPrice");
                     offset = 1;
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println("suffix not a number");
                 }
                 for (int i = 2; i < split.length - offset; i++) {
                     target += " " + split[i];
