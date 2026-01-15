@@ -21,7 +21,7 @@ public class DiscordBot {
 
 	private String channelName;
 
-	JDA api;
+	public JDA api;
 
 	HelpListener helpListener;
 
@@ -88,18 +88,16 @@ public class DiscordBot {
 	public void progressMsg(int in, int max) {
 		if (!ran) {
 			api.getTextChannelsByName(channelName, true).forEach(e -> {
-				e.sendMessage("Indexing ?/?").submit();
 				progressId=e.getLatestMessageId();
 				System.out.println("message to edit: "+e.retrieveMessageById(progressId).complete().getContentDisplay());});
 			ran=true;
 		}else{
-			api.getTextChannelsByName(channelName, true).forEach(e -> {
-				try {
-					e.editMessageById(progressId, ("Indexing " + in + "/" + max));
-				}catch(Exception p){
-					p.printStackTrace();
+			api.getTextChannelsByName(channelName, true).get(0).editMessageById(progressId, ("Indexing " + in + "/" + max)).submit();
+                    System.out.println("Indexing " + in + "/");
 				}
-				});
-		}
 	}
+    public void sendFinish(){
+        api.getTextChannelsByName(channelName, true).get(0)
+                .editMessageById(progressId, "Indexing finished").submit();
+    }
 }

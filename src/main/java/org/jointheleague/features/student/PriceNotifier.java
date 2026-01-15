@@ -15,8 +15,8 @@ import org.jointheleague.features.student.pojo.AuctionDataWrapper;
 import org.jointheleague.features.student.pojo.PreDataWrapper;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-// split URouUH0zfXDNOatcfdGPz0cWw8heCos
-//CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.G2Djbq.3nRWdT-
+//split pVComE-1yB1eaArvIMw
+//CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.G4f_c9.UzRIn0RFcdEFZFCalz-
 import reactor.core.publisher.Mono;
 
 
@@ -73,6 +73,8 @@ public class PriceNotifier extends FeatureTemplate {
     Map<String, ArrayList<Long>> everything = new HashMap<>(50_000_000);
     Map<String, Integer> counts = new HashMap<>(50_000_000);
     DiscordBot discord;
+    String specTarget = "";
+    String msg = "";
 
 
     public PriceNotifier(String channelName, DiscordBot discord) {
@@ -102,22 +104,25 @@ public class PriceNotifier extends FeatureTemplate {
     public void handle(ReceivedMessage event) {
 
         String messageContent = event.getMessageContent();
+        commandParser(messageContent);
         //main command
         if (messageContent.split(" ")[0].toLowerCase().startsWith(COMMAND)
         || messageContent.split(" ")[0].toLowerCase().startsWith("m")) {
-            commandParser(messageContent);
-            event.sendResponse("\u200Esearching for "+target +" under "+f(max));
-            event.sendResponse("indexed: " + f(indexed)+"\ncount: "+f(count)+"\ntotal cost to buy out: "+f(total)+"\n"
-            +target + "found at "+ cheapest(target));
-            hasIndexed = true;
+            try {
+                msg = " found at " + f(cheapest(target));
+                if (!specTarget.isEmpty()) {
+                    event.sendResponse("\u200Esearching for " + specTarget + " under " + f(max));
+                    msg = ("indexed: " + f(indexed) + "\ncount: " + f(fetch(specTarget).size()) +
+                            "\naveraged to: " + f(averageN(fetch(specTarget))) + "\n" + specTarget + msg);
+                    event.sendResponse(msg);
+                } else {
+                    event.sendResponse(target + " was not a part of any item name listed for BIN");
+                }
+            }catch (Exception e) {e.printStackTrace();}
         }
         //market manipulation finder
         else if(messageContent.split(" ")[0].toLowerCase().startsWith("search")){
             try {
-                if (!hasIndexed) {
-                    index();
-                    hasIndexed = true;
-                }
                 commandParser(messageContent);
                 ArrayList<String> found = dealFinder();
                 String deals = found.get(0);
@@ -160,10 +165,12 @@ public class PriceNotifier extends FeatureTemplate {
         try {
             while(run){
               data=getData(i);
+                if(i%5==0){
+                discord.progressMsg(i, data.getTotalPages());
+                }
                 if(data.getStatus()) {
                     for (int j = 0; j < data.getAuctions().length - 1; j++) {
                         indexed++;
-                        discord.progressMsg(i, data.getTotalPages());
                         if(data.getAuctions()[j].getBin()) {
                             //if it hasnt already, adds a new arraylist to the hashmap matching the item's name
                             everything.putIfAbsent(data.getAuctions()[j].getItem_name().toLowerCase(), new ArrayList<Long>());
@@ -182,13 +189,14 @@ public class PriceNotifier extends FeatureTemplate {
         }
         //return("lowest "+f(cheapest) + " averaged "+ f(averageN(prices)) +" across " + averageRange + " cheapest");
         System.out.println("indexing finished");
-        discord.sendMessage("indexing finished");
-        discord.sendMessage("m ember");
+        discord.sendFinish();
+        //discord.sendMessage("m ember");
     }
     public long cheapest(String in){
         String placehold = "";
         try {
             long cheapest = max;
+            specTarget = "";
             for (String i : everything.keySet()) {
                 if (i.contains(target)) {
                     System.out.println("found, " + i);
@@ -198,6 +206,7 @@ public class PriceNotifier extends FeatureTemplate {
                         if (everything.get(i).get(j) < cheapest) {
                             cheapest = everything.get(i).get(j);
                             System.out.println("\nnew cheapest: " + everything.get(i).get(j));
+                            specTarget = i;
                         }
                     }
                 }
@@ -216,7 +225,7 @@ public class PriceNotifier extends FeatureTemplate {
         int out=0;
         long track=0;
         int index=0;
-
+        int counter=0;
         long[] best = new long[averageRange];
         Arrays.fill(best, max);
         for (int i = 0; i<in.size(); i++){
@@ -237,11 +246,14 @@ public class PriceNotifier extends FeatureTemplate {
         for (int j = 0; j<averageRange; j++){
             if(best[j]==max){
             best[j]=0;
-            averageRange--;
+                counter++;
             }
             out+=best[j];
         }
-        return (out/averageRange);
+        if(fetch(specTarget).size()<averageRange){
+            return out/fetch(specTarget).size();
+        }
+        return (out/averageRange-counter);
     }
     //finds the best items to test with
     public ArrayList<String> dealFinder(){
@@ -386,6 +398,14 @@ public class PriceNotifier extends FeatureTemplate {
             }
         }
         return out;
+    }
+    public ArrayList<Long> fetch(String in){
+        for (String i : everything.keySet()) {
+            if (i.contains(target)) {
+                return everything.get(i);
+            }
+        }return null;
+
     }
 
 }
