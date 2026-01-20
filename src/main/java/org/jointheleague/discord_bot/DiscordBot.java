@@ -53,6 +53,7 @@ public class DiscordBot {
 				.addContent(api.getSelfUser().getName() + " has blessed you with his presence")
 				.build();
 		api.getTextChannelsByName(channelName, true).forEach(e -> {
+			e.sendMessage("----------------").submit();
 			e.sendMessage(botConnected).submit().join();
 			e.sendMessage("indexing...").submit();
 			e.sendTyping();

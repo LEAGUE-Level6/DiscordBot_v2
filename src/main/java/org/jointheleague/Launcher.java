@@ -2,6 +2,8 @@ package org.jointheleague;
 
 import org.jointheleague.discord_bot.DiscordBot;
 
+import java.util.Scanner;
+
 public class Launcher {
     public static void main(String[] args) throws InterruptedException {
 
@@ -13,6 +15,13 @@ public class Launcher {
         //Instantiate DiscordBot and connect
         DiscordBot discordBot =  new DiscordBot(discordToken, channelName);
         discordBot.connect(printDiscordInvite);
-
+        Scanner scan = new Scanner(System.in);
+        while(true) {
+            String in = scan.nextLine();
+            System.out.println("CONSOLE:"+in);
+            if (!in.isEmpty()) {
+                discordBot.sendMessage(in);
+            }
+        }
     }
 }

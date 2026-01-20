@@ -75,7 +75,19 @@ public class PriceNotifier extends FeatureTemplate {
     DiscordBot discord;
     String specTarget = "";
     String msg = "";
-
+    String[] reforges = {"Awkward", "Rich", "Clean", "Fierce", "Heavy", "Light", "Mythic", "Pure", "Smart", "Titanic", "Wise", "Bizarre", "Itchy", "Ominous",
+        "Pleasant", "Pretty", "Shiny", "Simple", "Strange", "Vivid", "Godly", "Demonic", "Forceful", "Hurtful", "Keen", "Strong", "Superior", "Unpleasant", "Zealous",
+        "Deadly", "Fine", "Grand", "Hasty", "Neat", "Rapid", "Unreal", "Epic", "Fair", "Fast", "Gentle", "Heroic", "Legendary", "Odd", "Sharp", "Spicy", "Salty", "Treacherous",
+        "Stiff", "Lucky", "Very", "Highly", "Extremely", "Not", "Possibly", "Fabled", "Suspicious", "Warped", "Withered", "Bulky", "Jerry's", "Salty", "Treacherous",
+        "Heated", "Auspicious", "Fleet", "Magnetic", "Mithraic", "Refined", "Stellar", "Fruitful", "Toil", "Blessed", "Bountiful", "Moil", "Groovy", "Green Thumb", "Candied",
+        "Submerged", "Reinforced", "Cubic", "Giant", "Loving", "Perfect", "Necrotic", "Ancient", "Spiked", "Renowned", "Redone", "Cubic", "Empowered", "Cold", "Frigid",
+        "Bloodshot", "Waxed", "Fortified", "Strengthened", "Shiny", "Glistening", "Rooted", "Blooming", "Snowy", "Festive", "Headstrong", "Burgeoning", "precise", "spiritual"};
+    //reforges that give a Custom item name
+    String[] cReforges = {"very wise dragon armor","Extremely heavy armor","not so heavy armor","thicc super heavy armor","absolutely perfect armor",
+            "even more refined titanium pickaxe", "even more refined mithril pickaxe"};
+    //the Base version of the item
+    String[] bReforges = {"wise dragon armor", "heavy armor", "heavy armor", "super heavy armor", "perfect armor","refined titanium pickaxe","refined mithril pickaxe"};
+    String name = "";
 
     public PriceNotifier(String channelName, DiscordBot discord) {
         super(channelName);
@@ -109,10 +121,10 @@ public class PriceNotifier extends FeatureTemplate {
         if (messageContent.split(" ")[0].toLowerCase().startsWith(COMMAND)
         || messageContent.split(" ")[0].toLowerCase().startsWith("m")) {
             try {
-                msg = " found at " + f(cheapest(target));
+                cheapest(target);
                 if (!specTarget.isEmpty()) {
                     event.sendResponse("\u200Esearching for " + specTarget + " under " + f(max));
-                    msg = ("indexed: " + f(indexed) + "\ncount: " + f(fetch(specTarget).size()) +
+                    msg = ("count: " + f(fetch(specTarget).size()) +
                             "\naveraged to: " + f(averageN(fetch(specTarget))) + "\n" + specTarget + msg);
                     event.sendResponse(msg);
                 } else {
@@ -154,6 +166,7 @@ public class PriceNotifier extends FeatureTemplate {
     //iterates through every auction and populates the price and quantity arrays
         //works by saving arraylists containing every bin price of an item and saving the arraylists to hashmaps with the item name as the key
     public void index(){
+
         count = 0;
         indexed=0;
         long cheapest = max;
@@ -172,10 +185,17 @@ public class PriceNotifier extends FeatureTemplate {
                     for (int j = 0; j < data.getAuctions().length - 1; j++) {
                         indexed++;
                         if(data.getAuctions()[j].getBin()) {
+                            //clears reforge
+                            name = data.getAuctions()[j].getItem_name();
+                            Arrays.stream(reforges).forEach(x -> {
+                                if(name.startsWith(x)){
+                                    name=name.replace(x+" ", "");
+                                }
+                            });
                             //if it hasnt already, adds a new arraylist to the hashmap matching the item's name
-                            everything.putIfAbsent(data.getAuctions()[j].getItem_name().toLowerCase(), new ArrayList<Long>());
+                            everything.putIfAbsent(name.toLowerCase(), new ArrayList<Long>());
                             //adds the item's price to the arraylist
-                            everything.get(data.getAuctions()[j].getItem_name().toLowerCase())
+                            everything.get(name.toLowerCase())
                                     .add(data.getAuctions()[j].getStarting_bid());
                         }
                     }
@@ -193,7 +213,6 @@ public class PriceNotifier extends FeatureTemplate {
         //discord.sendMessage("m ember");
     }
     public long cheapest(String in){
-        String placehold = "";
         try {
             long cheapest = max;
             specTarget = "";
@@ -201,17 +220,20 @@ public class PriceNotifier extends FeatureTemplate {
                 if (i.contains(target)) {
                     System.out.println("found, " + i);
                     for (int j = 0; j < everything.get(i).size(); j++) {
-                        System.out.println(everything.get(i).size());
-                        System.out.print("/");
+                        //System.out.println(everything.get(i).size());
+                        //System.out.print("/");
                         if (everything.get(i).get(j) < cheapest) {
                             cheapest = everything.get(i).get(j);
-                            System.out.println("\nnew cheapest: " + everything.get(i).get(j));
+                            System.out.println("\nnew cheapest: " + everything.get(i).get(j) + " - "+i);
                             specTarget = i;
+
                         }
                     }
                 }
             }
-            System.out.println("");
+            specTarget = specTarget;
+            System.out.println("spec > "+ specTarget);
+
             return cheapest;
         }catch(Exception e){
             e.printStackTrace();
@@ -222,10 +244,11 @@ public class PriceNotifier extends FeatureTemplate {
     //really unoptimized, iterates through everything in the "best" array to find the
         //most expensive index everytime, then replaces that one
     public long averageN(ArrayList<Long> in){
-        int out=0;
+        long out=0;
         long track=0;
         int index=0;
         int counter=0;
+        total = 0;
         long[] best = new long[averageRange];
         Arrays.fill(best, max);
         for (int i = 0; i<in.size(); i++){
@@ -244,12 +267,18 @@ public class PriceNotifier extends FeatureTemplate {
             }
         }
         for (int j = 0; j<averageRange; j++){
+
             if(best[j]==max){
             best[j]=0;
                 counter++;
             }
+            System.out.println("N best: "+best[j]);
             out+=best[j];
         }
+        System.out.println("N out: "+out);
+        System.out.println("N counter: "+counter);
+        System.out.println("N array size: "+best.length);
+        System.out.println("N in: "+in);
         if(fetch(specTarget).size()<averageRange){
             return out/fetch(specTarget).size();
         }
@@ -358,6 +387,9 @@ public class PriceNotifier extends FeatureTemplate {
 //     change this 0 to 1 if you dont want to abbreviate thousands |
         if(markers & out.chars().filter(num -> num == ',').count()>0){
             str = out.split(",")[0];
+            if(out.split(",")[1].charAt(0)!='0'){
+                str += "."+out.split(",")[1].charAt(0);
+            }
         if(out.chars().filter(num -> num == ',').count()==2){
             marker="m";
         }else if(out.chars().filter(num -> num == ',').count()==3){
@@ -375,7 +407,7 @@ public class PriceNotifier extends FeatureTemplate {
 
         return str+marker;
     }
-    //decodes numbers
+    //decodes formatted numbers
     public long fd(String in){
         long out = 67_000_000_000l;
         if(in.contains(",")){
@@ -401,7 +433,8 @@ public class PriceNotifier extends FeatureTemplate {
     }
     public ArrayList<Long> fetch(String in){
         for (String i : everything.keySet()) {
-            if (i.contains(target)) {
+            if (i.contains(in)) {
+                System.out.println("Fetched "+i+" as " +everything.get(i));
                 return everything.get(i);
             }
         }return null;
