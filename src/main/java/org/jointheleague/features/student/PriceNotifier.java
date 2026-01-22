@@ -15,8 +15,8 @@ import org.jointheleague.features.student.pojo.AuctionDataWrapper;
 import org.jointheleague.features.student.pojo.PreDataWrapper;
 import org.jointheleague.features.templates.FeatureTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-//split pVComE-1yB1eaArvIMw
-//CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.G4f_c9.UzRIn0RFcdEFZFCalz-
+//split I7Nlx3Uz47cf9tLRnID29uMCAMSuNaLGW9RsUE
+//CHANNEL_NAME=borl;DISCORD_TOKEN=MTQyNDg5MzE1Mjc2NTkzNTczOA.Gv_iRi.
 import reactor.core.publisher.Mono;
 
 
@@ -65,7 +65,7 @@ public class PriceNotifier extends FeatureTemplate {
     int averageRange = 5;
     boolean hasIndexed = false;
     String indexMsg = "";
-    String target = "jerry candy";
+    String target = "NUL";
     String minp = "8m";
     String maxp = "12m";
     int minc = 7;
@@ -73,7 +73,7 @@ public class PriceNotifier extends FeatureTemplate {
     Map<String, ArrayList<Long>> everything = new HashMap<>(50_000_000);
     Map<String, Integer> counts = new HashMap<>(50_000_000);
     DiscordBot discord;
-    String specTarget = "";
+    String specTarget = "jerry candy";
     String msg = "";
     String[] reforges = {"Awkward", "Rich", "Clean", "Fierce", "Heavy", "Light", "Mythic", "Pure", "Smart", "Titanic", "Wise", "Bizarre", "Itchy", "Ominous",
         "Pleasant", "Pretty", "Shiny", "Simple", "Strange", "Vivid", "Godly", "Demonic", "Forceful", "Hurtful", "Keen", "Strong", "Superior", "Unpleasant", "Zealous",
@@ -114,54 +114,64 @@ public class PriceNotifier extends FeatureTemplate {
 
     @Override
     public void handle(ReceivedMessage event) {
+        if (event.getAuthor() != "1424893152765935738") {
+            String messageContent = event.getMessageContent();
+            commandParser(messageContent);
 
-        String messageContent = event.getMessageContent();
-        commandParser(messageContent);
-        //main command
-        if (messageContent.split(" ")[0].toLowerCase().startsWith(COMMAND)
-        || messageContent.split(" ")[0].toLowerCase().startsWith("m")) {
-            try {
-                cheapest(target);
-                if (!specTarget.isEmpty()) {
-                    event.sendResponse("\u200Esearching for " + specTarget + " under " + f(max));
-                    msg = ("count: " + f(fetch(specTarget).size()) +
-                            "\naveraged to: " + f(averageN(fetch(specTarget))) + "\n" + specTarget + msg);
-                    event.sendResponse(msg);
-                } else {
-                    event.sendResponse(target + " was not a part of any item name listed for BIN");
+            System.out.println("MESSAGE: " + messageContent);
+            //main command
+            if (messageContent.split(" ")[0].toLowerCase().startsWith(COMMAND)
+                    || messageContent.split(" ")[0].toLowerCase().startsWith("m")) {
+                try {
+                    cheapest(target);
+                    if (!specTarget.isEmpty()) {
+                        event.sendResponse("\u200Esearching for " + specTarget + " under " + f(max));
+                        msg = ("count: " + f(fetch(specTarget).size()) +
+                                "\naveraged to: " + f(averageN(fetch(specTarget))) + "\n" + specTarget + msg);
+                        event.sendResponse("msg");
+                    } else {
+                        event.sendResponse(target + " was not a part of any item name listed for BIN");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }catch (Exception e) {e.printStackTrace();}
-        }
-        //market manipulation finder
-        else if(messageContent.split(" ")[0].toLowerCase().startsWith("search")){
-            try {
-                commandParser(messageContent);
-                ArrayList<String> found = dealFinder();
-                String deals = found.get(0);
-                for (int i = 1; i < found.size() - 1; i++) {
-                    deals += "\n" + found.get(i);
+            }
+            //market manipulation finder
+            else if (messageContent.split(" ")[0].toLowerCase().startsWith("search")) {
+                try {
+                    commandParser(messageContent);
+                    ArrayList<String> found = dealFinder();
+                    String deals = found.get(0);
+                    for (int i = 1; i < found.size() - 1; i++) {
+                        deals += "\n" + found.get(i);
+                    }
+                    event.sendResponse(deals);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                event.sendResponse(deals);
-            }catch(Exception e){
-                e.printStackTrace();
+            } else if (messageContent.split(" ")[0].toLowerCase().contains("kys")) {
+                discord.sendMessage("disconnecting");
+                System.out.println("SHUTTING DOWN");
+                discord.api.shutdown();
             }
         }
-    }
-    //gets the AH data of a specific page (used in index)
-    public AuctionDataWrapper getData(int page){
-        System.out.println(baseUrl+"?page="+page);
-        AuctionDataWrapper out;
-        try{
-            out = webClient.get().uri(baseUrl+"?page="+page).retrieve().bodyToMono(AuctionDataWrapper.class).block();
-            //System.out.println("no errors pulling data");
-        }catch(Exception e){
-            System.out.println(page+"data spoofed");
-             out = new AuctionDataWrapper();
-            out.spoof();
         }
+        //gets the AH data of a specific page (used in index)
+        public AuctionDataWrapper getData ( int page){
+            System.out.println(baseUrl + "?page=" + page);
+            AuctionDataWrapper out;
+            try {
+                out = webClient.get().uri(baseUrl + "?page=" + page).retrieve().bodyToMono(AuctionDataWrapper.class).block();
+                //System.out.println("no errors pulling data");
+            } catch (Exception e) {
+                System.out.println(page + "data spoofed");
+                out = new AuctionDataWrapper();
+                out.spoof();
+            }
 
         return out;
     }
+
     //iterates through every auction for stats message and to make dealfinder work
     //iterates through every auction and populates the price and quantity arrays
         //works by saving arraylists containing every bin price of an item and saving the arraylists to hashmaps with the item name as the key
@@ -188,7 +198,7 @@ public class PriceNotifier extends FeatureTemplate {
                             //clears reforge
                             name = data.getAuctions()[j].getItem_name();
                             Arrays.stream(reforges).forEach(x -> {
-                                if(name.startsWith(x)){
+                                if(name.startsWith(x.toLowerCase())){
                                     name=name.replace(x+" ", "");
                                 }
                             });
