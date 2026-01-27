@@ -58,13 +58,9 @@ public class PriceNotifier extends FeatureTemplate {
     private static final String baseUrl = "https://api.hypixel.net/v2/skyblock/auctions";
     int indexed = 0;
     int count = 0;
-    //AuctionDataWrapper auctions;
-    int pages = 0;
     long max = 10_002_000_000_000l;
     long total = 0;
     int averageRange = 5;
-    boolean hasIndexed = false;
-    String indexMsg = "";
     String target = "NUL";
     String minp = "8m";
     String maxp = "12m";
@@ -88,6 +84,13 @@ public class PriceNotifier extends FeatureTemplate {
     //the Base version of the item
     String[] bReforges = {"wise dragon armor", "heavy armor", "heavy armor", "super heavy armor", "perfect armor","refined titanium pickaxe","refined mithril pickaxe"};
     String name = "";
+    String[] symbols = {"➊","➋","➌","➍","➎"};
+    long cheap;
+    String temp="";
+    long out=0;
+    long track=0;
+    int index=0;
+    int counter=0;
 
     public PriceNotifier(String channelName, DiscordBot discord) {
         super(channelName);
@@ -114,22 +117,27 @@ public class PriceNotifier extends FeatureTemplate {
 
     @Override
     public void handle(ReceivedMessage event) {
-        if (event.getAuthor() != "1424893152765935738") {
+        if (!event.getAuthor().equals("1424893152765935738")) {
             String messageContent = event.getMessageContent();
             commandParser(messageContent);
 
-            System.out.println("MESSAGE: " + messageContent);
+            System.out.println("MESSAGE: " + messageContent + " ("+event.getAuthor()+")");
+
             //main command
             if (messageContent.split(" ")[0].toLowerCase().startsWith(COMMAND)
                     || messageContent.split(" ")[0].toLowerCase().startsWith("m")) {
                 try {
-                    cheapest(target);
+                    msg = "";
+                    cheap = cheapest(target);
                     if (!specTarget.isEmpty()) {
                         event.sendResponse("\u200Esearching for " + specTarget + " under " + f(max));
-                        msg = ("count: " + f(fetch(specTarget).size()) +
-                                "\naveraged to: " + f(averageN(fetch(specTarget))) + "\n" + specTarget + msg);
-                        event.sendResponse("msg");
+                        msg = ("count: " + getCount(fetch(specTarget)) +
+                                "\naveraged bottom "+averageRange+" to: " + f(averageN(fetch(specTarget))) + "\n" + "cheapest "+specTarget+": "+f(cheap) + msg);
+                        event.sendResponse(msg);
                     } else {
+                        if(target.equals("NUL")){
+                            event.sendResponse("/money [item name] [max item price (optional)] [how many to average across + \"r\"](optional)");
+                        }
                         event.sendResponse(target + " was not a part of any item name listed for BIN");
                     }
                 } catch (Exception e) {
@@ -138,6 +146,7 @@ public class PriceNotifier extends FeatureTemplate {
             }
             //market manipulation finder
             else if (messageContent.split(" ")[0].toLowerCase().startsWith("search")) {
+                if(messageContent.split(" ")[0].toLowerCase().)
                 try {
                     commandParser(messageContent);
                     ArrayList<String> found = dealFinder();
@@ -196,10 +205,10 @@ public class PriceNotifier extends FeatureTemplate {
                         indexed++;
                         if(data.getAuctions()[j].getBin()) {
                             //clears reforge
-                            name = data.getAuctions()[j].getItem_name();
+                            name = star(data.getAuctions()[j].getItem_name().toLowerCase());
                             Arrays.stream(reforges).forEach(x -> {
                                 if(name.startsWith(x.toLowerCase())){
-                                    name=name.replace(x+" ", "");
+                                    name=name.replace(x.toLowerCase()+" ", "");
                                 }
                             });
                             //if it hasnt already, adds a new arraylist to the hashmap matching the item's name
@@ -254,10 +263,10 @@ public class PriceNotifier extends FeatureTemplate {
     //really unoptimized, iterates through everything in the "best" array to find the
         //most expensive index everytime, then replaces that one
     public long averageN(ArrayList<Long> in){
-        long out=0;
-        long track=0;
-        int index=0;
-        int counter=0;
+         out=0;
+         track=0;
+         index=0;
+         counter=0;
         total = 0;
         long[] best = new long[averageRange];
         Arrays.fill(best, max);
@@ -289,10 +298,11 @@ public class PriceNotifier extends FeatureTemplate {
         System.out.println("N counter: "+counter);
         System.out.println("N array size: "+best.length);
         System.out.println("N in: "+in);
-        if(fetch(specTarget).size()<averageRange){
+
+        /*if(fetch(specTarget).size()<averageRange){
             return out/fetch(specTarget).size();
-        }
-        return (out/averageRange-counter);
+        }*/
+        return (out/(best.length-counter));
     }
     //finds the best items to test with
     public ArrayList<String> dealFinder(){
@@ -320,27 +330,14 @@ public class PriceNotifier extends FeatureTemplate {
     }
     //Rewrites star values to be more readable (used in dealfinder)
     public String star(String in){
-        if(in.contains("✪")){
-            int countS = 0;
-
-            for(int i=0; i < in.length(); i++) {
-                if(in.charAt(i) == '✪') {
-                    countS++;
-                }else if(in.charAt(i) == '➊'){
-                    countS+=1;
-                }else if(in.charAt(i) == '➋'){
-                    countS+=2;
-                }else if(in.charAt(i) == '➌'){
-                    countS+=3;
-                }else if(in.charAt(i) == '➍'){
-                    countS+=4;
-                }else if(in.charAt(i) == '➎'){
-                    countS+=5;
-                }
+            temp = in;
+            for(int i =0; i<symbols.length; i++){
+                in=in.replace(symbols[i], "");
             }
-            in=in.replaceFirst("✪", (count+"✪"));
-            in=in.replaceAll("✪", "");
-        }
+            in=in.replaceAll(" ✪", "");
+        in=in.replaceAll("✪", "");
+            if(!in.equals(temp)){
+            }
         return in;
     }
     //sets variables (target & setPrice) to what the user inputs
@@ -348,17 +345,29 @@ public class PriceNotifier extends FeatureTemplate {
         //main command
         //start, item name, price (optional)
         if(in.toLowerCase().startsWith("m")||in.toLowerCase().startsWith(COMMAND)) {
+            System.out.println("1");
             int offset = 0;
             String[] split = in.toLowerCase().split(" ");
             if (split.length > 1) {
                 target = split[1];
+                System.out.println("2");
                 try {
+                    if(split[split.length - 1].charAt(split[split.length - 1].length()-1)=='r'){
+                        System.out.println("3"+(split[split.length - 1].substring(0, (split[split.length - 1].length()-1))));
+                        averageRange=Integer.parseInt((split[split.length - 1].substring(0, (split[split.length - 1].length()-1))));
+                        System.out.println("4");
+                        System.out.println("range changed to "+averageRange);
+                        split[split.length - 1]=split[split.length - 2];
+                        System.out.println("5");
+                        offset++;
+                    }
+                    System.out.println("6");
                     System.out.println("suffix -> " + split[split.length - 1]);
                     max = fd(split[split.length - 1].trim());
                     System.out.println(max + "<- setPrice");
-                    offset = 1;
+                    offset++;
                 } catch (Exception e) {
-                    System.out.println("suffix not a number");
+                    System.out.println("suffix not a number/range");
                 }
                 for (int i = 2; i < split.length - offset; i++) {
                     target += " " + split[i];
@@ -450,6 +459,15 @@ public class PriceNotifier extends FeatureTemplate {
         }return null;
 
     }
-
+    public int getCount(ArrayList<Long> in){
+        int itemCount =0;
+        for(int i = 0; i<in.size(); i++){
+            if(in.get(i)<max){
+                itemCount++;
+                System.out.print("\\");
+            }
+        }
+        return itemCount;
+    }
 }
 
