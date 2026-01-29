@@ -16,12 +16,12 @@ public class Launcher {
         DiscordBot discordBot =  new DiscordBot(discordToken, channelName);
         discordBot.connect(printDiscordInvite);
         Scanner scan = new Scanner(System.in);
-        while(true) {
+       /* while(true) {
             String in = scan.nextLine();
             System.out.println("CONSOLE:"+in);
             if (!in.isEmpty()) {
                 discordBot.sendMessage(in);
             }
-        }
+        }*/
     }
 }

@@ -26,10 +26,10 @@ public class Input extends Feature {
     public void handle(ReceivedMessage event) {
         String messageContent = event.getMessageContent();
         if (!event.getAuthor().equals("1424893152765935738")){
-            if (messageContent.toLowerCase().contains("im")) {
-                event.sendResponse("Hey " + caps(messageContent.substring(messageContent.toLowerCase().indexOf("im") + 3)) + ", the name's LeBron");
-            } else if (messageContent.toLowerCase().contains("i'm")) {
-                event.sendResponse("Hey " + caps(messageContent.substring(messageContent.toLowerCase().indexOf("i'm") + 4)) + ", the name's LeBron");
+            if (messageContent.toLowerCase().contains(" im ")) {
+                event.sendResponse("Hey " + caps(messageContent.substring(messageContent.toLowerCase().indexOf(" im ") + 3)) + ", the name's LeBron");
+            } else if (messageContent.toLowerCase().contains(" i'm ")) {
+                event.sendResponse("Hey " + caps(messageContent.substring(messageContent.toLowerCase().indexOf(" i'm ") + 4)) + ", the name's LeBron");
             }
     }
 }

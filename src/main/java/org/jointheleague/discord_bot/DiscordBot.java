@@ -60,6 +60,8 @@ public class DiscordBot {
 
 		});
 		pn.index();
+        pn.fallbackSearch.add("search min_price max_price min_count max_count");
+        pn.emptySearch.add("no results found :(");
 
 		//add help listener to bot
 		api.addEventListener(helpListener);
@@ -90,11 +92,12 @@ public class DiscordBot {
 		if (!ran) {
 			api.getTextChannelsByName(channelName, true).forEach(e -> {
 				progressId=e.getLatestMessageId();
-				System.out.println("message to edit: "+e.retrieveMessageById(progressId).complete().getContentDisplay());});
+				//System.out.println("message to edit: "+e.retrieveMessageById(progressId).complete().getContentDisplay());
+            });
 			ran=true;
 		}else{
 			api.getTextChannelsByName(channelName, true).get(0).editMessageById(progressId, ("Indexing " + in + "/" + max)).submit();
-                    System.out.println("Indexing " + in + "/");
+                    //System.out.println("Indexing " + in + "/");
 				}
 	}
     public void sendFinish(){
