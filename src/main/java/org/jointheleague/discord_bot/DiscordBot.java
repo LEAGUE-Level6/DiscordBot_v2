@@ -42,11 +42,11 @@ public class DiscordBot {
 		api.awaitReady();
 
 		//Print the URL to invite the bot
-		//if (printInvite) {
+		if (printInvite) {
 			System.out.println("To authorize your bot, send your teacher this link: " + api.getInviteUrl()
 					+"\n\tThis message can be disabled in org.jointheleague.Launcher.java");
-			//api.getTextChannelsByName(channelName, true).forEach(e -> e.sendMessage(api.getInviteUrl()).submit());
-		//}
+			api.getTextChannelsByName(channelName, true).forEach(e -> e.sendMessage(api.getInviteUrl()).submit());
+		}
 		PriceNotifier pn = new PriceNotifier(channelName, this);
 		//Send bot connected message in channel
 		MessageCreateData botConnected = new MessageCreateBuilder()
@@ -56,7 +56,7 @@ public class DiscordBot {
 			e.sendMessage("----------------").submit();
 			e.sendMessage(botConnected).submit().join();
 			e.sendMessage("indexing...").submit();
-			e.sendTyping();
+			e.sendTyping().submit();
 
 		});
 		pn.index();

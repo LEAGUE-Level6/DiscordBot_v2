@@ -49,7 +49,7 @@ public class NewsApi extends Feature {
         Mono<ApiExampleWrapper> apiExampleWrapperMono = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("q", topic)
-                        .queryParam("sortBy", "popularity")
+                        .queryParam("sortBy", "relevancy")
                         .queryParam("apiKey", apiKey)
                         .build())
                 .retrieve()

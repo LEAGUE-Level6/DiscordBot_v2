@@ -1,10 +1,7 @@
-package org.jointheleague.features.student.pojo;
+package org.jointheleague.features.examples.third_features.plain_old_java_objects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.jointheleague.features.examples.third_features.plain_old_java_objects.news_api.Article;
-
-import java.util.List;
 
 public class AuctionDataWrapper {
     @SerializedName("totalAuctions")
