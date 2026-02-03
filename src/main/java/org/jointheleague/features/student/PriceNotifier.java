@@ -461,4 +461,4 @@ public class PriceNotifier extends FeatureTemplate {
             System.out.println(in);
         }
     }
-} 
+}
