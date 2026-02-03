@@ -22,7 +22,6 @@ public class AuctionDataWrapper {
 
     public boolean getSuccess(){ return success; }
 
-
     public boolean getStatus() {
         return success;
     }

@@ -69,4 +69,5 @@ public class SkyblockAuction {
     public long getHighest_bid_amount() {
         return highest_bid_amount;
     }
+
 }

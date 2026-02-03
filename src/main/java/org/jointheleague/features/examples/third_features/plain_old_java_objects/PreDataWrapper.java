@@ -7,6 +7,5 @@ public class PreDataWrapper {
     @SerializedName("success")
     @Expose
     private boolean success;
-
     public boolean getSuccess(){ return success; }
 }
